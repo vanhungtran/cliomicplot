@@ -7,6 +7,8 @@
 cliplot_interactive(p, tooltip = NULL, width = NULL, height = NULL)
 }
 \arguments{
+\item{p}{A ggplot object produced by \code{\link{cliplot}}.}
+
 \item{tooltip}{Columns to show in hover tooltips (default: all mapped)}
 
 \item{width}{Plot width (NULL = auto)}

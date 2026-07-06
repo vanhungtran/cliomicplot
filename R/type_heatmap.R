@@ -96,7 +96,9 @@ type_heatmap = function(
       settings$hm_border     = border_color
       settings$hm_fontsize   = fontsize
 
-      # Color gradient
+      # Color gradient breakpoints. The actual colorRamp2 object is built
+      # lazily in the draw step, only when ComplexHeatmap (which depends on
+      # circlize) is available, so circlize can stay a soft dependency.
       hm_min = min(mat, na.rm = TRUE)
       hm_max = max(mat, na.rm = TRUE)
       if (scale %in% c("row", "column")) {
@@ -104,10 +106,8 @@ type_heatmap = function(
         hm_min = -max_abs
         hm_max = max_abs
       }
-      settings$hm_color = circlize::colorRamp2(
-        c(hm_min, color_midpoint, hm_max),
-        c(color_low, color_mid, color_high)
-      )
+      settings$hm_breaks = c(hm_min, color_midpoint, hm_max)
+      settings$hm_colors = c(color_low, color_mid, color_high)
     },
     draw = function(data, mapping, settings, ...) {
       mat = settings$heatmap_mat
@@ -122,9 +122,11 @@ type_heatmap = function(
       # Build heatmap using ComplexHeatmap if available, else pheatmap
       if (requireNamespace("ComplexHeatmap", quietly = TRUE)) {
 
+        hm_color = circlize::colorRamp2(settings$hm_breaks, settings$hm_colors)
+
         hm_args = list(
           matrix             = mat,
-          col                = settings$hm_color,
+          col                = hm_color,
           cluster_rows       = settings$hm_cluster_r,
           cluster_columns    = settings$hm_cluster_c,
           show_row_names     = show_rn,

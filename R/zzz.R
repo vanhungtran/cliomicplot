@@ -2,6 +2,11 @@
 # cliomicplot: Package startup (zzz.R)
 # ===========================================================================
 
+# Non-standard-evaluation symbols used inside aes()/ggalluvial data-masks that
+# R CMD check cannot see are bound at compile time. Declaring them here keeps
+# the "no visible binding for global variable" NOTE clear.
+utils::globalVariables(c(":=", "level", "stratum"))
+
 .onLoad = function(libname, pkgname) {
   # Set default ggplot2 theme to a clean base
   ggplot2::theme_set(theme_cli_base())

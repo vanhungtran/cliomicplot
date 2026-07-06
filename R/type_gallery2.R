@@ -92,13 +92,15 @@ type_circular_bar = function(bar_width = 0.8, inner_radius = 0.3,
       angle = 90 - 360 * (df$id - 0.5) / n
       df$hjust = ifelse(angle < -90, 1, 0)
       df$angle = ifelse(angle < -90, angle + 180, angle)
+      max_val = max(df$value)
+      df$label_y = df$value + max_val * 0.05
 
       p = ggplot2::ggplot(df, ggplot2::aes(
         x = .data[["label"]], y = .data[["value"]], fill = .data[["label"]]
       )) +
         ggplot2::geom_col(width = bar_width, alpha = 0.9, color = "white", linewidth = 0.2) +
         ggplot2::coord_polar(start = 0) +
-        ggplot2::ylim(-max(df$value) * inner_radius, max(df$value) * 1.1) +
+        ggplot2::ylim(-max_val * inner_radius, max_val * 1.1) +
         ggplot2::theme_minimal() +
         ggplot2::theme(
           axis.text.x = ggplot2::element_blank(),
@@ -110,7 +112,7 @@ type_circular_bar = function(bar_width = 0.8, inner_radius = 0.3,
       if (show_labels) {
         p = p + ggplot2::geom_text(
           ggplot2::aes(
-            y = .data[["value"]] + max(df$value) * 0.05,
+            y = .data[["label_y"]],
             label = .data[["label"]],
             angle = .data[["angle"]],
             hjust = .data[["hjust"]]

@@ -111,6 +111,11 @@ type_km = function(
       df = settings$km_data
       if (is.null(df)) return(ggplot2::ggplot())
 
+      if (!requireNamespace("survminer", quietly = TRUE)) {
+        stop("Kaplan-Meier plots require the 'survminer' package. ",
+             "Install it with install.packages('survminer').", call. = FALSE)
+      }
+
       group_col = settings$km_group_col %||% "..by.."
       n_groups  = settings$km_n_groups %||% 1L
 

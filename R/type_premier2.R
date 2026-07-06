@@ -248,6 +248,7 @@ type_waffle = function(rows = 10, colors = NULL, size = 1.5, pad = 0.1) {
 #' @description Converts a cliomicplot ggplot to an interactive plotly chart
 #'   with hover tooltips, zoom, and pan support.
 #'
+#' @param p A ggplot object produced by \code{\link{cliplot}}.
 #' @param tooltip Columns to show in hover tooltips (default: all mapped)
 #' @param width Plot width (NULL = auto)
 #' @param height Plot height (NULL = auto)

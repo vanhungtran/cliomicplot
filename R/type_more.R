@@ -38,7 +38,7 @@ type_spineplot = function(weights = NULL) {
       if (!is.null(y_col)) df[[y_col]] = as.factor(df[[y_col]])
 
       if (!is.null(df[["..wt.."]])) {
-        spine_table = xtabs(df[["..wt.."]] ~ df[[y_col]] + df[[x_col]])
+        spine_table = stats::xtabs(df[["..wt.."]] ~ df[[y_col]] + df[[x_col]])
       } else {
         spine_table = table(df[[y_col]], df[[x_col]])
       }

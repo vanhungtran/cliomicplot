@@ -27,7 +27,7 @@ type_chord = function(alpha = 0.5, gap.degree = 4, start.degree = 90,
       if (is.data.frame(df)) {
         # Expect: from, to, value columns
         if (ncol(df) >= 3) {
-          mat = xtabs(df[[3]] ~ df[[1]] + df[[2]])
+          mat = stats::xtabs(df[[3]] ~ df[[1]] + df[[2]])
           settings$chord_mat = as.matrix(mat)
         } else {
           settings$chord_mat = as.matrix(df)
@@ -116,7 +116,7 @@ type_treemap = function(alpha = 0.85, border_color = "white", border_width = 1.5
           fill = .data[[cat_col]],
           subgroup = if (!is.null(group_col)) .data[[group_col]] else .data[[cat_col]]
         )) +
-          treemapify::geom_treemap(alpha = alpha, color = border_color, linewidth = border_width)
+          treemapify::geom_treemap(alpha = alpha, color = border_color, size = border_width)
 
         if (show_labels) {
           p = p + treemapify::geom_treemap_text(

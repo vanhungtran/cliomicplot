@@ -43,6 +43,9 @@
 #'   \code{"p.signif"}, or \code{"p.adj"}.
 #' @param file Optional file path to save the plot (pdf, png, jpg, svg).
 #' @param width,height Plot dimensions in inches.
+#' @param km_time,km_event,km_group Internal. Column names extracted from a
+#'   \code{Surv()} formula for Kaplan-Meier plots; set automatically by the
+#'   formula method and not intended to be supplied directly.
 #' @param ... Additional arguments passed to the plot type's draw function.
 #'
 #' @return A ggplot object (invisibly).
@@ -603,6 +606,13 @@ add_stat_annotations = function(p, settings, data) {
   if (length(groups) < 2) {
     warning("`stat.test` was requested but fewer than two groups are present; ",
             "skipping statistical annotations.", call. = FALSE)
+    return(p)
+  }
+
+  if (!requireNamespace("ggpubr", quietly = TRUE)) {
+    warning("`stat.test` annotations require the 'ggpubr' package; ",
+            "skipping. Install it with install.packages('ggpubr').",
+            call. = FALSE)
     return(p)
   }
 

@@ -145,6 +145,10 @@ specified via formula.}
 
 \item{width, height}{Plot dimensions in inches.}
 
+\item{km_time, km_event, km_group}{Internal. Column names extracted from a
+\code{Surv()} formula for Kaplan-Meier plots; set automatically by the
+formula method and not intended to be supplied directly.}
+
 \item{formula}{A formula of the form \code{y ~ x | group} or \code{~ x | group}
 for one-sided plots. The grouping variable after \code{|} is optional.}
 }

@@ -24,23 +24,30 @@ Description: Provides high-quality, publication-ready visualizations for
 License: MIT + file LICENSE
 Depends:
   R (>= 4.0.0)
-Imports: 
+Imports:
   ggplot2 (>= 3.4.0),
   scales,
   survival,
-  survminer,
   reshape2,
   ggrepel,
-  patchwork,
-  ggpubr,
-  circlize,
   ggtext,
   grid
 Suggests:
+  survminer,
+  ggpubr,
+  patchwork,
+  circlize,
   ComplexHeatmap,
   pheatmap,
   ggalluvial,
+  ggridges,
+  ggdist,
+  ggbeeswarm,
+  ggdendro,
+  treemapify,
+  ggstream,
   corrplot,
+  plotly,
   knitr,
   rmarkdown,
   testthat (>= 3.0.0)
