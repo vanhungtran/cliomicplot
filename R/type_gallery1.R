@@ -168,7 +168,7 @@ type_treemap = function(alpha = 0.85, border_color = "white", border_width = 1.5
 #' @return A cliplot_type object
 #' @export
 type_streamgraph = function(alpha = 0.8, bw = 0.75,
-                             sorting = "none", interpolate = "basis") {
+                             sorting = "mirror", interpolate = "basis") {
   cliplot_type(
     data = function(settings, ...) {
       df = settings$data

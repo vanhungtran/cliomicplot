@@ -68,6 +68,11 @@ type_swimmer = function(
           stringsAsFactors = FALSE
         )
         df$start = 0
+        if (!is.null(bar_fill)) {
+          df$fill_var = "Treatment"
+        } else {
+          df$fill_var = "Treatment"
+        }
       } else {
         df$id = if (!is.null(id) && id %in% names(df)) {
           df[[id]]
