@@ -1,0 +1,63 @@
+url: https://vanhungtran.github.io/cliomicplot
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#0073C2"
+
+home:
+  title: Publication-ready clinical & multi-omics visualizations
+  description: >
+    A ggplot2-based grammar for clinical and omics figures — volcano, forest,
+    Kaplan-Meier, waterfall, swimmer, heatmap, PCA and 40+ more, with
+    journal themes and curated palettes.
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+
+reference:
+  - title: Core engine
+    desc: The main plotting function and layer helpers.
+    contents:
+      - cliplot
+      - cliplot_add
+  - title: Themes & parameters
+    contents:
+      - clitheme
+      - clipar
+      - has_concept("theme")
+      - starts_with("clitheme_")
+  - title: Palettes
+    contents:
+      - cli_palette_list
+      - cli_palette_show
+      - palette_scale
+      - gradient_pal
+  - title: Clinical plot types
+    contents:
+      - type_volcano
+      - type_forest
+      - type_km
+      - type_waterfall
+      - type_swimmer
+  - title: Omics plot types
+    contents:
+      - type_heatmap
+      - type_pca
+      - type_ma
+      - type_correlation
+      - type_boxplot
+      - type_violin
+  - title: General plot types
+    contents:
+      - starts_with("type_")
+
+articles:
+  - title: Get started
+    contents:
+      - cliomicplot
+      - oncology
+      - multiomics
+      - themes-palettes

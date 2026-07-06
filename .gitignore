@@ -1,0 +1,64 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+vignettes/*.R
+
+# OAuth2 token
+.httr-oauth
+
+# knitr and R markdown default cache directories
+/*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# Built vignettes
+inst/doc
+docs
+
+# README rendered
+README.html
+README_files/
+
+# MacOS cruft
+.DS_Store
+
+# Claude / AI assistant files
+.claude/
+CLAUDE.md
+
+# VS Code
+.vscode/
+
+# Scratch / debug files
+SCRATCH
+Rplots.pdf
+
+# Session summaries
+SESSION_SUMMARY.md
+
+# Package tarball (already tracked in releases)
+cliomicplot_*.tar.gz

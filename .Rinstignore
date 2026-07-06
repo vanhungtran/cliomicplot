@@ -1,0 +1,4 @@
+## Exclude test suite from installed package to keep it lightweight
+## Users can run tests via devtools::test() from source, or run
+## R CMD check which tests against the source package.
+tests/
