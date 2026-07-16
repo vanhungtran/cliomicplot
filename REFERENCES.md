@@ -2,17 +2,19 @@
 
 ## API Design Inspiration
 
-The formula-based API (`y ~ x | group`) follows a pattern established by base
-R's `plot.formula()` and adopted by many packages in the R ecosystem. The type
-system (factory functions returning draw/data closures) is a general software
-engineering pattern used across multiple R graphics frameworks.
+The formula-based API (`y ~ x | group`) follows a pattern established by
+base R’s `plot.formula()` and adopted by many packages in the R
+ecosystem. The type system (factory functions returning draw/data
+closures) is a general software engineering pattern used across multiple
+R graphics frameworks.
 
 ## Colour Palette Sources
 
-Colour hex values are factual data derived from the following published sources:
+Colour hex values are factual data derived from the following published
+sources:
 
 | Palette | Source |
-|---------|--------|
+|----|----|
 | `jco` | *Journal of Clinical Oncology* style guide |
 | `nejm` | *New England Journal of Medicine* style guide |
 | `lancet` | *Lancet Oncology* published figure colours |
@@ -30,7 +32,7 @@ Colour hex values are factual data derived from the following published sources:
 | `d3_category10` / `d3_category20` | D3.js library (Mike Bostock) |
 | `tableau10` | Tableau Software default palette |
 | `okabe_ito` | Okabe & Ito (2008) colourblind-safe palette |
-| `tol_muted` | Paul Tol's muted colour scheme |
+| `tol_muted` | Paul Tol’s muted colour scheme |
 | `material` | Google Material Design colour system |
 | `flatui` | Flat UI Colors project |
 | `bs5` | Bootstrap 5 CSS framework |
@@ -50,6 +52,6 @@ Colour hex values are factual data derived from the following published sources:
 ## Software Dependencies
 
 cliomicplot builds on **ggplot2** (Wickham, 2016) and the following
-ecosystem packages: scales, ggtext, ggrepel, patchwork, ggpubr, survminer,
-survival, reshape2, RColorBrewer, and circlize.  All are used according to
-their published APIs.
+ecosystem packages: scales, ggtext, ggrepel, patchwork, ggpubr,
+survminer, survival, reshape2, RColorBrewer, and circlize. All are used
+according to their published APIs.
