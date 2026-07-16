@@ -7,7 +7,7 @@
 type_streamgraph(
   alpha = 0.8,
   bw = 0.75,
-  sorting = "none",
+  sorting = "mirror",
   interpolate = "basis"
 )
 }
@@ -16,7 +16,7 @@ type_streamgraph(
 
 \item{bw}{Bandwidth for smoothing (default 0.75)}
 
-\item{sorting}{How to sort layers: "none", "onset", "insideout"}
+\item{sorting}{How to sort layers: "none", "onset", "insideout", "mirror"}
 
 \item{interpolate}{Interpolation type: "linear", "basis", "cardinal"}
 }

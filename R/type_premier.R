@@ -61,7 +61,6 @@ type_raincloud = function(alpha = 0.7, point_size = 1.5, point_alpha = 0.4,
       } else {
         p = p + ggplot2::geom_violin(
           alpha = alpha, trim = TRUE,
-          draw_quantiles = NULL,
           position = ggplot2::position_dodge(0.8)
         )
       }

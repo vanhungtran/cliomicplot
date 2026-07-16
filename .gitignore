@@ -49,6 +49,8 @@ README_files/
 # Claude / AI assistant files
 .claude/
 CLAUDE.md
+.codegraph/
+.codebase-memory/
 
 # VS Code
 .vscode/
@@ -62,3 +64,5 @@ SESSION_SUMMARY.md
 
 # Package tarball (already tracked in releases)
 cliomicplot_*.tar.gz
+/doc/
+/Meta/

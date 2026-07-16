@@ -182,42 +182,44 @@ cliplot.default = function(
   # ---- Create the plot ----
   p = settings$type$draw(plot_data, mapping, settings, ...)
 
-  # ---- Apply labels ----
-  p = p +
-    ggplot2::labs(
-      title    = settings$title,
-      subtitle = settings$subtitle,
-      caption  = settings$caption,
-      x        = settings$xlab,
-      y        = settings$ylab
-    )
+  if (!isTRUE(settings$skip_postprocess)) {
+    # ---- Apply labels ----
+    p = p +
+      ggplot2::labs(
+        title    = settings$title,
+        subtitle = settings$subtitle,
+        caption  = settings$caption,
+        x        = settings$xlab,
+        y        = settings$ylab
+      )
 
-  # ---- Apply color palette ----
-  if (!is.null(settings$by)) {
-    p = apply_palette(p, settings)
-  }
-
-  # ---- Apply statistical tests ----
-  if (!is.null(settings$stat.test) && !is.null(settings$by)) {
-    p = add_stat_annotations(p, settings, plot_data)
-  }
-
-  # ---- Apply faceting ----
-  if (!is.null(settings$facet)) {
-    if (length(settings$facet) == 3L) {
-      # Two-sided formula (e.g. panel ~ logfc + fdr) → facet_grid
-      p <- p + ggplot2::facet_grid(settings$facet)
-    } else {
-      # One-sided formula (e.g. ~ group) → facet_wrap
-      p <- p + ggplot2::facet_wrap(settings$facet)
+    # ---- Apply color palette ----
+    if (!is.null(settings$by)) {
+      p = apply_palette(p, settings)
     }
+
+    # ---- Apply statistical tests ----
+    if (!is.null(settings$stat.test) && !is.null(settings$by)) {
+      p = add_stat_annotations(p, settings, plot_data)
+    }
+
+    # ---- Apply faceting ----
+    if (!is.null(settings$facet)) {
+      if (length(settings$facet) == 3L) {
+        # Two-sided formula (e.g. panel ~ logfc + fdr) → facet_grid
+        p <- p + ggplot2::facet_grid(settings$facet)
+      } else {
+        # One-sided formula (e.g. ~ group) → facet_wrap
+        p <- p + ggplot2::facet_wrap(settings$facet)
+      }
+    }
+
+    # ---- Apply theme ----
+    p = p + resolve_theme(settings$theme)
+
+    # ---- Apply legend position ----
+    p = p + ggplot2::theme(legend.position = settings$legend)
   }
-
-  # ---- Apply theme ----
-  p = p + resolve_theme(settings$theme)
-
-  # ---- Apply legend position ----
-  p = p + ggplot2::theme(legend.position = settings$legend)
 
   # ---- Save to file if requested ----
   if (!is.null(settings$file)) {
@@ -234,9 +236,8 @@ cliplot.default = function(
   # ---- Store last call for cliplot_add ----
   set_environment_variable(.last_call = match.call())
 
-  # ---- Display and return ----
-  print(p)
-  invisible(p)
+  # ---- Return visibly so knitr and interactive top-level use print once ----
+  p
 }
 
 #' @rdname cliplot
@@ -496,7 +497,10 @@ resolve_type = function(type) {
     circular_bar = type_circular_bar,
     density2d   = type_density2d,
     parallel    = type_parallel,
-    dendrogram  = type_dendrogram
+    dendrogram  = type_dendrogram,
+    trials      = type_trials,
+    infobar     = type_infobar,
+    hstack      = type_trials     # alias
   )
 
   if (type %in% names(type_map)) {

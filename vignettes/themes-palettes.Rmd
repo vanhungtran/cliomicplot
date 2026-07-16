@@ -5,6 +5,11 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     mathjax: null
+    css: reportdown.css
+    self_contained: true
+    includes:
+      in_header: header.html
+      after_body: reportdown.js
 vignette: >
   %\VignetteIndexEntry{Themes and Palettes in cliomicplot}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,6 +24,10 @@ knitr::opts_chunk$set(
   fig.height = 5,
   fig.align  = "center"
 )
+```
+
+```{r include-lightbox, echo=FALSE, results='asis'}
+knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
 ```
 
 ## Overview

@@ -42,6 +42,8 @@
 #'         \code{\link{type_errorbar}}, \code{\link{type_ribbon}}, \code{\link{type_text}},
 #'         \code{\link{type_bubble}}
 #'   \item Interactive: \code{\link{cliplot_interactive}} for plotly-powered zoom/pan/hover
+#'   \item Infographic: \code{\link{type_trials}}, \code{\link{type_infobar}}
+#'         for media-ready pipeline and polling-style charts
 #' }
 #'
 #' @keywords internal

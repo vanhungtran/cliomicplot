@@ -162,7 +162,7 @@ type_treemap = function(alpha = 0.85, border_color = "white", border_width = 1.5
 #'
 #' @param alpha Fill transparency (default 0.8)
 #' @param bw Bandwidth for smoothing (default 0.75)
-#' @param sorting How to sort layers: "none", "onset", "insideout"
+#' @param sorting How to sort layers: "none", "onset", "insideout", "mirror"
 #' @param interpolate Interpolation type: "linear", "basis", "cardinal"
 #'
 #' @return A cliplot_type object

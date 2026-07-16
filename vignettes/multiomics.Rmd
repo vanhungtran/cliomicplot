@@ -5,8 +5,13 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     mathjax: null
+    css: reportdown.css
+    self_contained: true
+    includes:
+      in_header: header.html
+      after_body: reportdown.js
 vignette: >
-  %\VignetteIndexEntry{Multi-Omics Exploratory Analysis}
+  %\VignetteIndexEntry{Multi-Omics Exploratory Analysis with cliomicplot}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,6 +24,10 @@ knitr::opts_chunk$set(
   fig.height = 5.5,
   fig.align  = "center"
 )
+```
+
+```{r include-lightbox, echo=FALSE, results='asis'}
+knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
 ```
 
 ## Overview
@@ -321,14 +330,65 @@ cliplot(expr_mat,
 
 ---
 
+## Figure 5: Infographic Bar Chart — Results Comparison
+
+The `type_infobar()` creates media-ready bar charts with per-category custom
+colours, footer boxes, and reference lines. Use it for polling, survey results,
+or any side-by-side comparison where each category carries semantic colouring:
+
+```{r}
+infobar_data <- data.frame(
+  endpoint  = c("ORR", "DCR", "PFS6", "OS12", "AE3"),
+  value     = c(42, 68, 55, 72, 12),
+  bar_color = c("#0073C2", "#4DBBD5", "#00A087", "#3C5488", "#E64B35"),
+  box_color = c("#005A9E", "#3AA8C2", "#00806A", "#2A3E6E", "#C9302C"),
+  group     = c("Efficacy", "Efficacy", "Efficacy", "Efficacy", "Safety"),
+  change    = c("(+3)", "(+5)", "(-1)", "(+2)", "(-4)"),
+  stringsAsFactors = FALSE
+)
+
+cliplot(value ~ endpoint, data = infobar_data,
+        type = type_infobar(
+          bar_colors      = setNames(infobar_data$bar_color,
+                                     infobar_data$endpoint),
+          box_colors      = setNames(infobar_data$box_color,
+                                     infobar_data$endpoint),
+          box_labels      = infobar_data$endpoint,
+          box_sub_labels  = infobar_data$group,
+          change_labels   = infobar_data$change,
+          reference_line  = 40,
+          reference_label = "40%",
+          value_suffix    = "%",
+          bar_width       = 0.82
+        ),
+        title    = "**Figure 5** — Efficacy & Safety Endpoint Comparison",
+        subtitle = "Clinical trial results by endpoint category")
+```
+
+### Customization
+
+| Parameter | Default | Description |
+|---|---|---|
+| `bar_colors` | `NULL` (jco palette) | Named vector of per-bar fill colours |
+| `box_colors` | `NULL` (no boxes) | Named vector of footer box fill colours |
+| `box_labels` | `NULL` | Labels inside footer boxes (vector, one per bar) |
+| `box_sub_labels` | `NULL` | Sub-labels below footer boxes |
+| `change_labels` | `NULL` | Change annotations below value labels |
+| `reference_line` | `NULL` | y-axis value for a horizontal reference line |
+| `reference_label` | `NULL` | Label text next to the reference line |
+| `value_suffix` | `""` | Suffix appended to value labels (e.g. `"%"`) |
+
+---
+
 ## Summary
 
-In this vignette we produced four publication-ready omics figures:
+In this vignette we produced five publication-ready omics figures:
 
 1. **PCA** — Dimensionality reduction with confidence ellipses
 2. **Correlation Matrix** — Pairwise correlations with hierarchical clustering
 3. **Volcano Plot** — Differential expression significance vs. fold-change
 4. **MA Plot** — Fold-change vs. mean expression with LOESS trend
+5. **Infobar** — Per-category infographic comparison with custom styling
 
 Reset global settings:
 

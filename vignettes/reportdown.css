@@ -1,0 +1,286 @@
+/* reportdown vignette CSS — adapted from report_theme/inst/templates/reportdown
+   Design system: navy + teal/cyan palette, elegant typography, card surfaces */
+
+:root {
+  --rd-navy: #0A1628;
+  --rd-accent: #00A8B0;
+  --rd-accent-lt: #20D0C8;
+  --rd-coral: #E76F51;
+  --rd-teal: #2A9D8F;
+  --rd-gold: #E9C46A;
+  --rd-text: #14202E;
+  --rd-muted: #5C6B7A;
+  --rd-border: #DDE6EA;
+  --rd-canvas: #F0F4F8;
+  --rd-surface: #FFFFFF;
+  --rd-radius: 10px;
+  --rd-shadow: 0 2px 8px rgba(10,22,40,.06);
+}
+
+/* ---- Typography ---- */
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--rd-text);
+  line-height: 1.7;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  color: var(--rd-navy);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  border-bottom: 3px solid var(--rd-accent);
+  padding-bottom: 0.4rem;
+  margin-top: 2.6rem;
+  font-size: 1.8rem;
+}
+
+h2 {
+  margin-top: 2.2rem;
+  border-bottom: 1px solid var(--rd-border);
+  padding-bottom: 0.3rem;
+  font-size: 1.35rem;
+}
+
+h3 {
+  color: var(--rd-accent-lt);
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin-top: 1.6rem;
+}
+
+h4 { font-size: 1.05rem; margin-top: 1.4rem; color: var(--rd-navy); }
+
+/* ---- Monospace / code ---- */
+code, pre, kbd, samp {
+  font-family: "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+pre {
+  border-left: 4px solid var(--rd-navy);
+  background: var(--rd-surface);
+  border: 1px solid var(--rd-border);
+  border-left: 4px solid var(--rd-navy);
+  border-radius: var(--rd-radius);
+  box-shadow: var(--rd-shadow);
+  padding: 12px 16px;
+}
+
+code {
+  background: rgba(10,22,40,.06);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* ---- Links ---- */
+a {
+  color: var(--rd-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--rd-coral);
+  text-decoration: underline;
+}
+
+/* ---- Tables ---- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.93em;
+  margin: 1rem 0;
+}
+
+table th {
+  background: var(--rd-navy);
+  color: #fff;
+  padding: 9px 12px;
+  font-weight: 600;
+  font-size: 0.88em;
+  text-align: left;
+  border-bottom: 2px solid var(--rd-accent);
+}
+
+table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--rd-border);
+}
+
+table tbody tr:nth-child(even) {
+  background: rgba(10,22,40,.03);
+}
+
+/* ---- Blockquotes ---- */
+blockquote {
+  border-left: 4px solid var(--rd-accent);
+  background: rgba(0,168,176,.06);
+  border-radius: 0 var(--rd-radius) var(--rd-radius) 0;
+  padding: 10px 16px;
+  margin: 1rem 0;
+  color: var(--rd-muted);
+}
+
+/* ---- Horizontal rules ---- */
+hr {
+  height: 1px;
+  border: 0;
+  margin: 2rem 0;
+  background: var(--rd-border);
+}
+
+/* ---- Images ---- */
+img {
+  max-width: 100%;
+  border-radius: var(--rd-radius);
+}
+
+/* ---- Main content container ---- */
+.main-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 30px 40px;
+}
+
+/* ---- TOC in vignettes ---- */
+#TOC {
+  background: var(--rd-navy);
+  border-radius: var(--rd-radius);
+  padding: 16px 20px;
+  margin: 0 0 2rem;
+}
+
+#TOC::before {
+  content: "Contents";
+  display: block;
+  color: #fff;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--rd-accent);
+}
+
+#TOC ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#TOC a {
+  color: #cbd5e1;
+  display: block;
+  padding: 2px 0;
+  font-size: 0.93em;
+}
+
+#TOC a:hover {
+  color: #fff;
+}
+
+/* ---- Strong / emphasis ---- */
+strong { color: var(--rd-navy); }
+
+/* ---- Zoomable images ---- */
+.rd-zoomable {
+  cursor: zoom-in;
+  transition: opacity 0.15s ease;
+}
+.rd-zoomable:hover {
+  opacity: 0.92;
+}
+
+/* ---- Lightbox overlay ---- */
+.rd-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10,22,40,.92);
+  backdrop-filter: blur(6px);
+}
+.rd-lightbox.open {
+  display: block;
+}
+
+.rd-lb-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.rd-lb-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+  border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.4);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---- Lightbox buttons ---- */
+.rd-lb-btn {
+  position: fixed;
+  z-index: 10001;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s ease;
+}
+.rd-lb-btn:hover {
+  background: rgba(255,255,255,.25);
+}
+
+.rd-lb-close {
+  top: 16px;
+  right: 16px;
+  font-size: 24px;
+}
+
+.rd-lb-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10001;
+  display: flex;
+  gap: 8px;
+}
+
+.rd-lb-controls .rd-lb-btn {
+  position: static;
+}
+
+.rd-lb-reset {
+  width: auto;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+}

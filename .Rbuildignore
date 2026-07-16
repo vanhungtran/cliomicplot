@@ -1,4 +1,4 @@
-^.git$
+^\.git
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
@@ -23,8 +23,12 @@
 ^Rplots\.pdf$
 ^CLAUDE\.md$
 ^\.claude$
+^\.codegraph$
+^\.codebase-memory$
 ^revdep$
 ^SESSION_SUMMARY\.md$
 ^debug_.*\.R$
 ^tests$
 ^scratch$
+^doc$
+^Meta$

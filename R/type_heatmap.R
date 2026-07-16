@@ -152,12 +152,18 @@ type_heatmap = function(
           )
         }
 
-        # Draw heatmap
         hm = do.call(ComplexHeatmap::Heatmap, hm_args)
-        ComplexHeatmap::draw(hm)
+        hm_grob = grid::grid.grabExpr(ComplexHeatmap::draw(hm))
+        settings$skip_postprocess = TRUE
 
-        # Return empty ggplot for API consistency
-        return(ggplot2::ggplot())
+        ggplot2::ggplot() +
+          ggplot2::annotation_custom(
+            grob = hm_grob,
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = Inf
+          ) +
+          ggplot2::coord_cartesian(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+          ggplot2::theme_void()
 
       } else {
 

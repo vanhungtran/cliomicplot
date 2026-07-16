@@ -58,6 +58,7 @@ articles:
   - title: Get started
     contents:
       - cliomicplot
+      - volcano-plot
       - oncology
       - multiomics
       - themes-palettes
