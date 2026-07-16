@@ -23,6 +23,8 @@ reference:
     contents:
       - cliplot
       - cliplot_add
+      - cliplot_interactive
+      - cli_markdown
   - title: Themes & parameters
     contents:
       - clitheme
@@ -50,6 +52,7 @@ reference:
       - type_correlation
       - type_boxplot
       - type_violin
+      - type_bubble_heatmap
   - title: General plot types
     contents:
       - starts_with("type_")
@@ -62,3 +65,5 @@ articles:
       - oncology
       - multiomics
       - themes-palettes
+      - bubble-heatmap
+      - ml_panel

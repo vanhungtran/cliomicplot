@@ -500,7 +500,8 @@ resolve_type = function(type) {
     dendrogram  = type_dendrogram,
     trials      = type_trials,
     infobar     = type_infobar,
-    hstack      = type_trials     # alias
+    hstack      = type_trials,     # alias
+    bubble_heatmap = type_bubble_heatmap
   )
 
   if (type %in% names(type_map)) {
