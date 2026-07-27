@@ -181,7 +181,7 @@ Every figure is a single `cliplot()` call. Click any image to enlarge.
 | | | |
 |:---:|:---:|:---:|
 | **Pattern Clustering** | **Rank-Abundance Curve** | **DEG Comparison** |
-| [![Pattern](man/figures/pattern.png)](man/figures/pattern.png) | [![RankAbundance](man/figures/rankabundance.png)](man/figures/rankabundance.png) | [![DEGCompare](man/figures/deg_compare.png)](man/figures/deg_compare.png) |
+| `type_pattern()` | `type_rankabundance()` | `type_deg_compare()` |
 
 ### R Graph Gallery Favorites
 
