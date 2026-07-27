@@ -20,10 +20,9 @@
 #' @param show_labels Show patient IDs on bars (default FALSE)
 #' @param label_size Size of patient labels (default 2.5)
 #' @param show_threshold_labels Add PD/PR threshold labels.
-#' @param n_skip_label Skip every nth x-axis label to prevent overlap when
-#'   many patients are plotted (default 1 = show all). Set to 2 for every
-#'   other label, 3 for every third, etc. Automatically enabled when
-#'   there are more than 20 patients if not explicitly set.
+#' @param n_skip_label Number of rows to stagger x-axis labels across
+#'   to prevent overlap (default: auto — 1 row for ≤15 patients, 2 for
+#'   16–35, 3 for >35). Set to 1 to force single-row labels.
 #'
 #' @return A cliplot_type object for use with \code{\link{cliplot}}.
 #'
@@ -92,18 +91,22 @@ type_waterfall = function(
         "PD" = "#E64B35"   # red
       )
 
-      # Determine x-axis label skipping
+      # Determine x-axis label dodge based on patient count
       n_patients = nrow(df)
       if (is.null(n_skip_label)) {
-        # Auto: skip labels when > 20 patients to prevent overlap
-        if (n_patients > 40) n_skip_label = 3
-        else if (n_patients > 20) n_skip_label = 2
-        else n_skip_label = 1
+        if (n_patients > 35) n_dodge = 3
+        else if (n_patients > 15) n_dodge = 2
+        else n_dodge = 1
+      } else if (is.numeric(n_skip_label) && n_skip_label > 1) {
+        n_dodge = n_skip_label
+      } else {
+        n_dodge = 1
       }
 
-      # Build display labels: blank out skipped positions
-      df$xlabel = as.character(df$patient)
-      df$xlabel[seq_len(n_patients) %% n_skip_label != 1] = ""
+      # Adaptive text size
+      if (n_patients > 40) axis_text_size = 5.5
+      else if (n_patients > 25) axis_text_size = 6.5
+      else axis_text_size = 7
 
       settings$waterfall_data     = df
       settings$bar_width          = bar_width
@@ -113,7 +116,8 @@ type_waterfall = function(
       settings$resp_colors        = resp_colors
       settings$response_thresholds = response_thresholds
       settings$show_threshold_labels = show_threshold_labels
-      settings$n_skip_label       = n_skip_label
+      settings$n_dodge            = n_dodge
+      settings$axis_text_size     = axis_text_size
     },
     draw = function(data, mapping, settings, ...) {
       df = settings$waterfall_data
@@ -136,12 +140,13 @@ type_waterfall = function(
           drop   = FALSE
         ) +
         ggplot2::scale_x_discrete(
-          labels = stats::setNames(df$xlabel, df$patient),
-          guide  = ggplot2::guide_axis(n.dodge = 2)
+          guide = ggplot2::guide_axis(n.dodge = settings$n_dodge)
         ) +
         ggplot2::labs(x = "", y = "Best Change from Baseline (%)") +
         ggplot2::theme(
-          axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 7),
+          axis.text.x = ggplot2::element_text(
+            angle = 45, hjust = 1, size = settings$axis_text_size
+          ),
           panel.grid.major.x = ggplot2::element_blank()
         )
 

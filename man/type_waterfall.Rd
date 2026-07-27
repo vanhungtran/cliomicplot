@@ -34,10 +34,9 @@ CR = Complete Response.}
 
 \item{show_threshold_labels}{Add PD/PR threshold labels.}
 
-\item{n_skip_label}{Skip every nth x-axis label to prevent overlap when
-many patients are plotted (default 1 = show all). Set to 2 for every
-other label, 3 for every third, etc. Automatically enabled when
-there are more than 20 patients if not explicitly set.}
+\item{n_skip_label}{Number of rows to stagger x-axis labels across
+to prevent overlap (default: auto — 1 row for ≤15 patients, 2 for
+16–35, 3 for >35). Set to 1 to force single-row labels.}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
