@@ -10,7 +10,7 @@
   <a href="https://www.r-project.org/"><img src="https://img.shields.io/badge/R-%E2%89%A5%204.0.0-276DC3?logo=r&logoColor=white" alt="R version"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="https://ggplot2.tidyverse.org/"><img src="https://img.shields.io/badge/Built%20on-ggplot2-2171B5?logo=r" alt="Built on ggplot2"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Plot%20Types-43-20854E" alt="Plot Types"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Plot%20Types-46-20854E" alt="Plot Types"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Palettes-55+-E18727" alt="Palettes"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Themes-11-7E6148" alt="Themes"/></a>
   <img src="https://img.shields.io/badge/Version-0.1.0-3C5488" alt="Version 0.1.0"/>
@@ -173,8 +173,15 @@ Every figure is a single `cliplot()` call. Click any image to enlarge.
 
 | | | |
 |:---:|:---:|:---:|
-| **Clinical Trials Pipeline** | **Infographic Bar** | |
-| [![Trials](man/figures/trials.png)](man/figures/trials.png) | [![Infobar](man/figures/infobar.png)](man/figures/infobar.png) | |
+| **Clinical Trials Pipeline** | **Infographic Bar** | **Diamond Bubble Heatmap** |
+| [![Trials](man/figures/trials.png)](man/figures/trials.png) | [![Infobar](man/figures/infobar.png)](man/figures/infobar.png) | [![BubbleHeatmap](man/figures/bubble_heatmap.png)](man/figures/bubble_heatmap.png) |
+
+### Multi-Omics (xOmicsShiny-inspired)
+
+| | | |
+|:---:|:---:|:---:|
+| **Pattern Clustering** | **Rank-Abundance Curve** | **DEG Comparison** |
+| [![Pattern](man/figures/pattern.png)](man/figures/pattern.png) | [![RankAbundance](man/figures/rankabundance.png)](man/figures/rankabundance.png) | [![DEGCompare](man/figures/deg_compare.png)](man/figures/deg_compare.png) |
 
 ### R Graph Gallery Favorites
 
@@ -187,7 +194,7 @@ Every figure is a single `cliplot()` call. Click any image to enlarge.
 | **Parallel Coords** | **Spineplot** | **Waffle** |
 | [![Parallel](man/figures/parallel.png)](man/figures/parallel.png) | [![Spineplot](man/figures/spineplot.png)](man/figures/spineplot.png) | [![Waffle](man/figures/waffle.png)](man/figures/waffle.png) |
 
-Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`.
+Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`, `deg_compare`.
 
 ---
 
@@ -292,14 +299,41 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
 
 - **Getting Started** — `vignette("cliomicplot")`
 - **Volcano Plot Guide** — `vignette("volcano-plot")`
-- **Oncology Workflows** — `vignette("oncology")`
-- **Multi-Omics** — `vignette("multiomics")`
+- **Oncology Workflows** — `vignette("oncology")` — 7 figures: KM, forest, waterfall, swimmer, dose-response, time-course, PD biomarkers
+- **Multi-Omics** — `vignette("multiomics")` — 10 figures: PCA, correlation, volcano, MA, pattern clustering, rank-abundance, DEG comparison, bubble heatmap & more
 - **Themes & Palettes** — `vignette("themes-palettes")`
+
+---
+
+## 🔬 xOmicsShiny Integration
+
+cliomicplot reads **xOmicsShiny**-format multi-omics datasets directly.  xOmicsShiny
+(Biogen) is a comprehensive proteomics/transcriptomics/metabolomics platform; its
+`DataInSets` nested-list structure — with `data_long`, `data_wide`, `results_long`,
+and `MetaData` components — works out of the box with cliomicplot's formula interface.
+
+```r
+# Load xOmicsShiny data
+load("path/to/xOmicsShiny/data/AgingHFCD_Metabolomics.RData")
+ds <- DataInSets[[1]]
+
+# Direct plotting from xOmicsShiny data_long
+cliplot(expr ~ group | Gene.Name, data = ds$data_long, type = "boxplot")
+
+# Pattern clustering from wide matrix
+cliplot(ds$data_wide, type = type_pattern(k = 6, method = "kmeans"))
+```
+
+Three plot types were developed directly from xOmicsShiny analysis modules:
+`type_rankabundance()` (S-curve), `type_pattern()` (k-means/Mfuzz/PAM clustering),
+and `type_deg_compare()` (cross-comparison scatter).  A sample metabolomics
+dataset is included at `inst/extdata/AgingHFCD_Metabolomics.RData`.
 
 ---
 
 ## 🔗 References
 
+- **xOmicsShiny** — multi-omics visualisation platform (Biogen Inc.)
 - **tinyplot** — formula-interface inspiration ([github.com/grantmcdermott/tinyplot](https://github.com/grantmcdermott/tinyplot))
 - **ggsci** — journal palette inspiration ([nanx.me/ggsci](https://nanx.me/ggsci/))
 - **survminer** — survival plotting engine

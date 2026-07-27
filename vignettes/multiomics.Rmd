@@ -33,12 +33,19 @@ knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
 ## Overview
 
 This vignette demonstrates a multi-omics exploratory analysis workflow using
-**cliomicplot**. We'll generate four figures commonly found in omics publications:
+**cliomicplot**. We'll generate ten figures — from core omics visualizations to
+advanced analyses inspired by xOmicsShiny:
 
 1. **Figure 1** — PCA with confidence ellipses
 2. **Figure 2** — Correlation heatmap with clustering and significance
 3. **Figure 3** — Volcano plot for differential expression
 4. **Figure 4** — MA plot for DE quality assessment
+5. **Figure 5** — Infographic bar chart
+6. **Figure 6** — Loading real multi-omics data (xOmicsShiny format)
+7. **Figure 7** — Expression pattern clustering (k-means/PAM/Mfuzz)
+8. **Figure 8** — Rank-abundance curve with marginal distribution
+9. **Figure 9** — DEG comparison scatter (two contrasts)
+10. **Figure 10** — Diamond bubble heatmap (feature × condition matrix)
 
 ```{r}
 library(cliomicplot)
@@ -380,15 +387,340 @@ cliplot(value ~ endpoint, data = infobar_data,
 
 ---
 
+## Figure 6: Loading Real Multi-Omics Data
+
+cliomicplot can work directly with multi-omics datasets from platforms like
+**xOmicsShiny**. Here we demonstrate loading a real metabolomics dataset:
+
+```{r}
+# Load xOmicsShiny-format RData file
+data_path = system.file("extdata", "AgingHFCD_Metabolomics.RData",
+                         package = "cliomicplot")
+if (file.exists(data_path)) {
+  load(data_path)
+  cat("Available datasets:", paste(names(DataInSets), collapse = ", "), "\n")
+}
+```
+
+### Understanding xOmicsShiny data structure
+
+xOmicsShiny datasets are organized as nested lists within `DataInSets`:
+
+```{r}
+if (exists("DataInSets") && length(DataInSets) > 0) {
+  ds = DataInSets[[1]]
+  cat("Components:", paste(names(ds), collapse = ", "), "\n")
+  cat("Groups:", paste(ds$groups, collapse = ", "), "\n")
+  cat("N samples:", length(ds$samples), "\n")
+  cat("N features in data_long:", nrow(ds$data_long), "\n")
+  if (!is.null(ds$results_long)) {
+    cat("N tests:", nrow(ds$results_long), "\n")
+    print(head(ds$results_long[, 1:6], 3))
+  }
+}
+```
+
+| Component | Description |
+|---|---|
+| `data_long` | Tidy expression data (feature × sample × group) |
+| `data_wide` | Wide matrix (features × samples) |
+| `results_long` | Differential expression / statistics results |
+| `MetaData` | Sample-level metadata (group assignments, covariates) |
+| `ProteinGeneName` | Feature identifier mapping table |
+
+---
+
+## Figure 7: Expression Pattern Clustering
+
+Inspired by **xOmicsShiny's pattern module**, `type_pattern()` groups features
+(genes, proteins, metabolites) by their expression profiles across conditions or
+time points. This reveals coordinated regulation patterns — essential for
+time-series and multi-condition omics studies.
+
+We'll generate realistic time-course data for demonstration:
+
+```{r}
+set.seed(42)
+n_genes  = 600
+n_points = 7
+
+time_points = paste0("T", 0:6)
+
+# Generate cluster-specific expression patterns
+make_cluster = function(n, pattern, noise_sd = 0.5) {
+  base = switch(pattern,
+    "up"      = seq(0, 2.5, length.out = n_points),
+    "down"    = seq(2.0, -0.5, length.out = n_points),
+    "early_up"= c(0, 0.3, 1.5, 2.2, 1.8, 1.2, 0.8),
+    "late_up" = c(0, -0.2, -0.1, 0.1, 0.8, 1.8, 2.5),
+    "transient"=c(0, 0.2, 1.8, 0.5, -0.3, -0.2, -0.1),
+    "osc"     = c(0, 1.2, -0.3, 0.8, -0.4, 0.6, 0)
+  )
+  t(replicate(n, base + rnorm(n_points, 0, noise_sd)))
+}
+
+clusters = rbind(
+  make_cluster(100, "up"), make_cluster(100, "down"),
+  make_cluster(100, "early_up"), make_cluster(100, "late_up"),
+  make_cluster(100, "transient"), make_cluster(100, "osc")
+)
+rownames(clusters) = paste0("Gene_", 1:nrow(clusters))
+colnames(clusters) = time_points
+
+dim(clusters)
+```
+
+```{r}
+cliplot(clusters,
+        type = type_pattern(
+          k         = 6,
+          method    = "kmeans",
+          ncol      = 3,
+          line_alpha = 0.3
+        ),
+        stat.test = NULL,
+        title    = "**Figure 7** — Expression Pattern Clustering",
+        subtitle = "K-means clustering of time-course profiles (n = 600 genes)") +
+  cli_markdown()
+```
+
+### Pattern clustering methods
+
+| Method | Description | Best for |
+|---|---|---|
+| `kmeans` | Hard clustering by Euclidean distance | General purpose, fast |
+| `pam` | Partitioning Around Medoids | Robust to outliers |
+| `mfuzz` | Soft (fuzzy) clustering via Mfuzz | Graded membership patterns |
+
+```{r}
+# Alternative: PAM clustering
+cliplot(clusters,
+        type = type_pattern(
+          k      = 4,
+          method = "pam",
+          ncol   = 2
+        ),
+        stat.test = NULL,
+        title    = "**Pattern Clustering** — PAM Method (k = 4)") +
+  cli_markdown()
+```
+
+---
+
+## Figure 8: Rank Abundance Curve
+
+The rank-abundance curve (inspired by **xOmicsShiny's S-curve**) sorts all
+features by their abundance and plots them against rank. It's a standard QC
+plot in proteomics and metabolomics, revealing:
+
+- **Dynamic range** of the assay
+- **Distribution shape** (normal, log-normal, bimodal)
+- **Outlier features** with extreme abundance
+
+```{r}
+set.seed(123)
+n_features = 5000
+
+# Simulate realistic proteomics intensity distribution
+ra_data = data.frame(
+  Feature   = paste0("PROT_", 1:n_features),
+  Intensity = 10^rnorm(n_features, mean = 6.5, sd = 1.2),
+  stringsAsFactors = FALSE
+)
+# Sort by intensity descending and add rank
+ra_data = ra_data[order(-ra_data$Intensity), ]
+ra_data$Rank = 1:n_features
+
+# Highlight some known proteins
+highlight = paste0("PROT_", c(10, 50, 200, 800, 3000))
+
+head(ra_data)
+```
+
+```{r}
+clitheme("science")
+
+cliplot(Intensity ~ Rank, data = ra_data,
+        type = type_rankabundance(
+          log_scale      = "10",
+          point_color    = "#4DBBD5",
+          marginal_type  = "density",
+          marginal_color = "#3C5488",
+          label_genes    = highlight,
+          label_color    = "#E64B35"
+        ),
+        stat.test = NULL,
+        title    = "**Figure 8** — Rank-Abundance Curve",
+        subtitle = "Simulated proteomics — log₁₀ intensity, top 5 proteins labeled",
+        caption  = paste0(n_features, " features; log₁₀ scale")) +
+  cli_markdown()
+```
+
+> **Tip:** Add a marginal distribution with `ggExtra::ggMarginal(p, type = "density")`
+> for publication-quality rank-abundance plots with distribution annotation.
+
+### Customizing the rank-abundance curve
+
+```{r}
+# No labels, with density marginal distribution
+cliplot(Intensity ~ Rank, data = ra_data,
+        type = type_rankabundance(
+          log_scale     = "2",
+          point_color   = "#0073C2",
+          marginal_type = "density"
+        ),
+        stat.test = NULL,
+        title = "**Rank-Abundance** — log₂ Scale, No Labels") +
+  cli_markdown()
+```
+
+---
+
+## Figure 9: DEG Comparison Scatter
+
+Inspired by **xOmicsShiny's "DEGs in Two Comparisons"**, `type_deg_compare()`
+plots the log₂ fold-changes of two independent contrasts against each other.
+This reveals:
+
+- **Concordant regulation** (both up or both down — top-right/bottom-left quadrants)
+- **Discordant regulation** (opposite direction — top-left/bottom-right)
+- **Comparison-specific effects** (significant in one but not the other)
+
+```{r}
+set.seed(789)
+n_de = 2000
+
+# Simulate two DE comparisons with shared and unique signals
+shared_genes = sample(1:n_de, 300)
+fc1 = rnorm(n_de, 0, 0.8)
+fc2 = rnorm(n_de, 0, 0.8)
+
+# Inject shared DE signal (concordant)
+fc1[shared_genes] = fc1[shared_genes] + rnorm(300, 2.0, 0.5)
+fc2[shared_genes] = fc2[shared_genes] + rnorm(300, 2.0, 0.5)
+
+# Inject comparison-specific signals
+fc1[sample(1:n_de, 80)] = rnorm(80, 2.5, 0.4)
+fc2[sample(1:n_de, 80)] = rnorm(80, -2.5, 0.4)
+
+de1 = data.frame(
+  Gene   = paste0("GENE_", 1:n_de),
+  logFC  = fc1,
+  PValue = 10^-runif(n_de, 1, 8),
+  stringsAsFactors = FALSE
+)
+de2 = data.frame(
+  Gene   = paste0("GENE_", 1:n_de),
+  logFC  = fc2,
+  PValue = 10^-runif(n_de, 1, 8),
+  stringsAsFactors = FALSE
+)
+
+# Label top genes from both comparisons
+top_genes = paste0("GENE_", shared_genes[1:10])
+```
+
+```{r}
+clitheme("cell")
+
+cliplot(logFC ~ Gene, data = de1,
+        type = type_deg_compare(
+          comp2_data  = de2,
+          merge_by    = "Gene",
+          add_lm      = TRUE,
+          label_genes = top_genes,
+          same_scale  = TRUE
+        ),
+        stat.test = NULL,
+        title    = "**Figure 9** — DEG Comparison Scatter",
+        subtitle = "log₂FC: Comparison 1 (WT vs KO) × Comparison 2 (Treated vs Control)") +
+  cli_markdown()
+```
+
+### Interpreting the quadrants
+
+| Quadrant | Interpretation |
+|---|---|
+| **Top-right** (+,+) | Consistently upregulated in both comparisons |
+| **Bottom-left** (−,−) | Consistently downregulated in both comparisons |
+| **Top-left** (−,+) | Opposing direction — comparison-specific upregulation |
+| **Bottom-right** (+,−) | Opposing direction — comparison-specific downregulation |
+
+The linear regression line indicates the overall concordance between the two
+comparisons (slope ≈ 1 = strong agreement).
+
+---
+
+## Figure 10: Diamond Bubble Heatmap
+
+The `type_bubble_heatmap()` creates a matrix of diamond-shaped bubbles where
+feature–sample combinations are encoded by **size** (e.g., fold-change) and
+**colour** (e.g., significance). It's ideal for pathway × comparison matrices
+or multi-marker panels, inspired by **xOmicsShiny's heatmap visualizations**:
+
+```{r}
+set.seed(456)
+markers = paste0("Marker_", LETTERS[1:12])
+cell_types = paste0("CellType_", 1:8)
+
+bh_data = expand.grid(
+  Marker = markers,
+  CellType = cell_types,
+  stringsAsFactors = FALSE
+)
+bh_data$FoldChange = round(runif(nrow(bh_data), 0.2, 8.6), 2)
+bh_data$Padj       = runif(nrow(bh_data), 1e-10, 0.5)
+
+# Make some markers stand out
+bh_data$FoldChange[bh_data$Marker %in% c("Marker_A", "Marker_D", "Marker_H")] =
+  bh_data$FoldChange[bh_data$Marker %in% c("Marker_A", "Marker_D", "Marker_H")] * 1.8
+```
+
+```{r}
+cliplot(Marker ~ CellType, data = bh_data,
+        by = bh_data$FoldChange,
+        type = type_bubble_heatmap(
+          label_threshold = 3.5,
+          max_size        = 14,
+          size_name       = "Fold Change",
+          fill_name       = expression(-log[10]~"adjusted P"),
+          fill_low        = "#4575B4",
+          fill_mid        = "#FFFFBF",
+          fill_high       = "#D73027"
+        ),
+        extra_data = list(fill = -log10(bh_data$Padj)),
+        stat.test  = NULL,
+        title      = "**Figure 10** — Diamond Bubble Heatmap",
+        subtitle   = "Marker × Cell Type — size = fold-change, colour = significance") +
+  cli_markdown()
+```
+
+### Bubble heatmap customization
+
+| Parameter | Default | Description |
+|---|---|---|
+| `label_threshold` | `2.0` | Minimum size for in-cell value labels |
+| `max_size` | `15` | Maximum bubble point size |
+| `band_alpha` | `0.6` | Opacity for alternating row highlight bands |
+| `fill_low/mid/high` | 3-colour gradient | Fill gradient stops for bubble fill |
+| `size_name` | `"Fold change"` | Legend title for size scale |
+
+---
+
 ## Summary
 
-In this vignette we produced five publication-ready omics figures:
+In this vignette we produced ten publication-ready omics figures:
 
 1. **PCA** — Dimensionality reduction with confidence ellipses
 2. **Correlation Matrix** — Pairwise correlations with hierarchical clustering
 3. **Volcano Plot** — Differential expression significance vs. fold-change
 4. **MA Plot** — Fold-change vs. mean expression with LOESS trend
-5. **Infobar** — Per-category infographic comparison with custom styling
+5. **Infobar** — Per-category infographic comparison
+6. **Real Multi-Omics Data** — Loading and exploring xOmicsShiny datasets
+7. **Pattern Clustering** — K-means/PAM expression profile clustering
+8. **Rank-Abundance Curve** — Feature abundance with marginal distributions
+9. **DEG Comparison** — Concordance of fold-changes across two contrasts
+10. **Diamond Bubble Heatmap** — Feature × condition matrix with dual encoding
 
 Reset global settings:
 

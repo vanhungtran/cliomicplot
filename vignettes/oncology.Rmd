@@ -32,14 +32,18 @@ knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
 
 ## Overview
 
-This vignette demonstrates a complete oncology clinical data analysis workflow using
-**cliomicplot**. We'll generate four publication-quality figures commonly found in
-oncology manuscripts:
+This vignette demonstrates a complete oncology clinical & translational data
+analysis workflow using **cliomicplot**. We'll generate publication-quality
+figures commonly found in oncology manuscripts, with additional analyses
+inspired by **xOmicsShiny**:
 
 1. **Figure 1** — Kaplan-Meier overall survival curves
 2. **Figure 2** — Forest plot from multivariable Cox regression
 3. **Figure 3A** — Waterfall plot of best tumor response
 4. **Figure 3B** — Swimmer plot of patient treatment courses
+5. **Figure 4A** — Dose-response curves for drug sensitivity
+6. **Figure 4B** — Gene expression time course trajectories
+7. **Figure 4C** — Prism-style boxplot with P-value annotations
 
 ```{r}
 library(cliomicplot)
@@ -246,6 +250,182 @@ cliplot(Duration ~ Patient, data = imtrial,
 
 ---
 
+## Figure 4A: Dose-Response Curves — Drug Sensitivity
+
+Inspired by **xOmicsShiny's dose-response/omics module**, dose-response analysis
+is essential in oncology for characterizing drug sensitivity and resistance.
+Using `type_lines()` with confidence bands, we can visualize concentration-response
+relationships across compounds:
+
+```{r}
+set.seed(42)
+
+# Simulate an in vitro drug screen across 4 compounds
+doses     = c(0.001, 0.01, 0.1, 1, 10, 100)
+compounds = c("Paclitaxel", "Doxorubicin", "Cisplatin", "Erlotinib")
+
+dr_data = do.call(rbind, lapply(1:4, function(i) {
+  ic50 = c(0.08, 0.5, 2.0, 25)[i]
+  hill = c(-1.2, -0.9, -1.5, -1.1)[i]
+  max_inhib = c(95, 88, 92, 78)[i]
+  resp = max_inhib / (1 + (doses / ic50)^(-hill)) +
+         rnorm(length(doses), 0, 3)
+  data.frame(
+    Compound = compounds[i],
+    Dose     = doses,
+    Response = pmax(0, pmin(100, resp)),
+    stringsAsFactors = FALSE
+  )
+}))
+
+head(dr_data, 8)
+```
+
+```{r}
+clitheme("science")
+
+cliplot(Response ~ Dose | Compound, data = dr_data,
+        type = type_lines(
+          add_points  = TRUE,
+          point_size  = 2.2,
+          add_ribbon  = FALSE,
+          group       = "Compound"
+        ),
+        palette = "jco",
+        title   = "**Figure 4A** — In Vitro Drug Sensitivity Screen",
+        subtitle = "Concentration–response curves (n = 4 compounds, 6 doses)",
+        xlab    = expression("Concentration ["*mu*"M]"),
+        ylab    = "Cell Viability (%)") +
+  cli_markdown()
+```
+
+> **Note:** Dose-response data from high-throughput screens (e.g., xOmicsShiny)
+> can be directly plotted with `cliplot()`. Use log-transformed x-axis with
+> `ggplot2::scale_x_log10()` for standard pharmacology conventions.
+
+```{r}
+# Log-scale x-axis (standard pharmacology convention)
+cliplot(Response ~ Dose | Compound, data = dr_data,
+        type = type_lines(
+          add_points  = TRUE,
+          add_ribbon  = FALSE,
+          group       = "Compound"
+        ),
+        palette = "npg",
+        title   = "**Dose-Response** — Log₁₀ Concentration Scale",
+        theme   = "cli_minimal",
+        xlab    = expression("log"[10]*" Concentration ["*mu*"M]"),
+        ylab    = "Cell Viability (%)") +
+  cli_markdown() +
+  ggplot2::scale_x_log10()
+```
+
+---
+
+## Figure 4B: Gene Expression Time Course
+
+Multi-condition or time-course gene expression profiles are a core analysis in
+xOmicsShiny. Using `type_lines()` with facets, we can visualize longitudinal
+biomarker trajectories across treatment arms:
+
+```{r}
+set.seed(789)
+n_biomarkers = 8
+biomarkers   = c("Ki-67", "p53", "BCL-2", "EGFR", "VEGF", "PD-L1", "HER2", "c-MYC")
+timepoints   = c("Baseline", "Cycle 2", "Cycle 4", "Cycle 6", "EOT")
+
+# Generate realistic fold-change trajectories
+tc_data = do.call(rbind, lapply(1:8, function(i) {
+  # Each biomarker has its own trajectory shape
+  shapes = list(
+    c(0, -0.3, -0.8, -1.5, -2.0),  # Ki-67: steady down
+    c(0, 0.5, 0.8, 0.3, -0.2),     # p53: early up then down
+    c(0, 0.2, -0.5, -1.2, -1.8),   # BCL-2
+    c(0, -0.8, -1.5, -2.0, -2.5),  # EGFR
+    c(0, -0.2, -0.5, -0.8, -1.2),  # VEGF
+    c(0, 1.0, 2.0, 1.5, 0.5),     # PD-L1: up then slight decline
+    c(0, -0.5, -1.0, -1.5, -2.0), # HER2
+    c(0, 0.3, 0.8, 1.2, 1.5)      # c-MYC: steady up
+  )
+  shape = shapes[[i]]
+  data.frame(
+    Biomarker = biomarkers[i],
+    Timepoint = factor(timepoints, levels = timepoints),
+    FoldChange = shape + rnorm(5, 0, 0.15),
+    stringsAsFactors = FALSE
+  )
+}))
+
+head(tc_data)
+```
+
+```{r}
+clitheme("broadsheet")
+
+cliplot(FoldChange ~ Timepoint | Biomarker, data = tc_data,
+        type = type_lines(
+          add_points  = TRUE,
+          point_size  = 3,
+          group       = "Biomarker",
+          linewidth   = 1.1
+        ),
+        palette = "lancet",
+        title   = "**Figure 4B** — Longitudinal Biomarker Trajectories",
+        subtitle = "8 biomarkers × 5 time points, Tumor vs Baseline log₂FC",
+        ylab    = expression("log"[2]~"Fold Change from Baseline"),
+        legend  = "right") +
+  cli_markdown()
+```
+
+---
+
+## Figure 4C: Prism-Style Boxplot with P-Value Bars
+
+Inspired by **xOmicsShiny's expression module**, which supports GraphPad
+Prism styling via `ggprism`. The built-in `stat.test` parameter in
+cliomicplot provides automatic significance annotations:
+
+```{r}
+clitheme("cli_minimal")
+
+# Simulate a pharmacodynamic biomarker study
+set.seed(456)
+pd_data = data.frame(
+  Biomarker = rep(c("Ki-67", "p21", "γH2AX", "c-PARP"), each = 24),
+  Change    = c(
+    rnorm(24, -35, 12),  # Ki-67: high inhibition
+    rnorm(24,  28, 15),  # p21: induction
+    rnorm(24,  45, 18),  # γH2AX: DNA damage marker
+    rnorm(24,  52, 20)   # c-PARP: apoptosis marker
+  ),
+  Arm       = rep(c("Control", "Low Dose", "High Dose"), 32),
+  stringsAsFactors = FALSE
+)
+pd_data$Arm = factor(pd_data$Arm, levels = c("Control", "Low Dose", "High Dose"))
+
+head(pd_data)
+```
+
+```{r}
+cliplot(Change ~ Arm | Biomarker, data = pd_data,
+        type = type_boxplot(
+          add_jitter = TRUE,
+          jitter_width = 0.22,
+          stat.test  = "anova",
+          stat.label = "p.signif"
+        ),
+        palette = "jco",
+        title   = "**Figure 4C** — Pharmacodynamic Biomarker Response",
+        subtitle = "Boxplot with one-way ANOVA significance annotations",
+        ylab    = "% Change from Baseline (D7)") +
+  cli_markdown()
+```
+
+> **Tip:** For prism-style theming, install `ggprism` and apply
+> `ggplot2::theme_prism()` on top of your cliomicplot.
+
+---
+
 ## Combined Multi-Panel Figure
 
 Use **patchwork** to combine the waterfall and swimmer plots:
@@ -355,8 +535,11 @@ cliomicplot's specialized plot types. The key takeaways:
 3. **`type_waterfall()`** for tumor response visualization
 4. **`type_swimmer()`** for patient-level timelines
 5. **`type_trials()`** for clinical trial pipeline stacked bar charts
-6. **`clitheme()`** for journal-specific styling
-7. **`cli_markdown()`** for rich text formatting
+6. **Dose-response curves** with `type_lines()` for drug sensitivity screens
+7. **Time-course trajectories** with automatic biomarker profiling
+8. **Prism-style statistics** built into `type_boxplot()` via `stat.test`
+9. **`clitheme()`** for journal-specific styling
+10. **`cli_markdown()`** for rich text formatting
 
 Reset global settings when done:
 
