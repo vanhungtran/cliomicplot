@@ -127,21 +127,54 @@ Every figure is a single
 [`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
 call. Click any image to enlarge.
 
-### Clinical
+### Clinical Oncology — 7 Lines of Code
+
+``` r
+library(cliomicplot)
+library(survival)
+clitheme("nejm")
+
+# 1. Kaplan-Meier survival with risk table
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(risk_table = TRUE, pval = TRUE, conf_int = TRUE))
+
+# 2. Forest plot from Cox model
+cliplot(HR ~ Variable, data = cox_results, type = "forest")
+
+# 3. Waterfall — tumor response
+cliplot(BestChange ~ Patient, data = imtrial,
+        type = type_waterfall(show_labels = TRUE))
+
+# 4. Swimmer — patient timelines
+cliplot(Duration ~ Patient, data = imtrial,
+        type = type_swimmer(bar_fill = "BestResp", event_times = events_df))
+```
+
+|  |  |  |  |
+|:--:|:--:|:--:|:--:|
+| **Kaplan-Meier** | **Forest Plot** | **Waterfall** | **Swimmer** |
+| [![KM](reference/figures/km.png)](https://vanhungtran.github.io/cliomicplot/man/figures/km.png) | [![Forest](reference/figures/forest.png)](https://vanhungtran.github.io/cliomicplot/man/figures/forest.png) | [![Waterfall](reference/figures/waterfall.png)](https://vanhungtran.github.io/cliomicplot/man/figures/waterfall.png) | [![Swimmer](reference/figures/swimmer.png)](https://vanhungtran.github.io/cliomicplot/man/figures/swimmer.png) |
+
+### Multi-Omics — Differential Expression in 3 Lines
+
+``` r
+# Volcano plot (y ~ x: significance ~ fold-change)
+cliplot(-log10(padj) ~ logFC, data = deg_results,
+        type = type_volcano(label_genes = "significant"))
+
+# MA plot with LOESS smoothing
+cliplot(logFC ~ baseMean, data = deg_results, type = "ma")
+
+# Correlation heatmap
+cliplot(expression_matrix, type = type_correlation(method = "spearman"))
+```
 
 |  |  |  |
 |:--:|:--:|:--:|
-| **Kaplan-Meier** | **Forest Plot** | **Volcano** |
-| [![KM](reference/figures/km.png)](https://vanhungtran.github.io/cliomicplot/man/figures/km.png) | [![Forest](reference/figures/forest.png)](https://vanhungtran.github.io/cliomicplot/man/figures/forest.png) | [![volcano](reference/figures/volcano.png)](https://vanhungtran.github.io/cliomicplot/man/figures/volcano.png) |
-| **Waterfall** | **Swimmer** | **MA Plot** |
-| [![Waterfall](reference/figures/waterfall.png)](https://vanhungtran.github.io/cliomicplot/man/figures/waterfall.png) | [![Swimmer](reference/figures/swimmer.png)](https://vanhungtran.github.io/cliomicplot/man/figures/swimmer.png) | [![MA](reference/figures/ma.png)](https://vanhungtran.github.io/cliomicplot/man/figures/ma.png) |
-
-### Omics
-
-|  |  |  |
-|:--:|:--:|:--:|
-| **Heatmap** | **PCA** | **Correlation** |
-| [![heatmap](reference/figures/heatmap.png)](https://vanhungtran.github.io/cliomicplot/man/figures/heatmap.png) | [![PCA](reference/figures/pca.png)](https://vanhungtran.github.io/cliomicplot/man/figures/pca.png) | [![Correlation](reference/figures/correlation.png)](https://vanhungtran.github.io/cliomicplot/man/figures/correlation.png) |
+| **Volcano** | **MA Plot** | **Correlation** |
+| [![volcano](reference/figures/volcano.png)](https://vanhungtran.github.io/cliomicplot/man/figures/volcano.png) | [![MA](reference/figures/ma.png)](https://vanhungtran.github.io/cliomicplot/man/figures/ma.png) | [![Correlation](reference/figures/correlation.png)](https://vanhungtran.github.io/cliomicplot/man/figures/correlation.png) |
+| **Heatmap** | **PCA** |  |
+| [![heatmap](reference/figures/heatmap.png)](https://vanhungtran.github.io/cliomicplot/man/figures/heatmap.png) | [![PCA](reference/figures/pca.png)](https://vanhungtran.github.io/cliomicplot/man/figures/pca.png) |  |
 
 ### Distributions & Statistics
 

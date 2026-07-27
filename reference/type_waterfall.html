@@ -53,7 +53,8 @@
 <span>  response_thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>PD <span class="op">=</span> <span class="fl">20</span>, PR <span class="op">=</span> <span class="op">-</span><span class="fl">30</span>, CR <span class="op">=</span> <span class="op">-</span><span class="fl">100</span><span class="op">)</span>,</span>
 <span>  show_labels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  label_size <span class="op">=</span> <span class="fl">2.5</span>,</span>
-<span>  show_threshold_labels <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  show_threshold_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  n_skip_label <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,6 +92,13 @@ CR = Complete Response.</p></dd>
 
 <dt id="arg-show-threshold-labels">show_threshold_labels<a class="anchor" aria-label="anchor" href="#arg-show-threshold-labels"></a></dt>
 <dd><p>Add PD/PR threshold labels.</p></dd>
+
+
+<dt id="arg-n-skip-label">n_skip_label<a class="anchor" aria-label="anchor" href="#arg-n-skip-label"></a></dt>
+<dd><p>Skip every nth x-axis label to prevent overlap when
+many patients are plotted (default 1 = show all). Set to 2 for every
+other label, 3 for every third, etc. Automatically enabled when
+there are more than 20 patients if not explicitly set.</p></dd>
 
 </dl></div>
     <div class="section level2">

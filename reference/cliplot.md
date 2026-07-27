@@ -185,7 +185,8 @@ cliplot(
 
 - km_time, km_event, km_group:
 
-  Internal. Column names extracted from a `Surv()` formula for
+  Internal. Column names extracted from a
+  [`Surv()`](https://rdrr.io/pkg/survival/man/Surv.html) formula for
   Kaplan-Meier plots; set automatically by the formula method and not
   intended to be supplied directly.
 
