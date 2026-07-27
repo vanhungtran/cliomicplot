@@ -1,0 +1,100 @@
+# Boxplot Type
+
+Creates publication-ready boxplots with optional jittered points, violin
+overlays, and statistical annotations. Supports grouped dodging and
+facet_grid/facet_wrap layouts for matrix-style figures.
+
+## Usage
+
+``` r
+type_boxplot(
+  add_jitter = TRUE,
+  jitter_width = 0.15,
+  jitter_alpha = 0.38,
+  jitter_size = 1.6,
+  add_violin = FALSE,
+  violin_alpha = 0.2,
+  outlier_shape = NA,
+  outlier_size = 1.5,
+  width = 0.55,
+  alpha = 0.28,
+  linewidth = 0.65,
+  position_dodge = NULL
+)
+```
+
+## Arguments
+
+- add_jitter:
+
+  Add jittered points (default TRUE)
+
+- jitter_width:
+
+  Width of jitter (default 0.15)
+
+- jitter_alpha:
+
+  Transparency of jittered points (default 0.25)
+
+- jitter_size:
+
+  Size of jittered points (default 1.2)
+
+- add_violin:
+
+  Overlay violin plot (default FALSE)
+
+- violin_alpha:
+
+  Violin transparency (default 0.2)
+
+- outlier_shape:
+
+  Shape for outlier points. Set to \`NA\` to hide outliers (publication
+  style). Default \`NA\`.
+
+- outlier_size:
+
+  Size of outlier points (default 1.5)
+
+- width:
+
+  Box width (default 0.55)
+
+- alpha:
+
+  Box fill transparency. Lower = more transparent (default 0.15)
+
+- linewidth:
+
+  Box outline width (default 0.5)
+
+- position_dodge:
+
+  Dodge width for grouped boxes. \`NULL\` uses ggplot2 default (0.9).
+  Set to e.g. 0.7 for tighter grouping.
+
+## Value
+
+A cliplot_type object for use with
+[`cliplot`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md).
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Basic publication-style boxplot (transparent fill, no outliers)
+cliplot(len ~ dose, data = ToothGrowth, type = "boxplot")
+
+# With violin overlay + stats + bold outline
+cliplot(len ~ dose, data = ToothGrowth,
+        type = type_boxplot(add_violin = TRUE, linewidth = 0.8),
+        stat.test = "t.test")
+
+# Grouped boxplot with faceting (matrix layout)
+cliplot(value ~ method, data = df,
+        type = type_boxplot(position_dodge = 0.7),
+        facet = panel ~ logfc + fdr)
+} # }
+```
