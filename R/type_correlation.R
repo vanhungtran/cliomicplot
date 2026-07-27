@@ -104,6 +104,13 @@ type_correlation = function(
       df = settings$cor_data
       if (is.null(df)) return(ggplot2::ggplot())
 
+      # Adaptive coefficient size based on number of variables
+      n_vars = length(unique(df$Var1))
+      adaptive_size = if (n_vars <= 5) coef_size
+                      else if (n_vars <= 10) min(coef_size, 3.0)
+                      else if (n_vars <= 15) min(coef_size, 2.5)
+                      else min(coef_size, 2.2)
+
       p = ggplot2::ggplot(df, ggplot2::aes(
         x = .data[["Var1"]], y = .data[["Var2"]], fill = .data[["Correlation"]]
       )) +
@@ -130,12 +137,18 @@ type_correlation = function(
 
       # Add correlation coefficients
       if (add_coef) {
+        # Format label: round coefficient with significance stars on new line
+        df$Label = ifelse(
+          df$Stars != "",
+          sprintf("%.2f\n%s", df$Correlation, df$Stars),
+          sprintf("%.2f", df$Correlation)
+        )
         p = p + ggplot2::geom_text(
           ggplot2::aes(
-            label = paste0(round(.data[["Correlation"]], 2), "\n", .data[["Stars"]]),
+            label = .data[["Label"]],
             color = .data[["TextColor"]]
           ),
-          size = coef_size,
+          size = adaptive_size,
           fontface = "bold",
           lineheight = 0.85,
           show.legend = FALSE

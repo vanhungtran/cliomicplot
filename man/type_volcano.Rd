@@ -10,12 +10,14 @@ type_volcano(
   point_size = 2.2,
   point_alpha = 0.72,
   label_genes = NULL,
-  max_overlaps = 15,
+  max_overlaps = 25,
   up_color = "#D73027",
   down_color = "#2B6CB0",
   ns_color = "#A8B0BA",
   cutoff_region_alpha = 0.045,
-  show_threshold_labels = TRUE
+  show_threshold_labels = TRUE,
+  force = 2,
+  seed = 42
 )
 }
 \arguments{
@@ -30,7 +32,7 @@ type_volcano(
 \item{label_genes}{Character vector of gene names to label, or "significant"
 to label all significant genes, or NULL for no labels.}
 
-\item{max_overlaps}{Maximum overlapping labels for ggrepel (default 15)}
+\item{max_overlaps}{Maximum overlapping labels for ggrepel (default 25)}
 
 \item{up_color}{Color for upregulated points (default "red")}
 
@@ -41,6 +43,10 @@ to label all significant genes, or NULL for no labels.}
 \item{cutoff_region_alpha}{Alpha for lightly shaded significant regions.}
 
 \item{show_threshold_labels}{Add text labels for cutoff lines.}
+
+\item{force}{Force of repulsion between labels in ggrepel (default 2).}
+
+\item{seed}{Random seed for reproducible ggrepel layout (default 42).}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.

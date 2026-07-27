@@ -60,7 +60,8 @@ the package REFERENCES for full attributions.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/vanhungtrantran/cliomicplot}
+  \item \url{https://github.com/vanhungtran/cliomicplot}
+  \item \url{https://vanhungtran.github.io/cliomicplot}
   \item Report bugs at \url{https://github.com/vanhungtran/cliomicplot/issues}
 }
 

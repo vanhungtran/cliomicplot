@@ -20,6 +20,10 @@
 #' @param show_labels Show patient IDs on bars (default FALSE)
 #' @param label_size Size of patient labels (default 2.5)
 #' @param show_threshold_labels Add PD/PR threshold labels.
+#' @param n_skip_label Skip every nth x-axis label to prevent overlap when
+#'   many patients are plotted (default 1 = show all). Set to 2 for every
+#'   other label, 3 for every third, etc. Automatically enabled when
+#'   there are more than 20 patients if not explicitly set.
 #'
 #' @return A cliplot_type object for use with \code{\link{cliplot}}.
 #'
@@ -44,7 +48,8 @@ type_waterfall = function(
     response_thresholds = c("PD" = 20, "PR" = -30, "CR" = -100),
     show_labels = FALSE,
     label_size  = 2.5,
-    show_threshold_labels = TRUE
+    show_threshold_labels = TRUE,
+    n_skip_label = NULL
 ) {
   cliplot_type(
     data = function(settings, ...) {
@@ -87,6 +92,19 @@ type_waterfall = function(
         "PD" = "#E64B35"   # red
       )
 
+      # Determine x-axis label skipping
+      n_patients = nrow(df)
+      if (is.null(n_skip_label)) {
+        # Auto: skip labels when > 20 patients to prevent overlap
+        if (n_patients > 40) n_skip_label = 3
+        else if (n_patients > 20) n_skip_label = 2
+        else n_skip_label = 1
+      }
+
+      # Build display labels: blank out skipped positions
+      df$xlabel = as.character(df$patient)
+      df$xlabel[seq_len(n_patients) %% n_skip_label != 1] = ""
+
       settings$waterfall_data     = df
       settings$bar_width          = bar_width
       settings$bar_alpha          = bar_alpha
@@ -95,6 +113,7 @@ type_waterfall = function(
       settings$resp_colors        = resp_colors
       settings$response_thresholds = response_thresholds
       settings$show_threshold_labels = show_threshold_labels
+      settings$n_skip_label       = n_skip_label
     },
     draw = function(data, mapping, settings, ...) {
       df = settings$waterfall_data
@@ -116,6 +135,7 @@ type_waterfall = function(
           name   = "Response",
           drop   = FALSE
         ) +
+        ggplot2::scale_x_discrete(labels = stats::setNames(df$xlabel, df$patient)) +
         ggplot2::labs(x = "", y = "Best Change from Baseline (%)") +
         ggplot2::theme(
           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 7),
@@ -149,16 +169,19 @@ type_waterfall = function(
 
       # Add patient labels if requested
       if (settings$show_labels) {
-        p = p + ggplot2::geom_text(
+        p = p + ggrepel::geom_text_repel(
           ggplot2::aes(
             label = .data[["patient"]],
-            y     = ifelse(.data[["response"]] >= 0,
-                           .data[["response"]] + 3,
-                           .data[["response"]] - 3)
+            y     = .data[["response"]]
           ),
-          size  = settings$label_size,
-          angle = 90,
-          hjust = 0
+          size             = settings$label_size,
+          angle            = 90,
+          direction        = "y",
+          max.overlaps     = 100,
+          min.segment.length = 0,
+          box.padding      = 0.15,
+          point.padding    = 0.1,
+          show.legend      = FALSE
         )
       }
 

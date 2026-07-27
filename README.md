@@ -133,21 +133,54 @@ clipar("palette.qualitative")  # query a single parameter
 
 Every figure is a single `cliplot()` call. Click any image to enlarge.
 
-### Clinical
+### Clinical Oncology — 7 Lines of Code
+
+```r
+library(cliomicplot)
+library(survival)
+clitheme("nejm")
+
+# 1. Kaplan-Meier survival with risk table
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(risk_table = TRUE, pval = TRUE, conf_int = TRUE))
+
+# 2. Forest plot from Cox model
+cliplot(HR ~ Variable, data = cox_results, type = "forest")
+
+# 3. Waterfall — tumor response
+cliplot(BestChange ~ Patient, data = imtrial,
+        type = type_waterfall(show_labels = TRUE))
+
+# 4. Swimmer — patient timelines
+cliplot(Duration ~ Patient, data = imtrial,
+        type = type_swimmer(bar_fill = "BestResp", event_times = events_df))
+```
+
+| | | | |
+|:---:|:---:|:---:|:---:|
+| **Kaplan-Meier** | **Forest Plot** | **Waterfall** | **Swimmer** |
+| [![KM](man/figures/km.png)](man/figures/km.png) | [![Forest](man/figures/forest.png)](man/figures/forest.png) | [![Waterfall](man/figures/waterfall.png)](man/figures/waterfall.png) | [![Swimmer](man/figures/swimmer.png)](man/figures/swimmer.png) |
+
+### Multi-Omics — Differential Expression in 3 Lines
+
+```r
+# Volcano plot (y ~ x: significance ~ fold-change)
+cliplot(-log10(padj) ~ logFC, data = deg_results,
+        type = type_volcano(label_genes = "significant"))
+
+# MA plot with LOESS smoothing
+cliplot(logFC ~ baseMean, data = deg_results, type = "ma")
+
+# Correlation heatmap
+cliplot(expression_matrix, type = type_correlation(method = "spearman"))
+```
 
 | | | |
 |:---:|:---:|:---:|
-| **Kaplan-Meier** | **Forest Plot** | **Volcano** |
-| [![KM](man/figures/km.png)](man/figures/km.png) | [![Forest](man/figures/forest.png)](man/figures/forest.png) | [![volcano](man/figures/volcano.png)](man/figures/volcano.png) |
-| **Waterfall** | **Swimmer** | **MA Plot** |
-| [![Waterfall](man/figures/waterfall.png)](man/figures/waterfall.png) | [![Swimmer](man/figures/swimmer.png)](man/figures/swimmer.png) | [![MA](man/figures/ma.png)](man/figures/ma.png) |
-
-### Omics
-
-| | | |
-|:---:|:---:|:---:|
-| **Heatmap** | **PCA** | **Correlation** |
-| [![heatmap](man/figures/heatmap.png)](man/figures/heatmap.png) | [![PCA](man/figures/pca.png)](man/figures/pca.png) | [![Correlation](man/figures/correlation.png)](man/figures/correlation.png) |
+| **Volcano** | **MA Plot** | **Correlation** |
+| [![volcano](man/figures/volcano.png)](man/figures/volcano.png) | [![MA](man/figures/ma.png)](man/figures/ma.png) | [![Correlation](man/figures/correlation.png)](man/figures/correlation.png) |
+| **Heatmap** | **PCA** | |
+| [![heatmap](man/figures/heatmap.png)](man/figures/heatmap.png) | [![PCA](man/figures/pca.png)](man/figures/pca.png) | |
 
 ### Distributions & Statistics
 

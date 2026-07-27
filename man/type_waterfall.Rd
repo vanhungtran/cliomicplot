@@ -11,7 +11,8 @@ type_waterfall(
   response_thresholds = c(PD = 20, PR = -30, CR = -100),
   show_labels = FALSE,
   label_size = 2.5,
-  show_threshold_labels = TRUE
+  show_threshold_labels = TRUE,
+  n_skip_label = NULL
 )
 }
 \arguments{
@@ -32,6 +33,11 @@ CR = Complete Response.}
 \item{label_size}{Size of patient labels (default 2.5)}
 
 \item{show_threshold_labels}{Add PD/PR threshold labels.}
+
+\item{n_skip_label}{Skip every nth x-axis label to prevent overlap when
+many patients are plotted (default 1 = show all). Set to 2 for every
+other label, 3 for every third, etc. Automatically enabled when
+there are more than 20 patients if not explicitly set.}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.

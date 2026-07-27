@@ -15,12 +15,14 @@
 #' @param point_alpha Point transparency (default 0.72)
 #' @param label_genes Character vector of gene names to label, or "significant"
 #'   to label all significant genes, or NULL for no labels.
-#' @param max_overlaps Maximum overlapping labels for ggrepel (default 15)
+#' @param max_overlaps Maximum overlapping labels for ggrepel (default 25)
 #' @param up_color Color for upregulated points (default "red")
 #' @param down_color Color for downregulated points (default "blue")
 #' @param ns_color Color for non-significant points (default "grey70")
 #' @param cutoff_region_alpha Alpha for lightly shaded significant regions.
 #' @param show_threshold_labels Add text labels for cutoff lines.
+#' @param force Force of repulsion between labels in ggrepel (default 2).
+#' @param seed Random seed for reproducible ggrepel layout (default 42).
 #'
 #' @return A cliplot_type object for use with \code{\link{cliplot}}.
 #'
@@ -54,12 +56,14 @@ type_volcano = function(
     point_size   = 2.2,
     point_alpha  = 0.72,
     label_genes  = NULL,
-    max_overlaps = 15,
+    max_overlaps = 25,
     up_color     = "#D73027",
     down_color   = "#2B6CB0",
     ns_color     = "#A8B0BA",
     cutoff_region_alpha = 0.045,
-    show_threshold_labels = TRUE
+    show_threshold_labels = TRUE,
+    force        = 2,
+    seed         = 42
 ) {
   cliplot_type(
     data = function(settings, ...) {
@@ -107,6 +111,8 @@ type_volcano = function(
       settings$ns_color      = ns_color
       settings$cutoff_region_alpha = cutoff_region_alpha
       settings$show_threshold_labels = show_threshold_labels
+      settings$ggforce       = force
+      settings$ggseed        = seed
     },
     draw = function(data, mapping, settings, ...) {
       df = settings$volcano_data
@@ -196,10 +202,15 @@ type_volcano = function(
           max.overlaps     = settings$max_overlaps,
           show.legend      = FALSE,
           fontface         = "italic",
-          box.padding      = 0.35,
-          point.padding    = 0.2,
-          min.segment.length = 0,
-          segment.color    = "grey55"
+          box.padding      = 0.5,
+          point.padding    = 0.3,
+          force            = settings$ggforce,
+          force_pull       = 0.5,
+          min.segment.length = 0.1,
+          segment.color    = "grey55",
+          seed             = settings$ggseed,
+          max.time         = 3,
+          max.iter         = 50000
         )
       }
 
