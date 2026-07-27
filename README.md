@@ -176,13 +176,6 @@ Every figure is a single `cliplot()` call. Click any image to enlarge.
 | **Clinical Trials Pipeline** | **Infographic Bar** | **Diamond Bubble Heatmap** |
 | [![Trials](man/figures/trials.png)](man/figures/trials.png) | [![Infobar](man/figures/infobar.png)](man/figures/infobar.png) | [![BubbleHeatmap](man/figures/bubble_heatmap.png)](man/figures/bubble_heatmap.png) |
 
-### Multi-Omics (xOmicsShiny-inspired)
-
-| | | |
-|:---:|:---:|:---:|
-| **Pattern Clustering** | **Rank-Abundance Curve** | **DEG Comparison** |
-| `type_pattern()` | `type_rankabundance()` | `type_deg_compare()` |
-
 ### R Graph Gallery Favorites
 
 | | | |
@@ -305,35 +298,8 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
 
 ---
 
-## 🔬 xOmicsShiny Integration
-
-cliomicplot reads **xOmicsShiny**-format multi-omics datasets directly.  xOmicsShiny
-(Biogen) is a comprehensive proteomics/transcriptomics/metabolomics platform; its
-`DataInSets` nested-list structure — with `data_long`, `data_wide`, `results_long`,
-and `MetaData` components — works out of the box with cliomicplot's formula interface.
-
-```r
-# Load xOmicsShiny data
-load("path/to/xOmicsShiny/data/AgingHFCD_Metabolomics.RData")
-ds <- DataInSets[[1]]
-
-# Direct plotting from xOmicsShiny data_long
-cliplot(expr ~ group | Gene.Name, data = ds$data_long, type = "boxplot")
-
-# Pattern clustering from wide matrix
-cliplot(ds$data_wide, type = type_pattern(k = 6, method = "kmeans"))
-```
-
-Three plot types were developed directly from xOmicsShiny analysis modules:
-`type_rankabundance()` (S-curve), `type_pattern()` (k-means/Mfuzz/PAM clustering),
-and `type_deg_compare()` (cross-comparison scatter).  A sample metabolomics
-dataset is included at `inst/extdata/AgingHFCD_Metabolomics.RData`.
-
----
-
 ## 🔗 References
 
-- **xOmicsShiny** — multi-omics visualisation platform (Biogen Inc.)
 - **tinyplot** — formula-interface inspiration ([github.com/grantmcdermott/tinyplot](https://github.com/grantmcdermott/tinyplot))
 - **ggsci** — journal palette inspiration ([nanx.me/ggsci](https://nanx.me/ggsci/))
 - **survminer** — survival plotting engine
