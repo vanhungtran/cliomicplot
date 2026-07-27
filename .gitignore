@@ -37,7 +37,6 @@ vignettes/*.R
 
 # Built vignettes
 inst/doc
-docs
 
 # README rendered
 README.html
