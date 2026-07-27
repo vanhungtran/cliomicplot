@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     mathjax: null
+    md_extensions: -tex_math_dollars
     css: reportdown.css
     self_contained: true
     includes:
@@ -27,23 +28,25 @@ knitr::opts_chunk$set(
 ```
 
 ```{r include-lightbox, echo=FALSE, results='asis'}
-knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
+if (file.exists('lightbox.html')) {
+  knitr::asis_output(paste(readLines('lightbox.html'), collapse='\n'))
+}
 ```
 
 ## Overview
 
 This vignette demonstrates a complete oncology clinical & translational data
-analysis workflow using **cliomicplot**. We'll generate publication-quality
-figures commonly found in oncology manuscripts, with additional analyses
-inspired by **xOmicsShiny**:
+analysis workflow using **cliomicplot** with both clinical trial data and
+real multi-omics datasets from **xOmicsShiny** (Biogen Inc.):
 
 1. **Figure 1** — Kaplan-Meier overall survival curves
 2. **Figure 2** — Forest plot from multivariable Cox regression
 3. **Figure 3A** — Waterfall plot of best tumor response
 4. **Figure 3B** — Swimmer plot of patient treatment courses
-5. **Figure 4A** — Dose-response curves for drug sensitivity
-6. **Figure 4B** — Gene expression time course trajectories
-7. **Figure 4C** — Prism-style boxplot with P-value annotations
+5. **Figure 4A** — Dose-response / time-course proteomics (Stroke model)
+6. **Figure 4B** — Longitudinal protein trajectories
+7. **Figure 4C** — Prism-style boxplot with ANOVA (Aging × HFCD metabolomics)
+8. **Figure 5** — Clinical trials pipeline (industry portfolio)
 
 ```{r}
 library(cliomicplot)
@@ -61,8 +64,8 @@ clipar(
 
 ## Figure 1: Kaplan-Meier Survival Curves
 
-We use the `lung` dataset from the **survival** package to visualize overall survival
-stratified by sex.
+We use the `lung` dataset from the **survival** package to visualize overall
+survival stratified by sex:
 
 ```{r}
 clitheme("nejm")
@@ -170,7 +173,6 @@ imtrial <- data.frame(
   Arm        = sample(c("Anti-PD1", "Chemotherapy"), n_pts, replace = TRUE)
 )
 
-# Show first few rows
 head(imtrial)
 ```
 
@@ -191,20 +193,9 @@ cliplot(BestChange ~ Patient, data = imtrial,
   cli_markdown()
 ```
 
-### Response categories
-
-| Category | Threshold | Color |
-|---|---|---|
-| CR (Complete Response) | Disappearance of all lesions | 🟢 Green |
-| PR (Partial Response) | ≥ 30% decrease | 🔵 Blue |
-| SD (Stable Disease) | Between +20% and −30% | 🟠 Orange |
-| PD (Progressive Disease) | ≥ 20% increase | 🔴 Red |
-
 ---
 
 ## Figure 3B: Swimmer Plot — Patient Timelines
-
-Add clinical event markers to the patient timeline:
 
 ```{r}
 set.seed(123)
@@ -238,191 +229,156 @@ cliplot(Duration ~ Patient, data = imtrial,
   cli_markdown()
 ```
 
-### Event shape legend
-
-| Event | Shape | Color |
-|---|---|---|
-| Progression | ✳ (asterisk, 8) | 🔴 Red |
-| AE Gr≥3 | ● (circle, 16) | 🟠 Orange |
-| Dose Reduction | ▲ (triangle, 17) | 🟤 Brown |
-| Response | ◆ (diamond, 18) | 🟢 Green |
-| Death | ✖ (cross, 4) | ⚫ Black |
-
 ---
 
-## Figure 4A: Dose-Response Curves — Drug Sensitivity
+## Figure 4A: Time-Course Proteomics — Stroke Model
 
-Inspired by **xOmicsShiny's dose-response/omics module**, dose-response analysis
-is essential in oncology for characterizing drug sensitivity and resistance.
-Using `type_lines()` with confidence bands, we can visualize concentration-response
-relationships across compounds:
+Using real **xOmicsShiny StrokeBrain_TimeCourse** data to visualize protein
+expression trajectories across 5 time points in a mouse stroke model.
+Three treatment groups: ischemic stroke (StrkIp), sham surgery (ShamIp),
+and naive control (StrkC):
 
 ```{r}
-set.seed(42)
+# Resolve data paths (works for both installed package and devel/devtools::load_all)
+resolve_data = function(filename) {
+  pkg_path = system.file("extdata", filename, package = "cliomicplot")
+  if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
+  fallback = file.path("..", "inst", "extdata", filename)
+  if (file.exists(fallback)) return(fallback)
+  fallback2 = file.path("inst", "extdata", filename)
+  if (file.exists(fallback2)) return(fallback2)
+  stop("Cannot find data file: ", filename)
+}
 
-# Simulate an in vitro drug screen across 4 compounds
-doses     = c(0.001, 0.01, 0.1, 1, 10, 100)
-compounds = c("Paclitaxel", "Doxorubicin", "Cisplatin", "Erlotinib")
+# Load stroke time-course data
+stroke_path = resolve_data("StrokeBrain_TimeCourse.RData")
+load(stroke_path)  # → data_long, data_wide, results_stat, MetaData, ProteinGeneName
 
-dr_data = do.call(rbind, lapply(1:4, function(i) {
-  ic50 = c(0.08, 0.5, 2.0, 25)[i]
-  hill = c(-1.2, -0.9, -1.5, -1.1)[i]
-  max_inhib = c(95, 88, 92, 78)[i]
-  resp = max_inhib / (1 + (doses / ic50)^(-hill)) +
-         rnorm(length(doses), 0, 3)
-  data.frame(
-    Compound = compounds[i],
-    Dose     = doses,
-    Response = pmax(0, pmin(100, resp)),
-    stringsAsFactors = FALSE
-  )
-}))
+# Merge gene names
+stroke_long = merge(data_long, ProteinGeneName[, c("UniqueID", "Gene.Name")],
+                     by = "UniqueID", all.x = TRUE)
 
-head(dr_data, 8)
+# Select an example gene: Mpeg1 (microglia/macrophage marker)
+mpeg1 = subset(stroke_long, Gene.Name == "Mpeg1")
+mpeg1$Day = as.numeric(mpeg1$conc)
+mpeg1$Treatment = mpeg1$treatment
+
+cat(sprintf("Mpeg1: %d observations across %d time points\n",
+            nrow(mpeg1), length(unique(mpeg1$Day))))
 ```
 
 ```{r}
 clitheme("science")
 
-cliplot(Response ~ Dose | Compound, data = dr_data,
-        type = type_lines(
-          add_points  = TRUE,
-          point_size  = 2.2,
-          add_ribbon  = FALSE,
-          group       = "Compound"
-        ),
+cliplot(expr ~ Day | Treatment, data = mpeg1,
+        type = type_lines(linewidth = 1.2),
         palette = "jco",
-        title   = "**Figure 4A** — In Vitro Drug Sensitivity Screen",
-        subtitle = "Concentration–response curves (n = 4 compounds, 6 doses)",
-        xlab    = expression("Concentration ["*mu*"M]"),
-        ylab    = "Cell Viability (%)") +
+        title   = "**Figure 4A** — Mpeg1 (Microglia Marker) Time Course",
+        subtitle = "Stroke brain proteomics — 5 time points (Days 1–28)",
+        xlab    = "Days Post-Stroke",
+        ylab    = "Protein Expression (LFQ Intensity)") +
   cli_markdown()
 ```
 
-> **Note:** Dose-response data from high-throughput screens (e.g., xOmicsShiny)
-> can be directly plotted with `cliplot()`. Use log-transformed x-axis with
-> `ggplot2::scale_x_log10()` for standard pharmacology conventions.
-
-```{r}
-# Log-scale x-axis (standard pharmacology convention)
-cliplot(Response ~ Dose | Compound, data = dr_data,
-        type = type_lines(
-          add_points  = TRUE,
-          add_ribbon  = FALSE,
-          group       = "Compound"
-        ),
-        palette = "npg",
-        title   = "**Dose-Response** — Log₁₀ Concentration Scale",
-        theme   = "cli_minimal",
-        xlab    = expression("log"[10]*" Concentration ["*mu*"M]"),
-        ylab    = "Cell Viability (%)") +
-  cli_markdown() +
-  ggplot2::scale_x_log10()
-```
+The ischemic stroke group shows elevated Mpeg1 expression peaking at
+day 7–14, consistent with microglial activation post-stroke.
 
 ---
 
-## Figure 4B: Gene Expression Time Course
+## Figure 4B: Multi-Protein Longitudinal Trajectories
 
-Multi-condition or time-course gene expression profiles are a core analysis in
-xOmicsShiny. Using `type_lines()` with facets, we can visualize longitudinal
-biomarker trajectories across treatment arms:
+Extending to 6 immune-related proteins across the stroke time course:
 
 ```{r}
-set.seed(789)
-n_biomarkers = 8
-biomarkers   = c("Ki-67", "p53", "BCL-2", "EGFR", "VEGF", "PD-L1", "HER2", "c-MYC")
-timepoints   = c("Baseline", "Cycle 2", "Cycle 4", "Cycle 6", "EOT")
+immune_genes = c("Mpeg1", "C1qa", "C3", "Trem2", "Tyrobp", "Itgam")
+immune_data = subset(stroke_long, Gene.Name %in% immune_genes & treatment == "StrkIp")
+immune_data$Day = as.numeric(immune_data$conc)
 
-# Generate realistic fold-change trajectories
-tc_data = do.call(rbind, lapply(1:8, function(i) {
-  # Each biomarker has its own trajectory shape
-  shapes = list(
-    c(0, -0.3, -0.8, -1.5, -2.0),  # Ki-67: steady down
-    c(0, 0.5, 0.8, 0.3, -0.2),     # p53: early up then down
-    c(0, 0.2, -0.5, -1.2, -1.8),   # BCL-2
-    c(0, -0.8, -1.5, -2.0, -2.5),  # EGFR
-    c(0, -0.2, -0.5, -0.8, -1.2),  # VEGF
-    c(0, 1.0, 2.0, 1.5, 0.5),     # PD-L1: up then slight decline
-    c(0, -0.5, -1.0, -1.5, -2.0), # HER2
-    c(0, 0.3, 0.8, 1.2, 1.5)      # c-MYC: steady up
-  )
-  shape = shapes[[i]]
-  data.frame(
-    Biomarker = biomarkers[i],
-    Timepoint = factor(timepoints, levels = timepoints),
-    FoldChange = shape + rnorm(5, 0, 0.15),
-    stringsAsFactors = FALSE
-  )
-}))
+# Mean per gene per day
+immune_means = aggregate(expr ~ Gene.Name + Day, data = immune_data, FUN = mean, na.rm = TRUE)
 
-head(tc_data)
-```
-
-```{r}
 clitheme("broadsheet")
 
-cliplot(FoldChange ~ Timepoint | Biomarker, data = tc_data,
-        type = type_lines(
-          add_points  = TRUE,
-          point_size  = 3,
-          group       = "Biomarker",
-          linewidth   = 1.1
-        ),
+cliplot(expr ~ Day | Gene.Name, data = immune_means,
+        type = type_lines(linewidth = 1.1),
         palette = "lancet",
-        title   = "**Figure 4B** — Longitudinal Biomarker Trajectories",
-        subtitle = "8 biomarkers × 5 time points, Tumor vs Baseline log₂FC",
-        ylab    = expression("log"[2]~"Fold Change from Baseline"),
+        title   = "**Figure 4B** — Immune Protein Trajectories (Stroke Model)",
+        subtitle = "6 proteins × 5 time points — Ischemic Stroke group",
+        ylab    = "Protein Expression (Mean LFQ)",
         legend  = "right") +
   cli_markdown()
 ```
 
 ---
 
-## Figure 4C: Prism-Style Boxplot with P-Value Bars
+## Figure 4C: Prism-Style Boxplot with ANOVA
 
-Inspired by **xOmicsShiny's expression module**, which supports GraphPad
-Prism styling via `ggprism`. The built-in `stat.test` parameter in
-cliomicplot provides automatic significance annotations:
+Using **xOmicsShiny AgingHFCD_Metabolomics** data to compare metabolite
+levels across four experimental groups with statistical annotations:
 
 ```{r}
-clitheme("cli_minimal")
+# Load metabolomics data
+aging_path = resolve_data("AgingHFCD_Metabolomics.RData")
+load(aging_path)  # → data_long, data_wide, results_long, MetaData, ProteinGeneName
+aging = list(long = data_long, wide = data_wide, results = results_long,
+              meta = MetaData, genes = ProteinGeneName)
 
-# Simulate a pharmacodynamic biomarker study
-set.seed(456)
-pd_data = data.frame(
-  Biomarker = rep(c("Ki-67", "p21", "γH2AX", "c-PARP"), each = 24),
-  Change    = c(
-    rnorm(24, -35, 12),  # Ki-67: high inhibition
-    rnorm(24,  28, 15),  # p21: induction
-    rnorm(24,  45, 18),  # γH2AX: DNA damage marker
-    rnorm(24,  52, 20)   # c-PARP: apoptosis marker
-  ),
-  Arm       = rep(c("Control", "Low Dose", "High Dose"), 32),
-  stringsAsFactors = FALSE
-)
-pd_data$Arm = factor(pd_data$Arm, levels = c("Control", "Low Dose", "High Dose"))
+# Select top 4 DE metabolites and merge with metadata
+top_mets = head(unique(aging$results$UniqueID[aging$results$Adj.P.Value < 0.01]), 4)
+met_data = subset(aging$long, UniqueID %in% top_mets)
+met_data$Group = factor(met_data$group,
+                         levels = c("Young_CD", "Old_CD", "Young_HF", "Old_HF"),
+                         labels = c("Young+CD", "Old+CD", "Young+HF", "Old+HF"))
 
-head(pd_data)
+head(met_data, 6)
 ```
 
 ```{r}
-cliplot(Change ~ Arm | Biomarker, data = pd_data,
+cliplot(expr ~ Group | UniqueID, data = met_data,
         type = type_boxplot(
-          add_jitter = TRUE,
-          jitter_width = 0.22,
-          stat.test  = "anova",
-          stat.label = "p.signif"
+          add_jitter   = TRUE,
+          jitter_width = 0.22
         ),
+        stat.test = "anova",
+        stat.label = "p.signif",
         palette = "jco",
-        title   = "**Figure 4C** — Pharmacodynamic Biomarker Response",
-        subtitle = "Boxplot with one-way ANOVA significance annotations",
-        ylab    = "% Change from Baseline (D7)") +
+        title   = "**Figure 4C** — Metabolite Levels by Age × Diet Group",
+        subtitle = "Top 4 DE metabolites | One-way ANOVA with significance stars",
+        ylab    = "Metabolite Abundance (log₂)") +
   cli_markdown()
 ```
 
-> **Tip:** For prism-style theming, install `ggprism` and apply
-> `ggplot2::theme_prism()` on top of your cliomicplot.
+---
+
+## Figure 5: Clinical Trials Pipeline — Stacked Bar Chart
+
+`type_trials()` creates horizontal stacked bar charts for trial pipelines:
+
+```{r}
+pipeline <- data.frame(
+  company = rep(c("AstraZeneca", "Roche", "MSD", "Lilly", "Hengrui",
+                  "Sanofi", "Novartis", "BMS", "J&J", "Pfizer", "AbbVie"),
+                each = 5),
+  phase   = rep(c("I", "I/II", "II", "II/III", "III"), 11),
+  n       = c(4,3,24,0,32, 10,8,21,0,19, 4,2,30,1,15, 6,3,15,0,17,
+              15,0,15,0,8, 7,0,14,0,16, 8,3,7,0,17, 7,5,14,1,6,
+              6,2,7,0,14, 9,2,10,0,6, 4,3,4,0,15)
+)
+
+phase_colors <- c(
+  "I"      = "#F8D95C", "I/II"   = "#D69B3C", "II"     = "#A7BA91",
+  "II/III" = "#B76348", "III"    = "#123F2A"
+)
+
+cliplot(n ~ company | phase, data = pipeline,
+        type = type_trials(
+          segment_colors      = phase_colors,
+          label_threshold     = 3
+        ),
+        title    = "**Figure 5** — Industry-Sponsored Clinical Trials by Phase",
+        subtitle = "Companies with ≥ 25 completed trials, 2025",
+        caption  = "Source: Citeline Annual Completed Clinical Trials Report")
+```
 
 ---
 
@@ -433,7 +389,6 @@ Use **patchwork** to combine the waterfall and swimmer plots:
 ```{r}
 library(patchwork)
 
-# Regenerate with consistent theme
 p1 <- cliplot(BestChange ~ Patient, data = imtrial,
               type = type_waterfall(show_labels = FALSE, bar_width = 0.7),
               theme = "cli_minimal",
@@ -476,70 +431,18 @@ cliplot(BestChange ~ Patient, data = imtrial,
 
 ---
 
-## Figure 4: Clinical Trials Pipeline — Stacked Bar Chart
-
-The new `type_trials()` creates a horizontal stacked bar chart ideal for showing
-trial pipelines, project portfolios, or any categorical breakdown within groups:
-
-```{r}
-# Simulated trial pipeline data
-pipeline <- data.frame(
-  company = rep(c("AstraZeneca", "Roche", "MSD", "Lilly", "Hengrui",
-                  "Sanofi", "Novartis", "BMS", "J&J", "Pfizer", "AbbVie"),
-                each = 5),
-  phase   = rep(c("I", "I/II", "II", "II/III", "III"), 11),
-  n       = c(4,3,24,0,32, 10,8,21,0,19, 4,2,30,1,15, 6,3,15,0,17,
-              15,0,15,0,8, 7,0,14,0,16, 8,3,7,0,17, 7,5,14,1,6,
-              6,2,7,0,14, 9,2,10,0,6, 4,3,4,0,15)
-)
-
-phase_colors <- c(
-  "I"      = "#F8D95C", "I/II"   = "#D69B3C", "II"     = "#A7BA91",
-  "II/III" = "#B76348", "III"    = "#123F2A"
-)
-phase_text <- c(
-  "I"      = "#173E2B", "I/II"   = "#173E2B", "II"     = "#173E2B",
-  "II/III" = "white",   "III"    = "#F6F1DE"
-)
-
-cliplot(n ~ company | phase, data = pipeline,
-        type = type_trials(
-          segment_colors      = phase_colors,
-          segment_text_colors = phase_text,
-          label_threshold     = 3
-        ),
-        title    = "**Figure 4** — Industry-Sponsored Clinical Trials by Phase",
-        subtitle = "Companies with ≥ 25 completed trials, 2025",
-        caption  = "Source: Citeline Annual Completed Clinical Trials Report")
-```
-
-### Customization
-
-| Parameter | Default | Description |
-|---|---|---|
-| `segment_colors` | `NULL` (jco palette) | Named vector mapping segments to fill colours |
-| `segment_text_colors` | `NULL` (auto dark) | Named vector mapping segments to label text colours |
-| `bar_height` | `0.72` | Bar height as fraction of row spacing |
-| `label_threshold` | `3` | Minimum segment width to show internal label |
-| `show_totals` | `TRUE` | Show total count label to the right |
-
----
-
 ## Summary
 
-In this vignette we produced four publication-ready oncology figures using
-cliomicplot's specialized plot types. The key takeaways:
+In this vignette we produced eight publication-ready oncology figures:
 
-1. **`type_km()`** for survival curves with risk tables
-2. **`type_forest()`** for Cox regression hazard ratios
-3. **`type_waterfall()`** for tumor response visualization
-4. **`type_swimmer()`** for patient-level timelines
-5. **`type_trials()`** for clinical trial pipeline stacked bar charts
-6. **Dose-response curves** with `type_lines()` for drug sensitivity screens
-7. **Time-course trajectories** with automatic biomarker profiling
-8. **Prism-style statistics** built into `type_boxplot()` via `stat.test`
-9. **`clitheme()`** for journal-specific styling
-10. **`cli_markdown()`** for rich text formatting
+1. **`type_km()`** — survival curves with risk tables, p-values, and CI
+2. **`type_forest()`** — Cox regression hazard ratios
+3. **`type_waterfall()`** — tumor response visualization
+4. **`type_swimmer()`** — patient-level treatment timelines
+5. **Time-course proteomics** — real stroke brain data from xOmicsShiny
+6. **Multi-protein trajectories** — 6 immune markers across 5 time points
+7. **Prism-style ANOVA** — metabolomics group comparisons with P-value bars
+8. **`type_trials()`** — industry clinical trial pipeline overview
 
 Reset global settings when done:
 

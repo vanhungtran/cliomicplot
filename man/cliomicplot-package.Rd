@@ -68,5 +68,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Lucas VHH Tran \email{lucas.tran@ck-care.ch}
 
+Authors:
+\itemize{
+  \item Lucas VHH Tran \email{lucas.tran@ck-care.ch}
+}
+
 }
 \keyword{internal}

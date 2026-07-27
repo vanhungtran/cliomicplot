@@ -77,21 +77,40 @@ type_deg_compare = function(
         }
       }
 
-      # Get logFC columns
-      fc1_col = if (!is.null(settings$y_var)) settings$y_var else "logFC"
-      fc2_col = if (!is.null(settings$x_var)) settings$x_var else "logFC"
+      # Get logFC columns — try formula-derived names first, then common patterns
+      fc1_col = "logFC"
+      fc2_col = "logFC"
 
-      # Build merged data
-      if (!fc1_col %in% names(df1)) {
-        # Try to find a logFC column
-        for (cn in c("logFC", "log2FoldChange", "log2FC", "coef")) {
-          if (cn %in% names(df1)) { fc1_col = cn; break }
+      # If x_var/y_var are set, use those names
+      y_col = settings$y_var
+      x_col = settings$x_var
+
+      # Detect logFC columns by pattern matching
+      find_fc_col = function(df, exclude = NULL) {
+        for (pat in c("logFC", "log2FoldChange", "log2FC", "log2Fold", "coef", "logFC_")) {
+          matches = grep(pat, names(df), value = TRUE, ignore.case = TRUE)
+          if (length(matches) > 0) {
+            # Return first match not in exclude
+            for (m in matches) if (!m %in% exclude) return(m)
+          }
         }
+        # Last resort: any column with "FC" in name
+        matches = grep("FC", names(df), value = TRUE, ignore.case = TRUE)
+        if (length(matches) > 0) {
+          for (m in matches) if (!m %in% exclude) return(m)
+        }
+        return(NULL)
       }
-      if (!fc2_col %in% names(df2)) {
-        for (cn in c("logFC", "log2FoldChange", "log2FC", "coef")) {
-          if (cn %in% names(df2)) { fc2_col = cn; break }
-        }
+
+      fc1_col = find_fc_col(df1)
+      if (!is.null(fc1_col)) {
+        # Also detect merge column as x var name if present
+        if (!is.null(x_col) && x_col %in% names(df1)) merge_col = x_col
+      }
+      fc2_col = find_fc_col(df2)
+
+      if (is.null(fc1_col) || is.null(fc2_col)) {
+        stop("Cannot identify logFC columns. Ensure columns contain 'logFC' or similar.", call. = FALSE)
       }
 
       # Also look for p-value columns
