@@ -292,41 +292,63 @@
 </h2>
 <p>Every figure is a single <code><a href="reference/cliplot.html">cliplot()</a></code> call. Click any image to enlarge.</p>
 <div class="section level3">
-<h3 id="clinical">Clinical<a class="anchor" aria-label="anchor" href="#clinical"></a>
+<h3 id="clinical-oncology--7-lines-of-code">Clinical Oncology — 7 Lines of Code<a class="anchor" aria-label="anchor" href="#clinical-oncology--7-lines-of-code"></a>
 </h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nejm"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Kaplan-Meier survival with risk table</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="reference/type_km.html">type_km</a></span><span class="op">(</span>risk_table <span class="op">=</span> <span class="cn">TRUE</span>, pval <span class="op">=</span> <span class="cn">TRUE</span>, conf_int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Forest plot from Cox model</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">HR</span> <span class="op">~</span> <span class="va">Variable</span>, data <span class="op">=</span> <span class="va">cox_results</span>, type <span class="op">=</span> <span class="st">"forest"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Waterfall — tumor response</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4. Swimmer — patient timelines</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="reference/type_swimmer.html">type_swimmer</a></span><span class="op">(</span>bar_fill <span class="op">=</span> <span class="st">"BestResp"</span>, event_times <span class="op">=</span> <span class="va">events_df</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
 </colgroup>
 <tbody>
 <tr>
 <td align="center"><strong>Kaplan-Meier</strong></td>
 <td align="center"><strong>Forest Plot</strong></td>
-<td align="center"><strong>Volcano</strong></td>
+<td align="center"><strong>Waterfall</strong></td>
+<td align="center"><strong>Swimmer</strong></td>
 </tr>
 <tr>
 <td align="center"><a href="man/figures/km.png"><img src="reference/figures/km.png" alt="KM"></a></td>
 <td align="center"><a href="man/figures/forest.png"><img src="reference/figures/forest.png" alt="Forest"></a></td>
-<td align="center"><a href="man/figures/volcano.png"><img src="reference/figures/volcano.png" alt="volcano"></a></td>
-</tr>
-<tr>
-<td align="center"><strong>Waterfall</strong></td>
-<td align="center"><strong>Swimmer</strong></td>
-<td align="center"><strong>MA Plot</strong></td>
-</tr>
-<tr>
 <td align="center"><a href="man/figures/waterfall.png"><img src="reference/figures/waterfall.png" alt="Waterfall"></a></td>
 <td align="center"><a href="man/figures/swimmer.png"><img src="reference/figures/swimmer.png" alt="Swimmer"></a></td>
-<td align="center"><a href="man/figures/ma.png"><img src="reference/figures/ma.png" alt="MA"></a></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section level3">
-<h3 id="omics">Omics<a class="anchor" aria-label="anchor" href="#omics"></a>
+<h3 id="multi-omics--differential-expression-in-3-lines">Multi-Omics — Differential Expression in 3 Lines<a class="anchor" aria-label="anchor" href="#multi-omics--differential-expression-in-3-lines"></a>
 </h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Volcano plot (y ~ x: significance ~ fold-change)</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">logFC</span>, data <span class="op">=</span> <span class="va">deg_results</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="reference/type_volcano.html">type_volcano</a></span><span class="op">(</span>label_genes <span class="op">=</span> <span class="st">"significant"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># MA plot with LOESS smoothing</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">logFC</span> <span class="op">~</span> <span class="va">baseMean</span>, data <span class="op">=</span> <span class="va">deg_results</span>, type <span class="op">=</span> <span class="st">"ma"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Correlation heatmap</span></span>
+<span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expression_matrix</span>, type <span class="op">=</span> <span class="fu"><a href="reference/type_correlation.html">type_correlation</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="33%">
@@ -335,14 +357,24 @@
 </colgroup>
 <tbody>
 <tr>
+<td align="center"><strong>Volcano</strong></td>
+<td align="center"><strong>MA Plot</strong></td>
+<td align="center"><strong>Correlation</strong></td>
+</tr>
+<tr>
+<td align="center"><a href="man/figures/volcano.png"><img src="reference/figures/volcano.png" alt="volcano"></a></td>
+<td align="center"><a href="man/figures/ma.png"><img src="reference/figures/ma.png" alt="MA"></a></td>
+<td align="center"><a href="man/figures/correlation.png"><img src="reference/figures/correlation.png" alt="Correlation"></a></td>
+</tr>
+<tr>
 <td align="center"><strong>Heatmap</strong></td>
 <td align="center"><strong>PCA</strong></td>
-<td align="center"><strong>Correlation</strong></td>
+<td align="center"></td>
 </tr>
 <tr>
 <td align="center"><a href="man/figures/heatmap.png"><img src="reference/figures/heatmap.png" alt="heatmap"></a></td>
 <td align="center"><a href="man/figures/pca.png"><img src="reference/figures/pca.png" alt="PCA"></a></td>
-<td align="center"><a href="man/figures/correlation.png"><img src="reference/figures/correlation.png" alt="Correlation"></a></td>
+<td align="center"></td>
 </tr>
 </tbody>
 </table>
@@ -496,12 +528,12 @@
 <h2 id="art-themes--publication-ready">🎨 Themes — Publication Ready<a class="anchor" aria-label="anchor" href="#art-themes--publication-ready"></a>
 </h2>
 <p>11 built-in themes. One function call.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span>     <span class="co"># persistent theme for all subsequent plots</span></span>
 <span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span>             <span class="co"># reset to default</span></span></code></pre></div>
 <p>Or per-plot:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -580,7 +612,7 @@
 <h2 id="rainbow-color-palettes">🌈 Color Palettes<a class="anchor" aria-label="anchor" href="#rainbow-color-palettes"></a>
 </h2>
 <p>55+ built-in palettes. Discrete, sequential, diverging, and journal-specific.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cli_palette_list.html">cli_palette_list</a></span><span class="op">(</span><span class="op">)</span>               <span class="co"># see all names</span></span>
 <span><span class="fu"><a href="reference/cli_palette_show.html">cli_palette_show</a></span><span class="op">(</span><span class="st">"cosmic"</span><span class="op">)</span>       <span class="co"># preview a palette</span></span>
 <span></span>
@@ -663,7 +695,7 @@
 <h2 id="pencil-markdown-text">📝 Markdown Text<a class="anchor" aria-label="anchor" href="#pencil-markdown-text"></a>
 </h2>
 <p>Rich text in titles and labels with <code><a href="reference/cli_markdown.html">cli_markdown()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">len</span> <span class="op">~</span> <span class="va">dose</span>, data <span class="op">=</span> <span class="va">ToothGrowth</span>, type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
 <span>        title <span class="op">=</span> <span class="st">"**Tooth Length** by Vitamin C Dose"</span>,</span>
 <span>        subtitle <span class="op">=</span> <span class="st">"*p* &amp;lt; 0.05 for all pairwise comparisons"</span>,</span>
@@ -675,7 +707,7 @@
 <h2 id="wrench-for-standalone-ggplot2-use">🔧 For Standalone ggplot2 Use<a class="anchor" aria-label="anchor" href="#wrench-for-standalone-ggplot2-use"></a>
 </h2>
 <p>Use <code><a href="reference/palette_scale.html">palette_scale()</a></code> to drop cliomicplot palettes into any ggplot:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>

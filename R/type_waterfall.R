@@ -135,10 +135,13 @@ type_waterfall = function(
           name   = "Response",
           drop   = FALSE
         ) +
-        ggplot2::scale_x_discrete(labels = stats::setNames(df$xlabel, df$patient)) +
+        ggplot2::scale_x_discrete(
+          labels = stats::setNames(df$xlabel, df$patient),
+          guide  = ggplot2::guide_axis(n.dodge = 2)
+        ) +
         ggplot2::labs(x = "", y = "Best Change from Baseline (%)") +
         ggplot2::theme(
-          axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5, size = 7),
+          axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 7),
           panel.grid.major.x = ggplot2::element_blank()
         )
 

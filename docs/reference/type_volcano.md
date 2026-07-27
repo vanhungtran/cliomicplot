@@ -13,12 +13,14 @@ type_volcano(
   point_size = 2.2,
   point_alpha = 0.72,
   label_genes = NULL,
-  max_overlaps = 15,
+  max_overlaps = 25,
   up_color = "#D73027",
   down_color = "#2B6CB0",
   ns_color = "#A8B0BA",
   cutoff_region_alpha = 0.045,
-  show_threshold_labels = TRUE
+  show_threshold_labels = TRUE,
+  force = 2,
+  seed = 42
 )
 ```
 
@@ -47,7 +49,7 @@ type_volcano(
 
 - max_overlaps:
 
-  Maximum overlapping labels for ggrepel (default 15)
+  Maximum overlapping labels for ggrepel (default 25)
 
 - up_color:
 
@@ -68,6 +70,14 @@ type_volcano(
 - show_threshold_labels:
 
   Add text labels for cutoff lines.
+
+- force:
+
+  Force of repulsion between labels in ggrepel (default 2).
+
+- seed:
+
+  Random seed for reproducible ggrepel layout (default 42).
 
 ## Value
 
