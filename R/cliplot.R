@@ -19,8 +19,10 @@
 #'   \code{"boxplot"}, \code{"violin"}, \code{"histogram"}, \code{"density"},
 #'   \code{"barplot"}, \code{"lines"}, \code{"volcano"}, \code{"forest"},
 #'   \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
-#'   \code{"pca"}, \code{"ma"}, \code{"correlation"}) or a call to a
-#'   \code{type_*()} function for customization.
+#'   \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
+#'   \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
+#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"})
+#'   or a call to a \code{type_*()} function for customization.
 #' @param by Grouping variable. Alternative to the \code{|} in formula.
 #' @param facet Faceting variable(s) as a formula. One-sided formulas
 #'   (e.g. \code{~ group}) use \code{facet_wrap}. Two-sided formulas
@@ -339,7 +341,8 @@ cliplot.data.frame = function(
   type_name = if (inherits(type, "cliplot_type")) type$name else type
 
   # PCA and correlation types need the full data matrix, not just two columns
-  if (type_name %in% c("pca", "correlation")) {
+  if (type_name %in% c("pca", "correlation", "roc", "gsea", "upset",
+                           "venn", "slope", "confusion", "donut")) {
     cliplot.default(
       x        = NULL,
       y        = NULL,
@@ -501,7 +504,17 @@ resolve_type = function(type) {
     trials      = type_trials,
     infobar     = type_infobar,
     hstack      = type_trials,     # alias
-    bubble_heatmap = type_bubble_heatmap
+    bubble_heatmap = type_bubble_heatmap,
+    roc         = type_roc,
+    gsea        = type_gsea,
+    upset       = type_upset,
+    venn        = type_venn,
+    slope       = type_slope,
+    confusion   = type_confusion,
+    donut       = type_donut,
+    mcid        = type_mcid,
+    trajectory  = type_trajectory,
+    longitudinal = type_trajectory
   )
 
   if (type %in% names(type_map)) {
@@ -516,8 +529,8 @@ resolve_type = function(type) {
 build_plot_data = function(settings) {
   df = list()
 
-  if (!is.null(settings$x)) df$x = settings$x
-  if (!is.null(settings$y)) df$y = settings$y
+  if (!is.null(settings$x) && !is.list(settings$x)) df$x = settings$x
+  if (!is.null(settings$y) && !is.list(settings$y)) df$y = settings$y
   if (!is.null(settings$by)) df[["..by.."]] = as.factor(settings$by)
 
   # Errorbar/ribbon extras

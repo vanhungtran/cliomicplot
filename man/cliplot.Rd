@@ -106,8 +106,10 @@ specified via formula.}
 \code{"boxplot"}, \code{"violin"}, \code{"histogram"}, \code{"density"},
 \code{"barplot"}, \code{"lines"}, \code{"volcano"}, \code{"forest"},
 \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
-\code{"pca"}, \code{"ma"}, \code{"correlation"}) or a call to a
-\code{type_*()} function for customization.}
+\code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
+\code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
+\code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"})
+or a call to a \code{type_*()} function for customization.}
 
 \item{by}{Grouping variable. Alternative to the \code{|} in formula.}
 

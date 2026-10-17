@@ -9,8 +9,8 @@ home:
   title: Publication-ready clinical & multi-omics visualizations
   description: >
     A ggplot2-based grammar for clinical and omics figures — volcano, forest,
-    Kaplan-Meier, waterfall, swimmer, heatmap, PCA and 40+ more, with
-    journal themes and curated palettes.
+    Kaplan-Meier, waterfall, swimmer, MCID dumbbell, trajectory, heatmap, PCA, ROC,
+    GSEA and 55+ more, with Nature/Cell/Science themes and curated palettes.
 
 navbar:
   structure:
@@ -28,9 +28,16 @@ reference:
   - title: Themes & parameters
     contents:
       - clitheme
+      - starts_with("theme_cli_")
       - clipar
       - has_concept("theme")
       - starts_with("clitheme_")
+  - title: Publication helpers
+    contents:
+      - cli_panel_label
+      - cli_legend_out
+      - cli_save
+      - cli_journal_size
   - title: Palettes
     contents:
       - cli_palette_list
@@ -44,6 +51,8 @@ reference:
       - type_km
       - type_waterfall
       - type_swimmer
+      - type_mcid
+      - type_trajectory
   - title: Omics plot types
     contents:
       - type_heatmap
@@ -58,10 +67,19 @@ reference:
       - starts_with("type_")
 
 articles:
-  - title: Get started
+  - title: Getting Started
     contents:
       - cliomicplot
-      - volcano-plot
-      - oncology
-      - multiomics
       - themes-palettes
+  - title: Nature / Cell / Science Figure Styles
+    contents:
+      - journal-plots
+      - oncology
+  - title: Multi-Omics Workflows
+    contents:
+      - multiomics
+      - volcano-plot
+  - title: Published Paper Re-creations
+    contents:
+      - recreate-paper
+      - recreate-spamtp

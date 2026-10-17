@@ -2,7 +2,7 @@
 % Please edit documentation in R/type_km.R
 \name{type_km}
 \alias{type_km}
-\title{Kaplan-Meier Survival Curve Type}
+\title{Kaplan-Meier Survival Curve & Cumulative Incidence Type}
 \usage{
 type_km(
   time = NULL,
@@ -11,39 +11,61 @@ type_km(
   pval = TRUE,
   conf_int = FALSE,
   median_line = FALSE,
+  cumulative_incidence = FALSE,
+  milestones = NULL,
+  censor = TRUE,
+  censor_size = 1.8,
   palette = NULL,
   linewidth = 0.8,
   xlab = "Time",
-  ylab = "Survival Probability"
+  ylab = NULL,
+  engine = c("auto", "native", "survminer")
 )
 }
 \arguments{
-\item{time}{Column name or vector of survival times}
+\item{time}{Column name or vector of survival times.}
 
-\item{event}{Column name or vector of event indicators (1 = event, 0 = censored)}
+\item{event}{Column name or vector of event indicators (1 = event, 0 = censored).}
 
-\item{risk_table}{Show risk table below the plot (default TRUE)}
+\item{risk_table}{Show risk table below the plot (default TRUE).}
 
-\item{pval}{Show log-rank p-value (default TRUE)}
+\item{pval}{Show log-rank p-value on the plot (default TRUE).}
 
-\item{conf_int}{Show confidence intervals (default FALSE)}
+\item{conf_int}{Show confidence interval ribbon (default FALSE).}
 
-\item{median_line}{Show median survival line (default FALSE)}
+\item{median_line}{Show median survival drop lines (default FALSE).}
 
-\item{palette}{Color palette for groups}
+\item{cumulative_incidence}{Plot cumulative incidence ((1 - S(t)) * 100 percent)
+instead of survival probability (default FALSE; Archetype 5).}
 
-\item{linewidth}{Line width for survival curves (default 0.8)}
+\item{milestones}{Numeric vector of landmark milestone times (e.g.,
+\code{c(6, 12, 24, 60)}) where exact percentages and point markers
+are annotated directly on the curve (Archetype 5).}
 
-\item{xlab}{Label for x-axis (default "Time")}
+\item{censor}{Show tick markers at censored observations (default TRUE).}
 
-\item{ylab}{Label for y-axis (default "Survival Probability")}
+\item{censor_size}{Size of censoring cross glyphs (default 1.8).}
+
+\item{palette}{Color palette for groups (default "jama").}
+
+\item{linewidth}{Line width for survival step curves (default 0.8).}
+
+\item{xlab}{Label for x-axis (default "Time").}
+
+\item{ylab}{Label for y-axis (default "Survival Probability" or "Cumulative Incidence (\%)").}
+
+\item{engine}{Engine to use: \code{"auto"} (default, uses native engine with
+survminer fallback if requested), \code{"native"}, or \code{"survminer"}.}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
 }
 \description{
-Creates publication-ready Kaplan-Meier survival curves with
-  risk tables and log-rank test p-values. Uses survminer under the hood.
+Creates publication-ready Kaplan-Meier survival curves or
+  cumulative incidence plots with optional risk tables, landmark milestone
+  callouts, confidence intervals, median survival lines, and log-rank
+  p-values. Driven by a native ggplot2 + survival engine with zero external
+  dependencies, and compatible with survminer when requested.
 }
 \examples{
 \dontrun{
@@ -53,9 +75,13 @@ data(lung)
 # Basic KM plot
 cliplot(Surv(time, status) ~ sex, data = lung, type = "km")
 
-# With risk table and CI
+# Landmark milestone callouts at 180, 365, 730 days with CI
 cliplot(Surv(time, status) ~ sex, data = lung,
-        type = type_km(risk_table = TRUE, conf_int = TRUE))
+        type = type_km(conf_int = TRUE, milestones = c(180, 365, 730)))
+
+# Cumulative incidence mode
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(cumulative_incidence = TRUE, milestones = c(180, 365)))
 }
 
 }

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-07-27</h4>
+            <h4 data-toc-skip class="date">2026-10-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/volcano-plot.Rmd" class="external-link"><code>vignettes/volcano-plot.Rmd</code></a></small>
       <div class="d-none name"><code>volcano-plot.Rmd</code></div>
@@ -392,20 +392,24 @@ calling <code>cliplot</code>:</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="export-for-publication">6. Export for publication<a class="anchor" aria-label="anchor" href="#export-for-publication"></a>
+<h2 id="export-for-publication-nature-cell-science-standards">6. Export for Publication (Nature / Cell / Science Standards)<a class="anchor" aria-label="anchor" href="#export-for-publication-nature-cell-science-standards"></a>
 </h2>
+<p>Premier journals expect figures sized to exact column widths with
+vector paths (PDF or SVG). <code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> provides
+exact specifications for Nature, Cell, and Science:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># High-resolution PNG for manuscript</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"nature"</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig_volcano.png"</span>, width <span class="op">=</span> <span class="fl">9</span>, height <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Check Nature single-column width (89 mm)</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"single"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Vector PDF for journal submission</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"nature"</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig_volcano.pdf"</span>, width <span class="op">=</span> <span class="fl">9</span>, height <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Save directly as vector PDF conforming to Nature column width</span></span>
+<span><span class="va">p_volcano</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
+<span>                     type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span>label_genes <span class="op">=</span> <span class="st">"significant"</span><span class="op">)</span>,</span>
+<span>                     theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_volcano</span>, <span class="st">"Figure_Volcano_Nature.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Export as high-resolution TIFF (600 DPI) for production printing</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_volcano</span>, <span class="st">"Figure_Volcano_Lancet.tiff"</span>, journal <span class="op">=</span> <span class="st">"lancet"</span>, column <span class="op">=</span> <span class="st">"single"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">

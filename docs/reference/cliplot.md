@@ -118,8 +118,9 @@ cliplot(
   Plot type. Can be a character string (`"points"`, `"boxplot"`,
   `"violin"`, `"histogram"`, `"density"`, `"barplot"`, `"lines"`,
   `"volcano"`, `"forest"`, `"km"`, `"waterfall"`, `"swimmer"`,
-  `"heatmap"`, `"pca"`, `"ma"`, `"correlation"`) or a call to a
-  `type_*()` function for customization.
+  `"heatmap"`, `"pca"`, `"ma"`, `"correlation"`, `"roc"`, `"gsea"`,
+  `"upset"`, `"venn"`, `"slope"`, `"confusion"`, `"donut"`, `"mcid"`,
+  `"trajectory"`) or a call to a `type_*()` function for customization.
 
 - by:
 

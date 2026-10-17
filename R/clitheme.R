@@ -12,6 +12,11 @@
 
 # Core theme templates (applied on top of theme_cli_base)
 
+#' Standard Black-and-White Theme for Laboratory Exploration
+#' @param base_size Base font size in points (default 11).
+#' @param base_family Base font family.
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_bw = function(base_size = 11, base_family = "") {
   theme_cli_base(base_size, base_family) +
     ggplot2::theme(
@@ -27,6 +32,10 @@ theme_cli_bw = function(base_size = 11, base_family = "") {
     )
 }
 
+#' Classic Axis Theme
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_classic = function(base_size = 11, base_family = "") {
   theme_cli_base(base_size, base_family) +
     ggplot2::theme(
@@ -42,6 +51,10 @@ theme_cli_classic = function(base_size = 11, base_family = "") {
     )
 }
 
+#' Minimal Clean Theme
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_minimal = function(base_size = 11, base_family = "") {
   theme_cli_base(base_size, base_family) +
     ggplot2::theme(
@@ -57,45 +70,73 @@ theme_cli_minimal = function(base_size = 11, base_family = "") {
     )
 }
 
+#' Nature Publishing Group Theme
+#' @description Open axes with outward ticks and zero gridlines conforming to
+#'   Nature and Nature Communications figure guidelines.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_nature = function(base_size = 10, base_family = "") {
   # Nature Publishing Group style
   theme_cli_minimal(base_size, base_family) +
     ggplot2::theme(
-      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.3),
-      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.3),
+      text             = ggplot2::element_text(color = "black"),
+      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks.length = ggplot2::unit(1.5, "pt"),
       axis.text        = ggplot2::element_text(size = 8, color = "black"),
-      axis.title       = ggplot2::element_text(size = 9),
+      axis.title       = ggplot2::element_text(size = 8, color = "black"),
       plot.title       = ggplot2::element_text(size = 10, face = "bold", hjust = 0),
       plot.subtitle    = ggplot2::element_text(size = 9, hjust = 0, color = "grey30"),
       plot.margin      = ggplot2::margin(6, 6, 6, 6),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      legend.text      = ggplot2::element_text(size = 8),
-      legend.title     = ggplot2::element_text(size = 8, face = "bold"),
-      legend.key.size  = ggplot2::unit(0.5, "cm")
+      legend.background = ggplot2::element_blank(),
+      legend.key       = ggplot2::element_blank(),
+      legend.text      = ggplot2::element_text(size = 7.5, color = "black"),
+      legend.title     = ggplot2::element_text(size = 8, face = "bold", color = "black"),
+      legend.key.size  = ggplot2::unit(0.45, "cm"),
+      legend.spacing.y = ggplot2::unit(0.12, "cm"),
+      strip.background = ggplot2::element_blank(),
+      strip.text       = ggplot2::element_text(size = 8, face = "bold", color = "black")
     )
 }
 
+#' Science Magazine Theme
+#' @description Ultra-clean open axis lines conforming to Science and AAAS figure standards.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_science = function(base_size = 10, base_family = "") {
   # Science/AAAS style
   theme_cli_minimal(base_size, base_family) +
     ggplot2::theme(
-      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.3),
-      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.3),
+      text             = ggplot2::element_text(color = "black"),
+      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks.length = ggplot2::unit(1.5, "pt"),
       axis.text        = ggplot2::element_text(size = 7, color = "black"),
-      axis.title       = ggplot2::element_text(size = 8),
+      axis.title       = ggplot2::element_text(size = 7.5, color = "black"),
       plot.title       = ggplot2::element_text(size = 9, face = "bold", hjust = 0),
       plot.subtitle    = ggplot2::element_text(size = 8, hjust = 0, color = "grey40"),
       plot.margin      = ggplot2::margin(5, 5, 5, 5),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      legend.text      = ggplot2::element_text(size = 7),
-      legend.title     = ggplot2::element_text(size = 7, face = "bold"),
+      legend.background = ggplot2::element_blank(),
+      legend.key       = ggplot2::element_blank(),
+      legend.text      = ggplot2::element_text(size = 7, color = "black"),
+      legend.title     = ggplot2::element_text(size = 7, face = "bold", color = "black"),
       legend.key.size  = ggplot2::unit(0.4, "cm"),
-      strip.text       = ggplot2::element_text(size = 8, face = "bold")
+      strip.background = ggplot2::element_blank(),
+      strip.text       = ggplot2::element_text(size = 7.5, face = "bold", color = "black")
     )
 }
 
+#' New England Journal of Medicine (NEJM) Theme
+#' @description Clean clinical trial typography with subtle horizontal reference lines.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_nejm = function(base_size = 10, base_family = "") {
   # NEJM style
   theme_cli_minimal(base_size, base_family) +
@@ -112,6 +153,11 @@ theme_cli_nejm = function(base_size = 10, base_family = "") {
     )
 }
 
+#' The Lancet Theme
+#' @description Classic clinical journal typography with subtle grid lines.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_lancet = function(base_size = 10, base_family = "") {
   # The Lancet style
   theme_cli_minimal(base_size, base_family) +
@@ -128,24 +174,38 @@ theme_cli_lancet = function(base_size = 10, base_family = "") {
     )
 }
 
+#' Cell Press Theme
+#' @description Structured open axes and compact labels conforming to Cell and Molecular Cell guidelines.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_cell = function(base_size = 10, base_family = "") {
   # Cell Press style
   theme_cli_minimal(base_size, base_family) +
     ggplot2::theme(
-      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.3),
-      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.3),
+      text             = ggplot2::element_text(color = "black"),
+      axis.line        = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks.length = ggplot2::unit(1.5, "pt"),
       axis.text        = ggplot2::element_text(size = 7, color = "black"),
-      axis.title       = ggplot2::element_text(size = 8),
+      axis.title       = ggplot2::element_text(size = 7.5, color = "black"),
       plot.title       = ggplot2::element_text(size = 9, face = "bold", hjust = 0),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      legend.text      = ggplot2::element_text(size = 7),
-      legend.title     = ggplot2::element_text(size = 7, face = "bold"),
+      legend.background = ggplot2::element_blank(),
+      legend.key       = ggplot2::element_blank(),
+      legend.text      = ggplot2::element_text(size = 7, color = "black"),
+      legend.title     = ggplot2::element_text(size = 7, face = "bold", color = "black"),
       legend.key.size  = ggplot2::unit(0.4, "cm"),
-      strip.text       = ggplot2::element_text(size = 8, face = "bold")
+      strip.background = ggplot2::element_blank(),
+      strip.text       = ggplot2::element_text(size = 7.5, face = "bold", color = "black")
     )
 }
 
+#' Dark Background Theme for Slides & Keynotes
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_dark = function(base_size = 11, base_family = "") {
   theme_cli_minimal(base_size, base_family) +
     ggplot2::theme(
@@ -169,6 +229,10 @@ theme_cli_dark = function(base_size = 11, base_family = "") {
     )
 }
 
+#' Showcase Theme for High-Contrast Posters & Hero Figures
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_showcase = function(base_size = 12, base_family = "") {
   theme_cli_base(base_size, base_family) +
     ggplot2::theme(
@@ -199,7 +263,11 @@ theme_cli_showcase = function(base_size = 12, base_family = "") {
     )
 }
 
-# Publication-style theme with controlled grid and subtle axis ticks
+#' Broadsheet Publication Print Theme
+#' @description Clean horizontal-ruled typography for print publications and reports.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
 theme_cli_broadsheet = function(base_size = 14, base_family = "") {
   ggplot2::theme_bw(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
@@ -251,6 +319,45 @@ theme_cli_broadsheet = function(base_size = 14, base_family = "") {
     )
 }
 
+#' SCI Full-Box Scientific Figure Theme
+#'
+#' @description Implements the SCI/Elsevier/IEEE scientific figure theme with
+#'   4 crisp spines, outward tick marks, and subtle reference grid.
+#'
+#' @param base_size Base font size (default 8).
+#' @param base_family Font family (default "").
+#'
+#' @return A ggplot2 theme.
+#' @export
+theme_cli_scifig = function(base_size = 8, base_family = "") {
+  theme_cli_base(base_size, base_family) +
+    ggplot2::theme(
+      text             = ggplot2::element_text(color = "black", family = base_family),
+      panel.background = ggplot2::element_rect(fill = "white", color = NA),
+      # 4 visible black spines (SCI full-box style)
+      panel.border     = ggplot2::element_rect(color = "black", fill = NA, linewidth = 0.6),
+      # Subtle dashed reference grid
+      panel.grid.major = ggplot2::element_line(color = "#E0E0E0", linewidth = 0.3, linetype = "dashed"),
+      panel.grid.minor = ggplot2::element_blank(),
+      # Outward ticks on both axes
+      axis.line        = ggplot2::element_blank(),
+      axis.ticks       = ggplot2::element_line(color = "black", linewidth = 0.45),
+      axis.ticks.length = ggplot2::unit(2.5, "pt"),
+      axis.text        = ggplot2::element_text(size = base_size, color = "black"),
+      axis.title       = ggplot2::element_text(size = base_size + 0.5, color = "black"),
+      plot.title       = ggplot2::element_text(size = base_size + 1.5, face = "bold", hjust = 0),
+      plot.subtitle    = ggplot2::element_text(size = base_size, hjust = 0, color = "grey30"),
+      plot.margin      = ggplot2::margin(4, 4, 4, 4, "mm"),
+      legend.background = ggplot2::element_blank(),
+      legend.key       = ggplot2::element_blank(),
+      legend.text      = ggplot2::element_text(size = base_size - 0.5, color = "black"),
+      legend.title     = ggplot2::element_text(size = base_size, face = "bold", color = "black"),
+      legend.key.size  = ggplot2::unit(3.5, "mm"),
+      strip.background = ggplot2::element_rect(fill = "grey95", color = "black", linewidth = 0.5),
+      strip.text       = ggplot2::element_text(size = base_size, face = "bold", color = "black")
+    )
+}
+
 # Map of available themes
 .theme_map = list(
   cli_bw      = theme_cli_bw,
@@ -263,7 +370,9 @@ theme_cli_broadsheet = function(base_size = 14, base_family = "") {
   cell        = theme_cli_cell,
   dark        = theme_cli_dark,
   showcase    = theme_cli_showcase,
-  broadsheet  = theme_cli_broadsheet
+  broadsheet  = theme_cli_broadsheet,
+  scifig      = theme_cli_scifig,
+  sci_box     = theme_cli_scifig
 )
 
 # ==========================================================================
@@ -291,6 +400,7 @@ theme_cli_broadsheet = function(base_size = 14, base_family = "") {
 #'     \item \code{"broadsheet"} - Publication print style with subtle grid
 #'     \item \code{"showcase"} - Polished presentation style with stronger hierarchy
 #'     \item \code{"dark"} - Dark background theme
+#'     \item \code{"scifig"} - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward ticks, dashed grid)
 #'   }
 #'   Use \code{clitheme()} without arguments to reset to the default theme.
 #' @param ... Named arguments to override specific theme settings (passed to

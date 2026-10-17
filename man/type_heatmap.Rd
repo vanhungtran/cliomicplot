@@ -18,7 +18,8 @@ type_heatmap(
   annotation_row = NULL,
   annotation_colors = NULL,
   border_color = NA,
-  fontsize = 10
+  fontsize = 10,
+  legend_title = "Z-score"
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ type_heatmap(
 \item{border_color}{Border color for cells (default NA, no border)}
 
 \item{fontsize}{Base font size (default 10)}
+
+\item{legend_title}{Legend title (default 'Z-score').}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.

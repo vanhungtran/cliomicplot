@@ -227,7 +227,7 @@ type_waffle = function(rows = 10, colors = NULL, size = 1.5, pad = 0.1) {
       p = ggplot2::ggplot(waffle_df, ggplot2::aes(
         x = .data[["x"]], y = .data[["y"]], fill = .data[["category"]]
       )) +
-        ggplot2::geom_tile(color = "white", linewidth = pad, size = size) +
+        ggplot2::geom_tile(color = "white", linewidth = pad) +
         ggplot2::scale_fill_manual(values = cols_use[1:length(unique(waffle_df$category))]) +
         ggplot2::coord_equal() +
         ggplot2::labs(x = "", y = "", fill = cat_col) +

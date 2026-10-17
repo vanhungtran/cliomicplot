@@ -19,6 +19,7 @@
 Scroll to zoom · Drag to pan · ← → to navigate
 
 ``` r
+
 library(cliomicplot)
 ```
 
@@ -41,6 +42,7 @@ constructor.
 Replace this section with your own DESeq2 / edgeR / limma output table.
 
 ``` r
+
 set.seed(2026)
 
 de_results <- data.frame(
@@ -81,6 +83,7 @@ head(de_results[, c("gene","log2FC","pvalue","padj")])
 ## 2. Quick volcano — one call
 
 ``` r
+
 cliplot(-log10(padj) ~ log2FC, data = de_results,
         type  = type_volcano(
           pval_cutoff  = 0.05,
@@ -113,6 +116,7 @@ the colour mapping, add a shaded significance region, and label only the
 top 15 hits by adjusted p-value.
 
 ``` r
+
 # Identify top-15 significant genes
 sig_idx <- order(de_results$padj)[1:15]
 top_genes <- rownames(de_results)[sig_idx]
@@ -148,6 +152,7 @@ interval, and exact p-values. `type_volcano` works with plain
 [`ggtext::geom_richtext`](https://wilkelab.org/ggtext/reference/geom_richtext.html).
 
 ``` r
+
 # Build annotation for CEACAM5
 highlight <- de_results[rownames(de_results) == "CEACAM5", ]
 highlight$ci_low   <- 1.86
@@ -223,6 +228,7 @@ a table with at least these columns:
 Row names should hold gene / probe identifiers.
 
 ``` r
+
 # Example: loading DESeq2 output
 res <- read.csv("differential_expression_results.csv")
 rownames(res) <- res$gene_symbol
@@ -242,25 +248,33 @@ cliplot(-log10(padj) ~ log2FC, data = res,
 > `cliplot`:
 >
 > ``` r
+>
 > res$padj <- pmax(res$padj, 1e-300)
 > ```
 
 ------------------------------------------------------------------------
 
-## 6. Export for publication
+## 6. Export for Publication (Nature / Cell / Science Standards)
+
+Premier journals expect figures sized to exact column widths with vector
+paths (PDF or SVG).
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+provides exact specifications for Nature, Cell, and Science:
 
 ``` r
-# High-resolution PNG for manuscript
-cliplot(-log10(padj) ~ log2FC, data = de_results,
-        type = type_volcano(),
-        theme = "nature", palette = "nature",
-        file = "fig_volcano.png", width = 9, height = 7)
 
-# Vector PDF for journal submission
-cliplot(-log10(padj) ~ log2FC, data = de_results,
-        type = type_volcano(),
-        theme = "nature", palette = "nature",
-        file = "fig_volcano.pdf", width = 9, height = 7)
+# Check Nature single-column width (89 mm)
+cli_journal_size("nature", "single")
+
+# Save directly as vector PDF conforming to Nature column width
+p_volcano <- cliplot(-log10(padj) ~ log2FC, data = de_results,
+                     type = type_volcano(label_genes = "significant"),
+                     theme = "nature", palette = "npg")
+
+cli_save(p_volcano, "Figure_Volcano_Nature.pdf", journal = "nature", column = "single")
+
+# Export as high-resolution TIFF (600 DPI) for production printing
+cli_save(p_volcano, "Figure_Volcano_Lancet.tiff", journal = "lancet", column = "single", dpi = 600)
 ```
 
 ------------------------------------------------------------------------

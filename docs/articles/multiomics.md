@@ -41,13 +41,15 @@ spanning proteomics, metabolomics, and time-course analysis:
 10. **Figure 10** — Diamond bubble heatmap (marker × condition matrix)
 
 ``` r
+
 library(cliomicplot)
 ```
 
-    #> cliomicplot 0.1.0 - Publication-ready clinical & omics plots
+    #> cliomicplot 0.1.4 - Publication-ready clinical & omics plots
     #> Main function: cliplot() | Themes: clitheme() | Params: clipar()
 
 ``` r
+
 clipar(stat.test = NULL)  # disable auto stat annotations
 ```
 
@@ -64,6 +66,7 @@ Three real datasets are bundled with cliomicplot at `inst/extdata/`:
 | `AgingHFCD_Metabolomics.RData` | Metabolomics | 46 | 393 | Aging × High-Fat Diet |
 
 ``` r
+
 # Resolve data paths (works for both installed package and devel/devtools::load_all)
 resolve_data = function(filename) {
   pkg_path = system.file("extdata", filename, package = "cliomicplot")
@@ -114,12 +117,14 @@ cat(sprintf("AD/PD proteomics : %d proteins × %d samples\n", nrow(adpd$wide), n
     #> AD/PD proteomics : 7163 proteins × 49 samples
 
 ``` r
+
 cat(sprintf("Stroke timecourse: %d proteins × %d samples\n", nrow(stroke$wide), ncol(stroke$wide)))
 ```
 
     #> Stroke timecourse: 7565 proteins × 70 samples
 
 ``` r
+
 cat(sprintf("Aging metabolomics: %d metabolites × %d samples\n", nrow(aging$wide), ncol(aging$wide)))
 ```
 
@@ -134,6 +139,7 @@ represent Alzheimer’s disease (AD), Parkinson’s disease (PD), combined
 AD+PD, and controls:
 
 ``` r
+
 # Build group labels and transpose for sample-level PCA
 adpd$meta$GroupLabel = adpd$meta$group
 adpd$wide_clean = adpd$wide
@@ -148,6 +154,7 @@ clitheme("nature")
     #> Theme set to: nature
 
 ``` r
+
 cliplot(adpd$samples_mat,
         type = type_pca(
           pc_x          = 1,
@@ -181,6 +188,7 @@ Pairwise protein expression correlations across the top 50 most variable
 proteins, with hierarchical clustering and significance stars:
 
 ``` r
+
 # Select top 50 most variable proteins
 variances = apply(adpd$wide_clean, 1, var, na.rm = TRUE)
 top50 = names(sort(variances, decreasing = TRUE)[1:50])
@@ -192,6 +200,7 @@ clitheme("cli_minimal")
     #> Theme set to: cli_minimal
 
 ``` r
+
 cliplot(as.data.frame(cor_mat),
         type = type_correlation(
           method    = "pearson",
@@ -219,6 +228,7 @@ Volcano plot of AD+PD vs. Control comparison from the AD/PD proteomics
 dataset. We extract the `ADPDvsCTL` test from the results table:
 
 ``` r
+
 # Filter to one comparison and prepare volcano data
 adpd_de = subset(adpd$results, test == "ADPDvsCTL")
 rownames(adpd_de) = adpd_de$UniqueID
@@ -227,6 +237,7 @@ rownames(adpd_de) = adpd_de$UniqueID
     #> Warning: Setting row names on a tibble is deprecated.
 
 ``` r
+
 # Log-transform P-values
 adpd_de$negLogP = -log10(adpd_de$P.Value)
 
@@ -235,12 +246,14 @@ n_de = sum(abs(adpd_de$logFC) > 0.5 & adpd_de$P.Value < 0.05, na.rm = TRUE)
 ```
 
 ``` r
+
 clitheme("cell")
 ```
 
     #> Theme set to: cell
 
 ``` r
+
 cliplot(negLogP ~ logFC, data = adpd_de,
         type = type_volcano(
           pval_cutoff  = 0.05,
@@ -267,6 +280,7 @@ The MA plot shows the relationship between fold-change and mean
 expression, with DE proteins highlighted:
 
 ``` r
+
 # Compute mean expression from data_long for each protein
 adpd_means = aggregate(expr ~ UniqueID, data = adpd$long, FUN = mean, na.rm = TRUE)
 names(adpd_means)[2] = "baseMean"
@@ -281,6 +295,7 @@ clitheme("science")
     #> Theme set to: science
 
 ``` r
+
 cliplot(logFC ~ baseMean, data = adpd_ma,
         type = type_ma(
           pval_cutoff = 0.05,
@@ -310,6 +325,7 @@ systematic intensity-dependent bias — good data quality.
 Clustered heatmap of the top 40 differentially expressed proteins:
 
 ``` r
+
 # Get top 40 DE proteins by significance
 adpd_de_sorted = adpd_de[order(adpd_de$P.Value), ]
 top40_ids = head(adpd_de_sorted$UniqueID, 40)
@@ -327,6 +343,7 @@ ann_col = data.frame(
 ```
 
 ``` r
+
 # Build named color vector for annotation
 grp_levels = unique(ann_col$Group)
 grp_colors = c("#E64B35","#4DBBD5","#00A087","#3C5488","#E18727")[1:length(grp_levels)]
@@ -348,8 +365,6 @@ cliplot(hm_mat,
   ggplot2::labs(title = "**Figure 5** — Top 40 DE Proteins (Z-score)")
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-9-1.png)
-
 > **Note:** The heatmap uses `ComplexHeatmap`. Install with
 > `BiocManager::install("ComplexHeatmap")`.
 
@@ -360,6 +375,7 @@ cliplot(hm_mat,
 Summary of differential metabolites across the Aging × HFCD comparisons:
 
 ``` r
+
 # Count DE metabolites per comparison
 aging_de = aging$results
 aging_de$is_sig = aging_de$Adj.P.Value < 0.05 & abs(aging_de$logFC) > 0.5
@@ -399,6 +415,7 @@ expression trajectories across 5 time points (days 1, 3, 7, 14, 28
 post-stroke):
 
 ``` r
+
 # Build time-course wide matrix: mean expr per treatment × time point
 stroke$long$time_group = paste0(stroke$long$treatment, "_D", stroke$long$conc)
 
@@ -426,18 +443,21 @@ cat(sprintf("Time-course matrix: %d proteins × %d time points\n",
     #> Time-course matrix: 500 proteins × 5 time points
 
 ``` r
+
 colnames(stroke_wide_top)
 ```
 
     #> [1] "StrkIp_D1"  "StrkIp_D14" "StrkIp_D28" "StrkIp_D3"  "StrkIp_D7"
 
 ``` r
+
 clitheme("broadsheet")
 ```
 
     #> Theme set to: broadsheet
 
 ``` r
+
 cliplot(stroke_wide_top,
         type = type_pattern(
           k           = 6,
@@ -467,6 +487,7 @@ Rank-abundance curve from stroke brain proteomics — a standard QC plot
 showing the dynamic range of protein detection:
 
 ``` r
+
 # Aggregate mean expression per protein
 stroke_expr = aggregate(expr ~ UniqueID, data = stroke$long, FUN = mean, na.rm = TRUE)
 names(stroke_expr) = c("Protein", "Intensity")
@@ -486,12 +507,14 @@ cat(sprintf("Dynamic range: %.0f – %.0f (%.0f×)\n",
     #> Dynamic range: 222 – 17217332 (77423×)
 
 ``` r
+
 clitheme("science")
 ```
 
     #> Theme set to: science
 
 ``` r
+
 cliplot(Intensity ~ Rank, data = stroke_expr,
         type = type_rankabundance(
           log_scale      = "10",
@@ -520,6 +543,7 @@ Compare fold-changes between two AD/PD contrasts: **AD vs. Control** and
 differentially regulated across the two related diseases:
 
 ``` r
+
 # Extract two comparisons and build standard-format data frames
 ad_vs_ctl = subset(adpd$results, test == "ADvsCTL")[, c("UniqueID", "logFC", "P.Value")]
 pd_vs_ctl = subset(adpd$results, test == "PDvsCTL")[, c("UniqueID", "logFC", "P.Value")]
@@ -546,6 +570,7 @@ cat(sprintf("Merged proteins: %d\n", nrow(deg_merged)))
     #> Merged proteins: 7163
 
 ``` r
+
 cat(sprintf("Concordant direction: %.1f%%\n",
             100 * sum(sign(deg_merged$logFC_AD) == sign(deg_merged$logFC_PD), na.rm = TRUE) / nrow(deg_merged)))
 ```
@@ -553,12 +578,14 @@ cat(sprintf("Concordant direction: %.1f%%\n",
     #> Concordant direction: 58.7%
 
 ``` r
+
 clitheme("cell")
 ```
 
     #> Theme set to: cell
 
 ``` r
+
 cliplot(logFC_AD ~ UniqueID, data = deg_merged,
         type = type_deg_compare(
           comp2_data  = deg2_clean,
@@ -589,6 +616,7 @@ A pathway-inspired bubble heatmap showing the top DE proteins across all
 six AD/PD comparisons:
 
 ``` r
+
 # Select top DE proteins from each comparison
 top_per_test = lapply(unique(adpd$results$test), function(tst) {
   sub = subset(adpd$results, test == tst)
@@ -620,6 +648,7 @@ bh_rows$absFC = abs(bh_rows$logFC)
 ```
 
 ``` r
+
 cliplot(Protein ~ Comparison, data = bh_rows,
         by = bh_rows$absFC,
         type = type_bubble_heatmap(
@@ -666,5 +695,6 @@ All three datasets (`ADPD_cortex_Maxquant`, `StrokeBrain_TimeCourse`,
 Reset global settings:
 
 ``` r
+
 clitheme()
 ```

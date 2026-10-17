@@ -23,6 +23,7 @@
 #' @param annotation_colors List of colors for annotations
 #' @param border_color Border color for cells (default NA, no border)
 #' @param fontsize Base font size (default 10)
+#' @param legend_title Legend title (default 'Z-score').
 #'
 #' @return A cliplot_type object for use with \code{\link{cliplot}}.
 #'
@@ -55,7 +56,8 @@ type_heatmap = function(
     annotation_row    = NULL,
     annotation_colors = NULL,
     border_color      = NA,
-    fontsize          = 10
+    fontsize          = 10,
+    legend_title      = 'Z-score'
 ) {
   cliplot_type(
     data = function(settings, ...) {
@@ -136,7 +138,7 @@ type_heatmap = function(
           name               = "Expression",
           row_title          = "",
           column_title       = "",
-          heatmap_legend_param = list(title = "Z-score")
+          heatmap_legend_param = list(title = legend_title)
         )
 
         if (!is.null(settings$hm_ann_col)) {
@@ -153,9 +155,42 @@ type_heatmap = function(
         }
 
         hm = do.call(ComplexHeatmap::Heatmap, hm_args)
+
+        # Render the ComplexHeatmap to a high-resolution raster instead of
+        # embedding a captured grob. Captured grobs are silently dropped by
+        # patchwork composites when a neighbouring panel uses a non-void
+        # theme, which blanks out the heatmap tiles. A raster keeps the
+        # ComplexHeatmap layout (row names, legend, annotations) and
+        # composes reliably in any grid/ggplot assembly.
+        wpx = max(1400L, round(800 + 320 * ncol(mat)))
+        hpx = max(1000L, round(600 + 130 * nrow(mat)))
+        tmp = tempfile(fileext = ".png")
+        ok  = FALSE
+        tryCatch({
+          grDevices::png(tmp, width = wpx, height = hpx, res = 300)
+          ComplexHeatmap::draw(hm)
+          grDevices::dev.off()
+          raster = png::readPNG(tmp)
+          ok = TRUE
+        }, error = function(e) {
+          if (grDevices::dev.cur() > 1) try(grDevices::dev.off(), silent = TRUE)
+        })
+        on.exit(unlink(tmp), add = TRUE)
+        if (ok) {
+          settings$skip_postprocess = TRUE
+          return(ggplot2::ggplot() +
+            ggplot2::annotation_raster(
+              raster, xmin = -Inf, xmax = Inf,
+              ymin = -Inf, ymax = Inf, interpolate = TRUE
+            ) +
+            ggplot2::coord_cartesian(xlim = c(0, 1), ylim = c(0, 1),
+                                     expand = FALSE) +
+            ggplot2::theme_void())
+        }
+
+        # Fallback: embed the captured grob directly
         hm_grob = grid::grid.grabExpr(ComplexHeatmap::draw(hm))
         settings$skip_postprocess = TRUE
-
         ggplot2::ggplot() +
           ggplot2::annotation_custom(
             grob = hm_grob,
@@ -189,7 +224,7 @@ type_heatmap = function(
             mid      = color_mid,
             high     = color_high,
             midpoint = color_midpoint,
-            name     = "Z-score"
+            name     = legend_title
           ) +
           ggplot2::labs(x = "", y = "") +
           ggplot2::theme(

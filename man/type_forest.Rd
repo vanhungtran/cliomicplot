@@ -10,33 +10,51 @@ type_forest(
   ci_high = NULL,
   variable = NULL,
   ref_line = TRUE,
+  ref_val = 1,
+  log_scale = TRUE,
   sort = TRUE,
+  stripe = TRUE,
+  show_values = FALSE,
+  diamond = FALSE,
   point_size = 3,
-  ci_width = 1,
+  ci_width = 0.9,
   sig_color = "#E64B35",
   ns_color = "#3C5488"
 )
 }
 \arguments{
-\item{estimate}{Column name or vector of point estimates (HR, OR, etc.)}
+\item{estimate}{Column name or vector of point estimates (HR, OR, etc.).}
 
-\item{ci_low}{Column name or vector of lower CI bounds}
+\item{ci_low}{Column name or vector of lower CI bounds.}
 
-\item{ci_high}{Column name or vector of upper CI bounds}
+\item{ci_high}{Column name or vector of upper CI bounds.}
 
-\item{variable}{Column name or vector of variable labels}
+\item{variable}{Column name or vector of variable labels.}
 
-\item{ref_line}{Reference line at x = 1 (default TRUE)}
+\item{ref_line}{Show reference line (default TRUE).}
 
-\item{sort}{Sort by estimate (default TRUE)}
+\item{ref_val}{Value for reference line (default 1 for HR/OR; set 0 for beta).}
 
-\item{point_size}{Point size for estimates (default 3)}
+\item{log_scale}{Use log10 scale for estimates (default TRUE for HR/OR).}
 
-\item{ci_width}{CI line width (default 1)}
+\item{sort}{Sort by estimate magnitude (default TRUE).}
 
-\item{sig_color}{Color for significant results}
+\item{stripe}{Add subtle alternating background row shading to prevent
+eye drift across wide canvases (default TRUE; Archetype 9).}
 
-\item{ns_color}{Color for non-significant results}
+\item{show_values}{Annotate exact numeric estimates and 95\% CIs on the
+plot (default FALSE).}
+
+\item{diamond}{Highlight summary / meta-analysis pooled rows as diamonds
+(default FALSE, or auto-detected from \code{is_summary} column).}
+
+\item{point_size}{Point size for estimates (default 3).}
+
+\item{ci_width}{CI line width (default 0.9).}
+
+\item{sig_color}{Color for significant results (default "#E64B35").}
+
+\item{ns_color}{Color for non-significant results (default "#3C5488").}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
@@ -44,11 +62,13 @@ A cliplot_type object for use with \code{\link{cliplot}}.
 \description{
 Creates publication-ready forest plots for displaying hazard
   ratios, odds ratios, and confidence intervals from survival analysis,
-  logistic regression, or meta-analysis.
+  logistic regression, observational causal models, or meta-analysis.
+  Enhanced with journal reporting standards: alternating row shading,
+  summary pooled diamonds, unclipped numeric annotations, and zero-magnitude
+  sign suppression.
 }
 \examples{
 \dontrun{
-# From a data frame with columns: Variable, HR, CI_low, CI_high, P
 forest_data = data.frame(
   Variable = c("Age >60", "Male", "Stage III", "Stage IV", "Mutation+"),
   HR = c(1.8, 1.3, 2.5, 4.2, 1.9),

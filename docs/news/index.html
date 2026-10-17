@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,94 @@
       <small>Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.4" id="cliomicplot-014">cliomicplot 0.1.4<a class="anchor" aria-label="anchor" href="#cliomicplot-014"></a></h2>
+<div class="section level3">
+<h3 id="clinical-figure-archetypes--publisher-compliance-0-1-4">Clinical Figure Archetypes &amp; Publisher Compliance<a class="anchor" aria-label="anchor" href="#clinical-figure-archetypes--publisher-compliance-0-1-4"></a></h3>
+<ul><li><p><strong>Minimal Clinically Important Difference (MCID) Dumbbell Plot (<code><a href="../reference/type_mcid.html">type_mcid()</a></code>, Archetype 1)</strong>: Distinguish genuine clinical relevance from large-cohort nominal significance (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">P &lt; 0.001</annotation></semantics></math>). Connects observed treatment effect sizes to validated instrument MCID thresholds (e.g. DLQI = 4.0, EASI = 6.6), with point glyphs scaled by sample size (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mtext mathvariant="normal">treated</mtext></msub><annotation encoding="application/x-tex">N_{\text{treated}}</annotation></semantics></math>) and endpoints ordered by effect-to-MCID ratio.</p></li>
+<li><p><strong>Longitudinal Clinical Trajectories with Severity Bands (<code><a href="../reference/type_trajectory.html">type_trajectory()</a></code>, Archetype 4)</strong>: Visualizes patient-level clinical heterogeneity without spaghetti hairballs. Overlays semi-transparent individual trajectories onto shaded background clinical severity bands (Mild, Moderate, Severe), anchored by a bold group mean trajectory with confidence ribbon (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>95</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">95\%</annotation></semantics></math> CI / SE) and visit sample-size annotations (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mi>…</mi></mrow><annotation encoding="application/x-tex">n = \dots</annotation></semantics></math>).</p></li>
+<li><p><strong>Zero-Dependency Native KM &amp; Cumulative Incidence (<code><a href="../reference/type_km.html">type_km()</a></code>, Archetype 5)</strong>: Completely removed the hard dependency on <code>survminer</code>. Driven by a native <code>ggplot2</code> + <code>survival</code> engine supporting cumulative incidence (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>1</mn><mo>−</mo><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo><mo>×</mo><mn>100</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">[1 - S(t)] \times 100\%</annotation></semantics></math>), landmark milestone callouts (<code>milestones = c(...)</code>) with exact percentages directly on the curve, aligned numbers-at-risk tables, median survival crosshairs, and log-rank <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values.</p></li>
+<li><p><strong>Clinical Oncology Swimmer Plot Enhancements (<code><a href="../reference/type_swimmer.html">type_swimmer()</a></code>, Archetype 13)</strong>: Added <code>ongoing</code> therapy indicator rendering arrowheads at the ends of timeline bars for patients remaining on therapy at database lock. Unified clinical event shape/color contracts and added duration annotations.</p></li>
+<li><p><strong>Publication Forest Plot Enhancements (<code><a href="../reference/type_forest.html">type_forest()</a></code>, Archetype 9)</strong>: Added alternating background row shading stripes (<code>stripe = TRUE</code>) to eliminate horizontal eye drift across wide canvases, unclipped confidence interval labels, zero-magnitude negative sign suppression (<code>-0.00</code> rounded to <code>0.00</code>), and meta-analysis pooled summary diamonds (<code>diamond = TRUE</code>).</p></li>
+<li><p><strong>SCI Full-Box Theme (<code><a href="../reference/theme_cli_scifig.html">theme_cli_scifig()</a></code>, <code>clitheme("scifig")</code>)</strong>: New publication theme adhering to SCI / Elsevier / IEEE journal visual requirements: 4 visible black spines, outward-facing tick marks, and subtle dashed reference grid.</p></li>
+<li><p><strong>Expanded Publisher Presets &amp; Compliance Checks (<code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code>, <code><a href="../reference/cli_save.html">cli_save()</a></code>)</strong>: Expanded to 9 verified publisher presets (Nature, Nature Communications, Science, Cell, JAMA, NEJM, The Lancet, PLOS, IEEE). Added arithmetic printable height verification, support for numeric columns (<code>1</code>, <code>1.5</code>, <code>2</code>), and submission format guidance (warning when raster PNG is supplied for Nature/Science final manuscripts).</p></li>
+<li><p><strong>Exported Standalone Theme Functions</strong>: Exported first-class ggplot2 themes <code><a href="../reference/theme_cli_nature.html">theme_cli_nature()</a></code>, <code><a href="../reference/theme_cli_science.html">theme_cli_science()</a></code>, <code><a href="../reference/theme_cli_cell.html">theme_cli_cell()</a></code>, <code><a href="../reference/theme_cli_nejm.html">theme_cli_nejm()</a></code>, <code><a href="../reference/theme_cli_lancet.html">theme_cli_lancet()</a></code>, <code><a href="../reference/theme_cli_scifig.html">theme_cli_scifig()</a></code>, <code><a href="../reference/theme_cli_bw.html">theme_cli_bw()</a></code>, <code><a href="../reference/theme_cli_classic.html">theme_cli_classic()</a></code>, <code><a href="../reference/theme_cli_minimal.html">theme_cli_minimal()</a></code>, <code><a href="../reference/theme_cli_dark.html">theme_cli_dark()</a></code>, <code><a href="../reference/theme_cli_showcase.html">theme_cli_showcase()</a></code>, <code><a href="../reference/theme_cli_broadsheet.html">theme_cli_broadsheet()</a></code>.</p></li>
+<li>
+<p><strong>Complete Vignette Overhaul (Nature, Cell, Science Figure Design Language)</strong>:</p>
+<ul><li>
+<code>journal-plots</code>: Showcases CNS design philosophy, isometric ROC curves, MCID dumbbells, trajectories with severity bands, KM milestone callouts, swimmer plots with ongoing therapy arrows, striped forest plots with summary diamonds, GSEA, UpSet, SCI full-box frames, and exact mm export.</li>
+<li>
+<code>oncology</code>: Full end-to-end trial workflow featuring landmark milestones, cumulative incidence, RECIST waterfall and ongoing swimmer, MCID evaluation, and multi-panel composite assembly.</li>
+<li>
+<code>themes-palettes</code>: Cataloging all 13 themes, open vs full-box frame guidelines, colorblind accessibility (Okabe-Ito, Paul Tol), and publisher canvas sizing.</li>
+<li>
+<code>cliomicplot</code> &amp; <code>volcano-plot</code>: Updated with modern clinical archetypes, two-tier volcano thresholds, and publication-ready export workflows.</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.3" id="cliomicplot-013">cliomicplot 0.1.3<a class="anchor" aria-label="anchor" href="#cliomicplot-013"></a></h2>
+<div class="section level3">
+<h3 id="recreating-a-published-paper-spamtp-nature-methods-0-1-3">Recreating a published paper (SpaMTP, Nature Methods 2026)<a class="anchor" aria-label="anchor" href="#recreating-a-published-paper-spamtp-nature-methods-0-1-3"></a></h3>
+<ul><li>New <code>recreate-spamtp</code> vignette: regenerates key figures of the SpaMTP manuscript “SpaMTP: a framework for spatial metabolomics data integration and analysis” (DOI: 10.1038/s41592-026-03140-8) from the paper’s public datasets (mouse urinary bladder MALDI-MSI, Parkinson mouse brain Visium + MSI, human brain tumour pathways, spotted mouse liver).</li>
+<li>New reproducible build script <code>inst/extdata/build_spamtp_figures.R</code>; four 300-dpi Nature-style composites added to the README gallery (<code>man/figures/spamtp_fig{1..4}.png</code>): segmentation maps, spatial metabolite intensities, DEM/DEG/NES heatmaps, volcanoes, Visium PCA, pathway dot/bar plots and annotation QC.</li>
+<li>Processed datasets (CC-BY-4.0) are fetched from the SpaMTP Zenodo community on first run and cached as small analysis bundles at <code>inst/extdata/spamtp_paper/</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="robust-complexheatmap-embedding-0-1-3">Robust ComplexHeatmap embedding<a class="anchor" aria-label="anchor" href="#robust-complexheatmap-embedding-0-1-3"></a></h3>
+<ul><li>
+<code><a href="../reference/type_heatmap.html">type_heatmap()</a></code> now embeds ComplexHeatmap output as a high-resolution raster instead of a captured grob. Captured grobs were silently dropped by <code>patchwork</code> composites when a neighbouring panel used a non-void theme, which blanked out heatmap tiles in multi-panel figures. All paper-figure heatmaps (SLE + SpaMTP) were regenerated with the fix.</li>
+<li>
+<code>png</code> added to <code>Suggests</code> (used to rasterize the ComplexHeatmap output). # cliomicplot 0.1.2</li>
+</ul></div>
+<div class="section level3">
+<h3 id="recreating-a-published-paper-soares-et-al-biology-of-sex-differences-0-1-3">Recreating a published paper (Soares et al. 2025, Biology of Sex Differences)<a class="anchor" aria-label="anchor" href="#recreating-a-published-paper-soares-et-al-biology-of-sex-differences-0-1-3"></a></h3>
+<ul><li>New <code>recreate-paper</code> vignette: regenerates the four main figures of “X-linked transcriptome dysregulation across immune cells in systemic lupus erythematosus” (DOI: 10.1186/s13293-025-00750-3) from the paper’s own supplementary tables, bundled at <code>inst/extdata/sle_paper/</code>.</li>
+<li>New reproducible build script <code>inst/extdata/build_sle_figures.R</code>; four 300-dpi Nature-style composite figures added to the README gallery (<code>man/figures/sle_fig{1..4}.png</code>): X/A-ratio and XIST boxplots, volcano small multiples, mean-logFC and NES heatmaps, DIABLO F1/marker barplots, X/A-correlation heatmaps, and intercellular-correlation diverging bars.</li>
+<li>
+<code><a href="../reference/type_heatmap.html">type_heatmap()</a></code> gains a <code>legend_title</code> argument so the color-bar title can be set to e.g. “NES” or “logFC” instead of the default “Z-score”.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1" id="cliomicplot-011">cliomicplot 0.1.1<a class="anchor" aria-label="anchor" href="#cliomicplot-011"></a></h2>
+<div class="section level3">
+<h3 id="new-cnsplots-inspired-plot-types-0-1-1">New cnsplots-inspired plot types<a class="anchor" aria-label="anchor" href="#new-cnsplots-inspired-plot-types-0-1-1"></a></h3>
+<ul><li>
+<code><a href="../reference/type_roc.html">type_roc()</a></code> - ROC curves with AUC in the legend; compare multiple biomarkers/predictors side by side (<code>rocplot</code> in cnsplots).</li>
+<li>
+<code><a href="../reference/type_gsea.html">type_gsea()</a></code> - GSEA-style enrichment dot plots ranking terms by an enrichment score, with FDR encoded in dot size and direction in color (<code>gseaplot</code> in cnsplots).</li>
+<li>
+<code><a href="../reference/type_upset.html">type_upset()</a></code> - ggplot2-based UpSet plots for set intersections; accepts a named list of sets or a binary membership data frame (<code>upsetplot</code>).</li>
+<li>
+<code><a href="../reference/type_venn.html">type_venn()</a></code> - Venn diagrams for 1-3 sets, built with ggplot2 (<code>vennplot</code>).</li>
+<li>
+<code><a href="../reference/type_slope.html">type_slope()</a></code> - slope plots / slopegraphs for paired before-after comparisons (<code>slopeplot</code>).</li>
+<li>
+<code><a href="../reference/type_confusion.html">type_confusion()</a></code> - confusion-matrix heatmaps with accuracy and Fisher exact test p-values (<code>confusionplot</code>).</li>
+<li>
+<code><a href="../reference/type_donut.html">type_donut()</a></code> - donut charts with optional center summary labels (<code>donutplot</code>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="publication-quality-helpers-0-1-1">Publication-quality helpers<a class="anchor" aria-label="anchor" href="#publication-quality-helpers-0-1-1"></a></h3>
+<ul><li>
+<code><a href="../reference/cli_panel_label.html">cli_panel_label()</a></code> - bold A/B/C panel labels for multi-panel figures.</li>
+<li>
+<code><a href="../reference/cli_legend_out.html">cli_legend_out()</a></code> - move legends outside the plotting area.</li>
+<li>
+<code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> - Nature/Science/Cell single-, 1.5-, and double-column figure widths in mm and inches.</li>
+<li>
+<code><a href="../reference/cli_save.html">cli_save()</a></code> - save figures at journal-reference widths and print DPI.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="vignettes-0-1-1">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes-0-1-1"></a></h3>
+<ul><li>New <code>journal-plots</code> vignette: Nature/Cell/Science-quality figures (ROC, GSEA dot plot, UpSet, Venn, slope, confusion, donut) built from the bundled AD/PD proteomics, stroke time-course, and aging metabolomics data.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="nature-style-figure-gallery-0-1-1">Nature-style figure gallery<a class="anchor" aria-label="anchor" href="#nature-style-figure-gallery-0-1-1"></a></h3>
+<ul><li>All seven journal-style gallery figures regenerated at 300 dpi with Nature/Science/Cell typography: no in-figure titles, bold lowercase panel labels, black text on white, and thin black axes.</li>
+<li>New reproducible build script <code>inst/extdata/build_journal_figures.R</code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="cliomicplot-010">cliomicplot 0.1.0<a class="anchor" aria-label="anchor" href="#cliomicplot-010"></a></h2>
 <p>Initial development release.</p>

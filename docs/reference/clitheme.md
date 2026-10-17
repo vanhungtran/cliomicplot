@@ -39,6 +39,9 @@ clitheme(theme = NULL, ..., register = NULL)
 
   - `"dark"` - Dark background theme
 
+  - `"scifig"` - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward
+    ticks, dashed grid)
+
   Use `clitheme()` without arguments to reset to the default theme.
 
 - ...:

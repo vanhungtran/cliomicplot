@@ -10,37 +10,45 @@ type_swimmer(
   time_end = NULL,
   bar_fill = NULL,
   event_times = NULL,
+  ongoing = NULL,
+  show_duration = FALSE,
   bar_alpha = 0.9,
   sort_by = "time_end",
   event_shape_map = NULL,
   event_color_map = NULL,
-  bar_linewidth = 8,
+  bar_linewidth = 7.5,
   bar_palette = "jama"
 )
 }
 \arguments{
-\item{id}{Column name for patient IDs}
+\item{id}{Column name for patient IDs.}
 
-\item{time_start}{Column name for start times (default created from data)}
+\item{time_start}{Column name for start times (default created from data).}
 
-\item{time_end}{Column name for end/duration times}
+\item{time_end}{Column name for end/duration times.}
 
-\item{bar_fill}{Column name for bar coloring (e.g., response category)}
+\item{bar_fill}{Column name for bar coloring (e.g., response category).}
 
 \item{event_times}{Optional data frame of event markers with columns:
-\code{id}, \code{time}, \code{event} (event type)}
+\code{id}, \code{time}, \code{event} (event type).}
 
-\item{bar_alpha}{Bar transparency (default 0.9)}
+\item{ongoing}{Optional column name or vector indicating whether patient
+treatment was ongoing at database lock. Ongoing patients receive an
+arrowhead indicator at their timeline bar tip (Archetype 13).}
 
-\item{sort_by}{Column to sort patients by (default "time_end")}
+\item{show_duration}{Display numeric duration at bar ends (default FALSE).}
 
-\item{event_shape_map}{Named vector mapping event types to pch values}
+\item{bar_alpha}{Bar transparency (default 0.9).}
 
-\item{event_color_map}{Named vector mapping event types to colors}
+\item{sort_by}{Column to sort patients by (default "time_end").}
 
-\item{bar_linewidth}{Timeline bar thickness.}
+\item{event_shape_map}{Named vector mapping event types to pch values.}
 
-\item{bar_palette}{Palette used for response/treatment bars.}
+\item{event_color_map}{Named vector mapping event types to colors.}
+
+\item{bar_linewidth}{Timeline bar thickness (default 7.5).}
+
+\item{bar_palette}{Palette used for response/treatment bars (default "jama").}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
@@ -48,7 +56,8 @@ A cliplot_type object for use with \code{\link{cliplot}}.
 \description{
 Creates publication-ready swimmer plots for visualizing
   individual patient timelines, including treatment duration, response,
-  and key clinical events.
+  key clinical events, and ongoing therapy status at database lock.
+  Enhanced with Clinical Archetype 13 conventions.
 }
 \examples{
 \dontrun{
@@ -57,7 +66,7 @@ pt_data = data.frame(
   ID       = paste0("Pt", 1:20),
   Duration = round(runif(20, 3, 24), 1),
   Response = sample(c("CR","PR","SD","PD"), 20, replace=TRUE),
-  Arm      = sample(c("Treatment","Control"), 20, replace=TRUE)
+  Ongoing  = sample(c(TRUE, FALSE), 20, replace=TRUE)
 )
 
 # Event markers
@@ -67,7 +76,8 @@ events = data.frame(
   Event = sample(c("Progression","AE","Dose Reduction"), 40, replace=TRUE)
 )
 
-cliplot(Duration ~ ID, data = pt_data, type = "swimmer")
+cliplot(Duration ~ ID, data = pt_data,
+        type = type_swimmer(bar_fill = "Response", event_times = events, ongoing = "Ongoing"))
 }
 
 }
