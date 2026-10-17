@@ -21,7 +21,8 @@ type_heatmap(
   annotation_row = NULL,
   annotation_colors = NULL,
   border_color = NA,
-  fontsize = 10
+  fontsize = 10,
+  legend_title = "Z-score"
 )
 ```
 
@@ -82,6 +83,10 @@ type_heatmap(
 - fontsize:
 
   Base font size (default 10)
+
+- legend_title:
+
+  Legend title (default 'Z-score').
 
 ## Value
 

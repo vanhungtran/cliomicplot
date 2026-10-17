@@ -54,10 +54,9 @@ type_waterfall(
 
 - n_skip_label:
 
-  Skip every nth x-axis label to prevent overlap when many patients are
-  plotted (default 1 = show all). Set to 2 for every other label, 3 for
-  every third, etc. Automatically enabled when there are more than 20
-  patients if not explicitly set.
+  Number of rows to stagger x-axis labels across to prevent overlap
+  (default: auto — 1 row for ≤15 patients, 2 for 16–35, 3 for \>35). Set
+  to 1 to force single-row labels.
 
 ## Value
 

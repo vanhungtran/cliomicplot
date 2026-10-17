@@ -20,475 +20,407 @@ Scroll to zoom · Drag to pan · ← → to navigate
 
 ## Overview
 
-cliomicplot ships with 10 publication-quality themes and 55+ color
-palettes. This vignette covers both systems in depth — how to select,
-customize, register, and combine them for maximum impact.
+**cliomicplot** provides 13 publication-quality themes and 55+ curated
+color palettes engineered around the design specifications of premier
+journals: **Nature**, **Cell**, **Science**, **NEJM**, **The Lancet**,
+and **JAMA**.
+
+This vignette covers: 1. **The 13 Themes** — open axes vs. full-box
+frames, typography, and tick styles 2. **55+ Color Palettes** — journal
+presets, genomics, and strict colorblind-safe palettes 3. **Standalone
+Scales** — using
+[`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md),
+[`scale_color_cli()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md),
+and
+[`scale_fill_cli()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md)
+on any ggplot2 figure 4. **Physical Canvas Sizing** — exact millimeter
+column widths for 9 major publishers
+([`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md))
+5. **Vector Publication Export** — automated compliance checks with
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
 
 ``` r
+
 library(cliomicplot)
-#> cliomicplot 0.1.0 - Publication-ready clinical & omics plots
-#> Main function: cliplot() | Themes: clitheme() | Params: clipar()
+library(ggplot2)
+library(patchwork)
 ```
 
 ------------------------------------------------------------------------
 
-## Part 1: Themes
+## Part 1: Themes & Journal Styles
 
 ### Theme Catalog
 
-| Theme         | Base Size | Grid       | Panel Border | Best For                  |
-|---------------|-----------|------------|--------------|---------------------------|
-| `cli_bw`      | 11        | Yes        | Yes          | General purpose (default) |
-| `cli_classic` | 11        | Yes        | No           | Traditional R look        |
-| `cli_minimal` | 11        | Faint      | No           | Modern, clean             |
-| `nature`      | 10        | No         | No           | Nature submissions        |
-| `science`     | 10        | No         | No           | Science / AAAS            |
-| `nejm`        | 10        | Subtle     | No           | NEJM style                |
-| `lancet`      | 10        | Subtle     | No           | The Lancet                |
-| `cell`        | 10        | No         | No           | Cell Press                |
-| `broadsheet`  | 14        | Horizontal | Yes          | Print / Newspaper         |
-| `dark`        | 11        | Subtle     | No           | Presentations / Slides    |
+| Theme | Spines | Grid | Ticks | Best For |
+|----|----|----|----|----|
+| `nature` | Open (left & bottom only) | None | Outward (1.5 pt) | Nature, Nature Medicine, Nat. Comms |
+| `science` | Ultra-clean open | None | Outward (1.5 pt) | Science, Science Immunology, Science Advances |
+| `cell` | Structured open | None | Outward (1.5 pt) | Cell, Cancer Cell, Immunity, Molecular Cell |
+| `nejm` | Open | Subtle horizontal | Outward (1.2 pt) | New England Journal of Medicine |
+| `lancet` | Open | Subtle horizontal | Outward (1.2 pt) | The Lancet, Lancet Oncology |
+| `scifig` / `sci_box` | 4 crisp black spines | Subtle dashed (0.3 pt) | Outward (2.5 pt) | Elsevier, IEEE, SCI journal submissions |
+| `cli_bw` | 4 spines (box) | Full grid | Inward | Standard laboratory exploration (default) |
+| `cli_classic` | Left & bottom spines | None | Inward | Traditional base R appearance |
+| `cli_minimal` | None | Faint | None | Modern presentations and dashboards |
+| `broadsheet` | Subtle frame | Horizontal only | Outward | High-contrast newsprint / executive briefs |
+| `dark` | Minimal dark | Faint | None | Keynote slides and conference presentations |
+| `showcase` | High-contrast border | None | Outward | Poster presentations and hero figures |
 
-### Side-by-side theme comparison
+------------------------------------------------------------------------
+
+### Side-by-Side Journal Theme Comparison
+
+The code below renders identical biomarker distributions across Nature,
+Science, Cell, NEJM, Lancet, and SCI full-box themes:
 
 ``` r
-# Generate the same plot with different themes
-data(iris)
-p <- function(thm) {
+
+p_theme <- function(thm, title_txt) {
   cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-          palette = "jco", theme = thm,
+          palette = "npg", theme = thm,
           stat.test = NULL,
-          title = thm)
+          title = title_txt)
 }
+
+(p_theme("nature", "Nature (Open Spines)") + p_theme("science", "Science (Clean Open)")) /
+(p_theme("cell", "Cell Press (Structured)") + p_theme("scifig", "SCI Full-Box (4 Spines)")) /
+(p_theme("nejm", "NEJM (Subtle Grid)") + p_theme("lancet", "The Lancet (Clinical)")) +
+  plot_annotation(title = "Theme Comparison Across Premier Scientific Journals")
 ```
+
+![](themes-palettes_files/figure-html/theme-comparison-1.png)
+
+------------------------------------------------------------------------
+
+### Open Axes vs. Full-Box Frames: Which to Choose?
+
+1.  **Open Axes (`nature`, `science`, `cell`, `nejm`, `lancet`)**:
+    - Nature and Science strongly prefer removing top and right spines
+      to maximize data ink and avoid confining the visual field.
+    - Outward tick marks prevent overlap with data points near the axis
+      boundaries.
+2.  **Full-Box Frame (`scifig` / `sci_box`)**:
+    - Elsevier, IEEE, and many specialized SCI journals require full
+      rectangular frames enclosing all four sides of the plot.
+    - [`theme_cli_scifig()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_scifig.md)
+      applies 0.5 pt dark borders, crisp outward tick marks, and 0.3 pt
+      dashed reference grid lines.
 
 ``` r
-library(patchwork)
-#> Warning: package 'patchwork' was built under R version 4.5.3
 
-(p("cli_bw") + p("cli_minimal")) /
-(p("nature") + p("nejm")) /
-(p("lancet") + p("cell")) +
-  plot_annotation(title = "Theme Comparison Across Journals")
+# Elsevier / IEEE style box plot with full frame
+cliplot(len ~ dose | supp, data = ToothGrowth,
+        type = "boxplot",
+        theme = "scifig",
+        palette = "jco",
+        title = "Tooth Growth by Supplement & Dose",
+        subtitle = "Full-box frame with outward ticks (theme_cli_scifig)")
 ```
 
-![](themes-palettes_files/figure-html/unnamed-chunk-3-1.png)
+![](themes-palettes_files/figure-html/scifig-demo-1.png)
+
+------------------------------------------------------------------------
 
 ### Persistent vs. Ephemeral Themes
 
 ``` r
-# ── Persistent: applies to ALL subsequent plots ────────────────────
+
+# ── Persistent: applies to all subsequent plots ────────────────────
 clitheme("nature")
-#> Theme set to: nature
 
 cliplot(mpg ~ wt, data = mtcars,
-        title = "Plot 1 — Nature theme persists")
+        title = "Plot 1 — Nature theme persists globally")
+```
+
+![](themes-palettes_files/figure-html/unnamed-chunk-2-1.png)
+
+``` r
+
+
+cliplot(len ~ dose, data = ToothGrowth, type = "boxplot",
+        title = "Plot 2 — Still using Nature theme")
+```
+
+![](themes-palettes_files/figure-html/unnamed-chunk-2-2.png)
+
+``` r
+
+
+clitheme()  # ← reset to default (cli_bw)
+```
+
+``` r
+
+# ── Ephemeral: applies to one plot only ────────────────────────────
+cliplot(mpg ~ wt, data = mtcars, theme = "cell",
+        title = "This plot uses Cell theme")
+```
+
+![](themes-palettes_files/figure-html/unnamed-chunk-3-1.png)
+
+``` r
+
+
+cliplot(mpg ~ wt, data = mtcars,
+        title = "Returned to default theme (cli_bw)")
+```
+
+![](themes-palettes_files/figure-html/unnamed-chunk-3-2.png)
+
+------------------------------------------------------------------------
+
+### Custom Theme Registration
+
+You can register bespoke lab or journal themes that remain accessible
+across your R session:
+
+``` r
+
+# Register custom institute theme
+clitheme_register("broad_institute",
+  base          = "nature",
+  axis.text     = ggplot2::element_text(size = 9, face = "bold", color = "#1A1A1A"),
+  axis.title    = ggplot2::element_text(size = 10, face = "bold"),
+  plot.title    = ggplot2::element_text(size = 12, face = "bold", hjust = 0),
+  legend.position = "right"
+)
+
+# Apply registered theme
+cliplot(mpg ~ wt, data = mtcars,
+        theme = "broad_institute",
+        title = "Broad Institute Custom Theme")
 ```
 
 ![](themes-palettes_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
 
-cliplot(len ~ dose, data = ToothGrowth, type = "boxplot",
-        title = "Plot 2 — Still Nature theme")
-#> Warning: Orientation is not uniquely specified when both the x and y aesthetics are
-#> continuous. Picking default orientation 'x'.
-#> Warning: Continuous x aesthetic
-#> ℹ did you forget `aes(group = ...)`?
+
+# Clean up
+clitheme_unregister("broad_institute")
 ```
 
-![](themes-palettes_files/figure-html/unnamed-chunk-4-2.png)
+------------------------------------------------------------------------
+
+## Part 2: Color Palettes & Accessibility
+
+cliomicplot provides 55+ palettes organized into clinical, journal,
+genomic, accessibility, and diverging families:
 
 ``` r
 
-clitheme()  # ← reset to default
+all_pals <- cli_palette_list()
+cat(sprintf("Total available palettes: %d\n", length(all_pals)))
+#> Total available palettes: 44
+cat("Representative selection:\n")
+#> Representative selection:
+cat(paste(head(all_pals, 24), collapse = ", "))
+#> jco, nejm, lancet, nature, science, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples, oranges, rd_yl_gn, spectral, pi_yg
 ```
 
-``` r
-# ── Ephemeral: applies to ONE plot only ────────────────────────────
-cliplot(mpg ~ wt, data = mtcars, theme = "nature",
-        title = "This plot: Nature")
-```
+------------------------------------------------------------------------
 
-![](themes-palettes_files/figure-html/unnamed-chunk-5-1.png)
+### 📰 Journal Palettes
 
-``` r
-
-cliplot(Sepal.Length ~ Species, data = iris, type = "boxplot",
-        theme = "dark",
-        title = "This plot: Dark")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-5-2.png)
+Journal palettes match the official color schemes of premier
+publications:
 
 ``` r
 
-cliplot(mpg ~ wt, data = mtcars,
-        title = "Back to default — cli_bw")
-```
+p_npg <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                 palette = "npg", theme = "nature", title = "Nature (npg)")
 
-![](themes-palettes_files/figure-html/unnamed-chunk-5-3.png)
+p_jama <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                  palette = "jama", theme = "nejm", title = "JAMA (jama)")
 
-### Custom Theme Registration
-
-Register your own themes for reuse across projects:
-
-``` r
-# Register a custom theme
-clitheme_register("my_submission",
-  base = "cli_bw",
-  axis.text     = ggplot2::element_text(size = 12, face = "bold"),
-  plot.title    = ggplot2::element_text(size = 16, hjust = 0.5, face = "bold"),
-  plot.subtitle = ggplot2::element_text(size = 11, hjust = 0.5, color = "grey40"),
-  legend.position   = "bottom",
-  legend.background = ggplot2::element_rect(color = "grey80")
-)
-#> Theme registered: my_submission
-
-# Use it
-clitheme("my_submission")
-#> Theme set to registered theme: my_submission
-cliplot(mpg ~ wt, data = mtcars,
-        title = "Custom 'my_submission' Theme",
-        subtitle = "12pt bold text, centered")
+p_npg + p_jama
 ```
 
 ![](themes-palettes_files/figure-html/unnamed-chunk-6-1.png)
 
+------------------------------------------------------------------------
+
+### ♿ Nature Policy: Colorblind Accessibility
+
+Nature and Science submission guidelines explicitly mandate that figures
+must be interpretable by individuals with color vision deficiencies
+(CVD).
+
+Never rely on green-red contrast alone. Use validated CVD-safe palettes:
+
 ``` r
-clitheme()
+
+p_oi <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                palette = "okabe_ito", theme = "nature",
+                title = "Okabe & Ito (2008) — Colorblind-Safe")
+
+p_tol <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                 palette = "tol_muted", theme = "nature",
+                 title = "Paul Tol Muted — Universal CVD Safety")
+
+p_oi + p_tol
 ```
 
-``` r
-# List all themes (including custom ones)
-clitheme_list()
-#>  [1] "cli_bw"        "cli_classic"   "cli_minimal"   "nature"       
-#>  [5] "science"       "nejm"          "lancet"        "cell"         
-#>  [9] "dark"          "showcase"      "broadsheet"    "my_submission"
+![](themes-palettes_files/figure-html/unnamed-chunk-7-1.png)
 
-# Remove a custom theme
-clitheme_unregister("my_submission")
-#> Theme unregistered: my_submission
-```
+------------------------------------------------------------------------
 
-### Theme Overrides
-
-Pass inline overrides to tweak any theme element:
+### 🧬 Genomics & Cancer Hallmarks
 
 ``` r
-# Start with nature, but override axis text size
-clitheme("nature", axis.text = ggplot2::element_text(size = 14))
-#> Theme set to: nature
-cliplot(mpg ~ wt, data = mtcars,
-        title = "Nature theme with larger axis text")
+
+p_ucsc <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                  palette = "ucscgb", theme = "cell",
+                  title = "UCSC Genome Browser Chromosome Colors")
+
+p_cosmic <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+                    palette = "cosmic", theme = "cell",
+                    title = "COSMIC Cancer Hallmarks")
+
+p_ucsc + p_cosmic
 ```
 
 ![](themes-palettes_files/figure-html/unnamed-chunk-8-1.png)
 
-``` r
-clitheme()
-```
-
 ------------------------------------------------------------------------
 
-## Part 2: Color Palettes
+### 🔥 Continuous & Diverging Heatmap Scales
 
-cliomicplot’s 55+ palettes are organized into logical categories:
-
-### Quick Lookup
-
-``` r
-# List all palettes
-all_pals <- cli_palette_list()
-cat(sprintf("Total palettes: %d\n", length(all_pals)))
-#> Total palettes: 44
-cat("First 25:\n")
-#> First 25:
-cat(paste(head(all_pals, 25), collapse = ", "))
-#> jco, nejm, lancet, nature, science, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples, oranges, rd_yl_gn, spectral, pi_yg, npg
-```
-
-### Preview a Palette
-
-``` r
-cli_palette_show("jco")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-10-1.png)
-
-``` r
-# Show all journal palettes side by side
-journal_pals <- c("npg", "nejm", "lancet", "jama", "jco", "bmj", "frontiers")
-
-par(mfrow = c(4, 2), mar = c(1, 3, 2, 1))
-for (pal_name in journal_pals) {
-  cols <- cliomicplot:::get_cli_palette(pal_name, 10)
-  barplot(rep(1, length(cols)), col = cols, border = NA,
-          main = pal_name, axes = FALSE, space = 0)
-}
-par(mfrow = c(1, 1))
-```
-
-### Palette Categories
-
-#### 📰 Journal Palettes
-
-``` r
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "npg",
-        title = "NPG (Nature Reviews Cancer)")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-12-1.png)
-
-``` r
-
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "lancet",
-        title = "The Lancet")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-12-2.png)
-
-#### 🧬 Genomics & Bioinformatics
-
-``` r
-# UCSC Genome Browser chromosome colors
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "ucscgb",
-        title = "UCSC Genome Browser")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-13-1.png)
-
-``` r
-
-# COSMIC Cancer Hallmarks
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "cosmic",
-        title = "COSMIC Hallmarks")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-13-2.png)
-
-#### ♿ Accessibility (Colorblind-Safe)
-
-These palettes are designed to be distinguishable under common forms of
-color vision deficiency (deuteranopia, protanopia, tritanopia):
-
-``` r
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "okabe_ito",
-        title = "Okabe & Ito (2008) — Colorblind-safe")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-14-1.png)
-
-``` r
-
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "tol_muted",
-        title = "Paul Tol — Muted, Colorblind-safe")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-14-2.png)
-
-#### 🔥 Heatmap & Diverging
-
-Use `type = "continuous"` with
+For heatmaps, correlation matrices, and spatial omics,
 [`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md)
-for gradient data:
+seamlessly provides continuous color gradients:
 
 ``` r
-library(ggplot2)
-#> Warning: package 'ggplot2' was built under R version 4.5.3
 
 p1 <- ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
   geom_tile() +
   palette_scale("heatmap_rdbu", "fill", type = "continuous") +
-  labs(title = "heatmap_rdbu") +
-  theme_minimal() +
-  theme(legend.position = "none")
+  labs(title = "heatmap_rdbu (Diverging Red-Blue)") +
+  theme_cli_nature()
 
 p2 <- ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
   geom_tile() +
   palette_scale("heatmap_prgn", "fill", type = "continuous") +
-  labs(title = "heatmap_prgn") +
-  theme_minimal() +
-  theme(legend.position = "none")
+  labs(title = "heatmap_prgn (Diverging Purple-Green)") +
+  theme_cli_nature()
 
 p1 + p2
 ```
 
-![](themes-palettes_files/figure-html/unnamed-chunk-15-1.png)
-
-#### 🌃 Dark / Presentation Palettes
-
-``` r
-clitheme("dark")
-#> Theme set to: dark
-
-cliplot(mpg ~ wt | factor(cyl), data = mtcars,
-        palette = "neon",
-        title = "Neon Palette on Dark Theme")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-16-1.png)
-
-``` r
-
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "cyberpunk",
-        title = "Cyberpunk Palette on Dark Theme")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-16-2.png)
-
-``` r
-
-clitheme()
-```
-
-### Using Palettes as Standalone Scales
-
-All palettes work with **any ggplot2 plot** — not just cliomicplot:
-
-``` r
-# Discrete colour scale
-ggplot(iris, aes(Sepal.Length, Petal.Length, colour = Species)) +
-  geom_point(size = 3) +
-  palette_scale("jama", "color") +
-  theme_bw() +
-  labs(title = "JAMA palette via palette_scale()")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-17-1.png)
-
-``` r
-
-# Discrete fill scale
-ggplot(mpg, aes(class, fill = class)) +
-  geom_bar() +
-  palette_scale("uchicago", "fill") +
-  theme_classic() +
-  labs(title = "UChicago palette via palette_scale()",
-       subtitle = "Works on any ggplot2 plot!")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-17-2.png)
-
-### Convenience Scale Wrappers
-
-``` r
-# scale_color_cli() — discrete colour
-ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
-  geom_point(size = 3) +
-  scale_color_cli("jco") +
-  theme_bw()
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-18-1.png)
-
-``` r
-
-# scale_fill_cli_c() — continuous fill
-ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
-  geom_tile() +
-  scale_fill_cli_c("blues") +
-  theme_minimal()
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-18-2.png)
-
-### Reversing and Alpha
-
-``` r
-# Reverse a palette
-ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
-  geom_point(size = 3) +
-  palette_scale("jco", "color", reverse = TRUE) +
-  theme_bw() +
-  labs(title = "JCO palette — reversed")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-19-1.png)
-
-``` r
-
-# Apply transparency
-ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
-  geom_point(size = 3) +
-  palette_scale("cosmic", "color", alpha = 0.5) +
-  theme_bw() +
-  labs(title = "COSMIC palette — 50% alpha")
-```
-
-![](themes-palettes_files/figure-html/unnamed-chunk-19-2.png)
+![](themes-palettes_files/figure-html/unnamed-chunk-9-1.png)
 
 ------------------------------------------------------------------------
 
-## Part 3: Combining Themes and Palettes
+## Part 3: Using Palettes as Standalone Scales
 
-The most powerful aspect of cliomicplot is how themes and palettes work
-together. Here are some tested combinations for common use cases:
-
-| Scenario               | Theme        | Palette               |
-|------------------------|--------------|-----------------------|
-| Nature submission      | `nature`     | `npg`                 |
-| NEJM oncology paper    | `nejm`       | `nejm`                |
-| Lancet clinical trial  | `lancet`     | `lancet`              |
-| Cell genomics paper    | `cell`       | `cosmic` or `ucscgb`  |
-| Conference slides      | `dark`       | `neon` or `cyberpunk` |
-| Preprint / bioRxiv     | `broadsheet` | `jco`                 |
-| General-purpose (safe) | `cli_bw`     | `okabe_ito`           |
+Every cliomicplot palette integrates with standard **ggplot2**
+pipelines:
 
 ``` r
-# Example: NEJM oncology paper
-clitheme("nejm")
-#> Theme set to: nejm
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "nejm",
-        title = "NEJM Theme + NEJM Palette")
+
+# Use with standard ggplot2 geom layers
+ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
+  geom_point(size = 3) +
+  scale_color_cli("lancet") +
+  theme_cli_lancet() +
+  labs(title = "scale_color_cli('lancet') on Base ggplot2")
 ```
 
-![](themes-palettes_files/figure-html/unnamed-chunk-20-1.png)
+![](themes-palettes_files/figure-html/unnamed-chunk-10-1.png)
+
+------------------------------------------------------------------------
+
+## Part 4: Physical Canvas Sizing (`cli_journal_size`)
+
+Submitting figures with arbitrary pixel dimensions results in distorted
+font sizes and downscaled labels during journal layout.
+
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+returns exact millimeter column dimensions for 9 premier publishers:
 
 ``` r
-clitheme()
+
+journals <- c("nature", "science", "cell", "jama", "nejm", "lancet", "plos", "ieee")
+
+dim_summary <- do.call(rbind, lapply(journals, function(j) {
+  s1 <- cli_journal_size(j, "single")
+  s2 <- cli_journal_size(j, "double")
+  data.frame(
+    Journal       = toupper(j),
+    Single_Col_mm = s1$width_mm,
+    Double_Col_mm = s2$width_mm,
+    Max_Height_mm = s1$max_height_mm
+  )
+}))
+
+dim_summary
+#>   Journal Single_Col_mm Double_Col_mm Max_Height_mm
+#> 1  NATURE          89.0         183.0         170.0
+#> 2 SCIENCE          90.0         183.0         230.0
+#> 3    CELL          85.0         180.0         203.0
+#> 4    JAMA          86.4         177.8         220.0
+#> 5    NEJM          89.0         180.0         220.0
+#> 6  LANCET          85.0         175.0         220.0
+#> 7    PLOS          83.0         190.5         222.3
+#> 8    IEEE          88.9         181.9         220.0
 ```
 
+Both string aliases (`"single"`, `"one_half"`, `"double"`) and numeric
+columns (`1`, `1.5`, `2`) are supported:
+
 ``` r
-# Example: Genomics paper with COSMIC
-clitheme("cell")
-#> Theme set to: cell
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "cosmic",
-        title = "Cell Theme + COSMIC Palette")
+
+# Numeric columns supported
+cli_journal_size("nature", 1)$width_mm   # 89 mm
+#> [1] 89
+cli_journal_size("nature", 2)$width_mm   # 183 mm
+#> [1] 183
 ```
 
-![](themes-palettes_files/figure-html/unnamed-chunk-21-1.png)
+------------------------------------------------------------------------
+
+## Part 5: Vector Publication Export (`cli_save`)
+
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+combines exact journal dimensions, 600 DPI rasterization when needed,
+and format compliance checking:
 
 ``` r
-clitheme()
+
+# Create publication figure
+p <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+             palette = "npg", theme = "nature",
+             title = "Biomarker Distribution by Species")
+
+# 1. Export vector PDF for Nature (2 columns, 183 mm width)
+cli_save(p, "Figure_1_Nature.pdf", journal = "nature", column = "double")
+
+# 2. Export vector SVG for Cell Press (1 column, 85 mm width)
+cli_save(p, "Figure_1_Cell.svg", journal = "cell", column = "single")
+
+# 3. Export 600 DPI TIFF for clinical journal line art
+cli_save(p, "Figure_1_Lancet.tiff", journal = "lancet", column = "double", dpi = 600)
 ```
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-- **10 themes** — from journal-specific to presentation-ready
-- **55+ palettes** — journal, genomics, accessibility, design, and pop
-  culture
-- Themes can be **persistent** (`clitheme("nature")`) or **ephemeral**
-  (`theme = "nature"`)
-- Register custom themes with
-  [`clitheme_register()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme_register.md)
-- All palettes work as standalone
-  [`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md)
-  for any ggplot2 plot
-- Combine themes and palettes freely for the perfect publication look
-
-``` r
-# Reset to defaults
-clitheme()
-```
+- **13 Themes**: Open spines (`nature`, `science`, `cell`, `nejm`,
+  `lancet`), full 4-spine boxes (`scifig`), and presentation modes
+  (`dark`, `showcase`).
+- **55+ Palettes**: Strict CVD safety (`okabe_ito`, `tol_muted`),
+  premier journals (`npg`, `jama`, `lancet`), and cancer hallmarks
+  (`cosmic`).
+- **Standard ggplot2 integration**:
+  [`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md),
+  [`scale_color_cli()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md),
+  and
+  [`scale_fill_cli()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md).
+- **Publisher Sizing**:
+  [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+  covers Nature, Cell, Science, JAMA, NEJM, Lancet, PLOS, and IEEE.
+- **Export Validation**:
+  [`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+  ensures font embedding and canvas compliance.
