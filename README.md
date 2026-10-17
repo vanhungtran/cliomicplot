@@ -80,7 +80,7 @@ cliplot(len ~ dose, data = ToothGrowth,
 
 ```r
 # From GitHub
-remotes::install_github("vanhungtrantran/cliomicplot")
+remotes::install_github("vanhungtran/cliomicplot")
 
 # Dependencies (installed automatically, but pre-install if needed)
 install.packages(c("ggplot2", "scales", "survival", "reshape2", "ggrepel", "ggtext"))
