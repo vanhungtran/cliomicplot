@@ -1,12 +1,10 @@
-# cliomicplot ![cliomicplot logo](reference/figures/logo.png)
+# cliomicplot
 
-**cliomicplot**\
-_(*Publication-Ready Clinical & Multi-Omics Visualizations*)
-============================================================
+# **cliomicplot** _(*Publication-Ready Clinical & Multi-Omics Visualizations*)
 
 ------------------------------------------------------------------------
 
-## ⚡ 30 Seconds
+## âš¡ 30 Seconds
 
 ``` r
 
@@ -61,18 +59,18 @@ cliplot(len ~ dose, data = ToothGrowth,
 
 | What you get for free | Base ggplot2 | cliomicplot |
 |----|----|----|
-| Formula interface (`y ~ x \| group`) | — | ✅ |
-| Auto-legend + auto-facet | Manual | ✅ |
-| Statistical annotations | Needs `ggpubr` | ✅ Built-in |
-| Journal themes (Nature, NEJM, etc.) | Manual tweaking | ✅ `theme = "nejm"` |
-| 55+ colorblind-safe palettes | Manual selection | ✅ `palette = "jco"` |
-| Markdown in titles/labels | Needs `ggtext` | ✅ [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md) |
-| Save to file | Separate [`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html) | ✅ `file = "plot.pdf"` |
-| Persistent global theme | [`theme_set()`](https://ggplot2.tidyverse.org/reference/get_theme.html) | ✅ `clitheme("nature")` |
+| Formula interface (`y ~ x \| group`) | â€” | âœ… |
+| Auto-legend + auto-facet | Manual | âœ… |
+| Statistical annotations | Needs `ggpubr` | âœ… Built-in |
+| Journal themes (Nature, NEJM, etc.) | Manual tweaking | âœ… `theme = "nejm"` |
+| 55+ colorblind-safe palettes | Manual selection | âœ… `palette = "jco"` |
+| Markdown in titles/labels | Needs `ggtext` | âœ… [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md) |
+| Save to file | Separate [`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html) | âœ… `file = "plot.pdf"` |
+| Persistent global theme | [`theme_set()`](https://ggplot2.tidyverse.org/reference/get_theme.html) | âœ… `clitheme("nature")` |
 
 ------------------------------------------------------------------------
 
-## 📦 Installation
+## ðŸ“¦ Installation
 
 ``` r
 
@@ -88,9 +86,10 @@ install.packages(c("ComplexHeatmap", "survminer", "ggpubr", "patchwork"))
 
 ------------------------------------------------------------------------
 
-## 🧩 The Formula API
+## ðŸ§© The Formula API
 
-cliomicplot uses `y ~ x | group` — the same convention you already know.
+cliomicplot uses `y ~ x | group` â€” the same convention you already
+know.
 
 | Formula                      | What it does                       |
 |------------------------------|------------------------------------|
@@ -114,7 +113,7 @@ cliomicplot uses `y ~ x | group` — the same convention you already know.
 
 ### Global Defaults: `clipar()`
 
-Set defaults for all plots — like
+Set defaults for all plots â€” like
 [`par()`](https://rdrr.io/r/graphics/par.html) for base R:
 
 ``` r
@@ -128,27 +127,157 @@ clipar("palette.qualitative")  # query a single parameter
 
 ------------------------------------------------------------------------
 
-## 🖼️ Gallery
+## ðŸ–¼ï¸? Gallery
 
 Every figure is a single
 [`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
 call. Click any image to enlarge.
 
-### Clinical
+### Clinical Oncology â€” 7 Lines of Code
+
+``` r
+
+library(cliomicplot)
+library(survival)
+clitheme("nejm")
+
+# 1. Kaplan-Meier survival with risk table
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(risk_table = TRUE, pval = TRUE, conf_int = TRUE))
+
+# 2. Forest plot from Cox model
+cliplot(HR ~ Variable, data = cox_results, type = "forest")
+
+# 3. Waterfall â€” tumor response
+cliplot(BestChange ~ Patient, data = imtrial,
+        type = type_waterfall(show_labels = TRUE))
+
+# 4. Swimmer â€” patient timelines
+cliplot(Duration ~ Patient, data = imtrial,
+        type = type_swimmer(bar_fill = "BestResp", event_times = events_df))
+```
+
+|  |  |  |  |
+|:--:|:--:|:--:|:--:|
+| **Kaplan-Meier** | **Forest Plot** | **Waterfall** | **Swimmer** |
+| [![KM](reference/figures/km.png)](https://vanhungtran.github.io/cliomicplot/man/figures/km.png) | [![Forest](reference/figures/forest.png)](https://vanhungtran.github.io/cliomicplot/man/figures/forest.png) | [![Waterfall](reference/figures/waterfall.png)](https://vanhungtran.github.io/cliomicplot/man/figures/waterfall.png) | [![Swimmer](reference/figures/swimmer.png)](https://vanhungtran.github.io/cliomicplot/man/figures/swimmer.png) |
+
+### Clinical Trials & Cohort Studies (Journal Archetypes)
+
+New clinical visualization archetypes adhering to Nature, Cell, and
+Science reporting standards and real-world clinical cohort figures:
+
+``` r
+
+# 1. Minimal Clinically Important Difference (MCID) Dumbbell (Archetype 1)
+# Compare observed effect sizes vs validated MCID threshold
+cliplot(Estimate ~ Endpoint, data = mcid_df,
+        type = type_mcid(mcid = "MCID", n_treated = "N"))
+
+# 2. Longitudinal Trajectory with Clinical Severity Bands (Archetype 4)
+# Spaghetti paths + bold mixed-model mean + shaded Mild/Moderate/Severe bands
+cliplot(Score ~ Visit | Patient, data = longitudinal_df,
+        type = type_trajectory(show_mean = TRUE, show_n = TRUE))
+
+# 3. Kaplan-Meier with Cumulative Incidence & Landmark Milestones (Archetype 5)
+# Zero external dependencies; exact percentages at 6mo, 1y, 2y callouts
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(cumulative_incidence = TRUE, milestones = c(180, 365, 730)))
+
+# 4. Swimmer Plot with Ongoing Indicators (Archetype 13)
+# Ongoing therapy arrowheads at bar ends + RECIST event milestones
+cliplot(Duration ~ Patient, data = pt_data,
+        type = type_swimmer(bar_fill = "Response", ongoing = "Ongoing", event_times = events))
+
+# 5. Forest Plot with Alternating Stripes & Pooled Diamonds (Archetype 9)
+# Subtle row striping eliminates eye drift across wide canvases
+cliplot(HR ~ Variable, data = meta_df,
+        type = type_forest(stripe = TRUE, diamond = TRUE, show_values = TRUE))
+```
+
+### Multi-Omics â€” Differential Expression in 3 Lines
+
+``` r
+
+# Volcano plot (y ~ x: significance ~ fold-change)
+cliplot(-log10(padj) ~ logFC, data = deg_results,
+        type = type_volcano(label_genes = "significant"))
+
+# MA plot with LOESS smoothing
+cliplot(logFC ~ baseMean, data = deg_results, type = "ma")
+
+# Correlation heatmap
+cliplot(expression_matrix, type = type_correlation(method = "spearman"))
+```
 
 |  |  |  |
 |:--:|:--:|:--:|
-| **Kaplan-Meier** | **Forest Plot** | **Volcano** |
-| [![KM](reference/figures/km.png)](https://vanhungtran.github.io/cliomicplot/man/figures/km.png) | [![Forest](reference/figures/forest.png)](https://vanhungtran.github.io/cliomicplot/man/figures/forest.png) | [![volcano](reference/figures/volcano.png)](https://vanhungtran.github.io/cliomicplot/man/figures/volcano.png) |
-| **Waterfall** | **Swimmer** | **MA Plot** |
-| [![Waterfall](reference/figures/waterfall.png)](https://vanhungtran.github.io/cliomicplot/man/figures/waterfall.png) | [![Swimmer](reference/figures/swimmer.png)](https://vanhungtran.github.io/cliomicplot/man/figures/swimmer.png) | [![MA](reference/figures/ma.png)](https://vanhungtran.github.io/cliomicplot/man/figures/ma.png) |
+| **Volcano** | **MA Plot** | **Correlation** |
+| [![volcano](reference/figures/volcano.png)](https://vanhungtran.github.io/cliomicplot/man/figures/volcano.png) | [![MA](reference/figures/ma.png)](https://vanhungtran.github.io/cliomicplot/man/figures/ma.png) | [![Correlation](reference/figures/correlation.png)](https://vanhungtran.github.io/cliomicplot/man/figures/correlation.png) |
+| **Heatmap** | **PCA** |  |
+| [![heatmap](reference/figures/heatmap.png)](https://vanhungtran.github.io/cliomicplot/man/figures/heatmap.png) | [![PCA](reference/figures/pca.png)](https://vanhungtran.github.io/cliomicplot/man/figures/pca.png) |  |
 
-### Omics
+### Nature / Cell / Science (cnsplots-Inspired)
+
+New plot types inspired by the
+[cnsplots](https://github.com/faridrashidi/cnsplots) gallery, rendered
+in Nature/Science style (no in-figure titles, 300 dpi) â€” see
+[`vignette("journal-plots")`](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md)
+for the full real-data workflow.
 
 |  |  |  |
 |:--:|:--:|:--:|
-| **Heatmap** | **PCA** | **Correlation** |
-| [![heatmap](reference/figures/heatmap.png)](https://vanhungtran.github.io/cliomicplot/man/figures/heatmap.png) | [![PCA](reference/figures/pca.png)](https://vanhungtran.github.io/cliomicplot/man/figures/pca.png) | [![Correlation](reference/figures/correlation.png)](https://vanhungtran.github.io/cliomicplot/man/figures/correlation.png) |
+| **ROC Curves** | **GSEA Dot Plot** | **UpSet** |
+| [![ROC](reference/figures/roc.png)](https://vanhungtran.github.io/cliomicplot/man/figures/roc.png) | [![GSEA](reference/figures/gsea.png)](https://vanhungtran.github.io/cliomicplot/man/figures/gsea.png) | [![UpSet](reference/figures/upset.png)](https://vanhungtran.github.io/cliomicplot/man/figures/upset.png) |
+| **Venn** | **Slope** | **Confusion Matrix** |
+| [![Venn](reference/figures/venn.png)](https://vanhungtran.github.io/cliomicplot/man/figures/venn.png) | [![Slope](reference/figures/slope.png)](https://vanhungtran.github.io/cliomicplot/man/figures/slope.png) | [![Confusion](reference/figures/confusion.png)](https://vanhungtran.github.io/cliomicplot/man/figures/confusion.png) |
+| **Donut** |  |  |
+| [![Donut](reference/figures/donut.png)](https://vanhungtran.github.io/cliomicplot/man/figures/donut.png) |  |  |
+
+### Recreating a Published Paper (Soares et al. 2025, *Biology of Sex Differences*)
+
+The main figures of a real publication - “X-linked transcriptome
+dysregulation across immune cells in systemic lupus erythematosus” (DOI:
+`10.1186/s13293-025-00750-3`) - were recreated from the paper’s own
+supplementary tables (bundled in `inst/extdata/sle_paper/`), rendered at
+300 dpi in Nature style. See
+[`vignette("recreate-paper")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md)
+and `inst/extdata/build_sle_figures.R`.
+
+|  |  |  |
+|:--:|:--:|:--:|
+| **Fig. 1: X-linked dysregulation** | **Fig. 2: DIABLO classification** | **Fig. 3: XIST dysregulation** |
+| [![SLE Fig 1](reference/figures/sle_fig1.png)](https://vanhungtran.github.io/cliomicplot/man/figures/sle_fig1.png) | [![SLE Fig 2](reference/figures/sle_fig2.png)](https://vanhungtran.github.io/cliomicplot/man/figures/sle_fig2.png) | [![SLE Fig 3](reference/figures/sle_fig3.png)](https://vanhungtran.github.io/cliomicplot/man/figures/sle_fig3.png) |
+| **Fig. 4: XIST interactome** |  |  |
+| [![SLE Fig 4](reference/figures/sle_fig4.png)](https://vanhungtran.github.io/cliomicplot/man/figures/sle_fig4.png) |  |  |
+
+Plot types used: `type_boxplot`, `type_volcano`, `type_heatmap`,
+`type_barplot` + `patchwork` composites.
+
+### Recreating a Published Paper (SpaMTP, *Nature Methods* 2026)
+
+The main figures of the SpaMTP manuscript - “SpaMTP: a framework for
+spatial metabolomics data integration and analysis” (DOI:
+`10.1038/s41592-026-03140-8`) - were recreated from the paper’s public
+datasets (processed Seurat objects mirrored on the [SpaMTP Zenodo
+community](https://zenodo.org/communities/spamtp), CC-BY-4.0), rendered
+at 300 dpi in Nature style. See
+[`vignette("recreate-spamtp")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-spamtp.md)
+and `inst/extdata/build_spamtp_figures.R`.
+
+|  |  |  |
+|:--:|:--:|:--:|
+| **Fig. 1: Bladder MALDI-MSI** | **Fig. 2: Multi-omic mouse brain** | **Fig. 3: Brain tumour pathways** |
+| [![SpaMTP Fig 1](reference/figures/spamtp_fig1.png)](https://vanhungtran.github.io/cliomicplot/man/figures/spamtp_fig1.png) | [![SpaMTP Fig 2](reference/figures/spamtp_fig2.png)](https://vanhungtran.github.io/cliomicplot/man/figures/spamtp_fig2.png) | [![SpaMTP Fig 3](reference/figures/spamtp_fig3.png)](https://vanhungtran.github.io/cliomicplot/man/figures/spamtp_fig3.png) |
+| **Fig. 4: Spotted mouse liver** |  |  |
+| [![SpaMTP Fig 4](reference/figures/spamtp_fig4.png)](https://vanhungtran.github.io/cliomicplot/man/figures/spamtp_fig4.png) |  |  |
+
+Datasets: mouse urinary bladder MALDI-MSI (PRIDE `PXD001283`), Parkinson
+mouse brain Visium + MALDI (SciLifeLab
+`10.17044/scilifelab.22770161.v2`), human brain tumour single-cell
+pathways (BioImage Archive `S-BIAD14260`), and spotted mouse liver
+MALDI-MSI (METASPACE). Plot types used: `type_heatmap`, `type_volcano`,
+`type_boxplot` + spatial scatter maps and `patchwork` composites.
 
 ### Distributions & Statistics
 
@@ -174,8 +303,8 @@ call. Click any image to enlarge.
 
 |  |  |  |
 |:--:|:--:|:--:|
-| **Clinical Trials Pipeline** | **Infographic Bar** |  |
-| [![Trials](reference/figures/trials.png)](https://vanhungtran.github.io/cliomicplot/man/figures/trials.png) | [![Infobar](reference/figures/infobar.png)](https://vanhungtran.github.io/cliomicplot/man/figures/infobar.png) |  |
+| **Clinical Trials Pipeline** | **Infographic Bar** | **Diamond Bubble Heatmap** |
+| [![Trials](reference/figures/trials.png)](https://vanhungtran.github.io/cliomicplot/man/figures/trials.png) | [![Infobar](reference/figures/infobar.png)](https://vanhungtran.github.io/cliomicplot/man/figures/infobar.png) | [![BubbleHeatmap](reference/figures/bubble_heatmap.png)](https://vanhungtran.github.io/cliomicplot/man/figures/bubble_heatmap.png) |
 
 ### R Graph Gallery Favorites
 
@@ -191,14 +320,17 @@ call. Click any image to enlarge.
 Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`,
 `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`,
 `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`,
-`ma`, `correlation`, `text`, `bubble`, `lm`, `loess`, `spineplot`,
-`rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`,
-`radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`,
-`connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`.
+`ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`,
+`spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`,
+`beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`,
+`streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`,
+`dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`,
+`deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`,
+`donut`.
 
 ------------------------------------------------------------------------
 
-## 🎨 Themes — Publication Ready
+## ðŸŽ¨ Themes â€” Publication Ready
 
 11 built-in themes. One function call.
 
@@ -235,7 +367,7 @@ Register custom themes with
 
 ------------------------------------------------------------------------
 
-## 🌈 Color Palettes
+## ðŸŒˆ Color Palettes
 
 55+ built-in palettes. Discrete, sequential, diverging, and
 journal-specific.
@@ -268,7 +400,7 @@ ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
 
 ------------------------------------------------------------------------
 
-## 📝 Markdown Text
+## ðŸ“? Markdown Text
 
 Rich text in titles and labels with
 [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md):
@@ -284,7 +416,7 @@ cliplot(len ~ dose, data = ToothGrowth, type = "boxplot",
 
 ------------------------------------------------------------------------
 
-## 🔧 For Standalone ggplot2 Use
+## ðŸ”§ For Standalone ggplot2 Use
 
 Use
 [`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md)
@@ -305,35 +437,56 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
 
 ------------------------------------------------------------------------
 
-## 📚 Vignettes
+## ðŸ“š Vignettes
 
-- **Getting Started** —
+- **Getting Started** â€”
   [`vignette("cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/cliomicplot.md)
-- **Volcano Plot Guide** —
+- **Volcano Plot Guide** â€”
   [`vignette("volcano-plot")`](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md)
-- **Oncology Workflows** —
+- **Oncology Workflows** â€”
   [`vignette("oncology")`](https://vanhungtran.github.io/cliomicplot/articles/oncology.md)
-- **Multi-Omics** —
+  â€” 7 figures: KM, forest, waterfall, swimmer, dose-response,
+  time-course, PD biomarkers
+- **Multi-Omics** â€”
   [`vignette("multiomics")`](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md)
-- **Themes & Palettes** —
+  â€” 10 figures: PCA, correlation, volcano, MA, pattern clustering,
+  rank-abundance, DEG comparison, bubble heatmap & more
+- **Recreating a Published Figure** -
+  [`vignette("recreate-paper")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md) -
+  regenerates the figures of Soares et al. 2025 (*Biology of Sex
+  Differences*, SLE X-linked dysregulation) from the paper’s
+  supplementary data: X/A-ratio and XIST boxplots, volcano small
+  multiples, logFC/NES heatmaps, DIABLO F1/marker barplots,
+  intercellular correlation diverging bars
+- **Recreating a Published Paper (Spatial Metabolomics)** -
+  [`vignette("recreate-spamtp")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-spamtp.md) -
+  regenerates the figures of the SpaMTP manuscript (Wemans et al. 2026,
+  *Nature Methods*) from the paper’s public datasets: bladder MALDI-MSI
+  segmentation and DEM heatmaps, multi-omic mouse brain MSI/Visium,
+  tumour pathway NES heatmaps, and spotted-liver annotation QC
+- **Journal-Quality Figures** â€”
+  [`vignette("journal-plots")`](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md)
+  â€” cnsplots-inspired ROC, GSEA dot plot, UpSet, Venn, slope,
+  confusion, donut + Nature/Cell/Science export helpers
+- **Themes & Palettes** â€”
   [`vignette("themes-palettes")`](https://vanhungtran.github.io/cliomicplot/articles/themes-palettes.md)
 
 ------------------------------------------------------------------------
 
-## 🔗 References
+## ðŸ”— References
 
-- **tinyplot** — formula-interface inspiration
+- **tinyplot** â€” formula-interface inspiration
   ([github.com/grantmcdermott/tinyplot](https://github.com/grantmcdermott/tinyplot))
-- **ggsci** — journal palette inspiration
+- **ggsci** â€” journal palette inspiration
   ([nanx.me/ggsci](https://nanx.me/ggsci/))
-- **survminer** — survival plotting engine
-- **ComplexHeatmap** — heatmap engine for omics data
+- **survminer** â€” survival plotting engine
+- **ComplexHeatmap** â€” heatmap engine for omics data
 
 ------------------------------------------------------------------------
 
-## 📄 License
+## ðŸ“„ License
 
-MIT © 2026 Lucas VHH Tran
+MIT Â© 2026 Lucas VHH Tran
 
 # Package index
 
@@ -354,6 +507,30 @@ The main plotting function and layer helpers.
 
 - [`clitheme()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme.md)
   : Set or Reset Plot Themes for cliomicplot
+- [`theme_cli_broadsheet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_broadsheet.md)
+  : Broadsheet Publication Print Theme
+- [`theme_cli_bw()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_bw.md)
+  : Standard Black-and-White Theme for Laboratory Exploration
+- [`theme_cli_cell()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_cell.md)
+  : Cell Press Theme
+- [`theme_cli_classic()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_classic.md)
+  : Classic Axis Theme
+- [`theme_cli_dark()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_dark.md)
+  : Dark Background Theme for Slides & Keynotes
+- [`theme_cli_lancet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_lancet.md)
+  : The Lancet Theme
+- [`theme_cli_minimal()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_minimal.md)
+  : Minimal Clean Theme
+- [`theme_cli_nature()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nature.md)
+  : Nature Publishing Group Theme
+- [`theme_cli_nejm()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nejm.md)
+  : New England Journal of Medicine (NEJM) Theme
+- [`theme_cli_science()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_science.md)
+  : Science Magazine Theme
+- [`theme_cli_scifig()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_scifig.md)
+  : SCI Full-Box Scientific Figure Theme
+- [`theme_cli_showcase()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_showcase.md)
+  : Showcase Theme for High-Contrast Posters & Hero Figures
 - [`clipar()`](https://vanhungtran.github.io/cliomicplot/reference/clipar.md)
   : Set or Query Cliomicplot Graphical Parameters
 - [`clitheme_list()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme_list.md)
@@ -366,6 +543,17 @@ The main plotting function and layer helpers.
   : Register a Custom Theme
 - [`clitheme_unregister()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme_unregister.md)
   : Unregister a Custom Theme
+
+## Publication helpers
+
+- [`cli_panel_label()`](https://vanhungtran.github.io/cliomicplot/reference/cli_panel_label.md)
+  : Add a Panel Label (A, B, C ...) to a ggplot
+- [`cli_legend_out()`](https://vanhungtran.github.io/cliomicplot/reference/cli_legend_out.md)
+  : Move the Legend Outside the Plot
+- [`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+  : Save a Figure at Journal-Reference Dimensions
+- [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+  : Get Exact Figure Dimensions for Specific Scientific Journals
 
 ## Palettes
 
@@ -389,11 +577,15 @@ The main plotting function and layer helpers.
 - [`type_forest()`](https://vanhungtran.github.io/cliomicplot/reference/type_forest.md)
   : Forest Plot Type
 - [`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)
-  : Kaplan-Meier Survival Curve Type
+  : Kaplan-Meier Survival Curve & Cumulative Incidence Type
 - [`type_waterfall()`](https://vanhungtran.github.io/cliomicplot/reference/type_waterfall.md)
   : Waterfall Plot Type
 - [`type_swimmer()`](https://vanhungtran.github.io/cliomicplot/reference/type_swimmer.md)
   : Swimmer Plot Type
+- [`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)
+  : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
+- [`type_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_trajectory.md)
+  : Longitudinal Clinical Trajectory Plot Type
 
 ## Omics plot types
 
@@ -409,6 +601,8 @@ The main plotting function and layer helpers.
   : Boxplot Type
 - [`type_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_violin.md)
   : Violin Plot Type
+- [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
+  : Diamond Bubble Heatmap
 
 ## General plot types
 
@@ -424,26 +618,36 @@ The main plotting function and layer helpers.
   : Boxplot Type
 - [`type_bubble()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble.md)
   : Bubble Chart Type
+- [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
+  : Diamond Bubble Heatmap
 - [`type_chord()`](https://vanhungtran.github.io/cliomicplot/reference/type_chord.md)
   : Chord Diagram Type
 - [`type_circular_bar()`](https://vanhungtran.github.io/cliomicplot/reference/type_circular_bar.md)
   : Circular Barplot Type
+- [`type_confusion()`](https://vanhungtran.github.io/cliomicplot/reference/type_confusion.md)
+  : Confusion Matrix Type
 - [`type_connected()`](https://vanhungtran.github.io/cliomicplot/reference/type_connected.md)
   : Connected Scatterplot Type
 - [`type_correlation()`](https://vanhungtran.github.io/cliomicplot/reference/type_correlation.md)
   : Correlation Matrix Plot Type
+- [`type_deg_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_deg_compare.md)
+  : DEG Comparison Scatter Type
 - [`type_dendrogram()`](https://vanhungtran.github.io/cliomicplot/reference/type_dendrogram.md)
   : Dendrogram Type
 - [`type_density()`](https://vanhungtran.github.io/cliomicplot/reference/type_density.md)
   : Density plot type
 - [`type_density2d()`](https://vanhungtran.github.io/cliomicplot/reference/type_density2d.md)
   : 2D Density / Contour Plot Type
+- [`type_donut()`](https://vanhungtran.github.io/cliomicplot/reference/type_donut.md)
+  : Donut Chart Type
 - [`type_dumbbell()`](https://vanhungtran.github.io/cliomicplot/reference/type_dumbbell.md)
   : Dumbbell Plot Type
 - [`type_errorbar()`](https://vanhungtran.github.io/cliomicplot/reference/type_errorbar.md)
   : Error bar type (requires ymin and ymax)
 - [`type_forest()`](https://vanhungtran.github.io/cliomicplot/reference/type_forest.md)
   : Forest Plot Type
+- [`type_gsea()`](https://vanhungtran.github.io/cliomicplot/reference/type_gsea.md)
+  : GSEA-Style Enrichment Dot Plot Type
 - [`type_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_heatmap.md)
   : Heatmap Type
 - [`type_histogram()`](https://vanhungtran.github.io/cliomicplot/reference/type_histogram.md)
@@ -453,7 +657,7 @@ The main plotting function and layer helpers.
 - [`type_jitter()`](https://vanhungtran.github.io/cliomicplot/reference/type_jitter.md)
   : Jitter Plot Type
 - [`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)
-  : Kaplan-Meier Survival Curve Type
+  : Kaplan-Meier Survival Curve & Cumulative Incidence Type
 - [`type_lines()`](https://vanhungtran.github.io/cliomicplot/reference/type_lines.md)
   : Line plot type
 - [`type_lm()`](https://vanhungtran.github.io/cliomicplot/reference/type_lm.md)
@@ -464,8 +668,12 @@ The main plotting function and layer helpers.
   : Lollipop Chart Type
 - [`type_ma()`](https://vanhungtran.github.io/cliomicplot/reference/type_ma.md)
   : MA Plot Type
+- [`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)
+  : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
 - [`type_parallel()`](https://vanhungtran.github.io/cliomicplot/reference/type_parallel.md)
   : Parallel Coordinates Plot Type
+- [`type_pattern()`](https://vanhungtran.github.io/cliomicplot/reference/type_pattern.md)
+  : Expression Pattern Clustering Type
 - [`type_pca()`](https://vanhungtran.github.io/cliomicplot/reference/type_pca.md)
   : PCA Plot Type
 - [`type_points()`](https://vanhungtran.github.io/cliomicplot/reference/type_points.md)
@@ -476,12 +684,18 @@ The main plotting function and layer helpers.
   : Radar / Spider Chart Type
 - [`type_raincloud()`](https://vanhungtran.github.io/cliomicplot/reference/type_raincloud.md)
   : Raincloud Plot Type
+- [`type_rankabundance()`](https://vanhungtran.github.io/cliomicplot/reference/type_rankabundance.md)
+  : Rank Abundance Curve Type
 - [`type_ribbon()`](https://vanhungtran.github.io/cliomicplot/reference/type_ribbon.md)
   : Ribbon/area plot type
 - [`type_ridge()`](https://vanhungtran.github.io/cliomicplot/reference/type_ridge.md)
   : Ridgeline Plot Type
+- [`type_roc()`](https://vanhungtran.github.io/cliomicplot/reference/type_roc.md)
+  : ROC Curve Type
 - [`type_rug()`](https://vanhungtran.github.io/cliomicplot/reference/type_rug.md)
   : Rug Plot Type
+- [`type_slope()`](https://vanhungtran.github.io/cliomicplot/reference/type_slope.md)
+  : Slope Plot Type
 - [`type_spineplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_spineplot.md)
   : Spine Plot / Spinogram Type
 - [`type_streamgraph()`](https://vanhungtran.github.io/cliomicplot/reference/type_streamgraph.md)
@@ -490,10 +704,16 @@ The main plotting function and layer helpers.
   : Swimmer Plot Type
 - [`type_text()`](https://vanhungtran.github.io/cliomicplot/reference/type_text.md)
   : Text/Label Plot Type
+- [`type_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_trajectory.md)
+  : Longitudinal Clinical Trajectory Plot Type
 - [`type_treemap()`](https://vanhungtran.github.io/cliomicplot/reference/type_treemap.md)
   : Treemap Type
 - [`type_trials()`](https://vanhungtran.github.io/cliomicplot/reference/type_trials.md)
   : Clinical Trials Pipeline Stacked Bar Chart
+- [`type_upset()`](https://vanhungtran.github.io/cliomicplot/reference/type_upset.md)
+  : UpSet Plot Type
+- [`type_venn()`](https://vanhungtran.github.io/cliomicplot/reference/type_venn.md)
+  : Venn Diagram Type
 - [`type_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_violin.md)
   : Violin Plot Type
 - [`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
@@ -505,15 +725,30 @@ The main plotting function and layer helpers.
 
 # Articles
 
-### Get started
+### Getting Started
 
 - [Getting Started with
   cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/cliomicplot.md):
-- [Volcano Plots — from Quick to
-  Publication-Ready](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md):
-- [End-to-End Oncology Analysis with
-  cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/oncology.md):
-- [Multi-Omics Exploratory Analysis with
-  cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md):
 - [Themes and Palettes in
   cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/themes-palettes.md):
+
+### Nature / Cell / Science Figure Styles
+
+- [Nature/Cell/Science-Quality Figures with
+  cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md):
+- [End-to-End Oncology Analysis with
+  cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/oncology.md):
+
+### Multi-Omics Workflows
+
+- [Multi-Omics Exploratory Analysis with
+  cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md):
+- [Volcano Plots — from Quick to
+  Publication-Ready](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md):
+
+### Published Paper Re-creations
+
+- [Recreating a Published Figure: SLE X-Chromosome
+  Dysregulation](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md):
+- [Recreating a Published Figure: SpaMTP Spatial
+  Metabolomics](https://vanhungtran.github.io/cliomicplot/articles/recreate-spamtp.md):

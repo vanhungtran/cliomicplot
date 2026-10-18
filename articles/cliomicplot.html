@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting Started with cliomicplot • cliomicplot</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +56,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Getting Started with cliomicplot</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Getting Started with cliomicplot</h1>
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-07-16</h4>
+            <h4 data-toc-skip class="date">2026-10-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/cliomicplot.Rmd" class="external-link"><code>vignettes/cliomicplot.Rmd</code></a></small>
       <div class="d-none name"><code>cliomicplot.Rmd</code></div>
@@ -159,329 +163,314 @@ document.addEventListener('keydown',function(e){if(!lbx.classList.contains('open
 </script><div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>cliomicplot</strong> is an R package for creating
-high-quality, publication-ready visualizations for clinical and
-multi-omics data analysis. Built on <strong>ggplot2</strong>, it
-provides 16 specialized plot types, 10 journal-specific themes, and 55+
-color palettes — all through a clean, formula-based API.</p>
-<p>This vignette walks you through the core concepts and basic
-usage.</p>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># From source</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_local.html" class="external-link">install_local</a></span><span class="op">(</span><span class="st">"path/to/cliomicplot"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Dependencies</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"ggplot2"</span>, <span class="st">"scales"</span>, <span class="st">"survival"</span>, <span class="st">"survminer"</span>,</span>
-<span>  <span class="st">"RColorBrewer"</span>, <span class="st">"reshape2"</span>, <span class="st">"ggrepel"</span>,</span>
-<span>  <span class="st">"patchwork"</span>, <span class="st">"ggpubr"</span>, <span class="st">"ggtext"</span>, <span class="st">"circlize"</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtrantran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; cliomicplot 0.1.0 - Publication-ready clinical &amp; omics plots</span></span>
-<span><span class="co">#&gt; Main function: cliplot() | Themes: clitheme() | Params: clipar()</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="the-formula-interface">The Formula Interface<a class="anchor" aria-label="anchor" href="#the-formula-interface"></a>
-</h2>
-<p>cliomicplot uses a formula-based API: <code>y ~ x | group</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Basic scatter with grouping</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<p>The <code>| group</code> part is optional. Every plot automatically
-gets:</p>
+<p><strong>cliomicplot</strong> is a unified grammar for
+publication-ready clinical and multi-omics figures built directly on
+<strong>ggplot2</strong>. Designed around the visual principles of
+<strong>Nature</strong>, <strong>Cell</strong>, and
+<strong>Science</strong>, it offers:</p>
 <ul>
-<li>Proper axis labels derived from variable names</li>
-<li>A legend when grouping is present</li>
-<li>A color palette applied to groups</li>
+<li>
+<strong>55+ specialized plot types</strong> spanning clinical trials
+(Kaplan-Meier milestones, MCID dumbbells, trajectories, swimmers,
+waterfalls, forest plots) and multi-omics (volcano, GSEA, UpSet, PCA,
+heatmaps).</li>
+<li>
+<strong>13 publication themes</strong> covering open-axis designs
+(<code>nature</code>, <code>science</code>, <code>cell</code>,
+<code>nejm</code>, <code>lancet</code>) and full-box Elsevier/IEEE
+frames (<code>scifig</code>).</li>
+<li>
+<strong>55+ curated color palettes</strong> with strict color vision
+deficiency (CVD) accessibility.</li>
+<li>
+<strong>Publisher trim sizing</strong>
+(<code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code>) for 9 major publishers with vector
+compliance checks (<code><a href="../reference/cli_save.html">cli_save()</a></code>).</li>
 </ul>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="choosing-a-plot-type">Choosing a Plot Type<a class="anchor" aria-label="anchor" href="#choosing-a-plot-type"></a>
+<h2 id="the-formula-interface-y-x-group">1. The Formula Interface: <code>y ~ x | group</code><a class="anchor" aria-label="anchor" href="#the-formula-interface-y-x-group"></a>
 </h2>
-<p>Pass <code>type = "..."</code> or a <code>type_*()</code>
-function:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Boxplot with built-in statistical test</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<p>cliomicplot provides a clean, expressive formula API:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Scatter plot with categorical grouping</span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<p>The formula syntax automatically manages: - Axis titles formatted
+from column names - Legend placement, titles, and symbol keys - Palette
+application with colorblind safety</p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="choosing-a-plot-type">2. Choosing a Plot Type<a class="anchor" aria-label="anchor" href="#choosing-a-plot-type"></a>
+</h2>
+<p>Pass <code>type = "..."</code> or a dedicated <code>type_*()</code>
+constructor to configure advanced parameters:</p>
+<div class="section level3">
+<h3 id="boxplot-with-automated-statistical-annotations">Boxplot with Automated Statistical Annotations<a class="anchor" aria-label="anchor" href="#boxplot-with-automated-statistical-annotations"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
 <span>        type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
 <span>        stat.test <span class="op">=</span> <span class="st">"kruskal.test"</span>,</span>
 <span>        stat.label <span class="op">=</span> <span class="st">"p.signif"</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"jco"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<p>When <code>type</code> is omitted, cliomicplot guesses based on data
-types:</p>
-<table class="table">
-<thead><tr class="header">
-<th>x variable</th>
-<th>y variable</th>
-<th>Auto-detected type</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>numeric</td>
-<td>numeric</td>
-<td>
-<code>"points"</code> (scatter)</td>
-</tr>
-<tr class="even">
-<td>factor/character</td>
-<td>numeric</td>
-<td><code>"boxplot"</code></td>
-</tr>
-<tr class="odd">
-<td>factor/character</td>
-<td><em>(none)</em></td>
-<td><code>"barplot"</code></td>
-</tr>
-<tr class="even">
-<td>numeric</td>
-<td><em>(none)</em></td>
-<td><code>"histogram"</code></td>
-</tr>
-</tbody>
-</table>
-<hr>
+<span>        palette <span class="op">=</span> <span class="st">"jco"</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<p>Supported statistical tests include <code>"t.test"</code>,
+<code>"wilcox.test"</code>, <code>"anova"</code>, and
+<code>"kruskal.test"</code>.</p>
 </div>
-<div class="section level2">
-<h2 id="statistical-annotations">Statistical Annotations<a class="anchor" aria-label="anchor" href="#statistical-annotations"></a>
-</h2>
-<p>Built-in statistical test support — no extra packages needed:</p>
+<div class="section level3">
+<h3 id="clinical-figure-archetypes-kaplan-meier-with-landmark-milestones">Clinical Figure Archetypes: Kaplan-Meier with Landmark
+Milestones<a class="anchor" aria-label="anchor" href="#clinical-figure-archetypes-kaplan-meier-with-landmark-milestones"></a>
+</h3>
+<p>In oncology and cardiovascular clinical trials, reporting landmark
+milestone survival rates (e.g., 1-year and 2-year survival) directly on
+curves is a premier journal requirement:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span></span>
+<span>          risk_table  <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          pval        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          conf_int    <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          milestones  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">365</span>, <span class="fl">730</span><span class="op">)</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"nejm"</span>, theme <span class="op">=</span> <span class="st">"nejm"</span>,</span>
+<span>        title <span class="op">=</span> <span class="st">"**NCCTG Lung Cancer Trial** — Overall Survival"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="minimal-clinically-important-difference-mcid-dumbbells">Minimal Clinically Important Difference (MCID) Dumbbells<a class="anchor" aria-label="anchor" href="#minimal-clinically-important-difference-mcid-dumbbells"></a>
+</h3>
+<p>Anchor clinical effect sizes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">|</mo><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="prefix">|</mo></mrow><annotation encoding="application/x-tex">|\hat{\theta}|</annotation></semantics></math>
+against validated instrument thresholds (Clinical Archetype 1):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># t-test with p-value formatting</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">len</span> <span class="op">~</span> <span class="va">dose</span>, data <span class="op">=</span> <span class="va">ToothGrowth</span>,</span>
-<span>        type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
-<span>        stat.test <span class="op">=</span> <span class="st">"t.test"</span>,</span>
-<span>        stat.label <span class="op">=</span> <span class="st">"p.format"</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"jco"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Orientation is not uniquely specified when both the x and y aesthetics are</span></span>
-<span><span class="co">#&gt; continuous. Picking default orientation 'x'.</span></span>
-<span><span class="co">#&gt; Warning: Continuous <span style="color: #00BB00;">x</span> aesthetic</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> did you forget `aes(group = ...)`?</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<p>Supported tests: <code>"t.test"</code>, <code>"wilcox.test"</code>,
-<code>"anova"</code>, <code>"kruskal.test"</code>.</p>
-<p>Supported label formats: <code>"p.format"</code> (e.g.,
-<code>p = 0.023</code>), <code>"p.signif"</code> (e.g., <code>*</code>,
-<code>**</code>), <code>"p.adj"</code>.</p>
+<code class="sourceCode R"><span><span class="va">mcid_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Endpoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EASI-75 (Biologic)"</span>, <span class="st">"DLQI 0/1 (Biologic)"</span>, <span class="st">"SCORAD-50 (SoC)"</span>, <span class="st">"POEM (Antihistamine)"</span><span class="op">)</span>,</span>
+<span>  Estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9.4</span>, <span class="fl">6.2</span>, <span class="fl">4.3</span>, <span class="fl">1.8</span><span class="op">)</span>,</span>
+<span>  MCID     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6.6</span>, <span class="fl">4.0</span>, <span class="fl">8.7</span>, <span class="fl">3.4</span><span class="op">)</span>,</span>
+<span>  N        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">480</span>, <span class="fl">450</span>, <span class="fl">310</span>, <span class="fl">220</span><span class="op">)</span>,</span>
+<span>  Category <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Biologic Exceeding MCID"</span>, <span class="st">"Biologic Exceeding MCID"</span>,</span>
+<span>               <span class="st">"SoC Below MCID"</span>, <span class="st">"SoC Below MCID"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Estimate</span> <span class="op">~</span> <span class="va">Endpoint</span>, data <span class="op">=</span> <span class="va">mcid_df</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_mcid.html">type_mcid</a></span><span class="op">(</span>mcid <span class="op">=</span> <span class="st">"MCID"</span>, n_treated <span class="op">=</span> <span class="st">"N"</span>, category <span class="op">=</span> <span class="st">"Category"</span><span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <hr>
 </div>
+</div>
 <div class="section level2">
-<h2 id="theming">Theming<a class="anchor" aria-label="anchor" href="#theming"></a>
+<h2 id="the-13-journal-themes">3. The 13 Journal Themes<a class="anchor" aria-label="anchor" href="#the-13-journal-themes"></a>
 </h2>
-<div class="section level3">
-<h3 id="persistent-themes">Persistent themes<a class="anchor" aria-label="anchor" href="#persistent-themes"></a>
-</h3>
-<p>Set a theme that applies to <strong>all</strong> subsequent
-plots:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: nature</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The theme persists</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">len</span> <span class="op">~</span> <span class="va">dose</span>, data <span class="op">=</span> <span class="va">ToothGrowth</span>, type <span class="op">=</span> <span class="st">"boxplot"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Orientation is not uniquely specified when both the x and y aesthetics are</span></span>
-<span><span class="co">#&gt; continuous. Picking default orientation 'x'.</span></span>
-<span><span class="co">#&gt; Warning: Continuous <span style="color: #00BB00;">x</span> aesthetic</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> did you forget `aes(group = ...)`?</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># reset to default</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="ephemeral-per-plot-themes">Ephemeral (per-plot) themes<a class="anchor" aria-label="anchor" href="#ephemeral-per-plot-themes"></a>
-</h3>
-<p>Apply a theme to <strong>one plot only</strong>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>, type <span class="op">=</span> <span class="st">"boxplot"</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-8-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level3">
-<h3 id="available-themes">Available themes<a class="anchor" aria-label="anchor" href="#available-themes"></a>
-</h3>
+<p>cliomicplot encapsulates distinct journal visual styles:</p>
 <table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
 <thead><tr class="header">
 <th>Theme</th>
 <th>Style</th>
+<th>Spines</th>
+<th>Grid</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>cli_bw</code></td>
-<td>Clean black-and-white (default)</td>
-</tr>
-<tr class="even">
-<td><code>cli_classic</code></td>
-<td>Classic with axis lines</td>
-</tr>
-<tr class="odd">
-<td><code>cli_minimal</code></td>
-<td>Minimal and modern</td>
-</tr>
-<tr class="even">
 <td><code>nature</code></td>
 <td>Nature Publishing Group</td>
+<td>Open (left &amp; bottom)</td>
+<td>None</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>science</code></td>
 <td>Science / AAAS</td>
+<td>Ultra-clean open</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td><code>cell</code></td>
+<td>Cell Press</td>
+<td>Structured open</td>
+<td>None</td>
 </tr>
 <tr class="even">
 <td><code>nejm</code></td>
 <td>New England Journal of Medicine</td>
+<td>Open</td>
+<td>Subtle horizontal</td>
 </tr>
 <tr class="odd">
 <td><code>lancet</code></td>
 <td>The Lancet</td>
+<td>Open</td>
+<td>Subtle horizontal</td>
 </tr>
 <tr class="even">
-<td><code>cell</code></td>
-<td>Cell Press</td>
+<td>
+<code>scifig</code> / <code>sci_box</code>
+</td>
+<td>Elsevier / IEEE / SCI</td>
+<td>4 black spines</td>
+<td>Subtle dashed (0.3 pt)</td>
 </tr>
 <tr class="odd">
-<td><code>broadsheet</code></td>
-<td>Publication print style</td>
+<td><code>cli_bw</code></td>
+<td>Laboratory default</td>
+<td>4 black spines</td>
+<td>Full grid</td>
 </tr>
 <tr class="even">
+<td><code>cli_classic</code></td>
+<td>Base R style</td>
+<td>Left &amp; bottom lines</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td><code>cli_minimal</code></td>
+<td>Modern minimal</td>
+<td>Borderless</td>
+<td>Faint</td>
+</tr>
+<tr class="even">
+<td><code>broadsheet</code></td>
+<td>Print newspaper</td>
+<td>Subtle border</td>
+<td>Horizontal only</td>
+</tr>
+<tr class="odd">
 <td><code>dark</code></td>
-<td>Dark background (presentations)</td>
+<td>Presentations / Slides</td>
+<td>Dark background</td>
+<td>Faint</td>
+</tr>
+<tr class="even">
+<td><code>showcase</code></td>
+<td>Posters / Hero figures</td>
+<td>Crisp frame</td>
+<td>Accent grid</td>
 </tr>
 </tbody>
 </table>
-<hr>
-</div>
-</div>
-<div class="section level2">
-<h2 id="color-palettes">Color Palettes<a class="anchor" aria-label="anchor" href="#color-palettes"></a>
-</h2>
-<p>cliomicplot ships with 55+ palettes in a unified system:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># List all palettes (first 20 shown)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/cli_palette_list.html">cli_palette_list</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">20</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "jco"            "nejm"           "lancet"         "nature"        </span></span>
-<span><span class="co">#&gt;  [5] "science"        "okabe_ito"      "tableau10"      "tol_muted"     </span></span>
-<span><span class="co">#&gt;  [9] "heatmap_rdbu"   "heatmap_rdylbu" "heatmap_prgn"   "volcano"       </span></span>
-<span><span class="co">#&gt; [13] "pastel"         "soft"           "neon"           "cyberpunk"     </span></span>
-<span><span class="co">#&gt; [17] "blues"          "reds"           "greens"         "purples"</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use any palette by name</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"jama"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"cosmic"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-10-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="standalone-ggplot2-scale-usage">Standalone ggplot2 scale usage<a class="anchor" aria-label="anchor" href="#standalone-ggplot2-scale-usage"></a>
-</h3>
-<p>All palettes work as standalone scales for any ggplot:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.5.3</span></span>
-<span></span>
+<p>All themes can be applied ephemerally
+(<code>theme = "nature"</code>), globally
+(<code>clitheme("nature")</code>), or as standalone ggplot2 functions
+(<code>+ theme_cli_nature()</code>,
+<code>+ theme_cli_scifig()</code>).</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use as a standalone ggplot2 theme layer</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"npg"</span>, <span class="st">"color"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/palette_scale.html">scale_color_cli</a></span><span class="op">(</span><span class="st">"npg"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_cli_science.html">theme_cli_science</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"theme_cli_science() on Base ggplot2"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <hr>
 </div>
-</div>
 <div class="section level2">
-<h2 id="markdown-text-rendering">Markdown Text Rendering<a class="anchor" aria-label="anchor" href="#markdown-text-rendering"></a>
+<h2 id="markdown-formatting-with-cli_markdown">4. Markdown Formatting with <code>cli_markdown()</code><a class="anchor" aria-label="anchor" href="#markdown-formatting-with-cli_markdown"></a>
 </h2>
-<p>Add <strong>bold</strong>, <em>italic</em>, colored,
-subscript/superscript text to labels:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>Render <strong>bold</strong>, <em>italic</em>, subscripts,
+superscripts, and hex-colored spans inside plot titles, subtitles, and
+captions:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title    <span class="op">=</span> <span class="st">"**Mileage** vs *Weight* in mtcars"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"n = 32 vehicles, &lt;span style='color:#E64B35'&gt;1974 Motor Trend&lt;/span&gt;"</span>,</span>
-<span>        caption  <span class="op">=</span> <span class="st">"*Motor Trend* (1974)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        theme    <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Mileage** vs *Weight* in 1974 Fleet"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"&lt;span style='color:#E64B35'&gt;n = 32 vehicles&lt;/span&gt;, *Motor Trend* benchmark"</span>,</span>
+<span>        caption  <span class="op">=</span> <span class="st">"Source: &lt;i&gt;1974 Motor Trend US magazine&lt;/i&gt;"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="selective-markdown">Selective markdown<a class="anchor" aria-label="anchor" href="#selective-markdown"></a>
-</h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Only the title renders markdown</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"**Bold Title**"</span>,</span>
-<span>        xlab  <span class="op">=</span> <span class="st">"Weight (1000 lbs)"</span>,    <span class="co"># plain text</span></span>
-<span>        ylab  <span class="op">=</span> <span class="st">"Miles / Gallon"</span><span class="op">)</span> <span class="op">+</span>      <span class="co"># plain text</span></span>
-<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="st">"title"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cliomicplot_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <hr>
 </div>
-</div>
 <div class="section level2">
-<h2 id="global-parameters-with-clipar">Global Parameters with <code>clipar()</code><a class="anchor" aria-label="anchor" href="#global-parameters-with-clipar"></a>
+<h2 id="multi-panel-composite-assembly">5. Multi-Panel Composite Assembly<a class="anchor" aria-label="anchor" href="#multi-panel-composite-assembly"></a>
 </h2>
-<p>Set defaults that apply to all subsequent plots:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># View current parameters (first 10)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;  [1] "facet.font"        "font.cap"          "stat.test"        </span></span>
-<span><span class="co">#&gt;  [4] "facet.border"      "facet.cex"         "palette.diverging"</span></span>
-<span><span class="co">#&gt;  [7] "file.width"        "theme.default"     "legend.direction" </span></span>
-<span><span class="co">#&gt; [10] "cex.sub"</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set defaults</span></span>
-<span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span>palette.qualitative <span class="op">=</span> <span class="st">"nejm"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span>stat.test <span class="op">=</span> <span class="st">"wilcox.test"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span>file.width <span class="op">=</span> <span class="fl">8</span>, file.height <span class="op">=</span> <span class="fl">6</span>, file.res <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
+<p>Assemble modular panels with <strong>patchwork</strong> and label
+them with <code><a href="../reference/cli_panel_label.html">cli_panel_label()</a></code> conforming to Nature
+(<strong>a</strong>, <strong>b</strong>) and Cell (<strong>A</strong>,
+<strong>B</strong>) standards:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>              palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Scatter Distribution"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Query</span></span>
-<span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span><span class="st">"palette.qualitative"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "nejm"</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="saving-to-file">Saving to File<a class="anchor" aria-label="anchor" href="#saving-to-file"></a>
-</h2>
-<p>Save plots directly from <code><a href="../reference/cliplot.html">cliplot()</a></code> in one call. Supports
-pdf, png, jpg, svg, and tiff:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        file   <span class="op">=</span> <span class="st">"iris_scatter.pdf"</span>,</span>
-<span>        width  <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>        height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>              type <span class="op">=</span> <span class="st">"boxplot"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Species Boxplot"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># PNG with high DPI</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"mpg_wt.png"</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
-<p>Set global defaults for file output:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span>file.width <span class="op">=</span> <span class="fl">8</span>, file.height <span class="op">=</span> <span class="fl">6</span>, file.res <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig1_highres.pdf"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Composite Biomarker Panel (Nature Design Language)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cliomicplot_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="912" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
+<h2 id="physical-dimensions-publication-export">6. Physical Dimensions &amp; Publication Export<a class="anchor" aria-label="anchor" href="#physical-dimensions-publication-export"></a>
 </h2>
+<p>When submitting manuscripts, figure dimensions must strictly match
+target journal column widths.</p>
+<p><code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> returns verified millimeter
+dimensions across 9 publishers:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Query Nature and Science column widths</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"single"</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>  <span class="co"># 89 mm</span></span>
+<span><span class="co">#&gt; [1] 89</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"double"</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>  <span class="co"># 183 mm</span></span>
+<span><span class="co">#&gt; [1] 183</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"science"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>        <span class="co"># 183 mm</span></span>
+<span><span class="co">#&gt; [1] 183</span></span></code></pre></div>
+<p>Export with <code><a href="../reference/cli_save.html">cli_save()</a></code> to verify format compliance
+(vector PDF/SVG for final submission):</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_final</span> <span class="op">&lt;-</span> <span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span>
+<span></span>
+<span><span class="co"># Vector PDF export for 2-column Nature layout</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_final</span>, <span class="st">"Figure_1.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Single-column Cell Press SVG export</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p1</span>, <span class="st">"Figure_1a.svg"</span>, journal <span class="op">=</span> <span class="st">"cell"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="next-steps-specialized-vignettes">Next Steps &amp; Specialized Vignettes<a class="anchor" aria-label="anchor" href="#next-steps-specialized-vignettes"></a>
+</h2>
+<p>Explore our in-depth guides for specific research workflows:</p>
 <ul>
 <li>
+<strong><code><a href="../articles/journal-plots.html">vignette("journal-plots", package = "cliomicplot")</a></code></strong>
+— Nature, Cell, and Science design language &amp; clinical
+archetypes</li>
+<li>
 <strong><code><a href="../articles/oncology.html">vignette("oncology", package = "cliomicplot")</a></code></strong>
-— End-to-end oncology analysis</li>
+— End-to-end clinical oncology analysis (swimmers, waterfalls, KM
+milestones)</li>
 <li>
 <strong><code><a href="../articles/multiomics.html">vignette("multiomics", package = "cliomicplot")</a></code></strong>
-— Multi-omics exploratory analysis</li>
+— Proteomics, metabolomics, and longitudinal time-courses
+(xOmicsShiny)</li>
 <li>
 <strong><code><a href="../articles/themes-palettes.html">vignette("themes-palettes", package = "cliomicplot")</a></code></strong>
-— Deep dive into themes &amp; palettes</li>
+— The 13 themes and 55+ color palettes in depth</li>
+<li>
+<strong><code><a href="../articles/volcano-plot.html">vignette("volcano-plot", package = "cliomicplot")</a></code></strong>
+— Differential expression volcanoes from quick to publication-ready</li>
+<li>
+<strong><code><a href="../articles/recreate-paper.html">vignette("recreate-paper", package = "cliomicplot")</a></code></strong>
+— Recreating published multi-panel figures from raw supplementary
+data</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -495,7 +484,7 @@ pdf, png, jpg, svg, and tiff:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

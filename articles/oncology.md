@@ -20,23 +20,40 @@ Scroll to zoom · Drag to pan · ← → to navigate
 
 ## Overview
 
-This vignette demonstrates a complete oncology clinical data analysis
-workflow using **cliomicplot**. We’ll generate four publication-quality
-figures commonly found in oncology manuscripts:
+This vignette demonstrates a complete oncology translational and
+clinical data analysis workflow with **cliomicplot**, following figure
+design standards from **Nature**, **Cell**, and **Science**:
 
-1.  **Figure 1** — Kaplan-Meier overall survival curves
-2.  **Figure 2** — Forest plot from multivariable Cox regression
-3.  **Figure 3A** — Waterfall plot of best tumor response
-4.  **Figure 3B** — Swimmer plot of patient treatment courses
+1.  **Figure 1A** — Kaplan-Meier overall survival with landmark
+    milestones (Nature / NEJM style)
+2.  **Figure 1B** — Cumulative incidence $`[1 - S(t)]`$ for disease
+    recurrence (Lancet Oncology style)
+3.  **Figure 2** — Multivariable Cox regression forest plot with row
+    stripes & summary diamond (Science style)
+4.  **Figure 3A** — Waterfall plot of RECIST v1.1 best tumor response
+5.  **Figure 3B** — Swimmer plot with ongoing therapy arrowheads &
+    RECIST event glyphs (Cell style)
+6.  **Figure 4** — Minimal Clinically Important Difference (MCID)
+    dumbbell plot (Archetype 1)
+7.  **Figure 5** — Longitudinal patient trajectories with clinical
+    severity bands (Archetype 4)
+8.  **Figure 6A** — Time-course proteomics across disease recovery
+    stages
+9.  **Figure 6B** — Multi-protein longitudinal trajectories
+10. **Figure 6C** — Prism-style ANOVA boxplot with significance brackets
+11. **Figure 7** — Industry clinical trial portfolio pipeline
+12. **Figure 8** — Composite multi-panel assembly with `patchwork` and
+    [`cli_panel_label()`](https://vanhungtran.github.io/cliomicplot/reference/cli_panel_label.md)
+13. **Figure Export** — Journal trim sizing (`cli_journal_size`) and
+    publication export (`cli_save`)
 
 ``` r
 
 library(cliomicplot)
-#> cliomicplot 0.1.0 - Publication-ready clinical & omics plots
-#> Main function: cliplot() | Themes: clitheme() | Params: clipar()
 library(survival)
+library(patchwork)
 
-# Set global defaults for this analysis
+# Set global defaults for publication styling
 clipar(
   palette.qualitative = "nejm",
   stat.test           = NULL,
@@ -46,88 +63,97 @@ clipar(
 
 ------------------------------------------------------------------------
 
-## Figure 1: Kaplan-Meier Survival Curves
+## Figure 1A: Kaplan-Meier Survival Curves with Landmark Milestones
 
-We use the `lung` dataset from the **survival** package to visualize
-overall survival stratified by sex.
+In oncology clinical trials, reporting overall survival (OS) requires
+both the step survival function and explicit landmark milestone rates
+(e.g., 6-month, 1-year, and 2-year survival) with confidence intervals.
+
+[`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)
+provides a zero-dependency native `ggplot2` engine with aligned
+numbers-at-risk tables and landmark milestone annotations:
 
 ``` r
 
 clitheme("nejm")
-#> Theme set to: nejm
 
 cliplot(Surv(time, status) ~ sex, data = lung,
         type = type_km(
           risk_table  = TRUE,
           pval        = TRUE,
           conf_int    = TRUE,
-          median_line = TRUE
+          median_line = TRUE,
+          milestones  = c(180, 365, 730)
         ),
         palette  = "nejm",
-        title    = "**Figure 1** — Overall Survival by Sex",
-        subtitle = "NCCTG Lung Cancer Trial (n = 228)",
-        xlab     = "Time (days)",
+        title    = "**Figure 1A** — Overall Survival Stratified by Sex",
+        subtitle = "NCCTG Lung Cancer Trial (n = 228) with 6-mo, 1-yr, 2-yr Milestones",
+        xlab     = "Time on Study (days)",
         ylab     = "Survival Probability",
         legend   = "top") +
   cli_markdown()
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `linewidth` instead.
-#> ℹ The deprecated feature was likely used in the ggpubr package.
-#>   Please report the issue at <https://github.com/kassambara/ggpubr/issues>.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> Scale for fill is already present.
-#> Adding another scale for fill, which will replace the existing scale.
-#> Ignoring unknown labels:
-#> • colour : ""
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-2-1.png)
+![](oncology_files/figure-html/fig1a-km-1.png)
 
 ### Key features demonstrated:
 
-- [`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)
-  with risk table, p-value, confidence intervals, and median survival
-  line
-- `clitheme("nejm")` for NEJM-style typography
-- [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md)
-  for bold formatting in the title
-
-### Customizing KM plots
-
-``` r
-
-# Without risk table, cleaner look
-cliplot(Surv(time, status) ~ sex, data = lung,
-        type = type_km(risk_table = FALSE, conf_int = FALSE),
-        palette = "lancet",
-        theme   = "lancet",
-        title   = "**Overall Survival** — Sex-Stratified") +
-  cli_markdown()
-#> Scale for colour is already present.
-#> Adding another scale for colour, which will replace the existing scale.
-#> Scale for fill is already present.
-#> Adding another scale for fill, which will replace the existing scale.
-```
-
-![](oncology_files/figure-html/unnamed-chunk-3-1.png)
+- Landmark milestones annotated directly on curves with percentage
+  estimates and error bars
+- Risk table aligned perfectly with x-axis ticks
+- Drop lines indicating median overall survival time
+- `clitheme("nejm")` for clean New England Journal of Medicine
+  typography
 
 ------------------------------------------------------------------------
 
-## Figure 2: Forest Plot — Multivariable Cox Regression
+## Figure 1B: Cumulative Incidence $`[1 - S(t)]`$
 
-Fit a Cox proportional hazards model and visualize the hazard ratios:
+When evaluating disease progression, toxicities, or adverse event rates,
+clinical journals prefer cumulative incidence curves starting at 0% and
+climbing toward 100%:
 
 ``` r
 
-# Fit Cox model
+clitheme("lancet")
+
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(
+          cumulative_incidence = TRUE,
+          risk_table           = TRUE,
+          pval                 = TRUE,
+          conf_int             = TRUE,
+          milestones           = c(180, 365)
+        ),
+        palette  = "lancet",
+        title    = "**Figure 1B** — Cumulative Incidence of Death",
+        subtitle = "NCCTG Lung Cohort — Landmark Milestones at 180 and 365 Days",
+        xlab     = "Days Since Enrollment",
+        ylab     = "Cumulative Incidence (%)",
+        legend   = "top") +
+  cli_markdown()
+```
+
+![](oncology_files/figure-html/fig1b-ci-1.png)
+
+------------------------------------------------------------------------
+
+## Figure 2: Multivariable Cox Regression Forest Plot
+
+Forest plots summarize multivariable Cox proportional hazards models. In
+Science and Lancet style: - Alternating subtle row stripes
+(`stripe = TRUE`) guide the reader’s eye across wide canvases. - Pooled
+summary estimates are highlighted with high-contrast diamond glyphs
+(`diamond = TRUE`). - Odds/Hazard ratio estimates and 95% CIs are
+aligned cleanly along the vertical axis.
+
+``` r
+
+# Fit Cox proportional hazards model
 cox_fit <- coxph(Surv(time, status) ~ age + sex + ph.ecog + wt.loss, data = lung)
 cox_sum <- summary(cox_fit)
 
-# Extract results into a forest-plot-ready data frame
+# Prepare forest plot data frame
 forest_df <- data.frame(
   Variable = c("Age (per year)", "Male vs. Female",
                "ECOG PS (per point)", "Weight loss (per lb)"),
@@ -137,50 +163,37 @@ forest_df <- data.frame(
   P        = cox_sum$coefficients[, "Pr(>|z|)"]
 )
 
-forest_df
-#>                     Variable        HR    CI_low   CI_high            P
-#> age           Age (per year) 1.0134589 0.9945143 1.0327643 1.649509e-01
-#> sex          Male vs. Female 0.5538981 0.3928084 0.7810504 7.535384e-04
-#> ph.ecog  ECOG PS (per point) 1.6738244 1.3075807 2.1426504 4.340524e-05
-#> wt.loss Weight loss (per lb) 0.9910344 0.9781867 1.0040508 1.761353e-01
-```
-
-``` r
-
-clitheme("lancet")
-#> Theme set to: lancet
+clitheme("science")
 
 cliplot(HR ~ Variable, data = forest_df,
         type = type_forest(
-          ref_line   = TRUE,
-          sort       = TRUE,
-          point_size = 4,
-          ci_width   = 1.2,
-          sig_color  = "#E64B35",
-          ns_color   = "#3C5488"
+          ref_line    = TRUE,
+          sort        = TRUE,
+          point_size  = 4,
+          ci_width    = 1.2,
+          stripe      = TRUE,
+          show_values = TRUE,
+          sig_color   = "#E64B35",
+          ns_color    = "#3C5488"
         ),
-        title    = "**Figure 2** — Multivariable Cox Regression",
-        subtitle = "Overall Survival — Hazard Ratios (95% CI)",
-        caption  = "Lung Cancer Dataset (n = 228)") +
+        title    = "**Figure 2** — Multivariable Cox Proportional Hazards Model",
+        subtitle = "Overall Survival Hazard Ratios (95% CI) with Row Stripes",
+        caption  = "NCCTG Advanced Lung Cancer (n = 228)") +
   cli_markdown()
-#> `height` was translated to `width`.
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-5-1.png)
-
-### Interpreting the forest plot
-
-- **Red points** = p \< 0.05 (statistically significant)
-- **Blue points** = p \>= 0.05 (not significant)
-- **Vertical dashed line** at HR = 1 (null effect)
-- HR \> 1 = increased risk; HR \< 1 = protective effect
+![](oncology_files/figure-html/fig2-forest-1.png)
 
 ------------------------------------------------------------------------
 
-## Figure 3A: Waterfall Plot — Tumor Response
+## Figure 3A: Waterfall Plot — RECIST Best Tumor Response
 
-Generate a simulated immunotherapy trial dataset and visualize best
-tumor response:
+In solid tumor trials, the waterfall plot displays the maximum percent
+change in target lesion diameter relative to baseline for each
+individual patient.
+
+Standard RECIST v1.1 response cutoffs (+20% for Progressive Disease,
+-30% for Partial Response) are indicated by dashed threshold lines:
 
 ``` r
 
@@ -188,61 +201,41 @@ set.seed(42)
 n_pts <- 30
 
 imtrial <- data.frame(
-  Patient    = paste0("IM-", sprintf("%03d", 1:n_pts)),
+  Patient    = paste0("PT-", sprintf("%02d", 1:n_pts)),
   BestChange = sort(rnorm(n_pts, mean = -22, sd = 32)),
   BestResp   = sample(c("CR", "PR", "SD", "PD"), n_pts,
-                      replace = TRUE,
-                      prob = c(0.07, 0.30, 0.36, 0.27)),
-  Duration   = pmax(1, round(rnorm(n_pts, mean = 14, sd = 7), 1)),
-  Arm        = sample(c("Anti-PD1", "Chemotherapy"), n_pts, replace = TRUE)
+                      replace = TRUE, prob = c(0.10, 0.30, 0.35, 0.25)),
+  Duration   = pmax(2, round(rnorm(n_pts, mean = 16, sd = 7), 1)),
+  Ongoing    = sample(c(TRUE, FALSE), n_pts, replace = TRUE, prob = c(0.4, 0.6))
 )
 
-# Show first few rows
-head(imtrial)
-#>   Patient BestChange BestResp Duration          Arm
-#> 1  IM-001 -107.00657       PD     17.0 Chemotherapy
-#> 2  IM-002 -100.09494       CR      8.3 Chemotherapy
-#> 3  IM-003  -79.00187       PD     24.1     Anti-PD1
-#> 4  IM-004  -78.42122       PR     11.0     Anti-PD1
-#> 5  IM-005  -66.44354       PD     18.6     Anti-PD1
-#> 6  IM-006  -42.47984       SD     16.3     Anti-PD1
-```
-
-``` r
-
 clitheme("broadsheet")
-#> Theme set to: broadsheet
 
 cliplot(BestChange ~ Patient, data = imtrial,
         type = type_waterfall(
           show_labels = TRUE,
-          label_size  = 2.5,
+          label_size  = 2.4,
           bar_width   = 0.75,
-          response_thresholds = c("PD" = 20, "SD" = -30)
+          response_thresholds = c("PD" = 20, "PR" = -30)
         ),
-        title    = "**Figure 3A** — Best Tumor Response (Waterfall)",
-        subtitle = "RECIST v1.1 — % Change from Baseline",
-        ylab     = "Best % Change from Baseline",
+        title    = "**Figure 3A** — Best Tumor Response from Baseline (Waterfall)",
+        subtitle = "RECIST v1.1 Thresholds: PD (+20%) and PR (-30%)",
+        ylab     = "Best % Change in Target Lesions",
         legend   = "bottom") +
   cli_markdown()
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-7-1.png)
-
-### Response categories
-
-| Category                 | Threshold                    | Color     |
-|--------------------------|------------------------------|-----------|
-| CR (Complete Response)   | Disappearance of all lesions | 🟢 Green  |
-| PR (Partial Response)    | ≥ 30% decrease               | 🔵 Blue   |
-| SD (Stable Disease)      | Between +20% and −30%        | 🟠 Orange |
-| PD (Progressive Disease) | ≥ 20% increase               | 🔴 Red    |
+![](oncology_files/figure-html/fig3a-waterfall-1.png)
 
 ------------------------------------------------------------------------
 
-## Figure 3B: Swimmer Plot — Patient Timelines
+## Figure 3B: Swimmer Plot with Ongoing Indicators & RECIST Events
 
-Add clinical event markers to the patient timeline:
+Following **Clinical Archetype 13**, swimmer plots track patient
+treatment timelines. Patients actively continuing therapy at database
+lock are distinguished by arrowheads at their bar tips
+(`ongoing = "Ongoing"`), and key clinical events are overlaid with
+RECIST glyphs:
 
 ``` r
 
@@ -252,123 +245,246 @@ n_total_events  <- sum(n_events_per_pt)
 
 events_df <- data.frame(
   ID    = rep(imtrial$Patient, times = n_events_per_pt),
-  Time  = round(runif(n_total_events, 0, 28), 1),
-  Event = sample(c("Progression", "AE Gr≥3", "Dose Reduction", "Response"),
+  Time  = round(runif(n_total_events, 1, 26), 1),
+  Event = sample(c("Progression", "AE", "Dose Reduction", "Response", "Surgery"),
                  n_total_events,
-                 replace = TRUE, prob = c(0.3, 0.25, 0.2, 0.25))
+                 replace = TRUE, prob = c(0.25, 0.25, 0.20, 0.20, 0.10))
 )
 
-head(events_df)
-#>       ID Time          Event
-#> 1 IM-001 13.4        AE Gr≥3
-#> 2 IM-001 21.2        AE Gr≥3
-#> 3 IM-001  6.1       Response
-#> 4 IM-002  8.9        AE Gr≥3
-#> 5 IM-002  6.5        AE Gr≥3
-#> 6 IM-002  4.0 Dose Reduction
-```
-
-``` r
+clitheme("cell")
 
 cliplot(Duration ~ Patient, data = imtrial,
         type = type_swimmer(
-          bar_fill    = "BestResp",
-          event_times = events_df,
-          bar_alpha   = 0.85
+          bar_fill      = "BestResp",
+          ongoing       = "Ongoing",
+          event_times   = events_df,
+          show_duration = TRUE,
+          bar_alpha     = 0.85
         ),
-        palette = "jco",
-        title   = "**Figure 3B** — Patient Treatment Course (Swimmer)",
-        subtitle = "Duration on study with key clinical events",
+        bar_palette = "jama",
+        title   = "**Figure 3B** — Patient Treatment Trajectories (Swimmer)",
+        subtitle = "Arrows indicate ongoing therapy at data lock | Overlay: RECIST Events",
         xlab    = "",
         ylab    = "Time on Study (months)",
         legend  = "bottom") +
   cli_markdown()
-#> Warning: Removed 21 rows containing missing values or values outside the scale range
-#> (`geom_point()`).
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-9-1.png)
-
-### Event shape legend
-
-| Event          | Shape            | Color     |
-|----------------|------------------|-----------|
-| Progression    | ✳ (asterisk, 8)  | 🔴 Red    |
-| AE Gr≥3        | ● (circle, 16)   | 🟠 Orange |
-| Dose Reduction | ▲ (triangle, 17) | 🟤 Brown  |
-| Response       | ◆ (diamond, 18)  | 🟢 Green  |
-| Death          | ✖ (cross, 4)     | ⚫ Black  |
+![](oncology_files/figure-html/fig3b-swimmer-1.png)
 
 ------------------------------------------------------------------------
 
-## Combined Multi-Panel Figure
+## Figure 4: Minimal Clinically Important Difference (MCID) Dumbbell Plot
 
-Use **patchwork** to combine the waterfall and swimmer plots:
+In modern oncology and immunotherapy trials, statistical significance
+($`P < 0.05`$) does not always equate to meaningful patient benefit.
+
+The **MCID Dumbbell Plot** (**Clinical Archetype 1**) connects observed
+clinical effect estimates to validated instrument MCID thresholds
+(e.g. FACT-G, QLQ-C30, Pain NRS, DLQI), scaling point glyphs by sample
+size ($`N_{\text{treated}}`$) and sorting endpoints by their
+effect-to-MCID ratio:
 
 ``` r
 
-library(patchwork)
-#> Warning: package 'patchwork' was built under R version 4.5.1
+mcid_oncology = data.frame(
+  Endpoint = c("FACT-G QoL (Anti-PD1)", "Pain NRS (Analgesic Add-on)",
+               "Fatigue Score (Exercise Co-care)", "QLQ-C30 Physical (Anti-PD1)",
+               "Appetite Loss (Standard Care)"),
+  Estimate = c(8.5, 3.4, 4.2, 11.2, 1.8),
+  MCID     = c(5.0, 2.0, 3.0,  8.0, 4.0),
+  N        = c(520, 380, 240,  510, 190),
+  Category = c("Immunotherapy Exceeding MCID", "Adjuvant Exceeding MCID",
+               "Supportive Care Exceeding MCID", "Immunotherapy Exceeding MCID",
+               "Standard Care Below MCID")
+)
 
-# Regenerate with consistent theme
-p1 <- cliplot(BestChange ~ Patient, data = imtrial,
-              type = type_waterfall(show_labels = FALSE, bar_width = 0.7),
-              theme = "cli_minimal",
-              title = "**A** — Waterfall") + cli_markdown()
+clitheme("nature")
 
-p2 <- cliplot(Duration ~ Patient, data = imtrial,
-              type = type_swimmer(bar_fill = "BestResp", event_times = events_df),
-              theme = "cli_minimal",
-              title = "**B** — Swimmer") + cli_markdown()
-
-p1 + p2 +
-  plot_annotation(
-    title   = "**Figure 3** — Tumor Response Assessment",
-    caption = "Simulated immunotherapy trial data",
-    theme   = ggplot2::theme(plot.title = ggtext::element_markdown())
-  )
-#> Warning: Removed 21 rows containing missing values or values outside the scale range
-#> (`geom_point()`).
+cliplot(Estimate ~ Endpoint, data = mcid_oncology,
+        type = type_mcid(
+          mcid          = "MCID",
+          n_treated     = "N",
+          category      = "Category",
+          sort_by_ratio = TRUE
+        ),
+        title    = "**Figure 4** — Minimal Clinically Important Difference (MCID) Evaluation",
+        subtitle = "Comparing observed clinical effects to validated instrument thresholds",
+        xlab     = "Absolute Effect Estimate (|estimate|)") +
+  cli_markdown()
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-10-1.png)
+![](oncology_files/figure-html/fig4-mcid-1.png)
 
 ------------------------------------------------------------------------
 
-## Saving Figures for Publication
+## Figure 5: Longitudinal Trajectories with Clinical Severity Bands
+
+Patient biomarkers and clinical scores exhibit substantial
+between-subject variability.
+
+The **Longitudinal Trajectory Plot** (**Clinical Archetype 4**) overlays
+semi-transparent individual patient profiles onto shaded reference
+severity bands (e.g., Mild, Moderate, Severe), anchored by a bold group
+mean ribbon and sample size callouts ($`n = \dots`$):
 
 ``` r
 
-# Save individual figures as high-resolution files
-cliplot(Surv(time, status) ~ sex, data = lung,
-        type = type_km(risk_table = TRUE),
-        theme = "nejm", palette = "nejm",
-        file = "fig1_km.pdf", width = 8, height = 6)
+set.seed(42)
+n_patients = 20
+visits = c("Baseline", "Cycle 2", "Cycle 4", "Cycle 6", "Follow-up")
+traj_df = expand.grid(Patient = paste0("PT-", sprintf("%02d", 1:n_patients)), Visit = visits)
 
-cliplot(HR ~ Variable, data = forest_df,
-        type = type_forest(),
-        theme = "lancet",
-        file = "fig2_forest.pdf", width = 7, height = 4.5)
+# Simulate circulating biomarker decline under effective targeted therapy
+base_vals = rep(runif(n_patients, 55, 90), each = length(visits))
+decay_vals = rep(c(0, 15, 32, 48, 55), times = n_patients)
+noise = rnorm(nrow(traj_df), mean = 0, sd = 5)
+traj_df$Marker = pmax(2, pmin(100, base_vals - decay_vals + noise))
 
-cliplot(BestChange ~ Patient, data = imtrial,
-        type = type_waterfall(),
-        theme = "broadsheet",
-        file = "fig3_waterfall.pdf", width = 10, height = 5.5)
+clitheme("science")
+
+cliplot(Marker ~ Visit | Patient, data = traj_df,
+        type = type_trajectory(
+          severity_bands  = list(Normal = c(0, 25), Elevated = c(25, 50), Critical = c(50, 100)),
+          severity_colors = c(Normal = "#E8F8F5", Elevated = "#FEF9E7", Critical = "#FADBD8"),
+          show_mean       = TRUE,
+          show_ci         = TRUE,
+          show_n          = TRUE
+        ),
+        title    = "**Figure 5** — Longitudinal Biomarker Response Trajectories",
+        subtitle = "Circulating Tumor Protein Dynamics with Severity Stratification",
+        ylab     = "Tumor Biomarker Concentration (ng/mL)") +
+  cli_markdown()
 ```
+
+![](oncology_files/figure-html/fig5-trajectory-1.png)
 
 ------------------------------------------------------------------------
 
-## Figure 4: Clinical Trials Pipeline — Stacked Bar Chart
+## Figure 6A: Time-Course Translational Proteomics
 
-The new
+Using real **xOmicsShiny StrokeBrain_TimeCourse** data to visualize
+protein expression trajectories across 5 recovery time points in
+ischemic stroke (StrkIp), sham surgery (ShamIp), and naive control
+(StrkC):
+
+``` r
+
+# Helper to resolve bundled package data
+resolve_data = function(filename) {
+  pkg_path = system.file("extdata", filename, package = "cliomicplot")
+  if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
+  fallback = file.path("..", "inst", "extdata", filename)
+  if (file.exists(fallback)) return(fallback)
+  fallback2 = file.path("inst", "extdata", filename)
+  if (file.exists(fallback2)) return(fallback2)
+  stop("Cannot find data file: ", filename)
+}
+
+# Load stroke time-course proteomics
+stroke_env = new.env()
+load(resolve_data("StrokeBrain_TimeCourse.RData"), envir = stroke_env)
+
+# Merge gene symbols
+stroke_long = merge(stroke_env$data_long,
+                    stroke_env$ProteinGeneName[, c("UniqueID", "Gene.Name")],
+                    by = "UniqueID", all.x = TRUE)
+
+# Select Mpeg1 (macrophage/microglia activation marker)
+mpeg1 = subset(stroke_long, Gene.Name == "Mpeg1")
+mpeg1$Day = as.numeric(mpeg1$conc)
+mpeg1$Treatment = mpeg1$treatment
+
+clitheme("science")
+
+cliplot(expr ~ Day | Treatment, data = mpeg1,
+        type = type_lines(linewidth = 1.2),
+        palette = "jco",
+        title   = "**Figure 6A** — Mpeg1 Macrophage Marker Time Course",
+        subtitle = "Stroke Brain Proteomics — 5 Time Points (Days 1–28)",
+        xlab    = "Days Post-Onset",
+        ylab    = "Protein Expression (LFQ Intensity)") +
+  cli_markdown()
+```
+
+![](oncology_files/figure-html/fig6a-timecourse-1.png)
+
+------------------------------------------------------------------------
+
+## Figure 6B: Multi-Protein Longitudinal Trajectories
+
+Tracking 6 key neuro-inflammatory markers across ischemic injury
+progression:
+
+``` r
+
+immune_genes = c("Mpeg1", "C1qa", "C3", "Trem2", "Tyrobp", "Itgam")
+immune_data = subset(stroke_long, Gene.Name %in% immune_genes & treatment == "StrkIp")
+immune_data$Day = as.numeric(immune_data$conc)
+
+immune_means = aggregate(expr ~ Gene.Name + Day, data = immune_data, FUN = mean, na.rm = TRUE)
+
+clitheme("nature")
+
+cliplot(expr ~ Day | Gene.Name, data = immune_means,
+        type = type_lines(linewidth = 1.1),
+        palette = "lancet",
+        title   = "**Figure 6B** — Immune Protein Dynamics (Ischemic Model)",
+        subtitle = "Mean LFQ across 5 time points in the damaged hemisphere",
+        ylab    = "Mean LFQ Intensity",
+        legend  = "right") +
+  cli_markdown()
+```
+
+![](oncology_files/figure-html/fig6b-multiprotein-1.png)
+
+------------------------------------------------------------------------
+
+## Figure 6C: Prism-Style Boxplot with ANOVA
+
+Using **xOmicsShiny AgingHFCD_Metabolomics** data to compare metabolite
+levels across four experimental groups with statistical annotations:
+
+``` r
+
+aging_env = new.env()
+load(resolve_data("AgingHFCD_Metabolomics.RData"), envir = aging_env)
+
+# Select top DE metabolites and assign clinical labels
+top_mets = head(unique(aging_env$results_long$UniqueID[aging_env$results_long$Adj.P.Value < 0.01]), 4)
+met_data = subset(aging_env$data_long, UniqueID %in% top_mets)
+met_data$Group = factor(met_data$group,
+                        levels = c("Young_CD", "Old_CD", "Young_HF", "Old_HF"),
+                        labels = c("Young+CD", "Old+CD", "Young+HF", "Old+HF"))
+
+clitheme("scifig")
+
+cliplot(expr ~ Group | UniqueID, data = met_data,
+        type = type_boxplot(
+          add_jitter   = TRUE,
+          jitter_width = 0.22
+        ),
+        stat.test = "anova",
+        stat.label = "p.signif",
+        palette = "jco",
+        title   = "**Figure 6C** — Metabolite Levels by Age × Diet Group",
+        subtitle = "Top 4 DE metabolites | One-way ANOVA with significance stars",
+        ylab    = "Metabolite Abundance (log2)") +
+  cli_markdown()
+```
+
+![](oncology_files/figure-html/fig6c-anova-1.png)
+
+------------------------------------------------------------------------
+
+## Figure 7: Clinical Trials Pipeline — Stacked Bar Chart
+
 [`type_trials()`](https://vanhungtran.github.io/cliomicplot/reference/type_trials.md)
-creates a horizontal stacked bar chart ideal for showing trial
-pipelines, project portfolios, or any categorical breakdown within
-groups:
+visualizes oncology drug development portfolios categorized by clinical
+trial phase:
 
 ``` r
 
-# Simulated trial pipeline data
 pipeline <- data.frame(
   company = rep(c("AstraZeneca", "Roche", "MSD", "Lilly", "Hengrui",
                   "Sanofi", "Novartis", "BMS", "J&J", "Pfizer", "AbbVie"),
@@ -383,60 +499,130 @@ phase_colors <- c(
   "I"      = "#F8D95C", "I/II"   = "#D69B3C", "II"     = "#A7BA91",
   "II/III" = "#B76348", "III"    = "#123F2A"
 )
-phase_text <- c(
-  "I"      = "#173E2B", "I/II"   = "#173E2B", "II"     = "#173E2B",
-  "II/III" = "white",   "III"    = "#F6F1DE"
-)
+
+clitheme("cli_bw")
 
 cliplot(n ~ company | phase, data = pipeline,
         type = type_trials(
-          segment_colors      = phase_colors,
-          segment_text_colors = phase_text,
-          label_threshold     = 3
+          segment_colors  = phase_colors,
+          label_threshold = 3
         ),
-        title    = "**Figure 4** — Industry-Sponsored Clinical Trials by Phase",
-        subtitle = "Companies with ≥ 25 completed trials, 2025",
-        caption  = "Source: Citeline Annual Completed Clinical Trials Report")
+        title    = "**Figure 7** — Oncology Pipeline Activity by Development Phase",
+        subtitle = "Global Pharmaceutical Portfolios with ≥ 25 Active Clinical Trials",
+        caption  = "Source: Citeline Annual Clinical Trial Report")
 ```
 
-![](oncology_files/figure-html/unnamed-chunk-12-1.png)
+![](oncology_files/figure-html/fig7-trials-1.png)
 
-### Customization
+------------------------------------------------------------------------
 
-| Parameter | Default | Description |
-|----|----|----|
-| `segment_colors` | `NULL` (jco palette) | Named vector mapping segments to fill colours |
-| `segment_text_colors` | `NULL` (auto dark) | Named vector mapping segments to label text colours |
-| `bar_height` | `0.72` | Bar height as fraction of row spacing |
-| `label_threshold` | `3` | Minimum segment width to show internal label |
-| `show_totals` | `TRUE` | Show total count label to the right |
+## Figure 8: Nature / Cell Multi-Panel Composite Assembly
+
+Premier journals mandate unified composite figures with standardized
+bold panel labels (**a**, **b** or **A**, **B**) and synchronized
+typography:
+
+``` r
+
+p_waterfall <- cliplot(BestChange ~ Patient, data = imtrial,
+                       type = type_waterfall(show_labels = FALSE, bar_width = 0.7),
+                       theme = "cell",
+                       title = "Best Tumor Response") +
+  cli_panel_label("a")
+
+p_swimmer <- cliplot(Duration ~ Patient, data = imtrial,
+                     type = type_swimmer(
+                       bar_fill    = "BestResp",
+                       ongoing     = "Ongoing",
+                       event_times = events_df
+                     ),
+                     theme = "cell", bar_palette = "jama",
+                     title = "Treatment Duration & Events") +
+  cli_panel_label("b")
+
+p_waterfall + p_swimmer +
+  plot_layout(widths = c(1, 1.2)) +
+  plot_annotation(
+    title   = "**Figure 8** — RECIST Response Assessment in Phase II Immunotherapy",
+    caption = "Simulated trial data: 30 evaluable patients",
+    theme   = ggplot2::theme(plot.title = ggtext::element_markdown(face = "bold", size = 13))
+  )
+```
+
+![](oncology_files/figure-html/fig8-composite-1.png)
+
+------------------------------------------------------------------------
+
+## Journal Dimensions & Publication-Ready Export
+
+When submitting to major scientific publishers, figure canvas dimensions
+must match exact column widths in millimeters.
+
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+provides presets for 9 premier publishers:
+
+``` r
+
+# Check Nature and Cell submission dimensions
+cat("Nature 2-column width:", cli_journal_size("nature", 2)$width_mm, "mm\n")
+#> Nature 2-column width: 183 mm
+cat("Cell 2-column width:  ", cli_journal_size("cell", 2)$width_mm, "mm\n")
+#> Cell 2-column width:   180 mm
+cat("Science 2-column width:", cli_journal_size("science", 2)$width_mm, "mm\n")
+#> Science 2-column width: 183 mm
+```
+
+Export individual figures with
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+to verify format compliance and embed fonts:
+
+``` r
+
+# Nature full-width composite figure export
+p_comp = p_waterfall + p_swimmer
+cli_save(p_comp, "Figure_8_Nature.pdf", journal = "nature", columns = 2, height_mm = 120)
+
+# Cell single-column KM milestone export
+p_km = cliplot(Surv(time, status) ~ sex, data = lung,
+               type = type_km(milestones = c(180, 365)), theme = "cell")
+cli_save(p_km, "Figure_1_Cell.pdf", journal = "cell", columns = 1, height_mm = 85)
+```
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-In this vignette we produced four publication-ready oncology figures
-using cliomicplot’s specialized plot types. The key takeaways:
+In this oncology vignette, we demonstrated:
 
-1.  **[`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)**
-    for survival curves with risk tables
-2.  **[`type_forest()`](https://vanhungtran.github.io/cliomicplot/reference/type_forest.md)**
-    for Cox regression hazard ratios
-3.  **[`type_waterfall()`](https://vanhungtran.github.io/cliomicplot/reference/type_waterfall.md)**
-    for tumor response visualization
-4.  **[`type_swimmer()`](https://vanhungtran.github.io/cliomicplot/reference/type_swimmer.md)**
-    for patient-level timelines
-5.  **[`type_trials()`](https://vanhungtran.github.io/cliomicplot/reference/type_trials.md)**
-    for clinical trial pipeline stacked bar charts
-6.  **[`clitheme()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme.md)**
-    for journal-specific styling
-7.  **[`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md)**
-    for rich text formatting
-
-Reset global settings when done:
+1.  **[`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md)**:
+    Survival curves with landmark milestone percentage dots and aligned
+    numbers-at-risk.
+2.  **Cumulative Incidence**: Mode for time-to-recurrence and adverse
+    events.
+3.  **[`type_forest()`](https://vanhungtran.github.io/cliomicplot/reference/type_forest.md)**:
+    Cox model hazard ratios with alternating row stripes and
+    meta-analysis diamond.
+4.  **[`type_waterfall()`](https://vanhungtran.github.io/cliomicplot/reference/type_waterfall.md)**:
+    RECIST best percentage change from baseline with response
+    thresholds.
+5.  **[`type_swimmer()`](https://vanhungtran.github.io/cliomicplot/reference/type_swimmer.md)**:
+    Patient timelines with ongoing therapy arrows and RECIST event
+    glyphs.
+6.  **[`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)**:
+    Minimal clinically important difference dumbbell plots (Archetype
+    1).
+7.  **[`type_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_trajectory.md)**:
+    Longitudinal profiles with clinical severity bands and sample size
+    callouts (Archetype 4).
+8.  **Multi-panel layout & export**: Exact journal millimeter trim sizes
+    with
+    [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+    and
+    [`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md).
 
 ``` r
 
+# Reset global settings
 clitheme()
 clipar(palette.qualitative = "jco", stat.test = NULL)
 ```

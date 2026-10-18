@@ -20,325 +20,252 @@ Scroll to zoom · Drag to pan · ← → to navigate
 
 ## Overview
 
-**cliomicplot** is an R package for creating high-quality,
-publication-ready visualizations for clinical and multi-omics data
-analysis. Built on **ggplot2**, it provides 16 specialized plot types,
-10 journal-specific themes, and 55+ color palettes — all through a
-clean, formula-based API.
+**cliomicplot** is a unified grammar for publication-ready clinical and
+multi-omics figures built directly on **ggplot2**. Designed around the
+visual principles of **Nature**, **Cell**, and **Science**, it offers:
 
-This vignette walks you through the core concepts and basic usage.
-
-## Installation
-
-``` r
-
-# From source
-remotes::install_local("path/to/cliomicplot")
-
-# Dependencies
-install.packages(c(
-  "ggplot2", "scales", "survival", "survminer",
-  "RColorBrewer", "reshape2", "ggrepel",
-  "patchwork", "ggpubr", "ggtext", "circlize"
-))
-```
+- **55+ specialized plot types** spanning clinical trials (Kaplan-Meier
+  milestones, MCID dumbbells, trajectories, swimmers, waterfalls, forest
+  plots) and multi-omics (volcano, GSEA, UpSet, PCA, heatmaps).
+- **13 publication themes** covering open-axis designs (`nature`,
+  `science`, `cell`, `nejm`, `lancet`) and full-box Elsevier/IEEE frames
+  (`scifig`).
+- **55+ curated color palettes** with strict color vision deficiency
+  (CVD) accessibility.
+- **Publisher trim sizing**
+  ([`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md))
+  for 9 major publishers with vector compliance checks
+  ([`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)).
 
 ``` r
 
 library(cliomicplot)
-#> cliomicplot 0.1.0 - Publication-ready clinical & omics plots
-#> Main function: cliplot() | Themes: clitheme() | Params: clipar()
+library(ggplot2)
+library(patchwork)
 ```
 
 ------------------------------------------------------------------------
 
-## The Formula Interface
+## 1. The Formula Interface: `y ~ x | group`
 
-cliomicplot uses a formula-based API: `y ~ x | group`.
+cliomicplot provides a clean, expressive formula API:
 
 ``` r
 
-# Basic scatter with grouping
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris)
+# Scatter plot with categorical grouping
+cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+        palette = "npg", theme = "nature")
 ```
 
-![](cliomicplot_files/figure-html/unnamed-chunk-3-1.png)
+![](cliomicplot_files/figure-html/unnamed-chunk-2-1.png)
 
-The `| group` part is optional. Every plot automatically gets:
-
-- Proper axis labels derived from variable names
-- A legend when grouping is present
-- A color palette applied to groups
+The formula syntax automatically manages: - Axis titles formatted from
+column names - Legend placement, titles, and symbol keys - Palette
+application with colorblind safety
 
 ------------------------------------------------------------------------
 
-## Choosing a Plot Type
+## 2. Choosing a Plot Type
 
-Pass `type = "..."` or a `type_*()` function:
+Pass `type = "..."` or a dedicated `type_*()` constructor to configure
+advanced parameters:
+
+### Boxplot with Automated Statistical Annotations
 
 ``` r
 
-# Boxplot with built-in statistical test
 cliplot(Sepal.Length ~ Species, data = iris,
         type = "boxplot",
         stat.test = "kruskal.test",
         stat.label = "p.signif",
-        palette = "jco")
+        palette = "jco", theme = "nature")
+```
+
+![](cliomicplot_files/figure-html/unnamed-chunk-3-1.png)
+
+Supported statistical tests include `"t.test"`, `"wilcox.test"`,
+`"anova"`, and `"kruskal.test"`.
+
+### Clinical Figure Archetypes: Kaplan-Meier with Landmark Milestones
+
+In oncology and cardiovascular clinical trials, reporting landmark
+milestone survival rates (e.g., 1-year and 2-year survival) directly on
+curves is a premier journal requirement:
+
+``` r
+
+library(survival)
+
+cliplot(Surv(time, status) ~ sex, data = lung,
+        type = type_km(
+          risk_table  = TRUE,
+          pval        = TRUE,
+          conf_int    = TRUE,
+          milestones  = c(180, 365, 730)
+        ),
+        palette = "nejm", theme = "nejm",
+        title = "**NCCTG Lung Cancer Trial** — Overall Survival") +
+  cli_markdown()
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-4-1.png)
 
-When `type` is omitted, cliomicplot guesses based on data types:
+### Minimal Clinically Important Difference (MCID) Dumbbells
 
-| x variable       | y variable | Auto-detected type   |
-|------------------|------------|----------------------|
-| numeric          | numeric    | `"points"` (scatter) |
-| factor/character | numeric    | `"boxplot"`          |
-| factor/character | *(none)*   | `"barplot"`          |
-| numeric          | *(none)*   | `"histogram"`        |
-
-------------------------------------------------------------------------
-
-## Statistical Annotations
-
-Built-in statistical test support — no extra packages needed:
+Anchor clinical effect sizes $`|\hat{\theta}|`$ against validated
+instrument thresholds (Clinical Archetype 1):
 
 ``` r
 
-# t-test with p-value formatting
-cliplot(len ~ dose, data = ToothGrowth,
-        type = "boxplot",
-        stat.test = "t.test",
-        stat.label = "p.format",
-        palette = "jco")
-#> Warning: Orientation is not uniquely specified when both the x and y aesthetics are
-#> continuous. Picking default orientation 'x'.
-#> Warning: Continuous x aesthetic
-#> ℹ did you forget `aes(group = ...)`?
+mcid_df = data.frame(
+  Endpoint = c("EASI-75 (Biologic)", "DLQI 0/1 (Biologic)", "SCORAD-50 (SoC)", "POEM (Antihistamine)"),
+  Estimate = c(9.4, 6.2, 4.3, 1.8),
+  MCID     = c(6.6, 4.0, 8.7, 3.4),
+  N        = c(480, 450, 310, 220),
+  Category = c("Biologic Exceeding MCID", "Biologic Exceeding MCID",
+               "SoC Below MCID", "SoC Below MCID")
+)
+
+cliplot(Estimate ~ Endpoint, data = mcid_df,
+        type = type_mcid(mcid = "MCID", n_treated = "N", category = "Category"),
+        theme = "cell")
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-5-1.png)
 
-Supported tests: `"t.test"`, `"wilcox.test"`, `"anova"`,
-`"kruskal.test"`.
-
-Supported label formats: `"p.format"` (e.g., `p = 0.023`), `"p.signif"`
-(e.g., `*`, `**`), `"p.adj"`.
-
 ------------------------------------------------------------------------
 
-## Theming
+## 3. The 13 Journal Themes
 
-### Persistent themes
+cliomicplot encapsulates distinct journal visual styles:
 
-Set a theme that applies to **all** subsequent plots:
+| Theme | Style | Spines | Grid |
+|----|----|----|----|
+| `nature` | Nature Publishing Group | Open (left & bottom) | None |
+| `science` | Science / AAAS | Ultra-clean open | None |
+| `cell` | Cell Press | Structured open | None |
+| `nejm` | New England Journal of Medicine | Open | Subtle horizontal |
+| `lancet` | The Lancet | Open | Subtle horizontal |
+| `scifig` / `sci_box` | Elsevier / IEEE / SCI | 4 black spines | Subtle dashed (0.3 pt) |
+| `cli_bw` | Laboratory default | 4 black spines | Full grid |
+| `cli_classic` | Base R style | Left & bottom lines | None |
+| `cli_minimal` | Modern minimal | Borderless | Faint |
+| `broadsheet` | Print newspaper | Subtle border | Horizontal only |
+| `dark` | Presentations / Slides | Dark background | Faint |
+| `showcase` | Posters / Hero figures | Crisp frame | Accent grid |
+
+All themes can be applied ephemerally (`theme = "nature"`), globally
+(`clitheme("nature")`), or as standalone ggplot2 functions
+(`+ theme_cli_nature()`, `+ theme_cli_scifig()`).
 
 ``` r
 
-clitheme("nature")
-#> Theme set to: nature
-cliplot(mpg ~ wt, data = mtcars)
+# Use as a standalone ggplot2 theme layer
+ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
+  geom_point(size = 2.5) +
+  scale_color_cli("npg") +
+  theme_cli_science() +
+  labs(title = "theme_cli_science() on Base ggplot2")
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-6-1.png)
 
+------------------------------------------------------------------------
+
+## 4. Markdown Formatting with `cli_markdown()`
+
+Render **bold**, *italic*, subscripts, superscripts, and hex-colored
+spans inside plot titles, subtitles, and captions:
+
 ``` r
 
-# The theme persists
-cliplot(len ~ dose, data = ToothGrowth, type = "boxplot")
-#> Warning: Orientation is not uniquely specified when both the x and y aesthetics are
-#> continuous. Picking default orientation 'x'.
-#> Warning: Continuous x aesthetic
-#> ℹ did you forget `aes(group = ...)`?
+cliplot(mpg ~ wt, data = mtcars,
+        theme    = "nature",
+        title    = "**Mileage** vs *Weight* in 1974 Fleet",
+        subtitle = "<span style='color:#E64B35'>n = 32 vehicles</span>, *Motor Trend* benchmark",
+        caption  = "Source: <i>1974 Motor Trend US magazine</i>") +
+  cli_markdown()
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-7-1.png)
 
+------------------------------------------------------------------------
+
+## 5. Multi-Panel Composite Assembly
+
+Assemble modular panels with **patchwork** and label them with
+[`cli_panel_label()`](https://vanhungtran.github.io/cliomicplot/reference/cli_panel_label.md)
+conforming to Nature (**a**, **b**) and Cell (**A**, **B**) standards:
+
 ``` r
 
-clitheme()  # reset to default
-```
+p1 <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
+              palette = "npg", theme = "nature", title = "Scatter Distribution") +
+  cli_panel_label("a")
 
-### Ephemeral (per-plot) themes
+p2 <- cliplot(Sepal.Length ~ Species, data = iris,
+              type = "boxplot", palette = "npg", theme = "nature", title = "Species Boxplot") +
+  cli_panel_label("b")
 
-Apply a theme to **one plot only**:
-
-``` r
-
-cliplot(mpg ~ wt, data = mtcars, theme = "nature")
+p1 + p2 +
+  plot_annotation(title = "Composite Biomarker Panel (Nature Design Language)")
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-8-1.png)
 
-``` r
-
-cliplot(Sepal.Length ~ Species, data = iris, type = "boxplot", theme = "dark")
-```
-
-![](cliomicplot_files/figure-html/unnamed-chunk-8-2.png)
-
-### Available themes
-
-| Theme         | Style                           |
-|---------------|---------------------------------|
-| `cli_bw`      | Clean black-and-white (default) |
-| `cli_classic` | Classic with axis lines         |
-| `cli_minimal` | Minimal and modern              |
-| `nature`      | Nature Publishing Group         |
-| `science`     | Science / AAAS                  |
-| `nejm`        | New England Journal of Medicine |
-| `lancet`      | The Lancet                      |
-| `cell`        | Cell Press                      |
-| `broadsheet`  | Publication print style         |
-| `dark`        | Dark background (presentations) |
-
 ------------------------------------------------------------------------
 
-## Color Palettes
+## 6. Physical Dimensions & Publication Export
 
-cliomicplot ships with 55+ palettes in a unified system:
+When submitting manuscripts, figure dimensions must strictly match
+target journal column widths.
+
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+returns verified millimeter dimensions across 9 publishers:
 
 ``` r
 
-# List all palettes (first 20 shown)
-head(cli_palette_list(), 20)
-#>  [1] "jco"            "nejm"           "lancet"         "nature"        
-#>  [5] "science"        "okabe_ito"      "tableau10"      "tol_muted"     
-#>  [9] "heatmap_rdbu"   "heatmap_rdylbu" "heatmap_prgn"   "volcano"       
-#> [13] "pastel"         "soft"           "neon"           "cyberpunk"     
-#> [17] "blues"          "reds"           "greens"         "purples"
+# Query Nature and Science column widths
+cli_journal_size("nature", "single")$width_mm  # 89 mm
+#> [1] 89
+cli_journal_size("nature", "double")$width_mm  # 183 mm
+#> [1] 183
+cli_journal_size("science", 2)$width_mm        # 183 mm
+#> [1] 183
 ```
 
-``` r
-
-# Use any palette by name
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "jama")
-```
-
-![](cliomicplot_files/figure-html/unnamed-chunk-10-1.png)
+Export with
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+to verify format compliance (vector PDF/SVG for final submission):
 
 ``` r
 
+p_final <- p1 + p2
 
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        palette = "cosmic")
-```
+# Vector PDF export for 2-column Nature layout
+cli_save(p_final, "Figure_1.pdf", journal = "nature", column = "double")
 
-![](cliomicplot_files/figure-html/unnamed-chunk-10-2.png)
-
-### Standalone ggplot2 scale usage
-
-All palettes work as standalone scales for any ggplot:
-
-``` r
-
-library(ggplot2)
-#> Warning: package 'ggplot2' was built under R version 4.5.3
-
-ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
-  geom_point(size = 3) +
-  palette_scale("npg", "color") +
-  theme_bw()
-```
-
-![](cliomicplot_files/figure-html/unnamed-chunk-11-1.png)
-
-------------------------------------------------------------------------
-
-## Markdown Text Rendering
-
-Add **bold**, *italic*, colored, subscript/superscript text to labels:
-
-``` r
-
-cliplot(mpg ~ wt, data = mtcars,
-        title    = "**Mileage** vs *Weight* in mtcars",
-        subtitle = "n = 32 vehicles, <span style='color:#E64B35'>1974 Motor Trend</span>",
-        caption  = "*Motor Trend* (1974)") +
-  cli_markdown()
-```
-
-![](cliomicplot_files/figure-html/unnamed-chunk-12-1.png)
-
-### Selective markdown
-
-``` r
-
-# Only the title renders markdown
-cliplot(mpg ~ wt, data = mtcars,
-        title = "**Bold Title**",
-        xlab  = "Weight (1000 lbs)",    # plain text
-        ylab  = "Miles / Gallon") +      # plain text
-  cli_markdown("title")
-```
-
-![](cliomicplot_files/figure-html/unnamed-chunk-13-1.png)
-
-------------------------------------------------------------------------
-
-## Global Parameters with `clipar()`
-
-Set defaults that apply to all subsequent plots:
-
-``` r
-
-# View current parameters (first 10)
-names(clipar())[1:10]
-#>  [1] "facet.font"        "font.cap"          "stat.test"        
-#>  [4] "facet.border"      "facet.cex"         "palette.diverging"
-#>  [7] "file.width"        "theme.default"     "legend.direction" 
-#> [10] "cex.sub"
-```
-
-``` r
-
-# Set defaults
-clipar(palette.qualitative = "nejm")
-clipar(stat.test = "wilcox.test")
-clipar(file.width = 8, file.height = 6, file.res = 600)
-
-# Query
-clipar("palette.qualitative")
-#> [1] "nejm"
+# Single-column Cell Press SVG export
+cli_save(p1, "Figure_1a.svg", journal = "cell", column = "single")
 ```
 
 ------------------------------------------------------------------------
 
-## Saving to File
+## Next Steps & Specialized Vignettes
 
-Save plots directly from
-[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
-in one call. Supports pdf, png, jpg, svg, and tiff:
+Explore our in-depth guides for specific research workflows:
 
-``` r
-
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        file   = "iris_scatter.pdf",
-        width  = 6,
-        height = 5)
-
-# PNG with high DPI
-cliplot(mpg ~ wt, data = mtcars,
-        file = "mpg_wt.png", width = 8, height = 6)
-```
-
-Set global defaults for file output:
-
-``` r
-
-clipar(file.width = 8, file.height = 6, file.res = 600)
-cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-        file = "fig1_highres.pdf")
-```
-
-------------------------------------------------------------------------
-
-## Next Steps
-
+- **[`vignette("journal-plots", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md)**
+  — Nature, Cell, and Science design language & clinical archetypes
 - **[`vignette("oncology", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/oncology.md)**
-  — End-to-end oncology analysis
+  — End-to-end clinical oncology analysis (swimmers, waterfalls, KM
+  milestones)
 - **[`vignette("multiomics", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md)**
-  — Multi-omics exploratory analysis
+  — Proteomics, metabolomics, and longitudinal time-courses
+  (xOmicsShiny)
 - **[`vignette("themes-palettes", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/themes-palettes.md)**
-  — Deep dive into themes & palettes
+  — The 13 themes and 55+ color palettes in depth
+- **[`vignette("volcano-plot", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md)**
+  — Differential expression volcanoes from quick to publication-ready
+- **[`vignette("recreate-paper", package = "cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md)**
+  — Recreating published multi-panel figures from raw supplementary data

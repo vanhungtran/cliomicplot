@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>End-to-End Oncology Analysis with cliomicplot • cliomicplot</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +56,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>End-to-End Oncology Analysis with cliomicplot</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>End-to-End Oncology Analysis with cliomicplot</h1>
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-07-16</h4>
+            <h4 data-toc-skip class="date">2026-10-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/oncology.Rmd" class="external-link"><code>vignettes/oncology.Rmd</code></a></small>
       <div class="d-none name"><code>oncology.Rmd</code></div>
@@ -159,30 +163,60 @@ document.addEventListener('keydown',function(e){if(!lbx.classList.contains('open
 </script><div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This vignette demonstrates a complete oncology clinical data analysis
-workflow using <strong>cliomicplot</strong>. We’ll generate four
-publication-quality figures commonly found in oncology manuscripts:</p>
+<p>This vignette demonstrates a complete oncology translational and
+clinical data analysis workflow with <strong>cliomicplot</strong>,
+following figure design standards from <strong>Nature</strong>,
+<strong>Cell</strong>, and <strong>Science</strong>:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Figure 1</strong> — Kaplan-Meier overall survival
-curves</li>
+<strong>Figure 1A</strong> — Kaplan-Meier overall survival with
+landmark milestones (Nature / NEJM style)</li>
 <li>
-<strong>Figure 2</strong> — Forest plot from multivariable Cox
-regression</li>
+<strong>Figure 1B</strong> — Cumulative incidence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>1</mn><mo>−</mo><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[1 - S(t)]</annotation></semantics></math>
+for disease recurrence (Lancet Oncology style)</li>
 <li>
-<strong>Figure 3A</strong> — Waterfall plot of best tumor
-response</li>
+<strong>Figure 2</strong> — Multivariable Cox regression forest plot
+with row stripes &amp; summary diamond (Science style)</li>
 <li>
-<strong>Figure 3B</strong> — Swimmer plot of patient treatment
-courses</li>
+<strong>Figure 3A</strong> — Waterfall plot of RECIST v1.1 best
+tumor response</li>
+<li>
+<strong>Figure 3B</strong> — Swimmer plot with ongoing therapy
+arrowheads &amp; RECIST event glyphs (Cell style)</li>
+<li>
+<strong>Figure 4</strong> — Minimal Clinically Important Difference
+(MCID) dumbbell plot (Archetype 1)</li>
+<li>
+<strong>Figure 5</strong> — Longitudinal patient trajectories with
+clinical severity bands (Archetype 4)</li>
+<li>
+<strong>Figure 6A</strong> — Time-course proteomics across disease
+recovery stages</li>
+<li>
+<strong>Figure 6B</strong> — Multi-protein longitudinal
+trajectories</li>
+<li>
+<strong>Figure 6C</strong> — Prism-style ANOVA boxplot with
+significance brackets</li>
+<li>
+<strong>Figure 7</strong> — Industry clinical trial portfolio
+pipeline</li>
+<li>
+<strong>Figure 8</strong> — Composite multi-panel assembly with
+<code>patchwork</code> and <code><a href="../reference/cli_panel_label.html">cli_panel_label()</a></code>
+</li>
+<li>
+<strong>Figure Export</strong> — Journal trim sizing
+(<code>cli_journal_size</code>) and publication export
+(<code>cli_save</code>)</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtrantran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; cliomicplot 0.1.0 - Publication-ready clinical &amp; omics plots</span></span>
-<span><span class="co">#&gt; Main function: cliplot() | Themes: clitheme() | Params: clipar()</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Set global defaults for this analysis</span></span>
+<span><span class="co"># Set global defaults for publication styling</span></span>
 <span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span></span>
 <span>  palette.qualitative <span class="op">=</span> <span class="st">"nejm"</span>,</span>
 <span>  stat.test           <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -191,86 +225,93 @@ courses</li>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="figure-1-kaplan-meier-survival-curves">Figure 1: Kaplan-Meier Survival Curves<a class="anchor" aria-label="anchor" href="#figure-1-kaplan-meier-survival-curves"></a>
+<h2 id="figure-1a-kaplan-meier-survival-curves-with-landmark-milestones">Figure 1A: Kaplan-Meier Survival Curves with Landmark
+Milestones<a class="anchor" aria-label="anchor" href="#figure-1a-kaplan-meier-survival-curves-with-landmark-milestones"></a>
 </h2>
-<p>We use the <code>lung</code> dataset from the
-<strong>survival</strong> package to visualize overall survival
-stratified by sex.</p>
+<p>In oncology clinical trials, reporting overall survival (OS) requires
+both the step survival function and explicit landmark milestone rates
+(e.g., 6-month, 1-year, and 2-year survival) with confidence
+intervals.</p>
+<p><code><a href="../reference/type_km.html">type_km()</a></code> provides a zero-dependency native
+<code>ggplot2</code> engine with aligned numbers-at-risk tables and
+landmark milestone annotations:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nejm"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: nejm</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span></span>
 <span>          risk_table  <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          pval        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          conf_int    <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          median_line <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>          median_line <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          milestones  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">365</span>, <span class="fl">730</span><span class="op">)</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        palette  <span class="op">=</span> <span class="st">"nejm"</span>,</span>
-<span>        title    <span class="op">=</span> <span class="st">"**Figure 1** — Overall Survival by Sex"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"NCCTG Lung Cancer Trial (n = 228)"</span>,</span>
-<span>        xlab     <span class="op">=</span> <span class="st">"Time (days)"</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 1A** — Overall Survival Stratified by Sex"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"NCCTG Lung Cancer Trial (n = 228) with 6-mo, 1-yr, 2-yr Milestones"</span>,</span>
+<span>        xlab     <span class="op">=</span> <span class="st">"Time on Study (days)"</span>,</span>
 <span>        ylab     <span class="op">=</span> <span class="st">"Survival Probability"</span>,</span>
 <span>        legend   <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggpubr</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/kassambara/ggpubr/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">fill</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; Ignoring unknown labels:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> <span style="color: #00BB00;">colour</span> : <span style="color: #0000BB;">""</span></span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig1a-km-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <div class="section level3">
 <h3 id="key-features-demonstrated">Key features demonstrated:<a class="anchor" aria-label="anchor" href="#key-features-demonstrated"></a>
 </h3>
 <ul>
+<li>Landmark milestones annotated directly on curves with percentage
+estimates and error bars</li>
+<li>Risk table aligned perfectly with x-axis ticks</li>
+<li>Drop lines indicating median overall survival time</li>
 <li>
-<code><a href="../reference/type_km.html">type_km()</a></code> with risk table, p-value, confidence
-intervals, and median survival line</li>
-<li>
-<code>clitheme("nejm")</code> for NEJM-style typography</li>
-<li>
-<code><a href="../reference/cli_markdown.html">cli_markdown()</a></code> for bold formatting in the title</li>
+<code>clitheme("nejm")</code> for clean New England Journal of
+Medicine typography</li>
 </ul>
-</div>
-<div class="section level3">
-<h3 id="customizing-km-plots">Customizing KM plots<a class="anchor" aria-label="anchor" href="#customizing-km-plots"></a>
-</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Without risk table, cleaner look</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span>risk_table <span class="op">=</span> <span class="cn">FALSE</span>, conf_int <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"lancet"</span>,</span>
-<span>        theme   <span class="op">=</span> <span class="st">"lancet"</span>,</span>
-<span>        title   <span class="op">=</span> <span class="st">"**Overall Survival** — Sex-Stratified"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">fill</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="figure-2-forest-plot-multivariable-cox-regression">Figure 2: Forest Plot — Multivariable Cox Regression<a class="anchor" aria-label="anchor" href="#figure-2-forest-plot-multivariable-cox-regression"></a>
+<h2 id="figure-1b-cumulative-incidence-1---st">Figure 1B: Cumulative Incidence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>1</mn><mo>−</mo><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[1 - S(t)]</annotation></semantics></math><a class="anchor" aria-label="anchor" href="#figure-1b-cumulative-incidence-1---st"></a>
 </h2>
-<p>Fit a Cox proportional hazards model and visualize the hazard
-ratios:</p>
+<p>When evaluating disease progression, toxicities, or adverse event
+rates, clinical journals prefer cumulative incidence curves starting at
+0% and climbing toward 100%:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"lancet"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span></span>
+<span>          cumulative_incidence <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          risk_table           <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          pval                 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          conf_int             <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          milestones           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">365</span><span class="op">)</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        palette  <span class="op">=</span> <span class="st">"lancet"</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 1B** — Cumulative Incidence of Death"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"NCCTG Lung Cohort — Landmark Milestones at 180 and 365 Days"</span>,</span>
+<span>        xlab     <span class="op">=</span> <span class="st">"Days Since Enrollment"</span>,</span>
+<span>        ylab     <span class="op">=</span> <span class="st">"Cumulative Incidence (%)"</span>,</span>
+<span>        legend   <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig1b-ci-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-2-multivariable-cox-regression-forest-plot">Figure 2: Multivariable Cox Regression Forest Plot<a class="anchor" aria-label="anchor" href="#figure-2-multivariable-cox-regression-forest-plot"></a>
+</h2>
+<p>Forest plots summarize multivariable Cox proportional hazards models.
+In Science and Lancet style: - Alternating subtle row stripes
+(<code>stripe = TRUE</code>) guide the reader’s eye across wide
+canvases. - Pooled summary estimates are highlighted with high-contrast
+diamond glyphs (<code>diamond = TRUE</code>). - Odds/Hazard ratio
+estimates and 95% CIs are aligned cleanly along the vertical axis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Fit Cox model</span></span>
+<code class="sourceCode R"><span><span class="co"># Fit Cox proportional hazards model</span></span>
 <span><span class="va">cox_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html" class="external-link">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">ph.ecog</span> <span class="op">+</span> <span class="va">wt.loss</span>, data <span class="op">=</span> <span class="va">lung</span><span class="op">)</span></span>
 <span><span class="va">cox_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cox_fit</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Extract results into a forest-plot-ready data frame</span></span>
+<span><span class="co"># Prepare forest plot data frame</span></span>
 <span><span class="va">forest_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  Variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Age (per year)"</span>, <span class="st">"Male vs. Female"</span>,</span>
 <span>               <span class="st">"ECOG PS (per point)"</span>, <span class="st">"Weight loss (per lb)"</span><span class="op">)</span>,</span>
@@ -280,270 +321,300 @@ ratios:</p>
 <span>  P        <span class="op">=</span> <span class="va">cox_sum</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span>, <span class="st">"Pr(&gt;|z|)"</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">forest_df</span></span>
-<span><span class="co">#&gt;                     Variable        HR    CI_low   CI_high            P</span></span>
-<span><span class="co">#&gt; age           Age (per year) 1.0134589 0.9945143 1.0327643 1.649509e-01</span></span>
-<span><span class="co">#&gt; sex          Male vs. Female 0.5538981 0.3928084 0.7810504 7.535384e-04</span></span>
-<span><span class="co">#&gt; ph.ecog  ECOG PS (per point) 1.6738244 1.3075807 2.1426504 4.340524e-05</span></span>
-<span><span class="co">#&gt; wt.loss Weight loss (per lb) 0.9910344 0.9781867 1.0040508 1.761353e-01</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"lancet"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: lancet</span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"science"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">HR</span> <span class="op">~</span> <span class="va">Variable</span>, data <span class="op">=</span> <span class="va">forest_df</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_forest.html">type_forest</a></span><span class="op">(</span></span>
-<span>          ref_line   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          sort       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          point_size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>          ci_width   <span class="op">=</span> <span class="fl">1.2</span>,</span>
-<span>          sig_color  <span class="op">=</span> <span class="st">"#E64B35"</span>,</span>
-<span>          ns_color   <span class="op">=</span> <span class="st">"#3C5488"</span></span>
+<span>          ref_line    <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          sort        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          point_size  <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>          ci_width    <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>          stripe      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          show_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          sig_color   <span class="op">=</span> <span class="st">"#E64B35"</span>,</span>
+<span>          ns_color    <span class="op">=</span> <span class="st">"#3C5488"</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>        title    <span class="op">=</span> <span class="st">"**Figure 2** — Multivariable Cox Regression"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"Overall Survival — Hazard Ratios (95% CI)"</span>,</span>
-<span>        caption  <span class="op">=</span> <span class="st">"Lung Cancer Dataset (n = 228)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; `height` was translated to `width`.</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="interpreting-the-forest-plot">Interpreting the forest plot<a class="anchor" aria-label="anchor" href="#interpreting-the-forest-plot"></a>
-</h3>
-<ul>
-<li>
-<strong>Red points</strong> = p &lt; 0.05 (statistically
-significant)</li>
-<li>
-<strong>Blue points</strong> = p &gt;= 0.05 (not significant)</li>
-<li>
-<strong>Vertical dashed line</strong> at HR = 1 (null effect)</li>
-<li>HR &gt; 1 = increased risk; HR &lt; 1 = protective effect</li>
-</ul>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 2** — Multivariable Cox Proportional Hazards Model"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Overall Survival Hazard Ratios (95% CI) with Row Stripes"</span>,</span>
+<span>        caption  <span class="op">=</span> <span class="st">"NCCTG Advanced Lung Cancer (n = 228)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig2-forest-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
-</div>
 <div class="section level2">
-<h2 id="figure-3a-waterfall-plot-tumor-response">Figure 3A: Waterfall Plot — Tumor Response<a class="anchor" aria-label="anchor" href="#figure-3a-waterfall-plot-tumor-response"></a>
+<h2 id="figure-3a-waterfall-plot-recist-best-tumor-response">Figure 3A: Waterfall Plot — RECIST Best Tumor Response<a class="anchor" aria-label="anchor" href="#figure-3a-waterfall-plot-recist-best-tumor-response"></a>
 </h2>
-<p>Generate a simulated immunotherapy trial dataset and visualize best
-tumor response:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>In solid tumor trials, the waterfall plot displays the maximum
+percent change in target lesion diameter relative to baseline for each
+individual patient.</p>
+<p>Standard RECIST v1.1 response cutoffs (+20% for Progressive Disease,
+-30% for Partial Response) are indicated by dashed threshold lines:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">n_pts</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
 <span></span>
 <span><span class="va">imtrial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Patient    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"IM-"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%03d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_pts</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Patient    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"PT-"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%02d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_pts</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  BestChange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_pts</span>, mean <span class="op">=</span> <span class="op">-</span><span class="fl">22</span>, sd <span class="op">=</span> <span class="fl">32</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  BestResp   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CR"</span>, <span class="st">"PR"</span>, <span class="st">"SD"</span>, <span class="st">"PD"</span><span class="op">)</span>, <span class="va">n_pts</span>,</span>
-<span>                      replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                      prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.07</span>, <span class="fl">0.30</span>, <span class="fl">0.36</span>, <span class="fl">0.27</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  Duration   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_pts</span>, mean <span class="op">=</span> <span class="fl">14</span>, sd <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  Arm        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Anti-PD1"</span>, <span class="st">"Chemotherapy"</span><span class="op">)</span>, <span class="va">n_pts</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                      replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.10</span>, <span class="fl">0.30</span>, <span class="fl">0.35</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Duration   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_pts</span>, mean <span class="op">=</span> <span class="fl">16</span>, sd <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Ongoing    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="va">n_pts</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Show first few rows</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">imtrial</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Patient BestChange BestResp Duration          Arm</span></span>
-<span><span class="co">#&gt; 1  IM-001 -107.00657       PD     17.0 Chemotherapy</span></span>
-<span><span class="co">#&gt; 2  IM-002 -100.09494       CR      8.3 Chemotherapy</span></span>
-<span><span class="co">#&gt; 3  IM-003  -79.00187       PD     24.1     Anti-PD1</span></span>
-<span><span class="co">#&gt; 4  IM-004  -78.42122       PR     11.0     Anti-PD1</span></span>
-<span><span class="co">#&gt; 5  IM-005  -66.44354       PD     18.6     Anti-PD1</span></span>
-<span><span class="co">#&gt; 6  IM-006  -42.47984       SD     16.3     Anti-PD1</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"broadsheet"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: broadsheet</span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"broadsheet"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span></span>
 <span>          show_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          label_size  <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>          label_size  <span class="op">=</span> <span class="fl">2.4</span>,</span>
 <span>          bar_width   <span class="op">=</span> <span class="fl">0.75</span>,</span>
-<span>          response_thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PD"</span> <span class="op">=</span> <span class="fl">20</span>, <span class="st">"SD"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span>
+<span>          response_thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PD"</span> <span class="op">=</span> <span class="fl">20</span>, <span class="st">"PR"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>        title    <span class="op">=</span> <span class="st">"**Figure 3A** — Best Tumor Response (Waterfall)"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"RECIST v1.1 — % Change from Baseline"</span>,</span>
-<span>        ylab     <span class="op">=</span> <span class="st">"Best % Change from Baseline"</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 3A** — Best Tumor Response from Baseline (Waterfall)"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"RECIST v1.1 Thresholds: PD (+20%) and PR (-30%)"</span>,</span>
+<span>        ylab     <span class="op">=</span> <span class="st">"Best % Change in Target Lesions"</span>,</span>
 <span>        legend   <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="response-categories">Response categories<a class="anchor" aria-label="anchor" href="#response-categories"></a>
-</h3>
-<table class="table">
-<thead><tr class="header">
-<th>Category</th>
-<th>Threshold</th>
-<th>Color</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>CR (Complete Response)</td>
-<td>Disappearance of all lesions</td>
-<td>🟢 Green</td>
-</tr>
-<tr class="even">
-<td>PR (Partial Response)</td>
-<td>≥ 30% decrease</td>
-<td>🔵 Blue</td>
-</tr>
-<tr class="odd">
-<td>SD (Stable Disease)</td>
-<td>Between +20% and −30%</td>
-<td>🟠 Orange</td>
-</tr>
-<tr class="even">
-<td>PD (Progressive Disease)</td>
-<td>≥ 20% increase</td>
-<td>🔴 Red</td>
-</tr>
-</tbody>
-</table>
+<p><img src="oncology_files/figure-html/fig3a-waterfall-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
-</div>
 <div class="section level2">
-<h2 id="figure-3b-swimmer-plot-patient-timelines">Figure 3B: Swimmer Plot — Patient Timelines<a class="anchor" aria-label="anchor" href="#figure-3b-swimmer-plot-patient-timelines"></a>
+<h2 id="figure-3b-swimmer-plot-with-ongoing-indicators-recist-events">Figure 3B: Swimmer Plot with Ongoing Indicators &amp; RECIST
+Events<a class="anchor" aria-label="anchor" href="#figure-3b-swimmer-plot-with-ongoing-indicators-recist-events"></a>
 </h2>
-<p>Add clinical event markers to the patient timeline:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Following <strong>Clinical Archetype 13</strong>, swimmer plots track
+patient treatment timelines. Patients actively continuing therapy at
+database lock are distinguished by arrowheads at their bar tips
+(<code>ongoing = "Ongoing"</code>), and key clinical events are overlaid
+with RECIST glyphs:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">n_events_per_pt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n_pts</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">n_total_events</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_events_per_pt</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">events_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  ID    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">imtrial</span><span class="op">$</span><span class="va">Patient</span>, times <span class="op">=</span> <span class="va">n_events_per_pt</span><span class="op">)</span>,</span>
-<span>  Time  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_total_events</span>, <span class="fl">0</span>, <span class="fl">28</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  Event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Progression"</span>, <span class="st">"AE Gr≥3"</span>, <span class="st">"Dose Reduction"</span>, <span class="st">"Response"</span><span class="op">)</span>,</span>
+<span>  Time  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_total_events</span>, <span class="fl">1</span>, <span class="fl">26</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Progression"</span>, <span class="st">"AE"</span>, <span class="st">"Dose Reduction"</span>, <span class="st">"Response"</span>, <span class="st">"Surgery"</span><span class="op">)</span>,</span>
 <span>                 <span class="va">n_total_events</span>,</span>
-<span>                 replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.25</span>, <span class="fl">0.2</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span>
+<span>                 replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">events_df</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       ID Time          Event</span></span>
-<span><span class="co">#&gt; 1 IM-001 13.4        AE Gr≥3</span></span>
-<span><span class="co">#&gt; 2 IM-001 21.2        AE Gr≥3</span></span>
-<span><span class="co">#&gt; 3 IM-001  6.1       Response</span></span>
-<span><span class="co">#&gt; 4 IM-002  8.9        AE Gr≥3</span></span>
-<span><span class="co">#&gt; 5 IM-002  6.5        AE Gr≥3</span></span>
-<span><span class="co">#&gt; 6 IM-002  4.0 Dose Reduction</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"cell"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_swimmer.html">type_swimmer</a></span><span class="op">(</span></span>
-<span>          bar_fill    <span class="op">=</span> <span class="st">"BestResp"</span>,</span>
-<span>          event_times <span class="op">=</span> <span class="va">events_df</span>,</span>
-<span>          bar_alpha   <span class="op">=</span> <span class="fl">0.85</span></span>
+<span>          bar_fill      <span class="op">=</span> <span class="st">"BestResp"</span>,</span>
+<span>          ongoing       <span class="op">=</span> <span class="st">"Ongoing"</span>,</span>
+<span>          event_times   <span class="op">=</span> <span class="va">events_df</span>,</span>
+<span>          show_duration <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          bar_alpha     <span class="op">=</span> <span class="fl">0.85</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
-<span>        title   <span class="op">=</span> <span class="st">"**Figure 3B** — Patient Treatment Course (Swimmer)"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"Duration on study with key clinical events"</span>,</span>
+<span>        bar_palette <span class="op">=</span> <span class="st">"jama"</span>,</span>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 3B** — Patient Treatment Trajectories (Swimmer)"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Arrows indicate ongoing therapy at data lock | Overlay: RECIST Events"</span>,</span>
 <span>        xlab    <span class="op">=</span> <span class="st">""</span>,</span>
 <span>        ylab    <span class="op">=</span> <span class="st">"Time on Study (months)"</span>,</span>
 <span>        legend  <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 21 rows containing missing values or values outside the scale range</span></span>
-<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="event-shape-legend">Event shape legend<a class="anchor" aria-label="anchor" href="#event-shape-legend"></a>
-</h3>
-<table class="table">
-<thead><tr class="header">
-<th>Event</th>
-<th>Shape</th>
-<th>Color</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Progression</td>
-<td>✳ (asterisk, 8)</td>
-<td>🔴 Red</td>
-</tr>
-<tr class="even">
-<td>AE Gr≥3</td>
-<td>● (circle, 16)</td>
-<td>🟠 Orange</td>
-</tr>
-<tr class="odd">
-<td>Dose Reduction</td>
-<td>▲ (triangle, 17)</td>
-<td>🟤 Brown</td>
-</tr>
-<tr class="even">
-<td>Response</td>
-<td>◆ (diamond, 18)</td>
-<td>🟢 Green</td>
-</tr>
-<tr class="odd">
-<td>Death</td>
-<td>✖ (cross, 4)</td>
-<td>⚫ Black</td>
-</tr>
-</tbody>
-</table>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig3b-swimmer-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
+<div class="section level2">
+<h2 id="figure-4-minimal-clinically-important-difference-mcid-dumbbell-plot">Figure 4: Minimal Clinically Important Difference (MCID) Dumbbell
+Plot<a class="anchor" aria-label="anchor" href="#figure-4-minimal-clinically-important-difference-mcid-dumbbell-plot"></a>
+</h2>
+<p>In modern oncology and immunotherapy trials, statistical significance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>&lt;</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">P &lt; 0.05</annotation></semantics></math>)
+does not always equate to meaningful patient benefit.</p>
+<p>The <strong>MCID Dumbbell Plot</strong> (<strong>Clinical Archetype
+1</strong>) connects observed clinical effect estimates to validated
+instrument MCID thresholds (e.g. FACT-G, QLQ-C30, Pain NRS, DLQI),
+scaling point glyphs by sample size
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mtext mathvariant="normal">treated</mtext></msub><annotation encoding="application/x-tex">N_{\text{treated}}</annotation></semantics></math>)
+and sorting endpoints by their effect-to-MCID ratio:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mcid_oncology</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Endpoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FACT-G QoL (Anti-PD1)"</span>, <span class="st">"Pain NRS (Analgesic Add-on)"</span>,</span>
+<span>               <span class="st">"Fatigue Score (Exercise Co-care)"</span>, <span class="st">"QLQ-C30 Physical (Anti-PD1)"</span>,</span>
+<span>               <span class="st">"Appetite Loss (Standard Care)"</span><span class="op">)</span>,</span>
+<span>  Estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8.5</span>, <span class="fl">3.4</span>, <span class="fl">4.2</span>, <span class="fl">11.2</span>, <span class="fl">1.8</span><span class="op">)</span>,</span>
+<span>  MCID     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>,  <span class="fl">8.0</span>, <span class="fl">4.0</span><span class="op">)</span>,</span>
+<span>  N        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">520</span>, <span class="fl">380</span>, <span class="fl">240</span>,  <span class="fl">510</span>, <span class="fl">190</span><span class="op">)</span>,</span>
+<span>  Category <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Immunotherapy Exceeding MCID"</span>, <span class="st">"Adjuvant Exceeding MCID"</span>,</span>
+<span>               <span class="st">"Supportive Care Exceeding MCID"</span>, <span class="st">"Immunotherapy Exceeding MCID"</span>,</span>
+<span>               <span class="st">"Standard Care Below MCID"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Estimate</span> <span class="op">~</span> <span class="va">Endpoint</span>, data <span class="op">=</span> <span class="va">mcid_oncology</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_mcid.html">type_mcid</a></span><span class="op">(</span></span>
+<span>          mcid          <span class="op">=</span> <span class="st">"MCID"</span>,</span>
+<span>          n_treated     <span class="op">=</span> <span class="st">"N"</span>,</span>
+<span>          category      <span class="op">=</span> <span class="st">"Category"</span>,</span>
+<span>          sort_by_ratio <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 4** — Minimal Clinically Important Difference (MCID) Evaluation"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Comparing observed clinical effects to validated instrument thresholds"</span>,</span>
+<span>        xlab     <span class="op">=</span> <span class="st">"Absolute Effect Estimate (|estimate|)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig4-mcid-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="combined-multi-panel-figure">Combined Multi-Panel Figure<a class="anchor" aria-label="anchor" href="#combined-multi-panel-figure"></a>
+<h2 id="figure-5-longitudinal-trajectories-with-clinical-severity-bands">Figure 5: Longitudinal Trajectories with Clinical Severity
+Bands<a class="anchor" aria-label="anchor" href="#figure-5-longitudinal-trajectories-with-clinical-severity-bands"></a>
 </h2>
-<p>Use <strong>patchwork</strong> to combine the waterfall and swimmer
-plots:</p>
+<p>Patient biomarkers and clinical scores exhibit substantial
+between-subject variability.</p>
+<p>The <strong>Longitudinal Trajectory Plot</strong> (<strong>Clinical
+Archetype 4</strong>) overlays semi-transparent individual patient
+profiles onto shaded reference severity bands (e.g., Mild, Moderate,
+Severe), anchored by a bold group mean ribbon and sample size callouts
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mi>…</mi></mrow><annotation encoding="application/x-tex">n = \dots</annotation></semantics></math>):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">n_patients</span> <span class="op">=</span> <span class="fl">20</span></span>
+<span><span class="va">visits</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Cycle 2"</span>, <span class="st">"Cycle 4"</span>, <span class="st">"Cycle 6"</span>, <span class="st">"Follow-up"</span><span class="op">)</span></span>
+<span><span class="va">traj_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>Patient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"PT-"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%02d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_patients</span><span class="op">)</span><span class="op">)</span>, Visit <span class="op">=</span> <span class="va">visits</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Simulate circulating biomarker decline under effective targeted therapy</span></span>
+<span><span class="va">base_vals</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_patients</span>, <span class="fl">55</span>, <span class="fl">90</span><span class="op">)</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">visits</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">decay_vals</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">15</span>, <span class="fl">32</span>, <span class="fl">48</span>, <span class="fl">55</span><span class="op">)</span>, times <span class="op">=</span> <span class="va">n_patients</span><span class="op">)</span></span>
+<span><span class="va">noise</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">traj_df</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">traj_df</span><span class="op">$</span><span class="va">Marker</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">100</span>, <span class="va">base_vals</span> <span class="op">-</span> <span class="va">decay_vals</span> <span class="op">+</span> <span class="va">noise</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"science"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Marker</span> <span class="op">~</span> <span class="va">Visit</span> <span class="op">|</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">traj_df</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_trajectory.html">type_trajectory</a></span><span class="op">(</span></span>
+<span>          severity_bands  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Normal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span>, Elevated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">50</span><span class="op">)</span>, Critical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>          severity_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Normal <span class="op">=</span> <span class="st">"#E8F8F5"</span>, Elevated <span class="op">=</span> <span class="st">"#FEF9E7"</span>, Critical <span class="op">=</span> <span class="st">"#FADBD8"</span><span class="op">)</span>,</span>
+<span>          show_mean       <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          show_ci         <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          show_n          <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 5** — Longitudinal Biomarker Response Trajectories"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Circulating Tumor Protein Dynamics with Severity Stratification"</span>,</span>
+<span>        ylab     <span class="op">=</span> <span class="st">"Tumor Biomarker Concentration (ng/mL)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig5-trajectory-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-6a-time-course-translational-proteomics">Figure 6A: Time-Course Translational Proteomics<a class="anchor" aria-label="anchor" href="#figure-6a-time-course-translational-proteomics"></a>
+</h2>
+<p>Using real <strong>xOmicsShiny StrokeBrain_TimeCourse</strong> data
+to visualize protein expression trajectories across 5 recovery time
+points in ischemic stroke (StrkIp), sham surgery (ShamIp), and naive
+control (StrkC):</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Helper to resolve bundled package data</span></span>
+<span><span class="va">resolve_data</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">pkg_path</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="va">filename</span>, package <span class="op">=</span> <span class="st">"cliomicplot"</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">pkg_path</span> <span class="op">!=</span> <span class="st">""</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">pkg_path</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pkg_path</span><span class="op">)</span></span>
+<span>  <span class="va">fallback</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">".."</span>, <span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">fallback</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fallback</span><span class="op">)</span></span>
+<span>  <span class="va">fallback2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">fallback2</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fallback2</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Cannot find data file: "</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Load stroke time-course proteomics</span></span>
+<span><span class="va">stroke_env</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">resolve_data</span><span class="op">(</span><span class="st">"StrokeBrain_TimeCourse.RData"</span><span class="op">)</span>, envir <span class="op">=</span> <span class="va">stroke_env</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Merge gene symbols</span></span>
+<span><span class="va">stroke_long</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">stroke_env</span><span class="op">$</span><span class="va">data_long</span>,</span>
+<span>                    <span class="va">stroke_env</span><span class="op">$</span><span class="va">ProteinGeneName</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UniqueID"</span>, <span class="st">"Gene.Name"</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                    by <span class="op">=</span> <span class="st">"UniqueID"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Select Mpeg1 (macrophage/microglia activation marker)</span></span>
+<span><span class="va">mpeg1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">stroke_long</span>, <span class="va">Gene.Name</span> <span class="op">==</span> <span class="st">"Mpeg1"</span><span class="op">)</span></span>
+<span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Day</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">mpeg1</span><span class="op">$</span><span class="va">conc</span><span class="op">)</span></span>
+<span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Treatment</span> <span class="op">=</span> <span class="va">mpeg1</span><span class="op">$</span><span class="va">treatment</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"science"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Day</span> <span class="op">|</span> <span class="va">Treatment</span>, data <span class="op">=</span> <span class="va">mpeg1</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_lines.html">type_lines</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 6A** — Mpeg1 Macrophage Marker Time Course"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Stroke Brain Proteomics — 5 Time Points (Days 1–28)"</span>,</span>
+<span>        xlab    <span class="op">=</span> <span class="st">"Days Post-Onset"</span>,</span>
+<span>        ylab    <span class="op">=</span> <span class="st">"Protein Expression (LFQ Intensity)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig6a-timecourse-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-6b-multi-protein-longitudinal-trajectories">Figure 6B: Multi-Protein Longitudinal Trajectories<a class="anchor" aria-label="anchor" href="#figure-6b-multi-protein-longitudinal-trajectories"></a>
+</h2>
+<p>Tracking 6 key neuro-inflammatory markers across ischemic injury
+progression:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'patchwork' was built under R version 4.5.1</span></span>
+<code class="sourceCode R"><span><span class="va">immune_genes</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mpeg1"</span>, <span class="st">"C1qa"</span>, <span class="st">"C3"</span>, <span class="st">"Trem2"</span>, <span class="st">"Tyrobp"</span>, <span class="st">"Itgam"</span><span class="op">)</span></span>
+<span><span class="va">immune_data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">stroke_long</span>, <span class="va">Gene.Name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">immune_genes</span> <span class="op">&amp;</span> <span class="va">treatment</span> <span class="op">==</span> <span class="st">"StrkIp"</span><span class="op">)</span></span>
+<span><span class="va">immune_data</span><span class="op">$</span><span class="va">Day</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">immune_data</span><span class="op">$</span><span class="va">conc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Regenerate with consistent theme</span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
-<span>              type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">FALSE</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>,</span>
-<span>              theme <span class="op">=</span> <span class="st">"cli_minimal"</span>,</span>
-<span>              title <span class="op">=</span> <span class="st">"**A** — Waterfall"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">immune_means</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Gene.Name</span> <span class="op">+</span> <span class="va">Day</span>, data <span class="op">=</span> <span class="va">immune_data</span>, FUN <span class="op">=</span> <span class="va">mean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
-<span>              type <span class="op">=</span> <span class="fu"><a href="../reference/type_swimmer.html">type_swimmer</a></span><span class="op">(</span>bar_fill <span class="op">=</span> <span class="st">"BestResp"</span>, event_times <span class="op">=</span> <span class="va">events_df</span><span class="op">)</span>,</span>
-<span>              theme <span class="op">=</span> <span class="st">"cli_minimal"</span>,</span>
-<span>              title <span class="op">=</span> <span class="st">"**B** — Swimmer"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span></span>
-<span>    title   <span class="op">=</span> <span class="st">"**Figure 3** — Tumor Response Assessment"</span>,</span>
-<span>    caption <span class="op">=</span> <span class="st">"Simulated immunotherapy trial data"</span>,</span>
-<span>    theme   <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">element_markdown</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 21 rows containing missing values or values outside the scale range</span></span>
-<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Day</span> <span class="op">|</span> <span class="va">Gene.Name</span>, data <span class="op">=</span> <span class="va">immune_means</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_lines.html">type_lines</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"lancet"</span>,</span>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 6B** — Immune Protein Dynamics (Ischemic Model)"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Mean LFQ across 5 time points in the damaged hemisphere"</span>,</span>
+<span>        ylab    <span class="op">=</span> <span class="st">"Mean LFQ Intensity"</span>,</span>
+<span>        legend  <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig6b-multiprotein-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="saving-figures-for-publication">Saving Figures for Publication<a class="anchor" aria-label="anchor" href="#saving-figures-for-publication"></a>
+<h2 id="figure-6c-prism-style-boxplot-with-anova">Figure 6C: Prism-Style Boxplot with ANOVA<a class="anchor" aria-label="anchor" href="#figure-6c-prism-style-boxplot-with-anova"></a>
 </h2>
+<p>Using <strong>xOmicsShiny AgingHFCD_Metabolomics</strong> data to
+compare metabolite levels across four experimental groups with
+statistical annotations:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Save individual figures as high-resolution files</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span>risk_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"nejm"</span>, palette <span class="op">=</span> <span class="st">"nejm"</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig1_km.pdf"</span>, width <span class="op">=</span> <span class="fl">8</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">aging_env</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">resolve_data</span><span class="op">(</span><span class="st">"AgingHFCD_Metabolomics.RData"</span><span class="op">)</span>, envir <span class="op">=</span> <span class="va">aging_env</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">HR</span> <span class="op">~</span> <span class="va">Variable</span>, data <span class="op">=</span> <span class="va">forest_df</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_forest.html">type_forest</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"lancet"</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig2_forest.pdf"</span>, width <span class="op">=</span> <span class="fl">7</span>, height <span class="op">=</span> <span class="fl">4.5</span><span class="op">)</span></span>
+<span><span class="co"># Select top DE metabolites and assign clinical labels</span></span>
+<span><span class="va">top_mets</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">aging_env</span><span class="op">$</span><span class="va">results_long</span><span class="op">$</span><span class="va">UniqueID</span><span class="op">[</span><span class="va">aging_env</span><span class="op">$</span><span class="va">results_long</span><span class="op">$</span><span class="va">Adj.P.Value</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">]</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">met_data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">aging_env</span><span class="op">$</span><span class="va">data_long</span>, <span class="va">UniqueID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_mets</span><span class="op">)</span></span>
+<span><span class="va">met_data</span><span class="op">$</span><span class="va">Group</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">met_data</span><span class="op">$</span><span class="va">group</span>,</span>
+<span>                        levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Young_CD"</span>, <span class="st">"Old_CD"</span>, <span class="st">"Young_HF"</span>, <span class="st">"Old_HF"</span><span class="op">)</span>,</span>
+<span>                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Young+CD"</span>, <span class="st">"Old+CD"</span>, <span class="st">"Young+HF"</span>, <span class="st">"Old+HF"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"broadsheet"</span>,</span>
-<span>        file <span class="op">=</span> <span class="st">"fig3_waterfall.pdf"</span>, width <span class="op">=</span> <span class="fl">10</span>, height <span class="op">=</span> <span class="fl">5.5</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"scifig"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Group</span> <span class="op">|</span> <span class="va">UniqueID</span>, data <span class="op">=</span> <span class="va">met_data</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_boxplot.html">type_boxplot</a></span><span class="op">(</span></span>
+<span>          add_jitter   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          jitter_width <span class="op">=</span> <span class="fl">0.22</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        stat.test <span class="op">=</span> <span class="st">"anova"</span>,</span>
+<span>        stat.label <span class="op">=</span> <span class="st">"p.signif"</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 6C** — Metabolite Levels by Age × Diet Group"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Top 4 DE metabolites | One-way ANOVA with significance stars"</span>,</span>
+<span>        ylab    <span class="op">=</span> <span class="st">"Metabolite Abundance (log2)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig6c-anova-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="figure-4-clinical-trials-pipeline-stacked-bar-chart">Figure 4: Clinical Trials Pipeline — Stacked Bar Chart<a class="anchor" aria-label="anchor" href="#figure-4-clinical-trials-pipeline-stacked-bar-chart"></a>
+<h2 id="figure-7-clinical-trials-pipeline-stacked-bar-chart">Figure 7: Clinical Trials Pipeline — Stacked Bar Chart<a class="anchor" aria-label="anchor" href="#figure-7-clinical-trials-pipeline-stacked-bar-chart"></a>
 </h2>
-<p>The new <code><a href="../reference/type_trials.html">type_trials()</a></code> creates a horizontal stacked bar
-chart ideal for showing trial pipelines, project portfolios, or any
-categorical breakdown within groups:</p>
+<p><code><a href="../reference/type_trials.html">type_trials()</a></code> visualizes oncology drug development
+portfolios categorized by clinical trial phase:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Simulated trial pipeline data</span></span>
-<span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  company <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AstraZeneca"</span>, <span class="st">"Roche"</span>, <span class="st">"MSD"</span>, <span class="st">"Lilly"</span>, <span class="st">"Hengrui"</span>,</span>
 <span>                  <span class="st">"Sanofi"</span>, <span class="st">"Novartis"</span>, <span class="st">"BMS"</span>, <span class="st">"J&amp;J"</span>, <span class="st">"Pfizer"</span>, <span class="st">"AbbVie"</span><span class="op">)</span>,</span>
 <span>                each <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
@@ -557,99 +628,116 @@ categorical breakdown within groups:</p>
 <span>  <span class="st">"I"</span>      <span class="op">=</span> <span class="st">"#F8D95C"</span>, <span class="st">"I/II"</span>   <span class="op">=</span> <span class="st">"#D69B3C"</span>, <span class="st">"II"</span>     <span class="op">=</span> <span class="st">"#A7BA91"</span>,</span>
 <span>  <span class="st">"II/III"</span> <span class="op">=</span> <span class="st">"#B76348"</span>, <span class="st">"III"</span>    <span class="op">=</span> <span class="st">"#123F2A"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">phase_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"I"</span>      <span class="op">=</span> <span class="st">"#173E2B"</span>, <span class="st">"I/II"</span>   <span class="op">=</span> <span class="st">"#173E2B"</span>, <span class="st">"II"</span>     <span class="op">=</span> <span class="st">"#173E2B"</span>,</span>
-<span>  <span class="st">"II/III"</span> <span class="op">=</span> <span class="st">"white"</span>,   <span class="st">"III"</span>    <span class="op">=</span> <span class="st">"#F6F1DE"</span></span>
-<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"cli_bw"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">n</span> <span class="op">~</span> <span class="va">company</span> <span class="op">|</span> <span class="va">phase</span>, data <span class="op">=</span> <span class="va">pipeline</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_trials.html">type_trials</a></span><span class="op">(</span></span>
-<span>          segment_colors      <span class="op">=</span> <span class="va">phase_colors</span>,</span>
-<span>          segment_text_colors <span class="op">=</span> <span class="va">phase_text</span>,</span>
-<span>          label_threshold     <span class="op">=</span> <span class="fl">3</span></span>
+<span>          segment_colors  <span class="op">=</span> <span class="va">phase_colors</span>,</span>
+<span>          label_threshold <span class="op">=</span> <span class="fl">3</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>        title    <span class="op">=</span> <span class="st">"**Figure 4** — Industry-Sponsored Clinical Trials by Phase"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"Companies with ≥ 25 completed trials, 2025"</span>,</span>
-<span>        caption  <span class="op">=</span> <span class="st">"Source: Citeline Annual Completed Clinical Trials Report"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="customization">Customization<a class="anchor" aria-label="anchor" href="#customization"></a>
-</h3>
-<table class="table">
-<colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
-</colgroup>
-<thead><tr class="header">
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>segment_colors</code></td>
-<td>
-<code>NULL</code> (jco palette)</td>
-<td>Named vector mapping segments to fill colours</td>
-</tr>
-<tr class="even">
-<td><code>segment_text_colors</code></td>
-<td>
-<code>NULL</code> (auto dark)</td>
-<td>Named vector mapping segments to label text colours</td>
-</tr>
-<tr class="odd">
-<td><code>bar_height</code></td>
-<td><code>0.72</code></td>
-<td>Bar height as fraction of row spacing</td>
-</tr>
-<tr class="even">
-<td><code>label_threshold</code></td>
-<td><code>3</code></td>
-<td>Minimum segment width to show internal label</td>
-</tr>
-<tr class="odd">
-<td><code>show_totals</code></td>
-<td><code>TRUE</code></td>
-<td>Show total count label to the right</td>
-</tr>
-</tbody>
-</table>
+<span>        title    <span class="op">=</span> <span class="st">"**Figure 7** — Oncology Pipeline Activity by Development Phase"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Global Pharmaceutical Portfolios with ≥ 25 Active Clinical Trials"</span>,</span>
+<span>        caption  <span class="op">=</span> <span class="st">"Source: Citeline Annual Clinical Trial Report"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig7-trials-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
+<div class="section level2">
+<h2 id="figure-8-nature-cell-multi-panel-composite-assembly">Figure 8: Nature / Cell Multi-Panel Composite Assembly<a class="anchor" aria-label="anchor" href="#figure-8-nature-cell-multi-panel-composite-assembly"></a>
+</h2>
+<p>Premier journals mandate unified composite figures with standardized
+bold panel labels (<strong>a</strong>, <strong>b</strong> or
+<strong>A</strong>, <strong>B</strong>) and synchronized typography:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_waterfall</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
+<span>                       type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">FALSE</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>,</span>
+<span>                       theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>                       title <span class="op">=</span> <span class="st">"Best Tumor Response"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_swimmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
+<span>                     type <span class="op">=</span> <span class="fu"><a href="../reference/type_swimmer.html">type_swimmer</a></span><span class="op">(</span></span>
+<span>                       bar_fill    <span class="op">=</span> <span class="st">"BestResp"</span>,</span>
+<span>                       ongoing     <span class="op">=</span> <span class="st">"Ongoing"</span>,</span>
+<span>                       event_times <span class="op">=</span> <span class="va">events_df</span></span>
+<span>                     <span class="op">)</span>,</span>
+<span>                     theme <span class="op">=</span> <span class="st">"cell"</span>, bar_palette <span class="op">=</span> <span class="st">"jama"</span>,</span>
+<span>                     title <span class="op">=</span> <span class="st">"Treatment Duration &amp; Events"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_waterfall</span> <span class="op">+</span> <span class="va">p_swimmer</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span></span>
+<span>    title   <span class="op">=</span> <span class="st">"**Figure 8** — RECIST Response Assessment in Phase II Immunotherapy"</span>,</span>
+<span>    caption <span class="op">=</span> <span class="st">"Simulated trial data: 30 evaluable patients"</span>,</span>
+<span>    theme   <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">element_markdown</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">13</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="oncology_files/figure-html/fig8-composite-1.png" class="r-plt" alt="" width="912" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="journal-dimensions-publication-ready-export">Journal Dimensions &amp; Publication-Ready Export<a class="anchor" aria-label="anchor" href="#journal-dimensions-publication-ready-export"></a>
+</h2>
+<p>When submitting to major scientific publishers, figure canvas
+dimensions must match exact column widths in millimeters.</p>
+<p><code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> provides presets for 9 premier
+publishers:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check Nature and Cell submission dimensions</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Nature 2-column width:"</span>, <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>, <span class="st">"mm\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Nature 2-column width: 183 mm</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Cell 2-column width:  "</span>, <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"cell"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>, <span class="st">"mm\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Cell 2-column width:   180 mm</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Science 2-column width:"</span>, <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"science"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>, <span class="st">"mm\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Science 2-column width: 183 mm</span></span></code></pre></div>
+<p>Export individual figures with <code><a href="../reference/cli_save.html">cli_save()</a></code> to verify
+format compliance and embed fonts:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Nature full-width composite figure export</span></span>
+<span><span class="va">p_comp</span> <span class="op">=</span> <span class="va">p_waterfall</span> <span class="op">+</span> <span class="va">p_swimmer</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_comp</span>, <span class="st">"Figure_8_Nature.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, columns <span class="op">=</span> <span class="fl">2</span>, height_mm <span class="op">=</span> <span class="fl">120</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Cell single-column KM milestone export</span></span>
+<span><span class="va">p_km</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="va">lung</span>,</span>
+<span>               type <span class="op">=</span> <span class="fu"><a href="../reference/type_km.html">type_km</a></span><span class="op">(</span>milestones <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">365</span><span class="op">)</span><span class="op">)</span>, theme <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_km</span>, <span class="st">"Figure_1_Cell.pdf"</span>, journal <span class="op">=</span> <span class="st">"cell"</span>, columns <span class="op">=</span> <span class="fl">1</span>, height_mm <span class="op">=</span> <span class="fl">85</span><span class="op">)</span></span></code></pre></div>
+<hr>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p>In this vignette we produced four publication-ready oncology figures
-using cliomicplot’s specialized plot types. The key takeaways:</p>
+<p>In this oncology vignette, we demonstrated:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong><code><a href="../reference/type_km.html">type_km()</a></code></strong> for survival curves with
-risk tables</li>
+<strong><code><a href="../reference/type_km.html">type_km()</a></code></strong>: Survival curves with
+landmark milestone percentage dots and aligned numbers-at-risk.</li>
 <li>
-<strong><code><a href="../reference/type_forest.html">type_forest()</a></code></strong> for Cox regression
-hazard ratios</li>
+<strong>Cumulative Incidence</strong>: Mode for time-to-recurrence
+and adverse events.</li>
 <li>
-<strong><code><a href="../reference/type_waterfall.html">type_waterfall()</a></code></strong> for tumor response
-visualization</li>
+<strong><code><a href="../reference/type_forest.html">type_forest()</a></code></strong>: Cox model hazard ratios
+with alternating row stripes and meta-analysis diamond.</li>
 <li>
-<strong><code><a href="../reference/type_swimmer.html">type_swimmer()</a></code></strong> for patient-level
-timelines</li>
+<strong><code><a href="../reference/type_waterfall.html">type_waterfall()</a></code></strong>: RECIST best
+percentage change from baseline with response thresholds.</li>
 <li>
-<strong><code><a href="../reference/type_trials.html">type_trials()</a></code></strong> for clinical trial
-pipeline stacked bar charts</li>
+<strong><code><a href="../reference/type_swimmer.html">type_swimmer()</a></code></strong>: Patient timelines with
+ongoing therapy arrows and RECIST event glyphs.</li>
 <li>
-<strong><code><a href="../reference/clitheme.html">clitheme()</a></code></strong> for journal-specific
-styling</li>
+<strong><code><a href="../reference/type_mcid.html">type_mcid()</a></code></strong>: Minimal clinically
+important difference dumbbell plots (Archetype 1).</li>
 <li>
-<strong><code><a href="../reference/cli_markdown.html">cli_markdown()</a></code></strong> for rich text
-formatting</li>
+<strong><code><a href="../reference/type_trajectory.html">type_trajectory()</a></code></strong>: Longitudinal
+profiles with clinical severity bands and sample size callouts
+(Archetype 4).</li>
+<li>
+<strong>Multi-panel layout &amp; export</strong>: Exact journal
+millimeter trim sizes with <code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> and
+<code><a href="../reference/cli_save.html">cli_save()</a></code>.</li>
 </ol>
-<p>Reset global settings when done:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Reset global settings</span></span>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span>palette.qualitative <span class="op">=</span> <span class="st">"jco"</span>, stat.test <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -663,7 +751,7 @@ formatting</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

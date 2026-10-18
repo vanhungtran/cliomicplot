@@ -97,10 +97,16 @@ bioinformatics tools; see the package REFERENCES for full attributions.
 
 Useful links:
 
-- <https://github.com/vanhungtrantran/cliomicplot>
+- <https://github.com/vanhungtran/cliomicplot>
+
+- <https://vanhungtran.github.io/cliomicplot>
 
 - Report bugs at <https://github.com/vanhungtran/cliomicplot/issues>
 
 ## Author
 
 **Maintainer**: Lucas VHH Tran <lucas.tran@ck-care.ch>
+
+Authors:
+
+- Lucas VHH Tran <lucas.tran@ck-care.ch>

@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Themes and Palettes in cliomicplot • cliomicplot</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +56,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Themes and Palettes in cliomicplot</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Themes and Palettes in cliomicplot</h1>
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-07-16</h4>
+            <h4 data-toc-skip class="date">2026-10-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/themes-palettes.Rmd" class="external-link"><code>vignettes/themes-palettes.Rmd</code></a></small>
       <div class="d-none name"><code>themes-palettes.Rmd</code></div>
@@ -159,492 +163,420 @@ document.addEventListener('keydown',function(e){if(!lbx.classList.contains('open
 </script><div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>cliomicplot ships with 10 publication-quality themes and 55+ color
-palettes. This vignette covers both systems in depth — how to select,
-customize, register, and combine them for maximum impact.</p>
+<p><strong>cliomicplot</strong> provides 13 publication-quality themes
+and 55+ curated color palettes engineered around the design
+specifications of premier journals: <strong>Nature</strong>,
+<strong>Cell</strong>, <strong>Science</strong>, <strong>NEJM</strong>,
+<strong>The Lancet</strong>, and <strong>JAMA</strong>.</p>
+<p>This vignette covers: 1. <strong>The 13 Themes</strong> — open axes
+vs. full-box frames, typography, and tick styles 2. <strong>55+ Color
+Palettes</strong> — journal presets, genomics, and strict
+colorblind-safe palettes 3. <strong>Standalone Scales</strong> — using
+<code><a href="../reference/palette_scale.html">palette_scale()</a></code>, <code><a href="../reference/palette_scale.html">scale_color_cli()</a></code>, and
+<code><a href="../reference/palette_scale.html">scale_fill_cli()</a></code> on any ggplot2 figure 4. <strong>Physical
+Canvas Sizing</strong> — exact millimeter column widths for 9 major
+publishers (<code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code>) 5. <strong>Vector
+Publication Export</strong> — automated compliance checks with
+<code><a href="../reference/cli_save.html">cli_save()</a></code></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtrantran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; cliomicplot 0.1.0 - Publication-ready clinical &amp; omics plots</span></span>
-<span><span class="co">#&gt; Main function: cliplot() | Themes: clitheme() | Params: clipar()</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="part-1-themes">Part 1: Themes<a class="anchor" aria-label="anchor" href="#part-1-themes"></a>
+<h2 id="part-1-themes-journal-styles">Part 1: Themes &amp; Journal Styles<a class="anchor" aria-label="anchor" href="#part-1-themes-journal-styles"></a>
 </h2>
 <div class="section level3">
 <h3 id="theme-catalog">Theme Catalog<a class="anchor" aria-label="anchor" href="#theme-catalog"></a>
 </h3>
 <table class="table">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+</colgroup>
 <thead><tr class="header">
 <th>Theme</th>
-<th>Base Size</th>
+<th>Spines</th>
 <th>Grid</th>
-<th>Panel Border</th>
+<th>Ticks</th>
 <th>Best For</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>cli_bw</code></td>
-<td>11</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>General purpose (default)</td>
-</tr>
-<tr class="even">
-<td><code>cli_classic</code></td>
-<td>11</td>
-<td>Yes</td>
-<td>No</td>
-<td>Traditional R look</td>
-</tr>
-<tr class="odd">
-<td><code>cli_minimal</code></td>
-<td>11</td>
-<td>Faint</td>
-<td>No</td>
-<td>Modern, clean</td>
-</tr>
-<tr class="even">
 <td><code>nature</code></td>
-<td>10</td>
-<td>No</td>
-<td>No</td>
-<td>Nature submissions</td>
+<td>Open (left &amp; bottom only)</td>
+<td>None</td>
+<td>Outward (1.5 pt)</td>
+<td>Nature, Nature Medicine, Nat. Comms</td>
+</tr>
+<tr class="even">
+<td><code>science</code></td>
+<td>Ultra-clean open</td>
+<td>None</td>
+<td>Outward (1.5 pt)</td>
+<td>Science, Science Immunology, Science Advances</td>
 </tr>
 <tr class="odd">
-<td><code>science</code></td>
-<td>10</td>
-<td>No</td>
-<td>No</td>
-<td>Science / AAAS</td>
+<td><code>cell</code></td>
+<td>Structured open</td>
+<td>None</td>
+<td>Outward (1.5 pt)</td>
+<td>Cell, Cancer Cell, Immunity, Molecular Cell</td>
 </tr>
 <tr class="even">
 <td><code>nejm</code></td>
-<td>10</td>
-<td>Subtle</td>
-<td>No</td>
-<td>NEJM style</td>
+<td>Open</td>
+<td>Subtle horizontal</td>
+<td>Outward (1.2 pt)</td>
+<td>New England Journal of Medicine</td>
 </tr>
 <tr class="odd">
 <td><code>lancet</code></td>
-<td>10</td>
-<td>Subtle</td>
-<td>No</td>
-<td>The Lancet</td>
+<td>Open</td>
+<td>Subtle horizontal</td>
+<td>Outward (1.2 pt)</td>
+<td>The Lancet, Lancet Oncology</td>
 </tr>
 <tr class="even">
-<td><code>cell</code></td>
-<td>10</td>
-<td>No</td>
-<td>No</td>
-<td>Cell Press</td>
+<td>
+<code>scifig</code> / <code>sci_box</code>
+</td>
+<td>4 crisp black spines</td>
+<td>Subtle dashed (0.3 pt)</td>
+<td>Outward (2.5 pt)</td>
+<td>Elsevier, IEEE, SCI journal submissions</td>
 </tr>
 <tr class="odd">
-<td><code>broadsheet</code></td>
-<td>14</td>
-<td>Horizontal</td>
-<td>Yes</td>
-<td>Print / Newspaper</td>
+<td><code>cli_bw</code></td>
+<td>4 spines (box)</td>
+<td>Full grid</td>
+<td>Inward</td>
+<td>Standard laboratory exploration (default)</td>
 </tr>
 <tr class="even">
+<td><code>cli_classic</code></td>
+<td>Left &amp; bottom spines</td>
+<td>None</td>
+<td>Inward</td>
+<td>Traditional base R appearance</td>
+</tr>
+<tr class="odd">
+<td><code>cli_minimal</code></td>
+<td>None</td>
+<td>Faint</td>
+<td>None</td>
+<td>Modern presentations and dashboards</td>
+</tr>
+<tr class="even">
+<td><code>broadsheet</code></td>
+<td>Subtle frame</td>
+<td>Horizontal only</td>
+<td>Outward</td>
+<td>High-contrast newsprint / executive briefs</td>
+</tr>
+<tr class="odd">
 <td><code>dark</code></td>
-<td>11</td>
-<td>Subtle</td>
-<td>No</td>
-<td>Presentations / Slides</td>
+<td>Minimal dark</td>
+<td>Faint</td>
+<td>None</td>
+<td>Keynote slides and conference presentations</td>
+</tr>
+<tr class="even">
+<td><code>showcase</code></td>
+<td>High-contrast border</td>
+<td>None</td>
+<td>Outward</td>
+<td>Poster presentations and hero figures</td>
 </tr>
 </tbody>
 </table>
+<hr>
 </div>
 <div class="section level3">
-<h3 id="side-by-side-theme-comparison">Side-by-side theme comparison<a class="anchor" aria-label="anchor" href="#side-by-side-theme-comparison"></a>
+<h3 id="side-by-side-journal-theme-comparison">Side-by-Side Journal Theme Comparison<a class="anchor" aria-label="anchor" href="#side-by-side-journal-theme-comparison"></a>
 </h3>
+<p>The code below renders identical biomarker distributions across
+Nature, Science, Cell, NEJM, Lancet, and SCI full-box themes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate the same plot with different themes</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">thm</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="va">p_theme</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">thm</span>, <span class="va">title_txt</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>          palette <span class="op">=</span> <span class="st">"jco"</span>, theme <span class="op">=</span> <span class="va">thm</span>,</span>
+<span>          palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="va">thm</span>,</span>
 <span>          stat.test <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>          title <span class="op">=</span> <span class="va">thm</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'patchwork' was built under R version 4.5.1</span></span>
+<span>          title <span class="op">=</span> <span class="va">title_txt</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span></span>
-<span><span class="op">(</span><span class="fu">p</span><span class="op">(</span><span class="st">"cli_bw"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p</span><span class="op">(</span><span class="st">"cli_minimal"</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
-<span><span class="op">(</span><span class="fu">p</span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p</span><span class="op">(</span><span class="st">"nejm"</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
-<span><span class="op">(</span><span class="fu">p</span><span class="op">(</span><span class="st">"lancet"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p</span><span class="op">(</span><span class="st">"cell"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Theme Comparison Across Journals"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="960" style="display: block; margin: auto;"></p>
+<span><span class="op">(</span><span class="fu">p_theme</span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"Nature (Open Spines)"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p_theme</span><span class="op">(</span><span class="st">"science"</span>, <span class="st">"Science (Clean Open)"</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
+<span><span class="op">(</span><span class="fu">p_theme</span><span class="op">(</span><span class="st">"cell"</span>, <span class="st">"Cell Press (Structured)"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p_theme</span><span class="op">(</span><span class="st">"scifig"</span>, <span class="st">"SCI Full-Box (4 Spines)"</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span></span>
+<span><span class="op">(</span><span class="fu">p_theme</span><span class="op">(</span><span class="st">"nejm"</span>, <span class="st">"NEJM (Subtle Grid)"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">p_theme</span><span class="op">(</span><span class="st">"lancet"</span>, <span class="st">"The Lancet (Clinical)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Theme Comparison Across Premier Scientific Journals"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/theme-comparison-1.png" class="r-plt" alt="" width="960" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="open-axes-vs--full-box-frames-which-to-choose">Open Axes vs. Full-Box Frames: Which to Choose?<a class="anchor" aria-label="anchor" href="#open-axes-vs--full-box-frames-which-to-choose"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Open Axes (<code>nature</code>, <code>science</code>,
+<code>cell</code>, <code>nejm</code>, <code>lancet</code>)</strong>:
+<ul>
+<li>Nature and Science strongly prefer removing top and right spines to
+maximize data ink and avoid confining the visual field.</li>
+<li>Outward tick marks prevent overlap with data points near the axis
+boundaries.</li>
+</ul>
+</li>
+<li>
+<strong>Full-Box Frame (<code>scifig</code> /
+<code>sci_box</code>)</strong>:
+<ul>
+<li>Elsevier, IEEE, and many specialized SCI journals require full
+rectangular frames enclosing all four sides of the plot.</li>
+<li>
+<code><a href="../reference/theme_cli_scifig.html">theme_cli_scifig()</a></code> applies 0.5 pt dark borders, crisp
+outward tick marks, and 0.3 pt dashed reference grid lines.</li>
+</ul>
+</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Elsevier / IEEE style box plot with full frame</span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">len</span> <span class="op">~</span> <span class="va">dose</span> <span class="op">|</span> <span class="va">supp</span>, data <span class="op">=</span> <span class="va">ToothGrowth</span>,</span>
+<span>        type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"scifig"</span>,</span>
+<span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
+<span>        title <span class="op">=</span> <span class="st">"Tooth Growth by Supplement &amp; Dose"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Full-box frame with outward ticks (theme_cli_scifig)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/scifig-demo-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<hr>
 </div>
 <div class="section level3">
 <h3 id="persistent-vs--ephemeral-themes">Persistent vs. Ephemeral Themes<a class="anchor" aria-label="anchor" href="#persistent-vs--ephemeral-themes"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># ── Persistent: applies to ALL subsequent plots ────────────────────</span></span>
+<code class="sourceCode R"><span><span class="co"># ── Persistent: applies to all subsequent plots ────────────────────</span></span>
 <span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: nature</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Plot 1 — Nature theme persists"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<span>        title <span class="op">=</span> <span class="st">"Plot 1 — Nature theme persists globally"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">len</span> <span class="op">~</span> <span class="va">dose</span>, data <span class="op">=</span> <span class="va">ToothGrowth</span>, type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Plot 2 — Still Nature theme"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Orientation is not uniquely specified when both the x and y aesthetics are</span></span>
-<span><span class="co">#&gt; continuous. Picking default orientation 'x'.</span></span>
-<span><span class="co">#&gt; Warning: Continuous <span style="color: #00BB00;">x</span> aesthetic</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> did you forget `aes(group = ...)`?</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-4-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<span>        title <span class="op">=</span> <span class="st">"Plot 2 — Still using Nature theme"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-2-2.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># ← reset to default</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># ← reset to default (cli_bw)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># ── Ephemeral: applies to ONE plot only ────────────────────────────</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>, theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"This plot: Nature"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span><span class="co"># ── Ephemeral: applies to one plot only ────────────────────────────</span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>, theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>        title <span class="op">=</span> <span class="st">"This plot uses Cell theme"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>, type <span class="op">=</span> <span class="st">"boxplot"</span>,</span>
-<span>        theme <span class="op">=</span> <span class="st">"dark"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"This plot: Dark"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-5-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Back to default — cli_bw"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-5-3.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<span>        title <span class="op">=</span> <span class="st">"Returned to default theme (cli_bw)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-3-2.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<hr>
 </div>
 <div class="section level3">
 <h3 id="custom-theme-registration">Custom Theme Registration<a class="anchor" aria-label="anchor" href="#custom-theme-registration"></a>
 </h3>
-<p>Register your own themes for reuse across projects:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Register a custom theme</span></span>
-<span><span class="fu"><a href="../reference/clitheme_register.html">clitheme_register</a></span><span class="op">(</span><span class="st">"my_submission"</span>,</span>
-<span>  base <span class="op">=</span> <span class="st">"cli_bw"</span>,</span>
-<span>  axis.text     <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">12</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
-<span>  plot.title    <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
-<span>  plot.subtitle <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span>,</span>
-<span>  legend.position   <span class="op">=</span> <span class="st">"bottom"</span>,</span>
-<span>  legend.background <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey80"</span><span class="op">)</span></span>
+<p>You can register bespoke lab or journal themes that remain accessible
+across your R session:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Register custom institute theme</span></span>
+<span><span class="fu"><a href="../reference/clitheme_register.html">clitheme_register</a></span><span class="op">(</span><span class="st">"broad_institute"</span>,</span>
+<span>  base          <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>  axis.text     <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, face <span class="op">=</span> <span class="st">"bold"</span>, color <span class="op">=</span> <span class="st">"#1A1A1A"</span><span class="op">)</span>,</span>
+<span>  axis.title    <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">10</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
+<span>  plot.title    <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">12</span>, face <span class="op">=</span> <span class="st">"bold"</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  legend.position <span class="op">=</span> <span class="st">"right"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme registered: my_submission</span></span>
 <span></span>
-<span><span class="co"># Use it</span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"my_submission"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to registered theme: my_submission</span></span>
+<span><span class="co"># Apply registered theme</span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Custom 'my_submission' Theme"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"12pt bold text, centered"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># List all themes (including custom ones)</span></span>
-<span><span class="fu"><a href="../reference/clitheme_list.html">clitheme_list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "cli_bw"        "cli_classic"   "cli_minimal"   "nature"       </span></span>
-<span><span class="co">#&gt;  [5] "science"       "nejm"          "lancet"        "cell"         </span></span>
-<span><span class="co">#&gt;  [9] "dark"          "showcase"      "broadsheet"    "my_submission"</span></span>
-<span></span>
-<span><span class="co"># Remove a custom theme</span></span>
-<span><span class="fu"><a href="../reference/clitheme_unregister.html">clitheme_unregister</a></span><span class="op">(</span><span class="st">"my_submission"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme unregistered: my_submission</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="theme-overrides">Theme Overrides<a class="anchor" aria-label="anchor" href="#theme-overrides"></a>
-</h3>
-<p>Pass inline overrides to tweak any theme element:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Start with nature, but override axis text size</span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nature"</span>, axis.text <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: nature</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Nature theme with larger axis text"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>        theme <span class="op">=</span> <span class="st">"broad_institute"</span>,</span>
+<span>        title <span class="op">=</span> <span class="st">"Broad Institute Custom Theme"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Clean up</span></span>
+<span><span class="fu"><a href="../reference/clitheme_unregister.html">clitheme_unregister</a></span><span class="op">(</span><span class="st">"broad_institute"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="part-2-color-palettes">Part 2: Color Palettes<a class="anchor" aria-label="anchor" href="#part-2-color-palettes"></a>
+<h2 id="part-2-color-palettes-accessibility">Part 2: Color Palettes &amp; Accessibility<a class="anchor" aria-label="anchor" href="#part-2-color-palettes-accessibility"></a>
 </h2>
-<p>cliomicplot’s 55+ palettes are organized into logical categories:</p>
+<p>cliomicplot provides 55+ palettes organized into clinical, journal,
+genomic, accessibility, and diverging families:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_pals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_palette_list.html">cli_palette_list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Total available palettes: %d\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_pals</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Total available palettes: 44</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Representative selection:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Representative selection:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_pals</span>, <span class="fl">24</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; jco, nejm, lancet, nature, science, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples, oranges, rd_yl_gn, spectral, pi_yg</span></span></code></pre></div>
+<hr>
 <div class="section level3">
-<h3 id="quick-lookup">Quick Lookup<a class="anchor" aria-label="anchor" href="#quick-lookup"></a>
+<h3 id="journal-palettes">📰 Journal Palettes<a class="anchor" aria-label="anchor" href="#journal-palettes"></a>
 </h3>
+<p>Journal palettes match the official color schemes of premier
+publications:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_npg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                 palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Nature (npg)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_jama</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                  palette <span class="op">=</span> <span class="st">"jama"</span>, theme <span class="op">=</span> <span class="st">"nejm"</span>, title <span class="op">=</span> <span class="st">"JAMA (jama)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_npg</span> <span class="op">+</span> <span class="va">p_jama</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="nature-policy-colorblind-accessibility">♿ Nature Policy: Colorblind Accessibility<a class="anchor" aria-label="anchor" href="#nature-policy-colorblind-accessibility"></a>
+</h3>
+<p>Nature and Science submission guidelines explicitly mandate that
+figures must be interpretable by individuals with color vision
+deficiencies (CVD).</p>
+<p>Never rely on green-red contrast alone. Use validated CVD-safe
+palettes:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_oi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                palette <span class="op">=</span> <span class="st">"okabe_ito"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>                title <span class="op">=</span> <span class="st">"Okabe &amp; Ito (2008) — Colorblind-Safe"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_tol</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                 palette <span class="op">=</span> <span class="st">"tol_muted"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Paul Tol Muted — Universal CVD Safety"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_oi</span> <span class="op">+</span> <span class="va">p_tol</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="genomics-cancer-hallmarks">🧬 Genomics &amp; Cancer Hallmarks<a class="anchor" aria-label="anchor" href="#genomics-cancer-hallmarks"></a>
+</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_ucsc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                  palette <span class="op">=</span> <span class="st">"ucscgb"</span>, theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>                  title <span class="op">=</span> <span class="st">"UCSC Genome Browser Chromosome Colors"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_cosmic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>                    palette <span class="op">=</span> <span class="st">"cosmic"</span>, theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>                    title <span class="op">=</span> <span class="st">"COSMIC Cancer Hallmarks"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p_ucsc</span> <span class="op">+</span> <span class="va">p_cosmic</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="continuous-diverging-heatmap-scales">🔥 Continuous &amp; Diverging Heatmap Scales<a class="anchor" aria-label="anchor" href="#continuous-diverging-heatmap-scales"></a>
+</h3>
+<p>For heatmaps, correlation matrices, and spatial omics,
+<code><a href="../reference/palette_scale.html">palette_scale()</a></code> seamlessly provides continuous color
+gradients:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># List all palettes</span></span>
-<span><span class="va">all_pals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_palette_list.html">cli_palette_list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Total palettes: %d\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_pals</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Total palettes: 44</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"First 25:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; First 25:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">all_pals</span>, <span class="fl">25</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; jco, nejm, lancet, nature, science, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples, oranges, rd_yl_gn, spectral, pi_yg, npg</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="preview-a-palette">Preview a Palette<a class="anchor" aria-label="anchor" href="#preview-a-palette"></a>
-</h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cli_palette_show.html">cli_palette_show</a></span><span class="op">(</span><span class="st">"jco"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Show all journal palettes side by side</span></span>
-<span><span class="va">journal_pals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"npg"</span>, <span class="st">"nejm"</span>, <span class="st">"lancet"</span>, <span class="st">"jama"</span>, <span class="st">"jco"</span>, <span class="st">"bmj"</span>, <span class="st">"frontiers"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">pal_name</span> <span class="kw">in</span> <span class="va">journal_pals</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">cliomicplot</span><span class="fu">:::</span><span class="fu">get_cli_palette</span><span class="op">(</span><span class="va">pal_name</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">cols</span>, border <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>          main <span class="op">=</span> <span class="va">pal_name</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, space <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="palette-categories">Palette Categories<a class="anchor" aria-label="anchor" href="#palette-categories"></a>
-</h3>
-<div class="section level4">
-<h4 id="journal-palettes">📰 Journal Palettes<a class="anchor" aria-label="anchor" href="#journal-palettes"></a>
-</h4>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"npg"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"NPG (Nature Reviews Cancer)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"lancet"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"The Lancet"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-12-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level4">
-<h4 id="genomics-bioinformatics">🧬 Genomics &amp; Bioinformatics<a class="anchor" aria-label="anchor" href="#genomics-bioinformatics"></a>
-</h4>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># UCSC Genome Browser chromosome colors</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"ucscgb"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"UCSC Genome Browser"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># COSMIC Cancer Hallmarks</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"cosmic"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"COSMIC Hallmarks"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-13-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level4">
-<h4 id="accessibility-colorblind-safe">♿ Accessibility (Colorblind-Safe)<a class="anchor" aria-label="anchor" href="#accessibility-colorblind-safe"></a>
-</h4>
-<p>These palettes are designed to be distinguishable under common forms
-of color vision deficiency (deuteranopia, protanopia, tritanopia):</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"okabe_ito"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Okabe &amp; Ito (2008) — Colorblind-safe"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"tol_muted"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Paul Tol — Muted, Colorblind-safe"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-14-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level4">
-<h4 id="heatmap-diverging">🔥 Heatmap &amp; Diverging<a class="anchor" aria-label="anchor" href="#heatmap-diverging"></a>
-</h4>
-<p>Use <code>type = "continuous"</code> with
-<code><a href="../reference/palette_scale.html">palette_scale()</a></code> for gradient data:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.5.3</span></span>
-<span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"heatmap_rdbu"</span>, <span class="st">"fill"</span>, type <span class="op">=</span> <span class="st">"continuous"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"heatmap_rdbu"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"heatmap_rdbu (Diverging Red-Blue)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_cli_nature.html">theme_cli_nature</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"heatmap_prgn"</span>, <span class="st">"fill"</span>, type <span class="op">=</span> <span class="st">"continuous"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"heatmap_prgn"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"heatmap_prgn (Diverging Purple-Green)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_cli_nature.html">theme_cli_nature</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level4">
-<h4 id="dark-presentation-palettes">🌃 Dark / Presentation Palettes<a class="anchor" aria-label="anchor" href="#dark-presentation-palettes"></a>
-</h4>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"dark"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: dark</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">|</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">mtcars</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"neon"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Neon Palette on Dark Theme"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"cyberpunk"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Cyberpunk Palette on Dark Theme"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-16-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level3">
-<h3 id="using-palettes-as-standalone-scales">Using Palettes as Standalone Scales<a class="anchor" aria-label="anchor" href="#using-palettes-as-standalone-scales"></a>
-</h3>
-<p>All palettes work with <strong>any ggplot2 plot</strong> — not just
-cliomicplot:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Discrete colour scale</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"jama"</span>, <span class="st">"color"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"JAMA palette via palette_scale()"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Discrete fill scale</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">class</span>, fill <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"uchicago"</span>, <span class="st">"fill"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"UChicago palette via palette_scale()"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Works on any ggplot2 plot!"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-17-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level3">
-<h3 id="convenience-scale-wrappers">Convenience Scale Wrappers<a class="anchor" aria-label="anchor" href="#convenience-scale-wrappers"></a>
-</h3>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># scale_color_cli() — discrete colour</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">scale_color_cli</a></span><span class="op">(</span><span class="st">"jco"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># scale_fill_cli_c() — continuous fill</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">scale_fill_cli_c</a></span><span class="op">(</span><span class="st">"blues"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-18-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-</div>
-<div class="section level3">
-<h3 id="reversing-and-alpha">Reversing and Alpha<a class="anchor" aria-label="anchor" href="#reversing-and-alpha"></a>
-</h3>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Reverse a palette</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"jco"</span>, <span class="st">"color"</span>, reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"JCO palette — reversed"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Apply transparency</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/palette_scale.html">palette_scale</a></span><span class="op">(</span><span class="st">"cosmic"</span>, <span class="st">"color"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"COSMIC palette — 50% alpha"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-19-2.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="part-3-combining-themes-and-palettes">Part 3: Combining Themes and Palettes<a class="anchor" aria-label="anchor" href="#part-3-combining-themes-and-palettes"></a>
+<h2 id="part-3-using-palettes-as-standalone-scales">Part 3: Using Palettes as Standalone Scales<a class="anchor" aria-label="anchor" href="#part-3-using-palettes-as-standalone-scales"></a>
 </h2>
-<p>The most powerful aspect of cliomicplot is how themes and palettes
-work together. Here are some tested combinations for common use
-cases:</p>
-<table class="table">
-<thead><tr class="header">
-<th>Scenario</th>
-<th>Theme</th>
-<th>Palette</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Nature submission</td>
-<td><code>nature</code></td>
-<td><code>npg</code></td>
-</tr>
-<tr class="even">
-<td>NEJM oncology paper</td>
-<td><code>nejm</code></td>
-<td><code>nejm</code></td>
-</tr>
-<tr class="odd">
-<td>Lancet clinical trial</td>
-<td><code>lancet</code></td>
-<td><code>lancet</code></td>
-</tr>
-<tr class="even">
-<td>Cell genomics paper</td>
-<td><code>cell</code></td>
-<td>
-<code>cosmic</code> or <code>ucscgb</code>
-</td>
-</tr>
-<tr class="odd">
-<td>Conference slides</td>
-<td><code>dark</code></td>
-<td>
-<code>neon</code> or <code>cyberpunk</code>
-</td>
-</tr>
-<tr class="even">
-<td>Preprint / bioRxiv</td>
-<td><code>broadsheet</code></td>
-<td><code>jco</code></td>
-</tr>
-<tr class="odd">
-<td>General-purpose (safe)</td>
-<td><code>cli_bw</code></td>
-<td><code>okabe_ito</code></td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example: NEJM oncology paper</span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"nejm"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: nejm</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"nejm"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"NEJM Theme + NEJM Palette"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example: Genomics paper with COSMIC</span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"cell"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Theme set to: cell</span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"cosmic"</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Cell Theme + COSMIC Palette"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="themes-palettes_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Every cliomicplot palette integrates with standard
+<strong>ggplot2</strong> pipelines:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use with standard ggplot2 geom layers</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Petal.Length</span>, color <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/palette_scale.html">scale_color_cli</a></span><span class="op">(</span><span class="st">"lancet"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_cli_lancet.html">theme_cli_lancet</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"scale_color_cli('lancet') on Base ggplot2"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="themes-palettes_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="part-4-physical-canvas-sizing-cli_journal_size">Part 4: Physical Canvas Sizing (<code>cli_journal_size</code>)<a class="anchor" aria-label="anchor" href="#part-4-physical-canvas-sizing-cli_journal_size"></a>
+</h2>
+<p>Submitting figures with arbitrary pixel dimensions results in
+distorted font sizes and downscaled labels during journal layout.</p>
+<p><code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> returns exact millimeter column
+dimensions for 9 premier publishers:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">journals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"science"</span>, <span class="st">"cell"</span>, <span class="st">"jama"</span>, <span class="st">"nejm"</span>, <span class="st">"lancet"</span>, <span class="st">"plos"</span>, <span class="st">"ieee"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dim_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">journals</span>, <span class="kw">function</span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="va">j</span>, <span class="st">"single"</span><span class="op">)</span></span>
+<span>  <span class="va">s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="va">j</span>, <span class="st">"double"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    Journal       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span>,</span>
+<span>    Single_Col_mm <span class="op">=</span> <span class="va">s1</span><span class="op">$</span><span class="va">width_mm</span>,</span>
+<span>    Double_Col_mm <span class="op">=</span> <span class="va">s2</span><span class="op">$</span><span class="va">width_mm</span>,</span>
+<span>    Max_Height_mm <span class="op">=</span> <span class="va">s1</span><span class="op">$</span><span class="va">max_height_mm</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dim_summary</span></span>
+<span><span class="co">#&gt;   Journal Single_Col_mm Double_Col_mm Max_Height_mm</span></span>
+<span><span class="co">#&gt; 1  NATURE          89.0         183.0         170.0</span></span>
+<span><span class="co">#&gt; 2 SCIENCE          90.0         183.0         230.0</span></span>
+<span><span class="co">#&gt; 3    CELL          85.0         180.0         203.0</span></span>
+<span><span class="co">#&gt; 4    JAMA          86.4         177.8         220.0</span></span>
+<span><span class="co">#&gt; 5    NEJM          89.0         180.0         220.0</span></span>
+<span><span class="co">#&gt; 6  LANCET          85.0         175.0         220.0</span></span>
+<span><span class="co">#&gt; 7    PLOS          83.0         190.5         222.3</span></span>
+<span><span class="co">#&gt; 8    IEEE          88.9         181.9         220.0</span></span></code></pre></div>
+<p>Both string aliases (<code>"single"</code>, <code>"one_half"</code>,
+<code>"double"</code>) and numeric columns (<code>1</code>,
+<code>1.5</code>, <code>2</code>) are supported:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Numeric columns supported</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>   <span class="co"># 89 mm</span></span>
+<span><span class="co">#&gt; [1] 89</span></span>
+<span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">$</span><span class="va">width_mm</span>   <span class="co"># 183 mm</span></span>
+<span><span class="co">#&gt; [1] 183</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="part-5-vector-publication-export-cli_save">Part 5: Vector Publication Export (<code>cli_save</code>)<a class="anchor" aria-label="anchor" href="#part-5-vector-publication-export-cli_save"></a>
+</h2>
+<p><code><a href="../reference/cli_save.html">cli_save()</a></code> combines exact journal dimensions, 600 DPI
+rasterization when needed, and format compliance checking:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create publication figure</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
+<span>             palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>             title <span class="op">=</span> <span class="st">"Biomarker Distribution by Species"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Export vector PDF for Nature (2 columns, 183 mm width)</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p</span>, <span class="st">"Figure_1_Nature.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Export vector SVG for Cell Press (1 column, 85 mm width)</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p</span>, <span class="st">"Figure_1_Cell.svg"</span>, journal <span class="op">=</span> <span class="st">"cell"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Export 600 DPI TIFF for clinical journal line art</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p</span>, <span class="st">"Figure_1_Lancet.tiff"</span>, journal <span class="op">=</span> <span class="st">"lancet"</span>, column <span class="op">=</span> <span class="st">"double"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -652,24 +584,26 @@ cases:</p>
 </h2>
 <ul>
 <li>
-<strong>10 themes</strong> — from journal-specific to
-presentation-ready</li>
+<strong>13 Themes</strong>: Open spines (<code>nature</code>,
+<code>science</code>, <code>cell</code>, <code>nejm</code>,
+<code>lancet</code>), full 4-spine boxes (<code>scifig</code>), and
+presentation modes (<code>dark</code>, <code>showcase</code>).</li>
 <li>
-<strong>55+ palettes</strong> — journal, genomics, accessibility,
-design, and pop culture</li>
-<li>Themes can be <strong>persistent</strong>
-(<code>clitheme("nature")</code>) or <strong>ephemeral</strong>
-(<code>theme = "nature"</code>)</li>
-<li>Register custom themes with <code><a href="../reference/clitheme_register.html">clitheme_register()</a></code>
-</li>
-<li>All palettes work as standalone <code><a href="../reference/palette_scale.html">palette_scale()</a></code> for any
-ggplot2 plot</li>
-<li>Combine themes and palettes freely for the perfect publication
-look</li>
+<strong>55+ Palettes</strong>: Strict CVD safety
+(<code>okabe_ito</code>, <code>tol_muted</code>), premier journals
+(<code>npg</code>, <code>jama</code>, <code>lancet</code>), and cancer
+hallmarks (<code>cosmic</code>).</li>
+<li>
+<strong>Standard ggplot2 integration</strong>:
+<code><a href="../reference/palette_scale.html">palette_scale()</a></code>, <code><a href="../reference/palette_scale.html">scale_color_cli()</a></code>, and
+<code><a href="../reference/palette_scale.html">scale_fill_cli()</a></code>.</li>
+<li>
+<strong>Publisher Sizing</strong>: <code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code>
+covers Nature, Cell, Science, JAMA, NEJM, Lancet, PLOS, and IEEE.</li>
+<li>
+<strong>Export Validation</strong>: <code><a href="../reference/cli_save.html">cli_save()</a></code> ensures
+font embedding and canvas compliance.</li>
 </ul>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Reset to defaults</span></span>
-<span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -682,7 +616,7 @@ look</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

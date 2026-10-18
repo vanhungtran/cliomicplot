@@ -254,21 +254,27 @@ cliplot(-log10(padj) ~ log2FC, data = res,
 
 ------------------------------------------------------------------------
 
-## 6. Export for publication
+## 6. Export for Publication (Nature / Cell / Science Standards)
+
+Premier journals expect figures sized to exact column widths with vector
+paths (PDF or SVG).
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+provides exact specifications for Nature, Cell, and Science:
 
 ``` r
 
-# High-resolution PNG for manuscript
-cliplot(-log10(padj) ~ log2FC, data = de_results,
-        type = type_volcano(),
-        theme = "nature", palette = "nature",
-        file = "fig_volcano.png", width = 9, height = 7)
+# Check Nature single-column width (89 mm)
+cli_journal_size("nature", "single")
 
-# Vector PDF for journal submission
-cliplot(-log10(padj) ~ log2FC, data = de_results,
-        type = type_volcano(),
-        theme = "nature", palette = "nature",
-        file = "fig_volcano.pdf", width = 9, height = 7)
+# Save directly as vector PDF conforming to Nature column width
+p_volcano <- cliplot(-log10(padj) ~ log2FC, data = de_results,
+                     type = type_volcano(label_genes = "significant"),
+                     theme = "nature", palette = "npg")
+
+cli_save(p_volcano, "Figure_Volcano_Nature.pdf", journal = "nature", column = "single")
+
+# Export as high-resolution TIFF (600 DPI) for production printing
+cli_save(p_volcano, "Figure_Volcano_Lancet.tiff", journal = "lancet", column = "single", dpi = 600)
 ```
 
 ------------------------------------------------------------------------

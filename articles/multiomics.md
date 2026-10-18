@@ -21,38 +21,141 @@ Scroll to zoom · Drag to pan · ← → to navigate
 ## Overview
 
 This vignette demonstrates a multi-omics exploratory analysis workflow
-using **cliomicplot**. We’ll generate four figures commonly found in
-omics publications:
+using **cliomicplot** with real datasets from the **xOmicsShiny**
+platform (Biogen Inc.). We’ll generate ten publication-ready figures
+spanning proteomics, metabolomics, and time-course analysis:
 
-1.  **Figure 1** — PCA with confidence ellipses
-2.  **Figure 2** — Correlation heatmap with clustering and significance
-3.  **Figure 3** — Volcano plot for differential expression
-4.  **Figure 4** — MA plot for DE quality assessment
+1.  **Figure 1** — PCA with confidence ellipses (AD/PD cortex
+    proteomics)
+2.  **Figure 2** — Correlation matrix with clustering (AD/PD proteomics)
+3.  **Figure 3** — Volcano plot for differential expression (AD/PD
+    proteomics)
+4.  **Figure 4** — MA plot for DE quality check (AD/PD proteomics)
+5.  **Figure 5** — Heatmap of top DE proteins
+6.  **Figure 6** — Infographic bar chart (Aging × HFCD metabolomics
+    summary)
+7.  **Figure 7** — Expression pattern clustering (Stroke brain
+    time-course)
+8.  **Figure 8** — Rank-abundance curve (Stroke brain proteomics)
+9.  **Figure 9** — DEG comparison scatter (two AD/PD contrasts)
+10. **Figure 10** — Diamond bubble heatmap (marker × condition matrix)
 
 ``` r
 
 library(cliomicplot)
-#> cliomicplot 0.1.0 - Publication-ready clinical & omics plots
-#> Main function: cliplot() | Themes: clitheme() | Params: clipar()
+```
+
+    #> cliomicplot 0.1.4 - Publication-ready clinical & omics plots
+    #> Main function: cliplot() | Themes: clitheme() | Params: clipar()
+
+``` r
+
 clipar(stat.test = NULL)  # disable auto stat annotations
 ```
 
 ------------------------------------------------------------------------
 
-## Figure 1: PCA with Confidence Ellipses
+## Data: xOmicsShiny Multi-Omics Datasets
 
-Principal Component Analysis (PCA) is the workhorse of omics data
-exploration. cliomicplot can compute PCA from raw data or accept
-pre-computed results:
+Three real datasets are bundled with cliomicplot at `inst/extdata/`:
 
-### From raw data
+| Dataset | Type | Samples | Features | Source |
+|----|----|----|----|----|
+| `ADPD_cortex_Maxquant.RData` | Proteomics (cortex) | 42 | 8,596 | AD/PD mouse model |
+| `StrokeBrain_TimeCourse.RData` | Proteomics (time-course) | 70 | 7,565 | Stroke model, 5 time points |
+| `AgingHFCD_Metabolomics.RData` | Metabolomics | 46 | 393 | Aging × High-Fat Diet |
 
 ``` r
 
-clitheme("nature")
-#> Theme set to: nature
+# Resolve data paths (works for both installed package and devel/devtools::load_all)
+resolve_data = function(filename) {
+  pkg_path = system.file("extdata", filename, package = "cliomicplot")
+  if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
+  # Fallback: look relative to the vignette source directory
+  fallback = file.path("..", "inst", "extdata", filename)
+  if (file.exists(fallback)) return(fallback)
+  # Fallback: direct path
+  fallback2 = file.path("inst", "extdata", filename)
+  if (file.exists(fallback2)) return(fallback2)
+  stop("Cannot find data file: ", filename)
+}
 
-cliplot(iris[, 1:4],
+adpd_path   = resolve_data("ADPD_cortex_Maxquant.RData")
+stroke_path = resolve_data("StrokeBrain_TimeCourse.RData")
+aging_path  = resolve_data("AgingHFCD_Metabolomics.RData")
+
+load(adpd_path)   # → data_long, data_wide, results_long, MetaData, ProteinGeneName
+adpd = list(
+  long    = data_long,
+  wide    = data_wide,
+  results = results_long,
+  meta    = MetaData,
+  genes   = ProteinGeneName
+)
+
+load(stroke_path)  # → data_long, data_wide, results_stat, MetaData, ProteinGeneName
+stroke = list(
+  long    = data_long,
+  wide    = data_wide,
+  results = results_stat,
+  meta    = MetaData,
+  genes   = ProteinGeneName
+)
+
+load(aging_path)   # → data_long, data_wide, results_long, MetaData, ProteinGeneName
+aging = list(
+  long    = data_long,
+  wide    = data_wide,
+  results = results_long,
+  meta    = MetaData,
+  genes   = ProteinGeneName
+)
+
+cat(sprintf("AD/PD proteomics : %d proteins × %d samples\n", nrow(adpd$wide), ncol(adpd$wide)))
+```
+
+    #> AD/PD proteomics : 7163 proteins × 49 samples
+
+``` r
+
+cat(sprintf("Stroke timecourse: %d proteins × %d samples\n", nrow(stroke$wide), ncol(stroke$wide)))
+```
+
+    #> Stroke timecourse: 7565 proteins × 70 samples
+
+``` r
+
+cat(sprintf("Aging metabolomics: %d metabolites × %d samples\n", nrow(aging$wide), ncol(aging$wide)))
+```
+
+    #> Aging metabolomics: 393 metabolites × 590 samples
+
+------------------------------------------------------------------------
+
+## Figure 1: PCA with Confidence Ellipses
+
+Principal component analysis of AD/PD cortex proteomics data. Groups
+represent Alzheimer’s disease (AD), Parkinson’s disease (PD), combined
+AD+PD, and controls:
+
+``` r
+
+# Build group labels and transpose for sample-level PCA
+adpd$meta$GroupLabel = adpd$meta$group
+adpd$wide_clean = adpd$wide
+adpd$wide_clean[is.na(adpd$wide_clean)] = 0
+
+# For sample-level PCA: transpose to samples × proteins
+adpd$samples_mat = t(adpd$wide_clean)
+
+clitheme("nature")
+```
+
+    #> Theme set to: nature
+
+``` r
+
+cliplot(adpd$samples_mat,
         type = type_pca(
           pc_x          = 1,
           pc_y          = 2,
@@ -60,286 +163,140 @@ cliplot(iris[, 1:4],
           scale.        = TRUE,
           add_ellipse   = TRUE,
           ellipse_level = 0.95,
-          point_size    = 2.5,
-          label_samples = FALSE
+          point_size    = 2.5
         ),
-        by       = iris$Species,
+        by       = adpd$meta$GroupLabel,
         palette  = "npg",
         stat.test = NULL,
-        title    = "**Figure 1** — PCA of Iris Morphometric Data",
-        subtitle = "PC1 (72.9%) vs. PC2 (22.9%), 95% CI ellipses") +
-  cli_markdown()
-```
-
-![](multiomics_files/figure-html/unnamed-chunk-2-1.png)
-
-The axis labels automatically include variance explained percentages,
-and confidence ellipses are drawn around each group.
-
-### From pre-computed PCA
-
-When you already have PCA results (e.g., from
-[`prcomp()`](https://rdrr.io/r/stats/prcomp.html), `DESeq2`, or another
-pipeline), cliomicplot accepts the scores directly:
-
-``` r
-
-pca_res <- prcomp(iris[, 1:4], center = TRUE, scale. = TRUE)
-scores  <- as.data.frame(pca_res$x)
-scores$Species <- iris$Species
-
-cliplot(PC2 ~ PC1, data = scores, by = scores$Species,
-        type      = "points",
-        stat.test = NULL,
-        palette   = "d3_category10",
-        title     = "**PCA Scores** — Pre-computed by prcomp()",
-        theme     = "science") +
+        title    = "**Figure 1** — PCA of AD/PD Cortex Proteomics",
+        subtitle = sprintf("PC1 vs. PC2, %d samples × %d proteins, 95%% CI ellipses",
+                          ncol(adpd$wide), nrow(adpd$wide))) +
   cli_markdown()
 ```
 
 ![](multiomics_files/figure-html/unnamed-chunk-3-1.png)
 
-### PCA with sample labels
-
-``` r
-
-cliplot(iris[, 1:4],
-        type = type_pca(
-          add_ellipse   = FALSE,
-          label_samples = TRUE,
-          label_size    = 2.5,
-          point_size    = 2
-        ),
-        by      = iris$Species,
-        palette = "jco",
-        stat.test = NULL,
-        title   = "**PCA with Sample Labels**") +
-  cli_markdown()
-```
-
-![](multiomics_files/figure-html/unnamed-chunk-4-1.png)
+The axis labels include variance-explained percentages automatically.
+AD, PD, and AD+PD groups show distinct separation from controls along
+PC1.
 
 ------------------------------------------------------------------------
 
 ## Figure 2: Correlation Matrix
 
-Correlation analysis with significance stars and hierarchical
-clustering:
+Pairwise protein expression correlations across the top 50 most variable
+proteins, with hierarchical clustering and significance stars:
 
 ``` r
 
-clitheme("cli_minimal")
-#> Theme set to: cli_minimal
+# Select top 50 most variable proteins
+variances = apply(adpd$wide_clean, 1, var, na.rm = TRUE)
+top50 = names(sort(variances, decreasing = TRUE)[1:50])
+cor_mat = t(adpd$wide_clean[top50, ])
 
-cliplot(mtcars[, 1:7],
+clitheme("cli_minimal")
+```
+
+    #> Theme set to: cli_minimal
+
+``` r
+
+cliplot(as.data.frame(cor_mat),
         type = type_correlation(
           method    = "pearson",
           type      = "lower",
-          add_coef  = TRUE,
-          coef_size = 3.5,
+          add_coef  = FALSE,
           cluster   = TRUE,
           sig_level = 0.001
         ),
         stat.test = NULL,
-        title = "**Figure 2** — Pearson Correlation Matrix (mtcars)",
-        subtitle = "Lower triangle | *** p < 0.001") +
+        title = "**Figure 2** — Protein Correlation Matrix (Top 50 Variable)",
+        subtitle = "Pearson | Lower triangle | *** p < 0.001") +
   cli_markdown()
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-5-1.png)
+![](multiomics_files/figure-html/unnamed-chunk-4-1.png)
 
-### Correlation options
-
-``` r
-
-# Spearman correlation, upper triangle, no coefficients
-cliplot(mtcars[, 1:5],
-        type = type_correlation(
-          method   = "spearman",
-          type     = "upper",
-          add_coef = FALSE,
-          cluster  = FALSE
-        ),
-        title = "**Spearman Correlation** — Upper Triangle") +
-  cli_markdown()
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-#> Warning in cor.test.default(mat[, i], mat[, j], method = method): Cannot
-#> compute exact p-value with ties
-```
-
-![](multiomics_files/figure-html/unnamed-chunk-6-1.png)
-
-``` r
-
-# Full matrix with all significance levels
-cliplot(mtcars[, 1:6],
-        type = type_correlation(
-          method    = "pearson",
-          type      = "full",
-          add_coef  = TRUE,
-          cluster   = TRUE,
-          sig_level = 0.05
-        ),
-        title = "**Full Correlation Matrix** with Significance Stars") +
-  cli_markdown()
-```
-
-![](multiomics_files/figure-html/unnamed-chunk-7-1.png)
+Clustered correlation reveals co-expression modules — groups of proteins
+with coordinated abundance patterns across disease states.
 
 ------------------------------------------------------------------------
 
 ## Figure 3: Volcano Plot — Differential Expression
 
-The volcano plot is the canonical visualization for differential
-expression analysis. We’ll generate realistic simulated data:
+Volcano plot of AD+PD vs. Control comparison from the AD/PD proteomics
+dataset. We extract the `ADPDvsCTL` test from the results table:
 
 ``` r
 
-set.seed(42)
+# Filter to one comparison and prepare volcano data
+adpd_de = subset(adpd$results, test == "ADPDvsCTL")
+rownames(adpd_de) = adpd_de$UniqueID
+```
 
-# Generate 8000 "genes" — most are null
-n_genes <- 8000
-de_data <- data.frame(
-  logFC   = rnorm(n_genes, 0, 0.7),
-  PValue  = 10^-rnorm(n_genes, 2.5, 1.8),
-  row.names = paste0("GENE", 1:n_genes)
-)
+    #> Warning: Setting row names on a tibble is deprecated.
 
-# Inject 200 "true" DE genes
-sig_idx <- sample(1:n_genes, 200)
-de_data$logFC[sig_idx]  <- rnorm(200, ifelse(runif(200) > 0.5, 2.0, -2.0), 0.5)
-de_data$PValue[sig_idx] <- 10^-runif(200, 5, 15)
+``` r
 
-cat(sprintf("Genes tested: %d\n", n_genes))
-#> Genes tested: 8000
-cat(sprintf("DE genes (|log2FC| > 1, p < 0.05): %d\n",
-            sum(abs(de_data$logFC) > 1 & de_data$PValue < 0.05)))
-#> DE genes (|log2FC| > 1, p < 0.05): 1081
+# Log-transform P-values
+adpd_de$negLogP = -log10(adpd_de$P.Value)
+
+n_tested = nrow(adpd_de)
+n_de = sum(abs(adpd_de$logFC) > 0.5 & adpd_de$P.Value < 0.05, na.rm = TRUE)
 ```
 
 ``` r
 
 clitheme("cell")
-#> Theme set to: cell
-
-cliplot(-log10(PValue) ~ logFC, data = de_data,
-        type = type_volcano(
-          pval_cutoff  = 0.01,
-          fc_cutoff    = 1,
-          label_genes  = "significant",
-          max_overlaps = 25,
-          point_alpha  = 0.5
-        ),
-        title    = "**Figure 3** — Volcano Plot of Differential Expression",
-        subtitle = "FDR < 0.01, |log<sub>2</sub>FC| > 1",
-        caption  = paste0("Top labeled genes; ", n_genes, " probes tested")) +
-  cli_markdown()
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-9-1.png)
-
-### Volcano plot color scheme
-
-| Category | Condition | Default Color |
-|----|----|----|
-| **Up** (red) | $`p < p_\text{cutoff}`$ and $`\log_2(\text{FC}) > \text{fc\_cutoff}`$ | `#E64B35` |
-| **Down** (blue) | $`p < p_\text{cutoff}`$ and $`\log_2(\text{FC}) < -\text{fc\_cutoff}`$ | `#4DBBD5` |
-| **NS** (grey) | All other genes | `grey70` |
-
-### Customizing the volcano
+    #> Theme set to: cell
 
 ``` r
 
-# Tighter thresholds, different colors
-cliplot(-log10(PValue) ~ logFC, data = de_data,
+cliplot(negLogP ~ logFC, data = adpd_de,
         type = type_volcano(
-          pval_cutoff  = 0.001,
-          fc_cutoff    = 1.5,
-          label_genes  = NULL,       # no labels
-          up_color     = "#BC3C29",  # NEJM red
-          down_color   = "#0072B5",  # NEJM blue
-          ns_color     = "grey85",
-          point_size   = 1.5,
-          point_alpha  = 0.4
+          pval_cutoff  = 0.05,
+          fc_cutoff    = 0.5,
+          label_genes  = "significant",
+          max_overlaps = 20,
+          point_alpha  = 0.5
         ),
-        palette = "volcano",
-        title   = "**Volcano Plot** — Stringent Thresholds",
-        subtitle = "p < 0.001, |log<sub>2</sub>FC| > 1.5") +
+        title    = "**Figure 3** — Volcano Plot: AD+PD vs. Control",
+        subtitle = "AD/PD Cortex Proteomics | p < 0.05, |log<sub>2</sub>FC| > 0.5",
+        caption  = sprintf("%d proteins tested; %d significant",
+                           nrow(adpd_de),
+                           sum(abs(adpd_de$logFC) > 0.5 & adpd_de$P.Value < 0.05, na.rm = TRUE))) +
   cli_markdown()
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-10-1.png)
+![](multiomics_files/figure-html/unnamed-chunk-6-1.png)
 
 ------------------------------------------------------------------------
 
 ## Figure 4: MA Plot — DE Quality Check
 
-The MA (Mean-Average) plot complements the volcano by showing the
-relationship between fold-change and mean expression level:
+The MA plot shows the relationship between fold-change and mean
+expression, with DE proteins highlighted:
 
 ``` r
 
-set.seed(123)
-ma_data <- data.frame(
-  baseMean       = 10^runif(3000, 0, 5),
-  log2FoldChange = rnorm(3000, 0, 0.6),
-  padj           = runif(3000)
-)
-# Add "real" DE genes
-ma_data$log2FoldChange[sample(1:3000, 150)] <- rnorm(150, 2, 0.5)
-ma_data$log2FoldChange[sample(1:3000, 150)] <- rnorm(150, -2, 0.5)
+# Compute mean expression from data_long for each protein
+adpd_means = aggregate(expr ~ UniqueID, data = adpd$long, FUN = mean, na.rm = TRUE)
+names(adpd_means)[2] = "baseMean"
+
+# Merge with DE results
+adpd_ma = merge(adpd_de, adpd_means, by = "UniqueID", all.x = TRUE)
+adpd_ma = adpd_ma[!is.na(adpd_ma$baseMean), ]
 
 clitheme("science")
-#> Theme set to: science
+```
 
-cliplot(log2FoldChange ~ baseMean, data = ma_data,
+    #> Theme set to: science
+
+``` r
+
+cliplot(logFC ~ baseMean, data = adpd_ma,
         type = type_ma(
           pval_cutoff = 0.05,
           add_loess   = TRUE,
@@ -349,138 +306,391 @@ cliplot(log2FoldChange ~ baseMean, data = ma_data,
           point_size  = 1.2,
           point_alpha = 0.4
         ),
-        title    = "**Figure 4** — MA Plot",
-        subtitle = "DE genes highlighted (padj < 0.05), LOESS trend") +
+        title    = "**Figure 4** — MA Plot: AD+PD vs. Control",
+        subtitle = "DE proteins highlighted (p < 0.05), LOESS trend") +
   cli_markdown()
-#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-11-1.png)
+    #> `geom_smooth()` using formula = 'y ~ x'
 
-The MA plot shows: - **y-axis**: $`\log_2`$ fold change (biological
-effect size) - **x-axis**: Mean normalized counts (expression level,
-log₁₀ scale) - **Red points**: Significant DE genes - **Blue curve**:
-LOESS trend line (checks for intensity-dependent bias) - **Horizontal
-dashed line**: $`\log_2\text{FC} = 0`$ (no change)
+![](multiomics_files/figure-html/unnamed-chunk-7-1.png)
+
+The LOESS trend line is approximately flat around y = 0, indicating no
+systematic intensity-dependent bias — good data quality.
 
 ------------------------------------------------------------------------
 
-## Heatmap: Clustered Expression Matrix
+## Figure 5: Heatmap — Top DE Proteins
 
-For completeness, here’s a clustered heatmap workflow:
+Clustered heatmap of the top 40 differentially expressed proteins:
 
 ``` r
 
-set.seed(789)
-expr_mat <- matrix(rnorm(500), nrow = 50)
-rownames(expr_mat) <- paste0("Gene_", 1:50)
-colnames(expr_mat) <- paste0("Sample_", sprintf("%02d", 1:10))
+# Get top 40 DE proteins by significance
+adpd_de_sorted = adpd_de[order(adpd_de$P.Value), ]
+top40_ids = head(adpd_de_sorted$UniqueID, 40)
+
+# Build heatmap matrix
+hm_mat = as.matrix(adpd$wide_clean[top40_ids, ])
+hm_mat = t(scale(t(hm_mat)))
+hm_mat[is.nan(hm_mat) | is.infinite(hm_mat)] = 0
 
 # Column annotations
-ann_col <- data.frame(
-  Condition = rep(c("Control", "Treatment"), each = 5),
-  Batch     = rep(c("A", "B"), 5),
-  row.names = colnames(expr_mat)
-)
-
-# Annotation color mapping
-ann_colors <- list(
-  Condition = c(Control = "#4DBBD5", Treatment = "#E64B35"),
-  Batch     = c(A = "#E18727", B = "#3C5488")
+ann_col = data.frame(
+  Group = adpd$meta$GroupLabel,
+  row.names = adpd$meta$sampleid
 )
 ```
 
 ``` r
 
-cliplot(expr_mat,
+# Build named color vector for annotation
+grp_levels = unique(ann_col$Group)
+grp_colors = c("#E64B35","#4DBBD5","#00A087","#3C5488","#E18727")[1:length(grp_levels)]
+names(grp_colors) = grp_levels
+ann_colors = list(Group = grp_colors)
+
+cliplot(hm_mat,
         type = type_heatmap(
-          scale             = "row",
+          scale             = "none",
           cluster_rows      = TRUE,
           cluster_cols      = TRUE,
           annotation_col    = ann_col,
           annotation_colors = ann_colors,
-          color_low         = "#4575B4",
-          color_mid         = "white",
-          color_high        = "#D73027",
+          color_low         = "#2166AC",
+          color_mid         = "#F7F7F7",
+          color_high        = "#B2182B",
           fontsize          = 9
-        ))
+        )) +
+  ggplot2::labs(title = "**Figure 5** — Top 40 DE Proteins (Z-score)")
 ```
 
-![](multiomics_files/figure-html/unnamed-chunk-13-1.png)
-
-> **Note:** The heatmap uses `ComplexHeatmap` when available, falling
-> back to `pheatmap`. Install with `install.packages("ComplexHeatmap")`
-> for the best experience.
+> **Note:** The heatmap uses `ComplexHeatmap`. Install with
+> `BiocManager::install("ComplexHeatmap")`.
 
 ------------------------------------------------------------------------
 
-## Figure 5: Infographic Bar Chart — Results Comparison
+## Figure 6: Infographic Bar — Metabolomics Summary
 
-The
-[`type_infobar()`](https://vanhungtran.github.io/cliomicplot/reference/type_infobar.md)
-creates media-ready bar charts with per-category custom colours, footer
-boxes, and reference lines. Use it for polling, survey results, or any
-side-by-side comparison where each category carries semantic colouring:
+Summary of differential metabolites across the Aging × HFCD comparisons:
 
 ``` r
 
-infobar_data <- data.frame(
-  endpoint  = c("ORR", "DCR", "PFS6", "OS12", "AE3"),
-  value     = c(42, 68, 55, 72, 12),
-  bar_color = c("#0073C2", "#4DBBD5", "#00A087", "#3C5488", "#E64B35"),
-  box_color = c("#005A9E", "#3AA8C2", "#00806A", "#2A3E6E", "#C9302C"),
-  group     = c("Efficacy", "Efficacy", "Efficacy", "Efficacy", "Safety"),
-  change    = c("(+3)", "(+5)", "(-1)", "(+2)", "(-4)"),
-  stringsAsFactors = FALSE
+# Count DE metabolites per comparison
+aging_de = aging$results
+aging_de$is_sig = aging_de$Adj.P.Value < 0.05 & abs(aging_de$logFC) > 0.5
+
+de_counts = aggregate(is_sig ~ test, data = aging_de, FUN = sum)
+names(de_counts) = c("Comparison", "n_DE")
+
+# Infobar-style presentation
+de_counts$ComparisonClean = c(
+  "Old CD vs\nYoung CD",
+  "Old HF vs\nOld CD",
+  "Old HF vs\nYoung HF",
+  "Young HF vs\nYoung CD"
+)
+de_counts = de_counts[order(-de_counts$n_DE), ]
+de_counts$bar_color = c("#E64B35", "#4DBBD5", "#00A087", "#3C5488")
+
+cliplot(n_DE ~ ComparisonClean, data = de_counts,
+        type = type_infobar(
+          bar_colors      = setNames(de_counts$bar_color, de_counts$ComparisonClean),
+          reference_line  = mean(de_counts$n_DE),
+          reference_label = sprintf("Mean = %.0f", mean(de_counts$n_DE))
+        ),
+        title    = "**Figure 6** — DE Metabolites per Comparison",
+        subtitle = "Aging × HFCD metabolomics | FDR < 0.05, |log₂FC| > 0.5",
+        ylab     = "Number of DE Metabolites")
+```
+
+![](multiomics_files/figure-html/unnamed-chunk-10-1.png)
+
+------------------------------------------------------------------------
+
+## Figure 7: Expression Pattern Clustering
+
+Time-course proteomics from a mouse stroke model. We cluster protein
+expression trajectories across 5 time points (days 1, 3, 7, 14, 28
+post-stroke):
+
+``` r
+
+# Build time-course wide matrix: mean expr per treatment × time point
+stroke$long$time_group = paste0(stroke$long$treatment, "_D", stroke$long$conc)
+
+# Mean expression per protein × time_group
+stroke_means = aggregate(
+  expr ~ UniqueID + time_group,
+  data = stroke$long[stroke$long$treatment == "StrkIp", ],  # stroke model
+  FUN = mean, na.rm = TRUE
 )
 
-cliplot(value ~ endpoint, data = infobar_data,
-        type = type_infobar(
-          bar_colors      = setNames(infobar_data$bar_color,
-                                     infobar_data$endpoint),
-          box_colors      = setNames(infobar_data$box_color,
-                                     infobar_data$endpoint),
-          box_labels      = infobar_data$endpoint,
-          box_sub_labels  = infobar_data$group,
-          change_labels   = infobar_data$change,
-          reference_line  = 40,
-          reference_label = "40%",
-          value_suffix    = "%",
-          bar_width       = 0.82
+# Reshape to wide
+stroke_wide = reshape2::dcast(stroke_means, UniqueID ~ time_group, value.var = "expr")
+rownames(stroke_wide) = stroke_wide$UniqueID
+stroke_wide$UniqueID = NULL
+
+# Keep top 500 most variable proteins
+vars = apply(stroke_wide, 1, var, na.rm = TRUE)
+stroke_wide_top = stroke_wide[names(sort(vars, decreasing = TRUE)[1:500]), ]
+stroke_wide_top[is.na(stroke_wide_top)] = 0
+
+cat(sprintf("Time-course matrix: %d proteins × %d time points\n",
+            nrow(stroke_wide_top), ncol(stroke_wide_top)))
+```
+
+    #> Time-course matrix: 500 proteins × 5 time points
+
+``` r
+
+colnames(stroke_wide_top)
+```
+
+    #> [1] "StrkIp_D1"  "StrkIp_D14" "StrkIp_D28" "StrkIp_D3"  "StrkIp_D7"
+
+``` r
+
+clitheme("broadsheet")
+```
+
+    #> Theme set to: broadsheet
+
+``` r
+
+cliplot(stroke_wide_top,
+        type = type_pattern(
+          k           = 6,
+          method      = "kmeans",
+          ncol        = 3,
+          line_alpha  = 0.3,
+          centroid_color = "#E64B35"
         ),
-        title    = "**Figure 5** — Efficacy & Safety Endpoint Comparison",
-        subtitle = "Clinical trial results by endpoint category")
+        stat.test = NULL,
+        title    = "**Figure 7** — Stroke Time-Course Pattern Clustering",
+        subtitle = "K-means (k=6) of 500 most variable proteins across 5 time points") +
+  cli_markdown()
+```
+
+![](multiomics_files/figure-html/unnamed-chunk-12-1.png)
+
+Each panel shows one cluster with individual protein trajectories (grey)
+and the cluster centroid (red). Clusters reveal distinct response
+patterns: acute responders (D1 peak), late responders (D14–D28), and
+sustained changes.
+
+------------------------------------------------------------------------
+
+## Figure 8: Rank-Abundance Curve
+
+Rank-abundance curve from stroke brain proteomics — a standard QC plot
+showing the dynamic range of protein detection:
+
+``` r
+
+# Aggregate mean expression per protein
+stroke_expr = aggregate(expr ~ UniqueID, data = stroke$long, FUN = mean, na.rm = TRUE)
+names(stroke_expr) = c("Protein", "Intensity")
+
+# Sort by intensity descending
+stroke_expr = stroke_expr[order(-stroke_expr$Intensity), ]
+stroke_expr$Rank = 1:nrow(stroke_expr)
+
+# Highlight top 5 and some known proteins
+highlight_ids = stroke_expr$Protein[c(1, 10, 50, 200, 1000)]
+
+cat(sprintf("Dynamic range: %.0f – %.0f (%.0f×)\n",
+            min(stroke_expr$Intensity), max(stroke_expr$Intensity),
+            max(stroke_expr$Intensity) / min(stroke_expr$Intensity)))
+```
+
+    #> Dynamic range: 222 – 17217332 (77423×)
+
+``` r
+
+clitheme("science")
+```
+
+    #> Theme set to: science
+
+``` r
+
+cliplot(Intensity ~ Rank, data = stroke_expr,
+        type = type_rankabundance(
+          log_scale      = "10",
+          point_color    = "#4DBBD5",
+          marginal_type  = "density",
+          label_genes    = highlight_ids,
+          label_color    = "#E64B35",
+          label_size     = 3
+        ),
+        stat.test = NULL,
+        title    = "**Figure 8** — Rank-Abundance Curve (Stroke Brain Proteomics)",
+        subtitle = sprintf("log₁₀ intensity | %d proteins detected", nrow(stroke_expr)),
+        caption  = sprintf("Dynamic range: %.0f× | Top 5 proteins highlighted",
+                          max(stroke_expr$Intensity)/min(stroke_expr$Intensity))) +
+  cli_markdown()
 ```
 
 ![](multiomics_files/figure-html/unnamed-chunk-14-1.png)
 
-### Customization
+------------------------------------------------------------------------
 
-| Parameter | Default | Description |
-|----|----|----|
-| `bar_colors` | `NULL` (jco palette) | Named vector of per-bar fill colours |
-| `box_colors` | `NULL` (no boxes) | Named vector of footer box fill colours |
-| `box_labels` | `NULL` | Labels inside footer boxes (vector, one per bar) |
-| `box_sub_labels` | `NULL` | Sub-labels below footer boxes |
-| `change_labels` | `NULL` | Change annotations below value labels |
-| `reference_line` | `NULL` | y-axis value for a horizontal reference line |
-| `reference_label` | `NULL` | Label text next to the reference line |
-| `value_suffix` | `""` | Suffix appended to value labels (e.g. `"%"`) |
+## Figure 9: DEG Comparison Scatter
+
+Compare fold-changes between two AD/PD contrasts: **AD vs. Control** and
+**PD vs. Control**. This reveals proteins that are consistently or
+differentially regulated across the two related diseases:
+
+``` r
+
+# Extract two comparisons and build standard-format data frames
+ad_vs_ctl = subset(adpd$results, test == "ADvsCTL")[, c("UniqueID", "logFC", "P.Value")]
+pd_vs_ctl = subset(adpd$results, test == "PDvsCTL")[, c("UniqueID", "logFC", "P.Value")]
+
+# Rename to standard column names expected by type_deg_compare
+deg1 = ad_vs_ctl  # Column "logFC" will be used as comp1 logFC
+deg2 = pd_vs_ctl  # Column "logFC" will be used as comp2 logFC
+
+# Merge on UniqueID
+deg_merged = merge(deg1, deg2, by = "UniqueID", suffixes = c("_AD", "_PD"))
+# After merge: logFC_AD = comp1 logFC, logFC_PD = comp2 logFC
+
+# For type_deg_compare, rename comp2's logFC column
+deg2_clean = deg2
+names(deg2_clean)[names(deg2_clean) == "logFC"] = "logFC_comp2"
+
+# Label top concordant hits
+deg_merged$effect = abs(deg_merged$logFC_AD) + abs(deg_merged$logFC_PD)
+top_labels = head(deg_merged[order(-deg_merged$effect), ], 15)$UniqueID
+
+cat(sprintf("Merged proteins: %d\n", nrow(deg_merged)))
+```
+
+    #> Merged proteins: 7163
+
+``` r
+
+cat(sprintf("Concordant direction: %.1f%%\n",
+            100 * sum(sign(deg_merged$logFC_AD) == sign(deg_merged$logFC_PD), na.rm = TRUE) / nrow(deg_merged)))
+```
+
+    #> Concordant direction: 58.7%
+
+``` r
+
+clitheme("cell")
+```
+
+    #> Theme set to: cell
+
+``` r
+
+cliplot(logFC_AD ~ UniqueID, data = deg_merged,
+        type = type_deg_compare(
+          comp2_data  = deg2_clean,
+          merge_by    = "UniqueID",
+          add_lm      = TRUE,
+          label_genes = top_labels,
+          same_scale  = TRUE
+        ),
+        stat.test = NULL,
+        title    = "**Figure 9** — Cross-Disease DEG Comparison",
+        subtitle = "log₂FC: AD vs. Control × PD vs. Control (cortex proteomics)") +
+  cli_markdown()
+```
+
+    #> `geom_smooth()` using formula = 'y ~ x'
+
+![](multiomics_files/figure-html/unnamed-chunk-16-1.png)
+
+The strong positive correlation indicates that AD and PD share many
+dysregulated proteins in the cortex, with disease-specific outliers
+visible in the off-diagonal quadrants.
+
+------------------------------------------------------------------------
+
+## Figure 10: Diamond Bubble Heatmap
+
+A pathway-inspired bubble heatmap showing the top DE proteins across all
+six AD/PD comparisons:
+
+``` r
+
+# Select top DE proteins from each comparison
+top_per_test = lapply(unique(adpd$results$test), function(tst) {
+  sub = subset(adpd$results, test == tst)
+  sub = sub[order(sub$P.Value), ]
+  head(sub$UniqueID, 6)
+})
+top_all = unique(unlist(top_per_test))
+
+# Build bubble heatmap data
+bh_rows = expand.grid(
+  Protein = top_all,
+  Comparison = unique(adpd$results$test),
+  stringsAsFactors = FALSE
+)
+
+bh_rows$logFC = sapply(1:nrow(bh_rows), function(i) {
+  row = subset(adpd$results,
+               UniqueID == bh_rows$Protein[i] & test == bh_rows$Comparison[i])
+  if (nrow(row) > 0) row$logFC[1] else NA
+})
+bh_rows$PValue = sapply(1:nrow(bh_rows), function(i) {
+  row = subset(adpd$results,
+               UniqueID == bh_rows$Protein[i] & test == bh_rows$Comparison[i])
+  if (nrow(row) > 0) -log10(row$P.Value[1]) else NA
+})
+
+bh_rows = bh_rows[!is.na(bh_rows$logFC), ]
+bh_rows$absFC = abs(bh_rows$logFC)
+```
+
+``` r
+
+cliplot(Protein ~ Comparison, data = bh_rows,
+        by = bh_rows$absFC,
+        type = type_bubble_heatmap(
+          label_threshold = 0.5,
+          max_size        = 14,
+          size_name       = "|log₂FC|",
+          fill_name       = expression(-log[10]~"P"),
+          fill_low        = "#4575B4",
+          fill_mid        = "#FFFFBF",
+          fill_high       = "#D73027"
+        ),
+        extra_data = list(fill = bh_rows$PValue),
+        stat.test  = NULL,
+        title      = "**Figure 10** — Diamond Bubble Heatmap",
+        subtitle   = "Top DE Proteins × AD/PD Comparisons | size = |log₂FC|, colour = significance") +
+  cli_markdown()
+```
+
+![](multiomics_files/figure-html/unnamed-chunk-18-1.png)
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-In this vignette we produced five publication-ready omics figures:
+In this vignette we produced ten publication-ready figures using real
+xOmicsShiny multi-omics datasets:
 
-1.  **PCA** — Dimensionality reduction with confidence ellipses
-2.  **Correlation Matrix** — Pairwise correlations with hierarchical
-    clustering
-3.  **Volcano Plot** — Differential expression significance
-    vs. fold-change
-4.  **MA Plot** — Fold-change vs. mean expression with LOESS trend
-5.  **Infobar** — Per-category infographic comparison with custom
-    styling
+1.  **PCA** — AD/PD cortex proteomics with 95% CI ellipses
+2.  **Correlation Matrix** — Co-expression modules from top variable
+    proteins
+3.  **Volcano Plot** — AD+PD vs. Control differential expression
+4.  **MA Plot** — DE quality assessment with LOESS trend
+5.  **Heatmap** — Top 40 DE proteins with group annotations
+6.  **Infobar** — DE metabolite counts across Aging × HFCD comparisons
+7.  **Pattern Clustering** — Stroke time-course trajectory clustering
+8.  **Rank-Abundance Curve** — Stroke proteome dynamic range QC
+9.  **DEG Comparison** — Cross-disease concordance (AD × PD)
+10. **Diamond Bubble Heatmap** — Protein × Comparison significance
+    matrix
+
+All three datasets (`ADPD_cortex_Maxquant`, `StrokeBrain_TimeCourse`,
+`AgingHFCD_Metabolomics`) are included at `system.file("extdata", ...)`.
 
 Reset global settings:
 

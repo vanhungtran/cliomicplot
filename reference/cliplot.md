@@ -118,8 +118,9 @@ cliplot(
   Plot type. Can be a character string (`"points"`, `"boxplot"`,
   `"violin"`, `"histogram"`, `"density"`, `"barplot"`, `"lines"`,
   `"volcano"`, `"forest"`, `"km"`, `"waterfall"`, `"swimmer"`,
-  `"heatmap"`, `"pca"`, `"ma"`, `"correlation"`) or a call to a
-  `type_*()` function for customization.
+  `"heatmap"`, `"pca"`, `"ma"`, `"correlation"`, `"roc"`, `"gsea"`,
+  `"upset"`, `"venn"`, `"slope"`, `"confusion"`, `"donut"`, `"mcid"`,
+  `"trajectory"`) or a call to a `type_*()` function for customization.
 
 - by:
 
@@ -185,7 +186,8 @@ cliplot(
 
 - km_time, km_event, km_group:
 
-  Internal. Column names extracted from a `Surv()` formula for
+  Internal. Column names extracted from a
+  [`Surv()`](https://rdrr.io/pkg/survival/man/Surv.html) formula for
   Kaplan-Meier plots; set automatically by the formula method and not
   intended to be supplied directly.
 

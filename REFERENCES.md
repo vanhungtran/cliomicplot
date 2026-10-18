@@ -43,11 +43,16 @@ sources:
 
 ## Theme Inspirations
 
-- `theme_cli_broadsheet()` — General newspaper/broadsheet print design
-  conventions with faint horizontal rules and compact typography.
-- `theme_cli_nature()`, `theme_cli_science()`, `theme_cli_cell()`,
-  `theme_cli_nejm()`, `theme_cli_lancet()` — Approximations of journal
-  formatting conventions for pre-submission figure preparation.
+- [`theme_cli_broadsheet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_broadsheet.md)
+  — General newspaper/broadsheet print design conventions with faint
+  horizontal rules and compact typography.
+- [`theme_cli_nature()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nature.md),
+  [`theme_cli_science()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_science.md),
+  [`theme_cli_cell()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_cell.md),
+  [`theme_cli_nejm()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nejm.md),
+  [`theme_cli_lancet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_lancet.md)
+  — Approximations of journal formatting conventions for pre-submission
+  figure preparation.
 
 ## Software Dependencies
 

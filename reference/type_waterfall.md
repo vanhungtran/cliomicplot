@@ -14,7 +14,8 @@ type_waterfall(
   response_thresholds = c(PD = 20, PR = -30, CR = -100),
   show_labels = FALSE,
   label_size = 2.5,
-  show_threshold_labels = TRUE
+  show_threshold_labels = TRUE,
+  n_skip_label = NULL
 )
 ```
 
@@ -50,6 +51,12 @@ type_waterfall(
 - show_threshold_labels:
 
   Add PD/PR threshold labels.
+
+- n_skip_label:
+
+  Number of rows to stagger x-axis labels across to prevent overlap
+  (default: auto — 1 row for ≤15 patients, 2 for 16–35, 3 for \>35). Set
+  to 1 to force single-row labels.
 
 ## Value
 

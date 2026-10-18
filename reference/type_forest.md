@@ -2,7 +2,10 @@
 
 Creates publication-ready forest plots for displaying hazard ratios,
 odds ratios, and confidence intervals from survival analysis, logistic
-regression, or meta-analysis.
+regression, observational causal models, or meta-analysis. Enhanced with
+journal reporting standards: alternating row shading, summary pooled
+diamonds, unclipped numeric annotations, and zero-magnitude sign
+suppression.
 
 ## Usage
 
@@ -13,9 +16,14 @@ type_forest(
   ci_high = NULL,
   variable = NULL,
   ref_line = TRUE,
+  ref_val = 1,
+  log_scale = TRUE,
   sort = TRUE,
+  stripe = TRUE,
+  show_values = FALSE,
+  diamond = FALSE,
   point_size = 3,
-  ci_width = 1,
+  ci_width = 0.9,
   sig_color = "#E64B35",
   ns_color = "#3C5488"
 )
@@ -25,43 +33,66 @@ type_forest(
 
 - estimate:
 
-  Column name or vector of point estimates (HR, OR, etc.)
+  Column name or vector of point estimates (HR, OR, etc.).
 
 - ci_low:
 
-  Column name or vector of lower CI bounds
+  Column name or vector of lower CI bounds.
 
 - ci_high:
 
-  Column name or vector of upper CI bounds
+  Column name or vector of upper CI bounds.
 
 - variable:
 
-  Column name or vector of variable labels
+  Column name or vector of variable labels.
 
 - ref_line:
 
-  Reference line at x = 1 (default TRUE)
+  Show reference line (default TRUE).
+
+- ref_val:
+
+  Value for reference line (default 1 for HR/OR; set 0 for beta).
+
+- log_scale:
+
+  Use log10 scale for estimates (default TRUE for HR/OR).
 
 - sort:
 
-  Sort by estimate (default TRUE)
+  Sort by estimate magnitude (default TRUE).
+
+- stripe:
+
+  Add subtle alternating background row shading to prevent eye drift
+  across wide canvases (default TRUE; Archetype 9).
+
+- show_values:
+
+  Annotate exact numeric estimates and 95% CIs on the plot (default
+  FALSE).
+
+- diamond:
+
+  Highlight summary / meta-analysis pooled rows as diamonds (default
+  FALSE, or auto-detected from `is_summary` column).
 
 - point_size:
 
-  Point size for estimates (default 3)
+  Point size for estimates (default 3).
 
 - ci_width:
 
-  CI line width (default 1)
+  CI line width (default 0.9).
 
 - sig_color:
 
-  Color for significant results
+  Color for significant results (default "#E64B35").
 
 - ns_color:
 
-  Color for non-significant results
+  Color for non-significant results (default "#3C5488").
 
 ## Value
 
@@ -72,7 +103,6 @@ A cliplot_type object for use with
 
 ``` r
 if (FALSE) { # \dontrun{
-# From a data frame with columns: Variable, HR, CI_low, CI_high, P
 forest_data = data.frame(
   Variable = c("Age >60", "Male", "Stage III", "Stage IV", "Mutation+"),
   HR = c(1.8, 1.3, 2.5, 4.2, 1.9),
