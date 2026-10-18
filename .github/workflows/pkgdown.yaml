@@ -52,7 +52,10 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+          dir.create("docs/man/figures", recursive = TRUE, showWarnings = FALSE)
+          file.copy(list.files("man/figures", full.names = TRUE), "docs/man/figures", overwrite = TRUE)
         shell: Rscript {0}
       - name: Deploy to GitHub pages
         if: github.event_name != 'pull_request'
