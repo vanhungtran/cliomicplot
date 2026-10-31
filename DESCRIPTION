@@ -46,7 +46,6 @@ Suggests:
   ggbeeswarm,
   ggdendro,
   treemapify,
-  ggstream,
   corrplot,
   pROC,
   UpSetR,
