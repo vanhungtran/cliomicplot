@@ -10,7 +10,7 @@ home:
   description: >
     A ggplot2-based grammar for clinical and omics figures — volcano, forest,
     Kaplan-Meier, waterfall, swimmer, MCID dumbbell, trajectory, heatmap, PCA, ROC,
-    GSEA and 55+ more, with Nature/Cell/Science themes and curated palettes.
+    GSEA, mGWAS Manhattan, bubble matrix, and 58+ more, with Nature/Cell/Science themes and curated palettes.
 
 navbar:
   structure:
@@ -53,8 +53,11 @@ reference:
       - type_swimmer
       - type_mcid
       - type_trajectory
-  - title: Omics plot types
+  - title: Omics & Genomics plot types
     contents:
+      - type_manhattan
+      - type_bubble_matrix
+      - type_sharing_heatmap
       - type_heatmap
       - type_pca
       - type_ma
@@ -75,10 +78,11 @@ articles:
     contents:
       - journal-plots
       - oncology
-  - title: Multi-Omics Workflows
+  - title: Multi-Omics & Genomics Workflows
     contents:
       - multiomics
       - volcano-plot
+      - microbiome-mgwas
   - title: Published Paper Re-creations
     contents:
       - recreate-paper

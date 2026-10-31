@@ -45,7 +45,7 @@ README_files/
 # MacOS cruft
 .DS_Store
 
-# Claude / AI assistant files
+# Local workspace metadata
 .claude/
 CLAUDE.md
 .codegraph/

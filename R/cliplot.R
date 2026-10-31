@@ -21,7 +21,7 @@
 #'   \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
 #'   \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
 #'   \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
-#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"})
+#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"})
 #'   or a call to a \code{type_*()} function for customization.
 #' @param by Grouping variable. Alternative to the \code{|} in formula.
 #' @param facet Faceting variable(s) as a formula. One-sided formulas
@@ -514,7 +514,11 @@ resolve_type = function(type) {
     donut       = type_donut,
     mcid        = type_mcid,
     trajectory  = type_trajectory,
-    longitudinal = type_trajectory
+    longitudinal = type_trajectory,
+    manhattan   = type_manhattan,
+    mgwas       = type_manhattan,
+    bubble_matrix = type_bubble_matrix,
+    sharing_heatmap = type_sharing_heatmap
   )
 
   if (type %in% names(type_map)) {
