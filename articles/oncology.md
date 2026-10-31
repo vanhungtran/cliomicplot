@@ -1,23 +1,5 @@
 # End-to-End Oncology Analysis with cliomicplot
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 This vignette demonstrates a complete oncology translational and

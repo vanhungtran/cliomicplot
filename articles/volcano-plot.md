@@ -1,23 +1,5 @@
 # Volcano Plots — from Quick to Publication-Ready
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ``` r
 
 library(cliomicplot)

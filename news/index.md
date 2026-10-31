@@ -1,5 +1,44 @@
 # Changelog
 
+## cliomicplot 0.1.5
+
+### Microbial Genomics & mGWAS Figure Archetypes
+
+- **Microbial GWAS & Genomics Manhattan Plot
+  ([`type_manhattan()`](https://vanhungtran.github.io/cliomicplot/reference/type_manhattan.md),
+  Archetype 27)**: Dedicated Manhattan plot builder supporting
+  multi-chromosome host GWAS (with natural chromosome ordering, centered
+  x-axis labels, and alternating hues) and single-contig microbial GWAS
+  (mGWAS). Includes significance cutoff line, hit highlighting above
+  threshold, and automatic non-overlapping variant labeling via
+  `ggrepel`.
+
+- **Differential Abundance Bubble Matrix
+  ([`type_bubble_matrix()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_matrix.md),
+  Archetype 29)**: Two-dimensional dot plot encoding directional effect
+  size (signed $`\log_2\text{FC}`$ or regression coefficient) as a
+  zero-centered diverging color gradient, and significance
+  ($`-\log_{10} q`$) as point radius across multiple anatomical sites,
+  conditions, or clinical visits.
+
+- **Longitudinal Transmission & Dyad Sharing Heatmap
+  ([`type_sharing_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_sharing_heatmap.md),
+  Archetype 28)**: Discrete matrix visualization for bacterial vertical
+  transmission across mother-infant dyads or strain persistence between
+  study visits (e.g. baseline infancy T1 versus 12 months T3).
+
+- **New Clinical Metagenomics Vignette
+  ([`vignette("microbiome-mgwas")`](https://vanhungtran.github.io/cliomicplot/articles/microbiome-mgwas.md))**:
+  Demonstrates end-to-end clinical metagenomics and mGWAS workflows
+  based on the VITALITY infant cohort: host *FLG* genetics vs SCORAD
+  severity, differential abundance bubble matrix across anatomical
+  sites, bacterial mGWAS Manhattan plot, and dyad strain transmission.
+
+- **Documentation & Assets**: Cleaned encoding artifacts across
+  documentation, added new figure panels to reference galleries, and
+  updated deployment configuration to prevent broken image paths on
+  GitHub Pages.
+
 ## cliomicplot 0.1.4
 
 ### Clinical Figure Archetypes & Publisher Compliance

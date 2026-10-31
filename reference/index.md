@@ -97,8 +97,14 @@ The main plotting function and layer helpers.
 - [`type_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_trajectory.md)
   : Longitudinal Clinical Trajectory Plot Type
 
-## Omics plot types
+## Omics & Genomics plot types
 
+- [`type_manhattan()`](https://vanhungtran.github.io/cliomicplot/reference/type_manhattan.md)
+  : Manhattan Plot for Genome-Wide and Microbial Association Studies
+- [`type_bubble_matrix()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_matrix.md)
+  : Differential Abundance Bubble Matrix Dot Plot
+- [`type_sharing_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_sharing_heatmap.md)
+  : Longitudinal Transmission and Dyad Sharing Heatmap
 - [`type_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_heatmap.md)
   : Heatmap Type
 - [`type_pca()`](https://vanhungtran.github.io/cliomicplot/reference/type_pca.md)
@@ -130,6 +136,8 @@ The main plotting function and layer helpers.
   : Bubble Chart Type
 - [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
   : Diamond Bubble Heatmap
+- [`type_bubble_matrix()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_matrix.md)
+  : Differential Abundance Bubble Matrix Dot Plot
 - [`type_chord()`](https://vanhungtran.github.io/cliomicplot/reference/type_chord.md)
   : Chord Diagram Type
 - [`type_circular_bar()`](https://vanhungtran.github.io/cliomicplot/reference/type_circular_bar.md)
@@ -178,6 +186,8 @@ The main plotting function and layer helpers.
   : Lollipop Chart Type
 - [`type_ma()`](https://vanhungtran.github.io/cliomicplot/reference/type_ma.md)
   : MA Plot Type
+- [`type_manhattan()`](https://vanhungtran.github.io/cliomicplot/reference/type_manhattan.md)
+  : Manhattan Plot for Genome-Wide and Microbial Association Studies
 - [`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)
   : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
 - [`type_parallel()`](https://vanhungtran.github.io/cliomicplot/reference/type_parallel.md)
@@ -204,6 +214,8 @@ The main plotting function and layer helpers.
   : ROC Curve Type
 - [`type_rug()`](https://vanhungtran.github.io/cliomicplot/reference/type_rug.md)
   : Rug Plot Type
+- [`type_sharing_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_sharing_heatmap.md)
+  : Longitudinal Transmission and Dyad Sharing Heatmap
 - [`type_slope()`](https://vanhungtran.github.io/cliomicplot/reference/type_slope.md)
   : Slope Plot Type
 - [`type_spineplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_spineplot.md)

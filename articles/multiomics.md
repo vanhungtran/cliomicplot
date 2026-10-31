@@ -1,23 +1,5 @@
 # Multi-Omics Exploratory Analysis with cliomicplot
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 This vignette demonstrates a multi-omics exploratory analysis workflow
@@ -45,7 +27,7 @@ spanning proteomics, metabolomics, and time-course analysis:
 library(cliomicplot)
 ```
 
-    #> cliomicplot 0.1.4 - Publication-ready clinical & omics plots
+    #> cliomicplot 0.1.5 - Publication-ready clinical & omics plots
     #> Main function: cliplot() | Themes: clitheme() | Params: clipar()
 
 ``` r
@@ -364,6 +346,8 @@ cliplot(hm_mat,
         )) +
   ggplot2::labs(title = "**Figure 5** — Top 40 DE Proteins (Z-score)")
 ```
+
+![](multiomics_files/figure-html/unnamed-chunk-9-1.png)
 
 > **Note:** The heatmap uses `ComplexHeatmap`. Install with
 > `BiocManager::install("ComplexHeatmap")`.

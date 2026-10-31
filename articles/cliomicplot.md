@@ -1,23 +1,5 @@
 # Getting Started with cliomicplot
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 **cliomicplot** is a unified grammar for publication-ready clinical and

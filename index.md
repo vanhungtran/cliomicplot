@@ -4,12 +4,12 @@
 
 ------------------------------------------------------------------------
 
-## âš¡ 30 Seconds
+## Quick Start
 
 ``` r
 
 # install.packages("remotes")
-# remotes::install_github("vanhungtrantran/cliomicplot")
+# remotes::install_github("vanhungtran/cliomicplot")
 library(cliomicplot)
 
 # One line = a publication-ready figure
@@ -59,23 +59,23 @@ cliplot(len ~ dose, data = ToothGrowth,
 
 | What you get for free | Base ggplot2 | cliomicplot |
 |----|----|----|
-| Formula interface (`y ~ x \| group`) | â€” | âœ… |
-| Auto-legend + auto-facet | Manual | âœ… |
-| Statistical annotations | Needs `ggpubr` | âœ… Built-in |
-| Journal themes (Nature, NEJM, etc.) | Manual tweaking | âœ… `theme = "nejm"` |
-| 55+ colorblind-safe palettes | Manual selection | âœ… `palette = "jco"` |
-| Markdown in titles/labels | Needs `ggtext` | âœ… [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md) |
-| Save to file | Separate [`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html) | âœ… `file = "plot.pdf"` |
-| Persistent global theme | [`theme_set()`](https://ggplot2.tidyverse.org/reference/get_theme.html) | âœ… `clitheme("nature")` |
+| Formula interface (`y ~ x \| group`) | — | ✅ |
+| Auto-legend + auto-facet | Manual | ✅ |
+| Statistical annotations | Needs `ggpubr` | ✅ Built-in |
+| Journal themes (Nature, NEJM, etc.) | Manual tweaking | ✅ `theme = "nejm"` |
+| 55+ colorblind-safe palettes | Manual selection | ✅ `palette = "jco"` |
+| Markdown in titles/labels | Needs `ggtext` | ✅ [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md) |
+| Save to file | Separate [`ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html) | ✅ `file = "plot.pdf"` |
+| Persistent global theme | [`theme_set()`](https://ggplot2.tidyverse.org/reference/get_theme.html) | ✅ `clitheme("nature")` |
 
 ------------------------------------------------------------------------
 
-## ðŸ“¦ Installation
+## Installation
 
 ``` r
 
 # From GitHub
-remotes::install_github("vanhungtrantran/cliomicplot")
+remotes::install_github("vanhungtran/cliomicplot")
 
 # Dependencies (installed automatically, but pre-install if needed)
 install.packages(c("ggplot2", "scales", "survival", "reshape2", "ggrepel", "ggtext"))
@@ -86,10 +86,9 @@ install.packages(c("ComplexHeatmap", "survminer", "ggpubr", "patchwork"))
 
 ------------------------------------------------------------------------
 
-## ðŸ§© The Formula API
+## The Formula API
 
-cliomicplot uses `y ~ x | group` â€” the same convention you already
-know.
+cliomicplot uses `y ~ x | group` — the same convention you already know.
 
 | Formula                      | What it does                       |
 |------------------------------|------------------------------------|
@@ -113,7 +112,7 @@ know.
 
 ### Global Defaults: `clipar()`
 
-Set defaults for all plots â€” like
+Set defaults for all plots — like
 [`par()`](https://rdrr.io/r/graphics/par.html) for base R:
 
 ``` r
@@ -127,13 +126,13 @@ clipar("palette.qualitative")  # query a single parameter
 
 ------------------------------------------------------------------------
 
-## ðŸ–¼ï¸? Gallery
+## Gallery
 
 Every figure is a single
 [`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
 call. Click any image to enlarge.
 
-### Clinical Oncology â€” 7 Lines of Code
+### Clinical Oncology — 7 Lines of Code
 
 ``` r
 
@@ -148,11 +147,11 @@ cliplot(Surv(time, status) ~ sex, data = lung,
 # 2. Forest plot from Cox model
 cliplot(HR ~ Variable, data = cox_results, type = "forest")
 
-# 3. Waterfall â€” tumor response
+# 3. Waterfall — tumor response
 cliplot(BestChange ~ Patient, data = imtrial,
         type = type_waterfall(show_labels = TRUE))
 
-# 4. Swimmer â€” patient timelines
+# 4. Swimmer — patient timelines
 cliplot(Duration ~ Patient, data = imtrial,
         type = type_swimmer(bar_fill = "BestResp", event_times = events_df))
 ```
@@ -195,7 +194,7 @@ cliplot(HR ~ Variable, data = meta_df,
         type = type_forest(stripe = TRUE, diamond = TRUE, show_values = TRUE))
 ```
 
-### Multi-Omics â€” Differential Expression in 3 Lines
+### Multi-Omics — Differential Expression in 3 Lines
 
 ``` r
 
@@ -221,7 +220,7 @@ cliplot(expression_matrix, type = type_correlation(method = "spearman"))
 
 New plot types inspired by the
 [cnsplots](https://github.com/faridrashidi/cnsplots) gallery, rendered
-in Nature/Science style (no in-figure titles, 300 dpi) â€” see
+in Nature/Science style (no in-figure titles, 300 dpi) — see
 [`vignette("journal-plots")`](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md)
 for the full real-data workflow.
 
@@ -326,11 +325,11 @@ Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`,
 `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`,
 `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`,
 `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`,
-`donut`.
+`donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`.
 
 ------------------------------------------------------------------------
 
-## ðŸŽ¨ Themes â€” Publication Ready
+## Themes — Publication Ready
 
 11 built-in themes. One function call.
 
@@ -367,7 +366,7 @@ Register custom themes with
 
 ------------------------------------------------------------------------
 
-## ðŸŒˆ Color Palettes
+## Color Palettes
 
 55+ built-in palettes. Discrete, sequential, diverging, and
 journal-specific.
@@ -400,7 +399,7 @@ ggplot(iris, aes(Sepal.Length, Petal.Length, color = Species)) +
 
 ------------------------------------------------------------------------
 
-## ðŸ“? Markdown Text
+## Markdown Text
 
 Rich text in titles and labels with
 [`cli_markdown()`](https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.md):
@@ -416,7 +415,7 @@ cliplot(len ~ dose, data = ToothGrowth, type = "boxplot",
 
 ------------------------------------------------------------------------
 
-## ðŸ”§ For Standalone ggplot2 Use
+## For Standalone ggplot2 Use
 
 Use
 [`palette_scale()`](https://vanhungtran.github.io/cliomicplot/reference/palette_scale.md)
@@ -437,19 +436,19 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
 
 ------------------------------------------------------------------------
 
-## ðŸ“š Vignettes
+## Vignettes
 
-- **Getting Started** â€”
+- **Getting Started** —
   [`vignette("cliomicplot")`](https://vanhungtran.github.io/cliomicplot/articles/cliomicplot.md)
-- **Volcano Plot Guide** â€”
+- **Volcano Plot Guide** —
   [`vignette("volcano-plot")`](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md)
-- **Oncology Workflows** â€”
+- **Oncology Workflows** —
   [`vignette("oncology")`](https://vanhungtran.github.io/cliomicplot/articles/oncology.md)
-  â€” 7 figures: KM, forest, waterfall, swimmer, dose-response,
+  — 7 figures: KM, forest, waterfall, swimmer, dose-response,
   time-course, PD biomarkers
-- **Multi-Omics** â€”
+- **Multi-Omics** —
   [`vignette("multiomics")`](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md)
-  â€” 10 figures: PCA, correlation, volcano, MA, pattern clustering,
+  — 10 figures: PCA, correlation, volcano, MA, pattern clustering,
   rank-abundance, DEG comparison, bubble heatmap & more
 - **Recreating a Published Figure** -
   [`vignette("recreate-paper")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md) -
@@ -464,26 +463,31 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
   *Nature Methods*) from the paper’s public datasets: bladder MALDI-MSI
   segmentation and DEM heatmaps, multi-omic mouse brain MSI/Visium,
   tumour pathway NES heatmaps, and spotted-liver annotation QC
-- **Journal-Quality Figures** â€”
+- **Microbial Metagenomics & mGWAS** —
+  [`vignette("microbiome-mgwas")`](https://vanhungtran.github.io/cliomicplot/articles/microbiome-mgwas.md)
+  — 4 figures: SCORAD severity stratification by host genetics,
+  differential abundance bubble matrix, bacterial mGWAS Manhattan plot,
+  and mother-infant dyad strain transmission
+- **Journal-Quality Figures** —
   [`vignette("journal-plots")`](https://vanhungtran.github.io/cliomicplot/articles/journal-plots.md)
-  â€” cnsplots-inspired ROC, GSEA dot plot, UpSet, Venn, slope,
-  confusion, donut + Nature/Cell/Science export helpers
-- **Themes & Palettes** â€”
+  — cnsplots-inspired ROC, GSEA dot plot, UpSet, Venn, slope, confusion,
+  donut + Nature/Cell/Science export helpers
+- **Themes & Palettes** —
   [`vignette("themes-palettes")`](https://vanhungtran.github.io/cliomicplot/articles/themes-palettes.md)
 
 ------------------------------------------------------------------------
 
-## ðŸ”— References
+## References
 
-- **tinyplot** â€” formula-interface inspiration
+- **tinyplot** — formula-interface inspiration
   ([github.com/grantmcdermott/tinyplot](https://github.com/grantmcdermott/tinyplot))
-- **ggsci** â€” journal palette inspiration
+- **ggsci** — journal palette inspiration
   ([nanx.me/ggsci](https://nanx.me/ggsci/))
-- **survminer** â€” survival plotting engine
-- **ComplexHeatmap** â€” heatmap engine for omics data
+- **survminer** — survival plotting engine
+- **ComplexHeatmap** — heatmap engine for omics data
 
 ------------------------------------------------------------------------
 
-## ðŸ“„ License
+## License
 
-MIT Â© 2026 Lucas VHH Tran
+MIT © 2026 Lucas VHH Tran

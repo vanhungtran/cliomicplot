@@ -1,23 +1,5 @@
 # Recreating a Published Figure: SLE X-Chromosome Dysregulation
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 This vignette recreates the main figures of a recently published paper

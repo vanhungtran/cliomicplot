@@ -1,23 +1,5 @@
 # Themes and Palettes in cliomicplot
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 **cliomicplot** provides 13 publication-quality themes and 55+ curated

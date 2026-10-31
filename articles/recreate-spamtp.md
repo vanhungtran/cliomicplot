@@ -1,23 +1,5 @@
 # Recreating a Published Figure: SpaMTP Spatial Metabolomics
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 This vignette recreates key figures of the SpaMTP manuscript in *Nature

@@ -1,9 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://vanhungtran.github.io/cliomicplot/404.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/LICENSE-text.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/LICENSE.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/REFERENCES.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/cliomicplot.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/index.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/journal-plots.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/articles/lightbox.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/articles/microbiome-mgwas.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/multiomics.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/oncology.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.html</loc></url>
@@ -12,13 +15,18 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/authors.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/index.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/LICENSE-text.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/LICENSE.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/news/index.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/add_stat_annotations.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/apply_palette.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_mapping.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_plot_data.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_legend_out.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_palette_list.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_palette_show.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_panel_label.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_save.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliomicplot-package.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clipar.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot.html</loc></url>
@@ -30,13 +38,6 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_md_reset.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_register.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_unregister.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_legend_out.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_markdown.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_palette_list.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_palette_show.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_panel_label.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_save.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/extract_data.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/gradient_pal.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/index.html</loc></url>
@@ -64,6 +65,7 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_boxplot.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_bubble.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_bubble_matrix.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_chord.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_circular_bar.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_confusion.html</loc></url>
@@ -88,6 +90,7 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_loess.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_lollipop.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_ma.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_manhattan.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_mcid.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_parallel.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_pattern.html</loc></url>
@@ -101,6 +104,7 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_ridge.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_roc.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_rug.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_sharing_heatmap.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_slope.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_spineplot.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_streamgraph.html</loc></url>
@@ -115,6 +119,5 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_volcano.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_waffle.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_waterfall.html</loc></url>
-<url><loc>https://vanhungtran.github.io/cliomicplot/REFERENCES.html</loc></url>
 </urlset>
 

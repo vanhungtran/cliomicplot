@@ -1,23 +1,5 @@
 # Nature/Cell/Science-Quality Figures with cliomicplot
 
-\+
-
-−
-
-⊙
-
-×
-
-‹
-
-›
-
-![Figure]()
-
-100 %
-
-Scroll to zoom · Drag to pan · ← → to navigate
-
 ## Overview
 
 Publishing in premier scientific journals—**Nature, Cell, and Science
