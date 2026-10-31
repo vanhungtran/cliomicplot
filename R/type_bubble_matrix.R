@@ -73,20 +73,39 @@ type_bubble_matrix = function(
         )
       } else {
         nms <- names(df)
+        candidates_x <- intersect(c("comparison", "condition", "Comparison", "Condition", "site", "visit", "sample"), nms)
         x_col <- if (is.character(settings$x) && length(settings$x) == 1 && settings$x %in% nms) {
           settings$x
+        } else if (length(candidates_x) > 0) {
+          candidates_x[1]
         } else {
-          intersect(c("comparison", "condition", "Comparison", "Condition", "site", "visit"), nms)[1] %||% nms[1]
+          nms[1]
         }
 
+        candidates_y <- intersect(c("feature", "species", "gene", "Species", "Gene", "Feature", "taxon", "Taxon"), nms)
         y_col <- if (is.character(settings$y) && length(settings$y) == 1 && settings$y %in% nms) {
           settings$y
+        } else if (length(candidates_y) > 0) {
+          candidates_y[1]
         } else {
-          intersect(c("feature", "species", "gene", "Species", "Gene", "Feature"), nms)[1] %||% nms[2]
+          nms[min(2, length(nms))]
         }
 
-        df$.x <- as.character(if (!is.null(settings$x) && !is.character(settings$x)) settings$x else df[[x_col]])
-        df$.y <- as.character(if (!is.null(settings$y) && !is.character(settings$y)) settings$y else df[[y_col]])
+        if (!is.null(settings$x) && length(settings$x) == nrow(df)) {
+          df$.x <- as.character(settings$x)
+        } else if (!is.null(x_col) && !is.na(x_col) && x_col %in% nms) {
+          df$.x <- as.character(df[[x_col]])
+        } else {
+          df$.x <- as.character(df[[1]])
+        }
+
+        if (!is.null(settings$y) && length(settings$y) == nrow(df)) {
+          df$.y <- as.character(settings$y)
+        } else if (!is.null(y_col) && !is.na(y_col) && y_col %in% nms) {
+          df$.y <- as.character(df[[y_col]])
+        } else {
+          df$.y <- as.character(df[[min(2, ncol(df))]])
+        }
 
         # Size metric
         s_col <- size_col %||% intersect(c("qval", "qvalue", "padj", "pvalue", "fdr", "log10q", "size"), nms)[1]

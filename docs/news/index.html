@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,17 @@
       <small>Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.5" id="cliomicplot-015">cliomicplot 0.1.5<a class="anchor" aria-label="anchor" href="#cliomicplot-015"></a></h2>
+<div class="section level3">
+<h3 id="microbial-genomics--mgwas-figure-archetypes-0-1-5">Microbial Genomics &amp; mGWAS Figure Archetypes<a class="anchor" aria-label="anchor" href="#microbial-genomics--mgwas-figure-archetypes-0-1-5"></a></h3>
+<ul><li><p><strong>Microbial GWAS &amp; Genomics Manhattan Plot (<code><a href="../reference/type_manhattan.html">type_manhattan()</a></code>, Archetype 27)</strong>: Dedicated Manhattan plot builder supporting multi-chromosome host GWAS (with natural chromosome ordering, centered x-axis labels, and alternating hues) and single-contig microbial GWAS (mGWAS). Includes significance cutoff line, hit highlighting above threshold, and automatic non-overlapping variant labeling via <code>ggrepel</code>.</p></li>
+<li><p><strong>Differential Abundance Bubble Matrix (<code><a href="../reference/type_bubble_matrix.html">type_bubble_matrix()</a></code>, Archetype 29)</strong>: Two-dimensional dot plot encoding directional effect size (signed <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext></mrow><annotation encoding="application/x-tex">\log_2\text{FC}</annotation></semantics></math> or regression coefficient) as a zero-centered diverging color gradient, and significance (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><mi>q</mi></mrow><annotation encoding="application/x-tex">-\log_{10} q</annotation></semantics></math>) as point radius across multiple anatomical sites, conditions, or clinical visits.</p></li>
+<li><p><strong>Longitudinal Transmission &amp; Dyad Sharing Heatmap (<code><a href="../reference/type_sharing_heatmap.html">type_sharing_heatmap()</a></code>, Archetype 28)</strong>: Discrete matrix visualization for bacterial vertical transmission across mother-infant dyads or strain persistence between study visits (e.g. baseline infancy T1 versus 12 months T3).</p></li>
+<li><p><strong>New Clinical Metagenomics Vignette (<code><a href="../articles/microbiome-mgwas.html">vignette("microbiome-mgwas")</a></code>)</strong>: Demonstrates end-to-end clinical metagenomics and mGWAS workflows based on the VITALITY infant cohort: host <em>FLG</em> genetics vs SCORAD severity, differential abundance bubble matrix across anatomical sites, bacterial mGWAS Manhattan plot, and dyad strain transmission.</p></li>
+<li><p><strong>Documentation &amp; Assets</strong>: Cleaned encoding artifacts across documentation, added new figure panels to reference galleries, and updated deployment configuration to prevent broken image paths on GitHub Pages.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.4" id="cliomicplot-014">cliomicplot 0.1.4<a class="anchor" aria-label="anchor" href="#cliomicplot-014"></a></h2>
 <div class="section level3">

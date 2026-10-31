@@ -21,6 +21,7 @@
 
 # produced vignettes
 vignettes/*.html
+!vignettes/header.html
 vignettes/*.pdf
 vignettes/*.R
 

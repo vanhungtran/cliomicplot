@@ -27,7 +27,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r include-lightbox, echo = FALSE, results = 'asis'}
-knitr::asis_output(paste(readLines('lightbox.html'), collapse = '\n'))
+if (file.exists('lightbox.html')) {
+  knitr::asis_output(paste(readLines('lightbox.html'), collapse = '\n'))
+}
 ```
 
 ```{r}

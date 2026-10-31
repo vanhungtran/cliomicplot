@@ -62,25 +62,52 @@ type_sharing_heatmap = function(
         )
       } else {
         nms <- names(df)
+        candidates_x <- intersect(c("dyad", "Dyad", "subject", "Subject", "id", "ID", "pair", "Pair"), nms)
         x_col <- if (is.character(settings$x) && length(settings$x) == 1 && settings$x %in% nms) {
           settings$x
+        } else if (length(candidates_x) > 0) {
+          candidates_x[1]
         } else {
-          intersect(c("dyad", "Dyad", "subject", "Subject", "id", "ID", "pair", "Pair"), nms)[1] %||% nms[1]
+          nms[1]
         }
 
+        candidates_y <- intersect(c("species", "Species", "strain", "Strain", "feature", "Feature", "taxon", "Taxon"), nms)
         y_col <- if (is.character(settings$y) && length(settings$y) == 1 && settings$y %in% nms) {
           settings$y
+        } else if (length(candidates_y) > 0) {
+          candidates_y[1]
         } else {
-          intersect(c("species", "Species", "strain", "Strain", "feature", "Feature"), nms)[1] %||% nms[2]
+          nms[min(2, length(nms))]
         }
 
-        df$.x <- as.character(if (!is.null(settings$x) && !is.character(settings$x)) settings$x else df[[x_col]])
-        df$.y <- as.character(if (!is.null(settings$y) && !is.character(settings$y)) settings$y else df[[y_col]])
+        if (!is.null(settings$x) && length(settings$x) == nrow(df)) {
+          df$.x <- as.character(settings$x)
+        } else if (!is.null(x_col) && !is.na(x_col) && x_col %in% nms) {
+          df$.x <- as.character(df[[x_col]])
+        } else {
+          df$.x <- as.character(df[[1]])
+        }
 
-        st_col <- status_col %||% intersect(c("status", "Status", "shared", "Shared", "sharing", "Sharing"), nms)[1]
+        if (!is.null(settings$y) && length(settings$y) == nrow(df)) {
+          df$.y <- as.character(settings$y)
+        } else if (!is.null(y_col) && !is.na(y_col) && y_col %in% nms) {
+          df$.y <- as.character(df[[y_col]])
+        } else {
+          df$.y <- as.character(df[[min(2, ncol(df))]])
+        }
+
+        candidates_st <- intersect(c("status", "Status", "shared", "Shared", "sharing", "Sharing", "transmission", "Transmission"), nms)
+        st_col <- if (!is.null(status_col) && status_col %in% nms) {
+          status_col
+        } else if (length(candidates_st) > 0) {
+          candidates_st[1]
+        } else {
+          NULL
+        }
+
         if (!is.null(st_col) && st_col %in% nms) {
           df$.status <- as.character(df[[st_col]])
-        } else if (!is.null(settings$by)) {
+        } else if (!is.null(settings$by) && length(settings$by) == nrow(df)) {
           df$.status <- as.character(settings$by)
         } else {
           df$.status <- rep(shared_label, nrow(df))
