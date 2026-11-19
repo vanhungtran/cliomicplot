@@ -120,6 +120,25 @@ The main plotting function and layer helpers.
 - [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
   : Diamond Bubble Heatmap
 
+## Systems Biology & Microbial Networks
+
+- [`cliplot_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.md)
+  : Direct Cross-Network Architecture Plotting Function
+- [`type_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/type_cross_network_graph.md)
+  : Multi-Group Cross-Network Architecture Graph
+- [`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
+  : Direct Plotting Function for Modular Network with Environmental
+  Factor Heatmaps
+- [`type_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/type_env_network.md)
+  : Circular Modular Network Coupled with Environmental Correlation
+  Heatmaps
+- [`type_module_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_compare.md)
+  : Cross-Network Module Comparison Heatmap
+- [`type_module_trait()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_trait.md)
+  : Module-Trait and Environmental Factor Correlation Heatmap
+- [`generate_demo_cross_network()`](https://vanhungtran.github.io/cliomicplot/reference/generate_demo_cross_network.md)
+  : Generate Demonstration Dataset for Cross-Network Architecture
+
 ## General plot types
 
 - [`type_abline()`](https://vanhungtran.github.io/cliomicplot/reference/type_abline.md)
@@ -148,6 +167,8 @@ The main plotting function and layer helpers.
   : Connected Scatterplot Type
 - [`type_correlation()`](https://vanhungtran.github.io/cliomicplot/reference/type_correlation.md)
   : Correlation Matrix Plot Type
+- [`type_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/type_cross_network_graph.md)
+  : Multi-Group Cross-Network Architecture Graph
 - [`type_deg_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_deg_compare.md)
   : DEG Comparison Scatter Type
 - [`type_dendrogram()`](https://vanhungtran.github.io/cliomicplot/reference/type_dendrogram.md)
@@ -160,6 +181,9 @@ The main plotting function and layer helpers.
   : Donut Chart Type
 - [`type_dumbbell()`](https://vanhungtran.github.io/cliomicplot/reference/type_dumbbell.md)
   : Dumbbell Plot Type
+- [`type_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/type_env_network.md)
+  : Circular Modular Network Coupled with Environmental Correlation
+  Heatmaps
 - [`type_errorbar()`](https://vanhungtran.github.io/cliomicplot/reference/type_errorbar.md)
   : Error bar type (requires ymin and ymax)
 - [`type_forest()`](https://vanhungtran.github.io/cliomicplot/reference/type_forest.md)

@@ -271,3 +271,58 @@ cliplot(
 ```
 
 ![](microbiome-mgwas_files/figure-html/module-trait-correlation-1.png)
+
+------------------------------------------------------------------------
+
+## 7. Multi-Group Network Comparison Graphs and Multi-Season Environmental Coupling
+
+For graphical network topologies beyond 2D matrix heatmaps,
+`cliomicplot` provides
+[`cliplot_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.md)
+and
+[`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
+implementing the multi-group and multi-indicator integration layouts
+from *ggClusterNet 2.0* (*iMeta* 2022).
+
+### 7.1 Multi-Group Node Topology & Module Ring Preservation
+
+[`cliplot_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.md)
+displays co-occurrence networks across conditions (e.g. KO vs WT vs OE)
+with module background hulls, intra-group edges, and conserved
+cross-group links at either node level (`level = "node"`) or module
+level (`level = "module"`):
+
+``` r
+
+# Demonstration data with 3 groups
+demo_net <- generate_demo_cross_network()
+
+# Node-level topology with module clustering and conserved links
+p_node <- cliplot_cross_network_graph(
+  nodes = demo_net$nodes,
+  edges = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level = "node",
+  title = "Multi-Group Cross-Network Microbial Architecture"
+)
+p_node
+```
+
+![](microbiome-mgwas_files/figure-html/cross-network-graphs-1.png)
+
+### 7.2 Central Network Coupled with Multi-Season Environmental Heatmaps
+
+[`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
+couples a central circular modular network with peripheral triangular
+correlation heatmaps and significance-weighted curved links:
+
+``` r
+
+# Central modular network coupled with 4 corner seasonal environmental heatmaps
+p_env <- cliplot_env_network(
+  title = "Central Microbial Network Coupled with Multi-Season Environmental Drivers"
+)
+p_env
+```
+
+![](microbiome-mgwas_files/figure-html/env-network-coupling-1.png)

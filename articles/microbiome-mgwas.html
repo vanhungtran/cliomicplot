@@ -314,6 +314,56 @@ clustering across modules and environmental parameters:</p>
 <span>  ylab <span class="op">=</span> <span class="st">"Microbial Network Modules"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/module-trait-correlation-1.png" class="r-plt" alt="" width="691.2" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="multi-group-network-comparison-graphs-and-multi-season-environmental-coupling">7. Multi-Group Network Comparison Graphs and Multi-Season
+Environmental Coupling<a class="anchor" aria-label="anchor" href="#multi-group-network-comparison-graphs-and-multi-season-environmental-coupling"></a>
+</h2>
+<p>For graphical network topologies beyond 2D matrix heatmaps,
+<code>cliomicplot</code> provides
+<code><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph()</a></code> and
+<code><a href="../reference/cliplot_env_network.html">cliplot_env_network()</a></code> implementing the multi-group and
+multi-indicator integration layouts from <em>ggClusterNet 2.0</em>
+(<em>iMeta</em> 2022).</p>
+<div class="section level3">
+<h3 id="multi-group-node-topology-module-ring-preservation">7.1 Multi-Group Node Topology &amp; Module Ring Preservation<a class="anchor" aria-label="anchor" href="#multi-group-node-topology-module-ring-preservation"></a>
+</h3>
+<p><code><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph()</a></code> displays co-occurrence
+networks across conditions (e.g. KO vs WT vs OE) with module background
+hulls, intra-group edges, and conserved cross-group links at either node
+level (<code>level = "node"</code>) or module level
+(<code>level = "module"</code>):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Demonstration data with 3 groups</span></span>
+<span><span class="va">demo_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_demo_cross_network.html">generate_demo_cross_network</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Node-level topology with module clustering and conserved links</span></span>
+<span><span class="va">p_node</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph</a></span><span class="op">(</span></span>
+<span>  nodes <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>  edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>  cross_edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">cross_edges</span>,</span>
+<span>  level <span class="op">=</span> <span class="st">"node"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Multi-Group Cross-Network Microbial Architecture"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_node</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/cross-network-graphs-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="central-network-coupled-with-multi-season-environmental-heatmaps">7.2 Central Network Coupled with Multi-Season Environmental
+Heatmaps<a class="anchor" aria-label="anchor" href="#central-network-coupled-with-multi-season-environmental-heatmaps"></a>
+</h3>
+<p><code><a href="../reference/cliplot_env_network.html">cliplot_env_network()</a></code> couples a central circular modular
+network with peripheral triangular correlation heatmaps and
+significance-weighted curved links:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Central modular network coupled with 4 corner seasonal environmental heatmaps</span></span>
+<span><span class="va">p_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Central Microbial Network Coupled with Multi-Season Environmental Drivers"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_env</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/env-network-coupling-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

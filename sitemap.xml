@@ -18,6 +18,8 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/news/index.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/add_stat_annotations.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/apply_palette.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_cross_network_layers.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_env_network_layers.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_mapping.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/build_plot_data.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.html</loc></url>
@@ -31,6 +33,8 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clipar.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot_add.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/cliplot_interactive.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_list.html</loc></url>
@@ -39,6 +43,7 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_register.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/clitheme_unregister.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/extract_data.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/generate_demo_cross_network.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/gradient_pal.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/index.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/palette_scale.html</loc></url>
@@ -71,12 +76,14 @@
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_confusion.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_connected.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_correlation.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_cross_network_graph.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_deg_compare.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_dendrogram.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_density.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_density2d.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_donut.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_dumbbell.html</loc></url>
+<url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_env_network.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_errorbar.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_forest.html</loc></url>
 <url><loc>https://vanhungtran.github.io/cliomicplot/reference/type_gsea.html</loc></url>
