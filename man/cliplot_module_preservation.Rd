@@ -4,7 +4,13 @@
 \alias{cliplot_module_preservation}
 \title{Standalone Module Preservation Figure}
 \usage{
-cliplot_module_preservation(data, ...)
+cliplot_module_preservation(
+  data,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link{cli_module_preservation}} or containing

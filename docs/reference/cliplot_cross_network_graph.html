@@ -49,6 +49,11 @@
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"triangle"</span>, <span class="st">"horizontal"</span>, <span class="st">"vertical"</span>, <span class="st">"grid"</span><span class="op">)</span>,</span>
 <span>  module_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cross_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  module_label_size <span class="op">=</span> <span class="fl">2.6</span>,</span>
+<span>  module_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_label_bg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -90,6 +95,27 @@ If NULL, conserved features with identical <code>id</code> across groups are lin
 
 <dt id="arg-cross-colors">cross_colors<a class="anchor" aria-label="anchor" href="#arg-cross-colors"></a></dt>
 <dd><p>Named color vector for cross-group links.</p></dd>
+
+
+<dt id="arg-show-module-labels">show_module_labels<a class="anchor" aria-label="anchor" href="#arg-show-module-labels"></a></dt>
+<dd><p>Logical. If TRUE, displays labels for module components in the circles.
+Defaults to TRUE when <code>level = "module"</code> and FALSE when <code>level = "node"</code>.</p></dd>
+
+
+<dt id="arg-module-labels">module_labels<a class="anchor" aria-label="anchor" href="#arg-module-labels"></a></dt>
+<dd><p>Optional named vector of custom labels for modules.</p></dd>
+
+
+<dt id="arg-module-label-size">module_label_size<a class="anchor" aria-label="anchor" href="#arg-module-label-size"></a></dt>
+<dd><p>Numeric font size for module labels (default 2.6).</p></dd>
+
+
+<dt id="arg-module-label-color">module_label_color<a class="anchor" aria-label="anchor" href="#arg-module-label-color"></a></dt>
+<dd><p>Color of module labels (default <code>"grey15"</code>).</p></dd>
+
+
+<dt id="arg-module-label-bg">module_label_bg<a class="anchor" aria-label="anchor" href="#arg-module-label-bg"></a></dt>
+<dd><p>Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>

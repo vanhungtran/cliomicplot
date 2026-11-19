@@ -162,6 +162,15 @@ test_that("type_env_network and cliplot_env_network work", {
   p_vals <- cliplot_env_network(show_values = TRUE, value_digits = 2, compact = TRUE)
   expect_s3_class(p_vals, "ggplot")
 
+  # With module labels enabled and custom names
+  custom_lbls <- c("Mod_1" = "M1: Core", "Mod_2" = "M2: Th2", "Mod_3" = "M3: Lipid")
+  p_lbls <- cliplot_env_network(show_module_labels = TRUE, module_labels = custom_lbls, module_label_pos = "radial")
+  expect_s3_class(p_lbls, "ggplot")
+
+  # With module labels disabled
+  p_nolbl <- cliplot_env_network(show_module_labels = FALSE)
+  expect_s3_class(p_nolbl, "ggplot")
+
   # With coef label_type
   p_coef <- cliplot_env_network(label_type = "coef", value_size = 1.5)
   expect_s3_class(p_coef, "ggplot")

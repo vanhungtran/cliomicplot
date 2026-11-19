@@ -18,7 +18,12 @@ type_cross_network_graph(
   edge_alpha = 0.45,
   edge_width = 0.2,
   cross_width = 0.6,
-  cross_alpha = 0.75
+  cross_alpha = 0.75,
+  show_module_labels = NULL,
+  module_labels = NULL,
+  module_label_size = 2.6,
+  module_label_color = "grey15",
+  module_label_bg = TRUE
 )
 }
 \arguments{
@@ -51,6 +56,17 @@ for full node-edge topology, or \code{"module"} for circular module ring preserv
 \item{cross_width}{Width for cross-group links (default \code{0.6}).}
 
 \item{cross_alpha}{Transparency for cross-group links (default \code{0.75}).}
+
+\item{show_module_labels}{Logical. If TRUE, displays labels for module components in the circles.
+Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node"}.}
+
+\item{module_labels}{Optional named vector of custom labels for modules.}
+
+\item{module_label_size}{Numeric font size for module labels (default 2.6).}
+
+\item{module_label_color}{Color of module labels (default \code{"grey15"}).}
+
+\item{module_label_bg}{Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.}
 }
 \value{
 A \code{cliplot_type} object for use with \code{\link{cliplot}}.

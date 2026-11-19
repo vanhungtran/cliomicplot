@@ -4,7 +4,13 @@
 \alias{cliplot_network_robustness}
 \title{Standalone Network Robustness Plot}
 \usage{
-cliplot_network_robustness(data, ...)
+cliplot_network_robustness(
+  data,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{Data frame returned by \code{\link{cli_network_robustness}}.}

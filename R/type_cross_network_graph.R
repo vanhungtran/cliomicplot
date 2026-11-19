@@ -36,25 +36,36 @@
 #' @param edge_width Width for intra-group edges (default \code{0.2}).
 #' @param cross_width Width for cross-group links (default \code{0.6}).
 #' @param cross_alpha Transparency for cross-group links (default \code{0.75}).
+#' @param show_module_labels Logical. If TRUE, displays labels for module components in the circles.
+#'   Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node"}.
+#' @param module_labels Optional named vector of custom labels for modules.
+#' @param module_label_size Numeric font size for module labels (default 2.6).
+#' @param module_label_color Color of module labels (default \code{"grey15"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
 #'
 #' @export
 type_cross_network_graph = function(
-    level          = c("node", "module"),
-    groups         = NULL,
-    layout         = c("triangle", "horizontal", "vertical", "grid"),
-    module_colors  = NULL,
-    cross_colors   = NULL,
-    show_hulls     = TRUE,
-    hull_alpha     = 0.18,
-    show_meta      = TRUE,
-    node_size_range = c(1.2, 4.2),
-    edge_color     = "grey85",
-    edge_alpha     = 0.45,
-    edge_width     = 0.2,
-    cross_width    = 0.6,
-    cross_alpha    = 0.75
+    level              = c("node", "module"),
+    groups             = NULL,
+    layout             = c("triangle", "horizontal", "vertical", "grid"),
+    module_colors      = NULL,
+    cross_colors       = NULL,
+    show_hulls         = TRUE,
+    hull_alpha         = 0.18,
+    show_meta          = TRUE,
+    node_size_range    = c(1.2, 4.2),
+    edge_color         = "grey85",
+    edge_alpha         = 0.45,
+    edge_width         = 0.2,
+    cross_width        = 0.6,
+    cross_alpha        = 0.75,
+    show_module_labels = NULL,
+    module_labels      = NULL,
+    module_label_size  = 2.6,
+    module_label_color = "grey15",
+    module_label_bg    = TRUE
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
@@ -71,21 +82,26 @@ type_cross_network_graph = function(
       custom_data <- args$network_data %||% settings$data
 
       res <- build_cross_network_layers(
-        custom_data    = custom_data,
-        level          = level,
-        groups         = groups,
-        layout         = layout,
-        module_colors  = module_colors,
-        cross_colors   = cross_colors,
-        show_hulls     = show_hulls,
-        hull_alpha     = hull_alpha,
-        show_meta      = show_meta,
-        node_size_range = node_size_range,
-        edge_color     = edge_color,
-        edge_alpha     = edge_alpha,
-        edge_width     = edge_width,
-        cross_width    = cross_width,
-        cross_alpha    = cross_alpha
+        custom_data        = custom_data,
+        level              = level,
+        groups             = groups,
+        layout             = layout,
+        module_colors      = module_colors,
+        cross_colors       = cross_colors,
+        show_hulls         = show_hulls,
+        hull_alpha         = hull_alpha,
+        show_meta          = show_meta,
+        node_size_range    = node_size_range,
+        edge_color         = edge_color,
+        edge_alpha         = edge_alpha,
+        edge_width         = edge_width,
+        cross_width        = cross_width,
+        cross_alpha        = cross_alpha,
+        show_module_labels = show_module_labels,
+        module_labels      = module_labels,
+        module_label_size  = module_label_size,
+        module_label_color = module_label_color,
+        module_label_bg    = module_label_bg
       )
 
       res$plot
@@ -105,21 +121,32 @@ type_cross_network_graph = function(
 #' @param layout Group placement: \code{"triangle"}, \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.
 #' @param module_colors Named color vector for modules.
 #' @param cross_colors Named color vector for cross-group links.
+#' @param show_module_labels Logical. If TRUE, displays labels for module components in the circles.
+#'   Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node"}.
+#' @param module_labels Optional named vector of custom labels for modules.
+#' @param module_label_size Numeric font size for module labels (default 2.6).
+#' @param module_label_color Color of module labels (default \code{"grey15"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.
 #' @param title Optional plot title.
 #' @param ... Additional graphic arguments.
 #'
 #' @return A \code{ggplot} object.
 #' @export
 cliplot_cross_network_graph = function(
-    nodes       = NULL,
-    edges       = NULL,
-    cross_edges = NULL,
-    level       = c("node", "module"),
-    groups      = NULL,
-    layout      = c("triangle", "horizontal", "vertical", "grid"),
-    module_colors = NULL,
-    cross_colors  = NULL,
-    title       = NULL,
+    nodes              = NULL,
+    edges              = NULL,
+    cross_edges        = NULL,
+    level              = c("node", "module"),
+    groups             = NULL,
+    layout             = c("triangle", "horizontal", "vertical", "grid"),
+    module_colors      = NULL,
+    cross_colors       = NULL,
+    show_module_labels = NULL,
+    module_labels      = NULL,
+    module_label_size  = 2.6,
+    module_label_color = "grey15",
+    module_label_bg    = TRUE,
+    title              = NULL,
     ...
 ) {
   level <- match.arg(level)
@@ -132,11 +159,16 @@ cliplot_cross_network_graph = function(
   )
 
   t_obj <- type_cross_network_graph(
-    level         = level,
-    groups        = groups,
-    layout        = layout,
-    module_colors = module_colors,
-    cross_colors  = cross_colors,
+    level              = level,
+    groups             = groups,
+    layout             = layout,
+    module_colors      = module_colors,
+    cross_colors       = cross_colors,
+    show_module_labels = show_module_labels,
+    module_labels      = module_labels,
+    module_label_size  = module_label_size,
+    module_label_color = module_label_color,
+    module_label_bg    = module_label_bg,
     ...
   )
 
@@ -162,7 +194,12 @@ build_cross_network_layers = function(
     edge_alpha,
     edge_width,
     cross_width,
-    cross_alpha
+    cross_alpha,
+    show_module_labels = NULL,
+    module_labels      = NULL,
+    module_label_size  = 2.6,
+    module_label_color = "grey15",
+    module_label_bg    = TRUE
 ) {
   # Extract components
   if (is.list(custom_data) && !is.data.frame(custom_data)) {
@@ -414,6 +451,104 @@ build_cross_network_layers = function(
   }
 
   p <- p + ggplot2::scale_fill_manual(values = module_colors, name = "Network Module")
+
+  resolved_show_labels <- if (!is.null(show_module_labels)) {
+    isTRUE(show_module_labels)
+  } else {
+    level == "module"
+  }
+
+  if (resolved_show_labels) {
+    if (level == "module") {
+      mod_lbl_text <- if (!is.null(module_labels)) {
+        if (!is.null(names(module_labels)) && all(nodes_df$module %in% names(module_labels))) {
+          module_labels[as.character(nodes_df$module)]
+        } else if (length(module_labels) == nrow(nodes_df)) {
+          module_labels
+        } else {
+          sub("^Mod_", "M", as.character(nodes_df$module))
+        }
+      } else {
+        sub("^Mod_", "M", as.character(nodes_df$module))
+      }
+
+      nodes_lbl_df <- nodes_df
+      nodes_lbl_df$lbl <- mod_lbl_text
+
+      if (isTRUE(module_label_bg)) {
+        p <- p + ggplot2::geom_label(
+          data = nodes_lbl_df,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["lbl"]]),
+          size = module_label_size,
+          fill = "white",
+          color = module_label_color,
+          fontface = "bold",
+          alpha = 0.88,
+          label.padding = ggplot2::unit(0.18, "lines"),
+          label.r = ggplot2::unit(0.16, "lines"),
+          linewidth = 0.2,
+          show.legend = FALSE
+        )
+      } else {
+        p <- p + ggplot2::geom_text(
+          data = nodes_lbl_df,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["lbl"]]),
+          size = module_label_size,
+          color = module_label_color,
+          fontface = "bold",
+          show.legend = FALSE
+        )
+      }
+    } else if (level == "node" && !is.null(hull_df)) {
+      centroid_list <- list()
+      for (g in grp_names) {
+        g_nodes <- nodes_df[nodes_df$group == g, ]
+        for (m in unique(g_nodes$module)) {
+          m_pts <- g_nodes[g_nodes$module == m, ]
+          if (nrow(m_pts) >= 3) {
+            lbl <- if (!is.null(module_labels) && m %in% names(module_labels)) {
+              as.character(module_labels[m])
+            } else {
+              sub("^Mod_", "Mod ", m)
+            }
+            centroid_list[[length(centroid_list) + 1]] <- data.frame(
+              x = mean(m_pts$x),
+              y = mean(m_pts$y),
+              label = lbl,
+              stringsAsFactors = FALSE
+            )
+          }
+        }
+      }
+      if (length(centroid_list) > 0) {
+        mod_cents <- do.call(rbind, centroid_list)
+        if (isTRUE(module_label_bg)) {
+          p <- p + ggplot2::geom_label(
+            data = mod_cents,
+            ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+            size = module_label_size,
+            fill = "white",
+            color = module_label_color,
+            fontface = "bold",
+            alpha = 0.88,
+            label.padding = ggplot2::unit(0.20, "lines"),
+            label.r = ggplot2::unit(0.18, "lines"),
+            linewidth = 0.2,
+            show.legend = FALSE
+          )
+        } else {
+          p <- p + ggplot2::geom_text(
+            data = mod_cents,
+            ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+            size = module_label_size,
+            color = module_label_color,
+            fontface = "bold",
+            show.legend = FALSE
+          )
+        }
+      }
+    }
+  }
 
   if (!is.null(meta_df)) {
     p <- p + ggplot2::geom_text(

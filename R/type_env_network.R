@@ -33,6 +33,18 @@
 #'   based on tile step dimensions so numbers fit inside without clipping.
 #' @param compact Logical. If TRUE (default), strips leading zeros (e.g. \code{".42"} instead of \code{"0.42"})
 #'   for compact, high-density tile fitting.
+#' @param show_module_labels Logical. If TRUE (default), displays text labels for modules/components
+#'   inside the central circle.
+#' @param module_labels Optional named character vector or list mapping module IDs (e.g. \code{"Mod_1"})
+#'   to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).
+#' @param module_label_size Numeric font size for module labels inside the circle (default 2.8).
+#' @param module_label_color Color of module label text and borders (default \code{"grey15"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels inside rounded opaque white
+#'   badges for high contrast against network nodes and links.
+#' @param module_label_alpha Numeric fill transparency for module label badges (default 1.0, fully opaque).
+#' @param module_label_pos Placement of module labels: \code{"radial"} (default, placed radially
+#'   outward toward the circle boundary to avoid overlapping dense core nodes) or \code{"centroid"}
+#'   (placed directly at module centroid).
 #' @param curvature Numeric curvature of inter-domain connecting lines (default 0.14).
 #' @param circle_radius Numeric radius of the central boundary circle (default 2.45).
 #' @param title Optional plot title.
@@ -41,24 +53,32 @@
 #'
 #' @export
 type_env_network = function(
-    env_cors        = NULL,
-    links           = NULL,
-    module_colors   = NULL,
-    corner_palettes = NULL,
-    link_colors     = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
-    show_asterisks  = TRUE,
-    show_values     = FALSE,
-    show_cor        = NULL,
-    label_type      = c("auto", "stars", "coef", "coef_stars", "none"),
-    value_digits    = 2,
-    value_size      = NULL,
-    compact         = TRUE,
-    curvature       = 0.14,
-    circle_radius   = 2.45,
-    title           = NULL
+    env_cors           = NULL,
+    links              = NULL,
+    module_colors      = NULL,
+    corner_palettes    = NULL,
+    link_colors        = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
+    show_asterisks     = TRUE,
+    show_values        = FALSE,
+    show_cor           = NULL,
+    label_type         = c("auto", "stars", "coef", "coef_stars", "none"),
+    value_digits       = 2,
+    value_size         = NULL,
+    compact            = TRUE,
+    show_module_labels = TRUE,
+    module_labels      = NULL,
+    module_label_size  = 2.8,
+    module_label_color = "grey15",
+    module_label_bg    = TRUE,
+    module_label_alpha = 1.0,
+    module_label_pos   = c("radial", "centroid"),
+    curvature          = 0.14,
+    circle_radius      = 2.45,
+    title              = NULL
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
   label_type <- match.arg(label_type)
+  module_label_pos <- match.arg(module_label_pos)
 
   resolved_label_type <- if (label_type == "auto") {
     if (isTRUE(show_values)) {
@@ -93,6 +113,13 @@ type_env_network = function(
         value_digits        = value_digits,
         value_size          = value_size,
         compact             = compact,
+        show_module_labels  = show_module_labels,
+        module_labels       = module_labels,
+        module_label_size   = module_label_size,
+        module_label_color  = module_label_color,
+        module_label_bg     = module_label_bg,
+        module_label_alpha  = module_label_alpha,
+        module_label_pos    = module_label_pos,
         curvature           = curvature,
         circle_radius       = circle_radius
       )
@@ -119,44 +146,66 @@ type_env_network = function(
 #' @param value_digits Decimal places for correlation coefficients (default 2).
 #' @param value_size Font size for tile text (default auto-scaled).
 #' @param compact Logical. If TRUE (default), omits leading zero for compact fitting.
+#' @param show_module_labels Logical. If TRUE (default), displays text labels for modules inside the central circle.
+#' @param module_labels Optional named vector of custom labels for modules inside the circle.
+#' @param module_label_size Numeric font size for module labels (default 2.8).
+#' @param module_label_color Color of module labels (default \code{"grey15"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels in an opaque white pill badge.
+#' @param module_label_alpha Numeric fill transparency for module label badge (default 1.0, fully opaque).
+#' @param module_label_pos Placement of labels: \code{"radial"} (default) or \code{"centroid"}.
 #' @param title Plot title.
 #' @param ... Additional arguments.
 #'
 #' @return A \code{ggplot} object.
 #' @export
 cliplot_env_network = function(
-    nodes           = NULL,
-    edges           = NULL,
-    env_cors        = NULL,
-    links           = NULL,
-    module_colors   = NULL,
-    corner_palettes = NULL,
-    show_asterisks  = TRUE,
-    show_values     = FALSE,
-    show_cor        = NULL,
-    label_type      = c("auto", "stars", "coef", "coef_stars", "none"),
-    value_digits    = 2,
-    value_size      = NULL,
-    compact         = TRUE,
-    title           = NULL,
+    nodes              = NULL,
+    edges              = NULL,
+    env_cors           = NULL,
+    links              = NULL,
+    module_colors      = NULL,
+    corner_palettes    = NULL,
+    show_asterisks     = TRUE,
+    show_values        = FALSE,
+    show_cor           = NULL,
+    label_type         = c("auto", "stars", "coef", "coef_stars", "none"),
+    value_digits       = 2,
+    value_size         = NULL,
+    compact            = TRUE,
+    show_module_labels = TRUE,
+    module_labels      = NULL,
+    module_label_size  = 2.8,
+    module_label_color = "grey15",
+    module_label_bg    = TRUE,
+    module_label_alpha = 1.0,
+    module_label_pos   = c("radial", "centroid"),
+    title              = NULL,
     ...
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
   label_type <- match.arg(label_type)
+  module_label_pos <- match.arg(module_label_pos)
 
   net_data <- list(nodes = nodes, edges = edges)
   t_obj <- type_env_network(
-    env_cors        = env_cors,
-    links           = links,
-    module_colors   = module_colors,
-    corner_palettes = corner_palettes,
-    show_asterisks  = show_asterisks,
-    show_values     = show_values,
-    label_type      = label_type,
-    value_digits    = value_digits,
-    value_size      = value_size,
-    compact         = compact,
-    title           = title,
+    env_cors           = env_cors,
+    links              = links,
+    module_colors      = module_colors,
+    corner_palettes    = corner_palettes,
+    show_asterisks     = show_asterisks,
+    show_values        = show_values,
+    label_type         = label_type,
+    value_digits       = value_digits,
+    value_size         = value_size,
+    compact            = compact,
+    show_module_labels = show_module_labels,
+    module_labels      = module_labels,
+    module_label_size  = module_label_size,
+    module_label_color = module_label_color,
+    module_label_bg    = module_label_bg,
+    module_label_alpha = module_label_alpha,
+    module_label_pos   = module_label_pos,
+    title              = title,
     ...
   )
   t_obj$draw(ggplot2::ggplot(), list(data = net_data), net_data, ...)
@@ -175,8 +224,15 @@ build_env_network_layers = function(
     value_digits,
     value_size,
     compact,
-    curvature,
-    circle_radius
+    show_module_labels  = TRUE,
+    module_labels       = NULL,
+    module_label_size   = 2.8,
+    module_label_color  = "grey15",
+    module_label_bg     = TRUE,
+    module_label_alpha  = 1.0,
+    module_label_pos    = "radial",
+    curvature           = 0.14,
+    circle_radius       = 2.45
 ) {
   # 1. Module configuration
   n_mods <- 7
@@ -226,6 +282,14 @@ build_env_network_layers = function(
       )
     }
     nodes_df <- do.call(rbind, node_list)
+  } else if (all(c("x", "y", "module") %in% names(nodes_df))) {
+    mod_cents <- stats::aggregate(cbind(x, y) ~ module, data = nodes_df, FUN = mean)
+    mod_centers <- data.frame(
+      module = as.character(mod_cents$module),
+      cx = mod_cents$x,
+      cy = mod_cents$y,
+      stringsAsFactors = FALSE
+    )
   }
 
   # Build module hulls
@@ -582,6 +646,76 @@ build_env_network_layers = function(
     }
   }
 
+  # 3b. Module labels inside the central circle
+  mod_labels_df <- NULL
+  if (isTRUE(show_module_labels) && nrow(mod_centers) > 0) {
+    label_list <- list()
+    for (m_i in seq_len(nrow(mod_centers))) {
+      m_name <- as.character(mod_centers$module[m_i])
+      cx <- mod_centers$cx[m_i]
+      cy <- mod_centers$cy[m_i]
+      r_dist <- sqrt(cx^2 + cy^2)
+
+      if (module_label_pos == "radial" && r_dist > 0.15) {
+        th <- atan2(cy, cx)
+        r_pos <- min(circle_radius * 0.77, r_dist + 0.43)
+        lx <- r_pos * cos(th)
+        ly <- r_pos * sin(th)
+      } else {
+        lx <- cx
+        ly <- cy
+      }
+
+      lbl_txt <- if (!is.null(module_labels)) {
+        if (!is.null(names(module_labels)) && m_name %in% names(module_labels)) {
+          as.character(module_labels[m_name])
+        } else if (m_i <= length(module_labels)) {
+          as.character(module_labels[m_i])
+        } else {
+          sub("^Mod_", "Mod ", m_name)
+        }
+      } else {
+        sub("^Mod_", "Mod ", m_name)
+      }
+
+      label_list[[m_i]] <- data.frame(
+        module = m_name,
+        x = lx,
+        y = ly,
+        label = lbl_txt,
+        stringsAsFactors = FALSE
+      )
+    }
+    mod_labels_df <- do.call(rbind, label_list)
+  }
+
+  if (!is.null(mod_labels_df) && nrow(mod_labels_df) > 0) {
+    if (isTRUE(module_label_bg)) {
+      p <- p + ggplot2::geom_label(
+        data = mod_labels_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+        fill = "white",
+        color = module_label_color,
+        fontface = "bold",
+        size = module_label_size,
+        alpha = module_label_alpha,
+        label.padding = ggplot2::unit(0.22, "lines"),
+        label.r = ggplot2::unit(0.20, "lines"),
+        linewidth = 0.25,
+        show.legend = FALSE
+      )
+    } else {
+      p <- p + ggplot2::geom_text(
+        data = mod_labels_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+        color = module_label_color,
+        fontface = "bold",
+        size = module_label_size,
+        show.legend = FALSE
+      )
+    }
+  }
+
   p <- p +
     ggplot2::geom_point(
       data = all_diag,
@@ -603,5 +737,5 @@ build_env_network_layers = function(
       legend.margin = ggplot2::margin(b = 4, t = 2)
     )
 
-  list(plot = p, nodes = nodes_df, tiles = all_tiles, links = all_links)
+  list(plot = p, nodes = nodes_df, tiles = all_tiles, links = all_links, module_labels = mod_labels_df)
 }

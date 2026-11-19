@@ -87,7 +87,12 @@ Supports two representations:</p><ul><li><p><code>level = "node"</code>: Full ne
 <span>  edge_alpha <span class="op">=</span> <span class="fl">0.45</span>,</span>
 <span>  edge_width <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  cross_width <span class="op">=</span> <span class="fl">0.6</span>,</span>
-<span>  cross_alpha <span class="op">=</span> <span class="fl">0.75</span></span>
+<span>  cross_alpha <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  show_module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  module_label_size <span class="op">=</span> <span class="fl">2.6</span>,</span>
+<span>  module_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_label_bg <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -151,6 +156,27 @@ for full node-edge topology, or <code>"module"</code> for circular module ring p
 
 <dt id="arg-cross-alpha">cross_alpha<a class="anchor" aria-label="anchor" href="#arg-cross-alpha"></a></dt>
 <dd><p>Transparency for cross-group links (default <code>0.75</code>).</p></dd>
+
+
+<dt id="arg-show-module-labels">show_module_labels<a class="anchor" aria-label="anchor" href="#arg-show-module-labels"></a></dt>
+<dd><p>Logical. If TRUE, displays labels for module components in the circles.
+Defaults to TRUE when <code>level = "module"</code> and FALSE when <code>level = "node"</code>.</p></dd>
+
+
+<dt id="arg-module-labels">module_labels<a class="anchor" aria-label="anchor" href="#arg-module-labels"></a></dt>
+<dd><p>Optional named vector of custom labels for modules.</p></dd>
+
+
+<dt id="arg-module-label-size">module_label_size<a class="anchor" aria-label="anchor" href="#arg-module-label-size"></a></dt>
+<dd><p>Numeric font size for module labels (default 2.6).</p></dd>
+
+
+<dt id="arg-module-label-color">module_label_color<a class="anchor" aria-label="anchor" href="#arg-module-label-color"></a></dt>
+<dd><p>Color of module labels (default <code>"grey15"</code>).</p></dd>
+
+
+<dt id="arg-module-label-bg">module_label_bg<a class="anchor" aria-label="anchor" href="#arg-module-label-bg"></a></dt>
+<dd><p>Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.</p></dd>
 
 </dl></div>
     <div class="section level2">

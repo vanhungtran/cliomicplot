@@ -47,9 +47,10 @@ names(mod_summary)[3] <- "degree"
 mod_summary$id <- paste0(mod_summary$group, "_", mod_summary$module)
 
 p_b <- cliplot_cross_network_graph(
-  nodes = mod_summary,
-  level = "module",
-  title = "(b) Module-Level Cross-Network Preservation"
+  nodes              = mod_summary,
+  level              = "module",
+  show_module_labels = TRUE,
+  title              = "(b) Module-Level Cross-Network Preservation"
 )
 
 # ==============================================================================
@@ -84,11 +85,12 @@ env_cors <- list(
 )
 
 p_c <- cliplot_env_network(
-  env_cors    = env_cors,
-  show_values = TRUE,  # Display compact, contrast-aware correlation coefficients
-  value_digits = 2,    # Number of decimal places
-  compact     = TRUE,  # Strip leading zero (.42 instead of 0.42) to fit snugly in tiles
-  title       = "(c) Central Modular Network Coupled with Environmental Drivers"
+  env_cors           = env_cors,
+  show_values        = TRUE,  # Display compact, contrast-aware correlation coefficients
+  value_digits       = 2,     # Number of decimal places
+  compact            = TRUE,  # Strip leading zero (.42 instead of 0.42) to fit snugly in tiles
+  show_module_labels = TRUE,  # Display module/component labels in the central circle
+  title              = "(c) Central Modular Network Coupled with Environmental Drivers"
 )
 
 # ==============================================================================

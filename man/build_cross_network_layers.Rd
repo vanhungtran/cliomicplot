@@ -19,7 +19,12 @@ build_cross_network_layers(
   edge_alpha,
   edge_width,
   cross_width,
-  cross_alpha
+  cross_alpha,
+  show_module_labels = NULL,
+  module_labels = NULL,
+  module_label_size = 2.6,
+  module_label_color = "grey15",
+  module_label_bg = TRUE
 )
 }
 \description{
