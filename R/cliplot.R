@@ -221,6 +221,11 @@ cliplot.default = function(
 
     # ---- Apply legend position ----
     p = p + ggplot2::theme(legend.position = settings$legend)
+
+    # ---- Maintain angled x-axis text for matrix and heatmap types ----
+    if (settings$type_name %in% c("module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix")) {
+      p = p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1))
+    }
   }
 
   # ---- Save to file if requested ----
