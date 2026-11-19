@@ -120,8 +120,9 @@ cliplot(
   `"volcano"`, `"forest"`, `"km"`, `"waterfall"`, `"swimmer"`,
   `"heatmap"`, `"pca"`, `"ma"`, `"correlation"`, `"roc"`, `"gsea"`,
   `"upset"`, `"venn"`, `"slope"`, `"confusion"`, `"donut"`, `"mcid"`,
-  `"trajectory"`, `"manhattan"`, `"bubble_matrix"`, `"sharing_heatmap"`)
-  or a call to a `type_*()` function for customization.
+  `"trajectory"`, `"manhattan"`, `"bubble_matrix"`, `"sharing_heatmap"`,
+  `"module_compare"`, `"cross_network"`, `"module_trait"`,
+  `"module_env"`) or a call to a `type_*()` function for customization.
 
 - by:
 

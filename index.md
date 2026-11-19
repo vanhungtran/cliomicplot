@@ -325,7 +325,8 @@ Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`,
 `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`,
 `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`,
 `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`,
-`donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`.
+`donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`,
+`module_compare`, `cross_network`, `module_trait`, `module_env`.
 
 ------------------------------------------------------------------------
 

@@ -190,6 +190,10 @@ The main plotting function and layer helpers.
   : Manhattan Plot for Genome-Wide and Microbial Association Studies
 - [`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)
   : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
+- [`type_module_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_compare.md)
+  : Cross-Network Module Comparison Heatmap
+- [`type_module_trait()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_trait.md)
+  : Module-Trait and Environmental Factor Correlation Heatmap
 - [`type_parallel()`](https://vanhungtran.github.io/cliomicplot/reference/type_parallel.md)
   : Parallel Coordinates Plot Type
 - [`type_pattern()`](https://vanhungtran.github.io/cliomicplot/reference/type_pattern.md)
