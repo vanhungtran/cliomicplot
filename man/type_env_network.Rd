@@ -25,6 +25,8 @@ type_env_network(
   module_label_bg = TRUE,
   module_label_alpha = 1,
   module_label_pos = c("radial", "centroid"),
+  show_module_legend = TRUE,
+  legend_position = "top",
   env_label_size = 1.8,
   env_label_color = "grey20",
   env_label_face = "plain",
@@ -106,6 +108,10 @@ to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).}
 \item{module_label_pos}{Placement of module labels: \code{"radial"} (default, placed radially
 outward toward the circle boundary to avoid overlapping dense core nodes) or \code{"centroid"}
 (placed directly at module centroid).}
+
+\item{show_module_legend}{Logical. If TRUE, shows the module color legend. Default TRUE.}
+
+\item{legend_position}{Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.}
 
 \item{env_label_size}{Font size for environmental variable labels outside corner heatmaps (default 1.8).}
 

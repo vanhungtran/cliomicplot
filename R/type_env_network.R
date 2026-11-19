@@ -45,6 +45,8 @@
 #' @param module_label_pos Placement of module labels: \code{"radial"} (default, placed radially
 #'   outward toward the circle boundary to avoid overlapping dense core nodes) or \code{"centroid"}
 #'   (placed directly at module centroid).
+#' @param show_module_legend Logical. If TRUE, shows the module color legend. Default TRUE.
+#' @param legend_position Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.
 #' @param env_label_size Font size for environmental variable labels outside corner heatmaps (default 1.8).
 #' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
 #' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
@@ -103,6 +105,8 @@ type_env_network = function(
     module_label_bg    = TRUE,
     module_label_alpha = 1.0,
     module_label_pos   = c("radial", "centroid"),
+    show_module_legend = TRUE,
+    legend_position    = "top",
     env_label_size     = 1.8,
     env_label_color    = "grey20",
     env_label_face     = "plain",
@@ -188,6 +192,8 @@ type_env_network = function(
         module_label_bg     = module_label_bg,
         module_label_alpha  = module_label_alpha,
         module_label_pos    = module_label_pos,
+        show_module_legend  = show_module_legend,
+        legend_position     = legend_position,
         env_label_size      = env_label_size,
         env_label_color     = env_label_color,
         env_label_face      = env_label_face,
@@ -293,6 +299,8 @@ cliplot_env_network = function(
     module_label_bg    = TRUE,
     module_label_alpha = 1.0,
     module_label_pos   = c("radial", "centroid"),
+    show_module_legend = TRUE,
+    legend_position    = "top",
     env_label_size     = 1.8,
     env_label_color    = "grey20",
     env_label_face     = "plain",
@@ -349,6 +357,8 @@ cliplot_env_network = function(
     module_label_bg    = module_label_bg,
     module_label_alpha = module_label_alpha,
     module_label_pos   = module_label_pos,
+    show_module_legend = show_module_legend,
+    legend_position    = legend_position,
     env_label_size     = env_label_size,
     env_label_color    = env_label_color,
     env_label_face     = env_label_face,
@@ -403,6 +413,8 @@ build_env_network_layers = function(
     module_label_bg     = TRUE,
     module_label_alpha  = 1.0,
     module_label_pos    = "radial",
+    show_module_legend  = TRUE,
+    legend_position     = "top",
     env_label_size      = 1.8,
     env_label_color     = "grey20",
     env_label_face      = "plain",
@@ -810,11 +822,11 @@ build_env_network_layers = function(
     ggplot2::scale_linewidth_continuous(
       range = link_width_range,
       breaks = c(1.5, 2.0, 2.5, 3.0),
-      name = expression(-log[10](italic(P)-value))
+      name = expression(-log[10](italic(P)-value) * ":")
     )
   }
 
-  p <- p + ggplot2::scale_color_manual(values = link_colors, name = "Correlation")
+  p <- p + ggplot2::scale_color_manual(values = link_colors, name = "Correlation:")
 
   if (isTRUE(show_link_values) && nrow(all_links) > 0) {
     dx <- all_links$xend - all_links$x
@@ -863,7 +875,7 @@ build_env_network_layers = function(
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["module"]], size = .data[["degree"]]),
       shape = 21, color = "grey25", stroke = 0.2
     ) +
-    ggplot2::scale_fill_manual(values = module_colors, name = "Network Module") +
+    ggplot2::scale_fill_manual(values = module_colors, name = "Module:") +
     ggplot2::scale_size_continuous(range = node_size_range, guide = "none") +
     ggplot2::geom_tile(
       data = all_tiles,
@@ -986,14 +998,34 @@ build_env_network_layers = function(
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["var"]], angle = .data[["angle"]], hjust = .data[["hjust"]], vjust = .data[["vjust"]]),
       size = env_label_size, fontface = env_label_face, color = env_label_color
     ) +
+    ggplot2::guides(
+      color     = ggplot2::guide_legend(title.position = "left", title.vjust = 0.5, nrow = 1, order = 1),
+      linewidth = if (is.null(link_width)) {
+        ggplot2::guide_legend(title.position = "left", title.vjust = 0.5, nrow = 1, order = 2)
+      } else {
+        "none"
+      },
+      fill      = if (isTRUE(show_module_legend)) {
+        ggplot2::guide_legend(title.position = "left", title.vjust = 0.5, nrow = 1, order = 3)
+      } else {
+        "none"
+      }
+    ) +
     ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
     ggplot2::theme_void() +
     ggplot2::theme(
-      legend.position = "top",
-      legend.box = "horizontal",
-      legend.text = ggplot2::element_text(size = 7),
-      legend.title = ggplot2::element_text(size = 8, face = "bold"),
-      legend.margin = ggplot2::margin(b = 4, t = 2)
+      legend.position      = legend_position,
+      legend.box           = "vertical",
+      legend.box.just      = "center",
+      legend.spacing.y     = ggplot2::unit(1.0, "pt"),
+      legend.key.spacing.y = ggplot2::unit(0.5, "pt"),
+      legend.key.spacing.x = ggplot2::unit(2.5, "pt"),
+      legend.key.height    = ggplot2::unit(2.2, "mm"),
+      legend.key.width     = ggplot2::unit(3.8, "mm"),
+      legend.text          = ggplot2::element_text(size = 6.2, family = "sans"),
+      legend.title         = ggplot2::element_text(size = 6.8, face = "bold", family = "sans"),
+      legend.margin        = ggplot2::margin(t = 0, b = 2, l = 0, r = 0, unit = "pt"),
+      legend.box.margin    = ggplot2::margin(t = 0, b = 1, l = 0, r = 0, unit = "pt")
     )
 
   list(plot = p, nodes = nodes_df, tiles = all_tiles, links = all_links, module_labels = mod_labels_df)

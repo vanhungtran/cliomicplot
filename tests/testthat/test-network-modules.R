@@ -331,3 +331,21 @@ test_that("cli_scifig_qa and AI4SciFig publication gates work", {
   out_txt <- capture.output(print(qa))
   expect_true(any(grepl("SciFig QA Journal Compliance Report", out_txt)))
 })
+
+test_that("cliplot_env_network legend options and row formatting work", {
+  cors <- list(
+    "Env A" = matrix(c(1.0, 0.5, 0.5, 1.0), 2, 2, dimnames = list(c("V1", "V2"), c("V1", "V2")))
+  )
+
+  # With module legend
+  p1 <- cliplot_env_network(env_cors = cors, show_module_legend = TRUE, legend_position = "top")
+  expect_s3_class(p1, "ggplot")
+  g1 <- ggplot2::ggplot_build(p1)
+  expect_true(!is.null(g1))
+
+  # Without module legend
+  p2 <- cliplot_env_network(env_cors = cors, show_module_legend = FALSE, legend_position = "bottom")
+  expect_s3_class(p2, "ggplot")
+  g2 <- ggplot2::ggplot_build(p2)
+  expect_true(!is.null(g2))
+})
