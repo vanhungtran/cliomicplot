@@ -71,6 +71,13 @@ and colored by correlation direction.</p>
 <span>  value_digits <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  value_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compact <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_module_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  module_label_size <span class="op">=</span> <span class="fl">2.8</span>,</span>
+<span>  module_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_label_bg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  module_label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  module_label_pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"radial"</span>, <span class="st">"centroid"</span><span class="op">)</span>,</span>
 <span>  curvature <span class="op">=</span> <span class="fl">0.14</span>,</span>
 <span>  circle_radius <span class="op">=</span> <span class="fl">2.45</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -134,6 +141,39 @@ based on tile step dimensions so numbers fit inside without clipping.</p></dd>
 <dt id="arg-compact">compact<a class="anchor" aria-label="anchor" href="#arg-compact"></a></dt>
 <dd><p>Logical. If TRUE (default), strips leading zeros (e.g. <code>".42"</code> instead of <code>"0.42"</code>)
 for compact, high-density tile fitting.</p></dd>
+
+
+<dt id="arg-show-module-labels">show_module_labels<a class="anchor" aria-label="anchor" href="#arg-show-module-labels"></a></dt>
+<dd><p>Logical. If TRUE (default), displays text labels for modules/components
+inside the central circle.</p></dd>
+
+
+<dt id="arg-module-labels">module_labels<a class="anchor" aria-label="anchor" href="#arg-module-labels"></a></dt>
+<dd><p>Optional named character vector or list mapping module IDs (e.g. <code>"Mod_1"</code>)
+to custom display labels (e.g. <code>c("Mod_1" = "M1: S. aureus core")</code>).</p></dd>
+
+
+<dt id="arg-module-label-size">module_label_size<a class="anchor" aria-label="anchor" href="#arg-module-label-size"></a></dt>
+<dd><p>Numeric font size for module labels inside the circle (default 2.8).</p></dd>
+
+
+<dt id="arg-module-label-color">module_label_color<a class="anchor" aria-label="anchor" href="#arg-module-label-color"></a></dt>
+<dd><p>Color of module label text and borders (default <code>"grey15"</code>).</p></dd>
+
+
+<dt id="arg-module-label-bg">module_label_bg<a class="anchor" aria-label="anchor" href="#arg-module-label-bg"></a></dt>
+<dd><p>Logical. If TRUE (default), renders labels inside rounded opaque white
+badges for high contrast against network nodes and links.</p></dd>
+
+
+<dt id="arg-module-label-alpha">module_label_alpha<a class="anchor" aria-label="anchor" href="#arg-module-label-alpha"></a></dt>
+<dd><p>Numeric fill transparency for module label badges (default 1.0, fully opaque).</p></dd>
+
+
+<dt id="arg-module-label-pos">module_label_pos<a class="anchor" aria-label="anchor" href="#arg-module-label-pos"></a></dt>
+<dd><p>Placement of module labels: <code>"radial"</code> (default, placed radially
+outward toward the circle boundary to avoid overlapping dense core nodes) or <code>"centroid"</code>
+(placed directly at module centroid).</p></dd>
 
 
 <dt id="arg-curvature">curvature<a class="anchor" aria-label="anchor" href="#arg-curvature"></a></dt>

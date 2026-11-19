@@ -5,7 +5,13 @@ High-level wrapper to plot cross-network module preservation results.
 ## Usage
 
 ``` r
-cliplot_module_preservation(data, ...)
+cliplot_module_preservation(
+  data,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  ...
+)
 ```
 
 ## Arguments

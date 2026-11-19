@@ -25,6 +25,13 @@ type_env_network(
   value_digits = 2,
   value_size = NULL,
   compact = TRUE,
+  show_module_labels = TRUE,
+  module_labels = NULL,
+  module_label_size = 2.8,
+  module_label_color = "grey15",
+  module_label_bg = TRUE,
+  module_label_alpha = 1,
+  module_label_pos = c("radial", "centroid"),
   curvature = 0.14,
   circle_radius = 2.45,
   title = NULL
@@ -95,6 +102,41 @@ type_env_network(
 
   Logical. If TRUE (default), strips leading zeros (e.g. `".42"` instead
   of `"0.42"`) for compact, high-density tile fitting.
+
+- show_module_labels:
+
+  Logical. If TRUE (default), displays text labels for
+  modules/components inside the central circle.
+
+- module_labels:
+
+  Optional named character vector or list mapping module IDs (e.g.
+  `"Mod_1"`) to custom display labels (e.g.
+  `c("Mod_1" = "M1: S. aureus core")`).
+
+- module_label_size:
+
+  Numeric font size for module labels inside the circle (default 2.8).
+
+- module_label_color:
+
+  Color of module label text and borders (default `"grey15"`).
+
+- module_label_bg:
+
+  Logical. If TRUE (default), renders labels inside rounded opaque white
+  badges for high contrast against network nodes and links.
+
+- module_label_alpha:
+
+  Numeric fill transparency for module label badges (default 1.0, fully
+  opaque).
+
+- module_label_pos:
+
+  Placement of module labels: `"radial"` (default, placed radially
+  outward toward the circle boundary to avoid overlapping dense core
+  nodes) or `"centroid"` (placed directly at module centroid).
 
 - curvature:
 

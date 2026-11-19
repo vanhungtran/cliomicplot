@@ -5,7 +5,13 @@ Standalone Network Robustness Plot
 ## Usage
 
 ``` r
-cliplot_network_robustness(data, ...)
+cliplot_network_robustness(
+  data,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  ...
+)
 ```
 
 ## Arguments

@@ -20,6 +20,13 @@ cliplot_env_network(
   value_digits = 2,
   value_size = NULL,
   compact = TRUE,
+  show_module_labels = TRUE,
+  module_labels = NULL,
+  module_label_size = 2.8,
+  module_label_color = "grey15",
+  module_label_bg = TRUE,
+  module_label_alpha = 1,
+  module_label_pos = c("radial", "centroid"),
   title = NULL,
   ...
 )
@@ -82,6 +89,37 @@ cliplot_env_network(
 - compact:
 
   Logical. If TRUE (default), omits leading zero for compact fitting.
+
+- show_module_labels:
+
+  Logical. If TRUE (default), displays text labels for modules inside
+  the central circle.
+
+- module_labels:
+
+  Optional named vector of custom labels for modules inside the circle.
+
+- module_label_size:
+
+  Numeric font size for module labels (default 2.8).
+
+- module_label_color:
+
+  Color of module labels (default `"grey15"`).
+
+- module_label_bg:
+
+  Logical. If TRUE (default), renders labels in an opaque white pill
+  badge.
+
+- module_label_alpha:
+
+  Numeric fill transparency for module label badge (default 1.0, fully
+  opaque).
+
+- module_label_pos:
+
+  Placement of labels: `"radial"` (default) or `"centroid"`.
 
 - title:
 

@@ -16,7 +16,14 @@ build_env_network_layers(
   value_digits,
   value_size,
   compact,
-  curvature,
-  circle_radius
+  show_module_labels = TRUE,
+  module_labels = NULL,
+  module_label_size = 2.8,
+  module_label_color = "grey15",
+  module_label_bg = TRUE,
+  module_label_alpha = 1,
+  module_label_pos = "radial",
+  curvature = 0.14,
+  circle_radius = 2.45
 )
 ```
