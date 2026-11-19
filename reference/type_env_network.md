@@ -33,6 +33,8 @@ type_env_network(
   module_label_bg = TRUE,
   module_label_alpha = 1,
   module_label_pos = c("radial", "centroid"),
+  show_module_legend = TRUE,
+  legend_position = "top",
   env_label_size = 1.8,
   env_label_color = "grey20",
   env_label_face = "plain",
@@ -167,6 +169,15 @@ type_env_network(
   Placement of module labels: `"radial"` (default, placed radially
   outward toward the circle boundary to avoid overlapping dense core
   nodes) or `"centroid"` (placed directly at module centroid).
+
+- show_module_legend:
+
+  Logical. If TRUE, shows the module color legend. Default TRUE.
+
+- legend_position:
+
+  Position of the legend: `"top"` (default), `"bottom"`, `"right"`,
+  `"left"`, or `"none"`.
 
 - env_label_size:
 
