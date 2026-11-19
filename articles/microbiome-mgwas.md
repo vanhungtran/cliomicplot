@@ -320,9 +320,110 @@ correlation heatmaps and significance-weighted curved links:
 
 # Central modular network coupled with 4 corner seasonal environmental heatmaps
 p_env <- cliplot_env_network(
-  title = "Central Microbial Network Coupled with Multi-Season Environmental Drivers"
+  title = "Central Microbial Network Coupled with Multi-Season Environmental Drivers",
+  show_values = TRUE,
+  value_digits = 2,
+  compact = TRUE
 )
 p_env
 ```
 
 ![](microbiome-mgwas_files/figure-html/env-network-coupling-1.png)
+
+------------------------------------------------------------------------
+
+## 8. Cross-Network Module Preservation and Attack Robustness
+
+Beyond network visualizations, quantitative systems biology requires
+testing whether module structures persist across conditions and whether
+networks withstand random loss or targeted hub disruption.
+
+### 8.1 Module Preservation Statistics ($`Z_{summary}`$)
+
+[`cli_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/cli_module_preservation.md)
+evaluates whether module density and intramodular hub rank are preserved
+between reference and test conditions under permutation testing
+(Langfelder et al., *PLoS Comput Biol* 2011). The results are plotted
+with
+[`cliplot_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_module_preservation.md)
+displaying the $`Z = 2`$ and $`Z = 10`$ thresholds:
+
+``` r
+
+demo_omics <- cli_demo_vitality_multiomics(n_samples = 35, n_features = 60, seed = 42)
+
+pres_stats <- cli_module_preservation(
+  ref_data    = demo_omics$ref_expr,
+  test_data   = demo_omics$test_expr,
+  ref_modules = demo_omics$modules,
+  n_perm      = 100,
+  seed        = 42
+)
+
+cliplot_module_preservation(
+  pres_stats,
+  title = "Cross-Network Module Preservation: WT Reference vs KO Test"
+)
+```
+
+![](microbiome-mgwas_files/figure-html/module-preservation-1.png)
+
+### 8.2 Network Robustness and Targeted Attack Simulation
+
+[`cli_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/cli_network_robustness.md)
+simulates progressive network degradation under random node loss versus
+targeted attacks on high-degree hub nodes.
+[`cliplot_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_network_robustness.md)
+displays natural connectivity decay curves across conditions:
+
+``` r
+
+rob_stats <- cli_network_robustness(
+  networks     = demo_omics$networks,
+  attack       = c("random", "degree"),
+  rm_fractions = seq(0.05, 0.85, by = 0.05),
+  n_perm       = 20,
+  metric       = "natural_connectivity",
+  seed         = 42
+)
+
+cliplot_network_robustness(
+  rob_stats,
+  title = "Network Robustness Under Progressive Node Removal"
+)
+```
+
+![](microbiome-mgwas_files/figure-html/network-robustness-1.png)
+
+### 8.3 Mantel & Partial Mantel Tests for Omics-Environment Coupling
+
+[`cli_mantel()`](https://vanhungtran.github.io/cliomicplot/reference/cli_mantel.md)
+links omics community or module dissimilarity matrices to environmental
+variables, with optional covariate conditioning for partial Mantel
+tests:
+
+``` r
+
+# Mantel test against environmental variables
+mantel_out <- cli_mantel(
+  comm_data   = demo_omics$ref_expr,
+  env_data    = demo_omics$env_data[, 1:6],
+  dist_comm   = "bray",
+  dist_env    = "euclidean",
+  n_perm      = 199,
+  by_variable = TRUE
+)
+knitr::kable(mantel_out, digits = 3, caption = "Mantel Association Statistics")
+```
+
+| variable      | statistic | pvalue | method | padj | signif |
+|:--------------|----------:|-------:|:-------|-----:|:-------|
+| pH            |     0.038 |  0.685 | Mantel | 0.91 |        |
+| Humdepth      |     0.069 |  0.410 | Mantel | 0.91 |        |
+| Baresoil      |    -0.048 |  0.555 | Mantel | 0.91 |        |
+| Mo            |     0.040 |  0.645 | Mantel | 0.91 |        |
+| Zn            |    -0.017 |  0.890 | Mantel | 0.91 |        |
+| Mn            |    -0.135 |  0.165 | Mantel | 0.91 |        |
+| All_Variables |    -0.007 |  0.910 | Mantel | 0.91 |        |
+
+Mantel Association Statistics {.table}

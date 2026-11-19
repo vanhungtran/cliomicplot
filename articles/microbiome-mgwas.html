@@ -359,10 +359,162 @@ significance-weighted curved links:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Central modular network coupled with 4 corner seasonal environmental heatmaps</span></span>
 <span><span class="va">p_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
-<span>  title <span class="op">=</span> <span class="st">"Central Microbial Network Coupled with Multi-Season Environmental Drivers"</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Central Microbial Network Coupled with Multi-Season Environmental Drivers"</span>,</span>
+<span>  show_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  value_digits <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  compact <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">p_env</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/env-network-coupling-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="cross-network-module-preservation-and-attack-robustness">8. Cross-Network Module Preservation and Attack Robustness<a class="anchor" aria-label="anchor" href="#cross-network-module-preservation-and-attack-robustness"></a>
+</h2>
+<p>Beyond network visualizations, quantitative systems biology requires
+testing whether module structures persist across conditions and whether
+networks withstand random loss or targeted hub disruption.</p>
+<div class="section level3">
+<h3 id="module-preservation-statistics-z_summary">8.1 Module Preservation Statistics
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mrow><mi>s</mi><mi>u</mi><mi>m</mi><mi>m</mi><mi>a</mi><mi>r</mi><mi>y</mi></mrow></msub><annotation encoding="application/x-tex">Z_{summary}</annotation></semantics></math>)<a class="anchor" aria-label="anchor" href="#module-preservation-statistics-z_summary"></a>
+</h3>
+<p><code><a href="../reference/cli_module_preservation.html">cli_module_preservation()</a></code> evaluates whether module
+density and intramodular hub rank are preserved between reference and
+test conditions under permutation testing (Langfelder et al., <em>PLoS
+Comput Biol</em> 2011). The results are plotted with
+<code><a href="../reference/cliplot_module_preservation.html">cliplot_module_preservation()</a></code> displaying the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">Z = 2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">Z = 10</annotation></semantics></math>
+thresholds:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">demo_omics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_demo_vitality_multiomics.html">cli_demo_vitality_multiomics</a></span><span class="op">(</span>n_samples <span class="op">=</span> <span class="fl">35</span>, n_features <span class="op">=</span> <span class="fl">60</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pres_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_module_preservation.html">cli_module_preservation</a></span><span class="op">(</span></span>
+<span>  ref_data    <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span>,</span>
+<span>  test_data   <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">test_expr</span>,</span>
+<span>  ref_modules <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">modules</span>,</span>
+<span>  n_perm      <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  seed        <span class="op">=</span> <span class="fl">42</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot_module_preservation.html">cliplot_module_preservation</a></span><span class="op">(</span></span>
+<span>  <span class="va">pres_stats</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Cross-Network Module Preservation: WT Reference vs KO Test"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/module-preservation-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="network-robustness-and-targeted-attack-simulation">8.2 Network Robustness and Targeted Attack Simulation<a class="anchor" aria-label="anchor" href="#network-robustness-and-targeted-attack-simulation"></a>
+</h3>
+<p><code><a href="../reference/cli_network_robustness.html">cli_network_robustness()</a></code> simulates progressive network
+degradation under random node loss versus targeted attacks on
+high-degree hub nodes. <code><a href="../reference/cliplot_network_robustness.html">cliplot_network_robustness()</a></code>
+displays natural connectivity decay curves across conditions:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rob_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_network_robustness.html">cli_network_robustness</a></span><span class="op">(</span></span>
+<span>  networks     <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">networks</span>,</span>
+<span>  attack       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"degree"</span><span class="op">)</span>,</span>
+<span>  rm_fractions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.85</span>, by <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>,</span>
+<span>  n_perm       <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  metric       <span class="op">=</span> <span class="st">"natural_connectivity"</span>,</span>
+<span>  seed         <span class="op">=</span> <span class="fl">42</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot_network_robustness.html">cliplot_network_robustness</a></span><span class="op">(</span></span>
+<span>  <span class="va">rob_stats</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Network Robustness Under Progressive Node Removal"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/network-robustness-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="mantel-partial-mantel-tests-for-omics-environment-coupling">8.3 Mantel &amp; Partial Mantel Tests for Omics-Environment
+Coupling<a class="anchor" aria-label="anchor" href="#mantel-partial-mantel-tests-for-omics-environment-coupling"></a>
+</h3>
+<p><code><a href="../reference/cli_mantel.html">cli_mantel()</a></code> links omics community or module
+dissimilarity matrices to environmental variables, with optional
+covariate conditioning for partial Mantel tests:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Mantel test against environmental variables</span></span>
+<span><span class="va">mantel_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_mantel.html">cli_mantel</a></span><span class="op">(</span></span>
+<span>  comm_data   <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span>,</span>
+<span>  env_data    <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">env_data</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,</span>
+<span>  dist_comm   <span class="op">=</span> <span class="st">"bray"</span>,</span>
+<span>  dist_env    <span class="op">=</span> <span class="st">"euclidean"</span>,</span>
+<span>  n_perm      <span class="op">=</span> <span class="fl">199</span>,</span>
+<span>  by_variable <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">mantel_out</span>, digits <span class="op">=</span> <span class="fl">3</span>, caption <span class="op">=</span> <span class="st">"Mantel Association Statistics"</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<caption>Mantel Association Statistics</caption>
+<thead><tr class="header">
+<th align="left">variable</th>
+<th align="right">statistic</th>
+<th align="right">pvalue</th>
+<th align="left">method</th>
+<th align="right">padj</th>
+<th align="left">signif</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">pH</td>
+<td align="right">0.038</td>
+<td align="right">0.685</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Humdepth</td>
+<td align="right">0.069</td>
+<td align="right">0.410</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Baresoil</td>
+<td align="right">-0.048</td>
+<td align="right">0.555</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Mo</td>
+<td align="right">0.040</td>
+<td align="right">0.645</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Zn</td>
+<td align="right">-0.017</td>
+<td align="right">0.890</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Mn</td>
+<td align="right">-0.135</td>
+<td align="right">0.165</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">All_Variables</td>
+<td align="right">-0.007</td>
+<td align="right">0.910</td>
+<td align="left">Mantel</td>
+<td align="right">0.91</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

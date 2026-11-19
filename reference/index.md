@@ -136,8 +136,31 @@ The main plotting function and layer helpers.
   : Cross-Network Module Comparison Heatmap
 - [`type_module_trait()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_trait.md)
   : Module-Trait and Environmental Factor Correlation Heatmap
+- [`cli_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/cli_module_preservation.md)
+  : Evaluate Cross-Network Module Preservation Statistics
+- [`type_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_preservation.md)
+  : Cross-Network Module Preservation Plot Type
+- [`cliplot_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_module_preservation.md)
+  : Standalone Module Preservation Figure
+- [`cli_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/cli_network_robustness.md)
+  : Simulate Multi-Network Robustness Under Random and Targeted Node
+  Attacks
+- [`type_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/type_network_robustness.md)
+  : Network Robustness Degradation Curves Plot Type
+- [`cliplot_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_network_robustness.md)
+  : Standalone Network Robustness Plot
+- [`cli_mantel()`](https://vanhungtran.github.io/cliomicplot/reference/cli_mantel.md)
+  : Mantel and Partial Mantel Test for Omics-Environment Associations
+- [`cli_partial_cor()`](https://vanhungtran.github.io/cliomicplot/reference/cli_partial_cor.md)
+  : Partial Correlation with Covariate Adjustment
+- [`cli_module_summary()`](https://vanhungtran.github.io/cliomicplot/reference/cli_module_summary.md)
+  : Calculate Module Eigengenes and Composite Scores
+- [`cli_network_rewiring()`](https://vanhungtran.github.io/cliomicplot/reference/cli_network_rewiring.md)
+  : Differential Network Rewiring and Edge Conservation Analysis
 - [`generate_demo_cross_network()`](https://vanhungtran.github.io/cliomicplot/reference/generate_demo_cross_network.md)
   : Generate Demonstration Dataset for Cross-Network Architecture
+- [`cli_demo_vitality_multiomics()`](https://vanhungtran.github.io/cliomicplot/reference/cli_demo_vitality_multiomics.md)
+  : Generate Synthetic Multi-Network Multi-Omics Dataset
 
 ## General plot types
 
@@ -216,8 +239,12 @@ The main plotting function and layer helpers.
   : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
 - [`type_module_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_compare.md)
   : Cross-Network Module Comparison Heatmap
+- [`type_module_preservation()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_preservation.md)
+  : Cross-Network Module Preservation Plot Type
 - [`type_module_trait()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_trait.md)
   : Module-Trait and Environmental Factor Correlation Heatmap
+- [`type_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/type_network_robustness.md)
+  : Network Robustness Degradation Curves Plot Type
 - [`type_parallel()`](https://vanhungtran.github.io/cliomicplot/reference/type_parallel.md)
   : Parallel Coordinates Plot Type
 - [`type_pattern()`](https://vanhungtran.github.io/cliomicplot/reference/type_pattern.md)
