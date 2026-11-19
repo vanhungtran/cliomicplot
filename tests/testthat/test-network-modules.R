@@ -170,3 +170,101 @@ test_that("type_env_network and cliplot_env_network work", {
   p_cli_env <- cliplot(data.frame(), type = "env_network")
   expect_s3_class(p_cli_env, "ggplot")
 })
+
+test_that("cli_module_preservation and type_module_preservation work", {
+  demo <- cli_demo_vitality_multiomics(n_samples = 25, n_features = 30, seed = 123)
+  
+  pres <- cli_module_preservation(
+    ref_data    = demo$ref_expr,
+    test_data   = demo$test_expr,
+    ref_modules = demo$modules,
+    n_perm      = 20,
+    seed        = 123
+  )
+  expect_true(is.data.frame(pres))
+  expect_true(all(c("module", "size", "z_summary", "preservation") %in% names(pres)))
+  expect_true(nrow(pres) >= 3)
+  
+  # Plotting via type_module_preservation
+  p_pres <- cliplot(z_summary ~ size, data = pres, type = type_module_preservation())
+  expect_s3_class(p_pres, "ggplot")
+
+  # Standalone helper
+  p_stand <- cliplot_module_preservation(pres)
+  expect_s3_class(p_stand, "ggplot")
+})
+
+test_that("cli_network_robustness and type_network_robustness work", {
+  demo <- cli_demo_vitality_multiomics(n_samples = 20, n_features = 25, seed = 42)
+
+  rob <- cli_network_robustness(
+    networks     = demo$networks,
+    attack       = c("random", "degree"),
+    rm_fractions = c(0.1, 0.3, 0.5),
+    n_perm       = 5,
+    seed         = 42
+  )
+  expect_true(is.data.frame(rob))
+  expect_true(all(c("group", "attack", "fraction_removed", "value", "se") %in% names(rob)))
+
+  # Plotting
+  p_rob <- cliplot(value ~ fraction_removed, data = rob, type = type_network_robustness())
+  expect_s3_class(p_rob, "ggplot")
+
+  # Standalone helper
+  p_stand_rob <- cliplot_network_robustness(rob)
+  expect_s3_class(p_stand_rob, "ggplot")
+})
+
+test_that("cli_mantel and cli_partial_cor work", {
+  demo <- cli_demo_vitality_multiomics(n_samples = 20, n_features = 20, seed = 99)
+
+  mantel_res <- cli_mantel(
+    comm_data   = demo$ref_expr,
+    env_data    = demo$env_data[, 1:4],
+    dist_comm   = "bray",
+    dist_env    = "euclidean",
+    n_perm      = 49,
+    by_variable = TRUE
+  )
+  expect_true(is.data.frame(mantel_res))
+  expect_true(all(c("variable", "statistic", "pvalue", "padj") %in% names(mantel_res)))
+  expect_true(nrow(mantel_res) >= 4)
+
+  # Partial mantel test with covariate
+  cov_df <- data.frame(Age = rnorm(20), Batch = rnorm(20))
+  pmantel_res <- cli_mantel(
+    comm_data    = demo$ref_expr,
+    env_data     = demo$env_data[, 1:2],
+    partial_data = cov_df,
+    n_perm       = 49
+  )
+  expect_true(is.data.frame(pmantel_res))
+  expect_true(all(pmantel_res$method == "Partial_Mantel"))
+
+  # Partial correlation
+  pcor <- cli_partial_cor(x = rnorm(20), y = rnorm(20), z = cov_df)
+  expect_true(is.data.frame(pcor))
+  expect_true(all(c("estimate", "pvalue", "padj") %in% names(pcor)))
+})
+
+test_that("cli_module_summary and cli_network_rewiring work", {
+  demo <- cli_demo_vitality_multiomics(n_samples = 20, n_features = 24, seed = 88)
+
+  # Eigengene summary
+  me_df <- cli_module_summary(demo$ref_expr, demo$modules, method = "eigengene")
+  expect_true(is.data.frame(me_df))
+  expect_equal(nrow(me_df), 20)
+  expect_true(ncol(me_df) >= 3)
+
+  # Mean score summary
+  ms_df <- cli_module_summary(demo$ref_expr, demo$modules, method = "mean_score")
+  expect_equal(nrow(ms_df), 20)
+
+  # Rewiring test
+  rewire <- cli_network_rewiring(demo$networks$KO, demo$networks$WT, r_threshold = 0.3)
+  expect_true(is.list(rewire))
+  expect_true("jaccard_similarity" %in% names(rewire))
+  expect_true(is.data.frame(rewire$edges))
+  expect_true(is.data.frame(rewire$node_rewiring))
+})

@@ -73,7 +73,18 @@ reference:
       - type_env_network
       - type_module_compare
       - type_module_trait
+      - cli_module_preservation
+      - type_module_preservation
+      - cliplot_module_preservation
+      - cli_network_robustness
+      - type_network_robustness
+      - cliplot_network_robustness
+      - cli_mantel
+      - cli_partial_cor
+      - cli_module_summary
+      - cli_network_rewiring
       - generate_demo_cross_network
+      - cli_demo_vitality_multiomics
   - title: General plot types
     contents:
       - starts_with("type_")

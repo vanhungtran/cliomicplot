@@ -351,7 +351,8 @@ cliplot.data.frame = function(
                            "module_trait", "module_env", "module_cor",
                            "module_compare", "cross_network",
                            "cross_network_graph", "cross_net",
-                           "env_network", "microbial_network")) {
+                           "env_network", "microbial_network",
+                           "module_preservation", "network_robustness")) {
     cliplot.default(
       x        = NULL,
       y        = NULL,
@@ -537,7 +538,9 @@ resolve_type = function(type) {
     module_env = type_module_trait,
     module_cor = type_module_trait,
     env_network = type_env_network,
-    microbial_network = type_env_network
+    microbial_network = type_env_network,
+    module_preservation = type_module_preservation,
+    network_robustness = type_network_robustness
   )
 
   if (type %in% names(type_map)) {
