@@ -21,7 +21,7 @@
 #'   \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
 #'   \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
 #'   \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
-#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"})
+#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"})
 #'   or a call to a \code{type_*()} function for customization.
 #' @param by Grouping variable. Alternative to the \code{|} in formula.
 #' @param facet Faceting variable(s) as a formula. One-sided formulas
@@ -340,9 +340,11 @@ cliplot.data.frame = function(
   # Resolve type name for special handling
   type_name = if (inherits(type, "cliplot_type")) type$name else type
 
-  # PCA and correlation types need the full data matrix, not just two columns
+  # PCA, correlation, and module types need the full data matrix, not just two columns
   if (type_name %in% c("pca", "correlation", "roc", "gsea", "upset",
-                           "venn", "slope", "confusion", "donut")) {
+                           "venn", "slope", "confusion", "donut",
+                           "module_trait", "module_env", "module_cor",
+                           "module_compare", "cross_network")) {
     cliplot.default(
       x        = NULL,
       y        = NULL,
@@ -518,7 +520,13 @@ resolve_type = function(type) {
     manhattan   = type_manhattan,
     mgwas       = type_manhattan,
     bubble_matrix = type_bubble_matrix,
-    sharing_heatmap = type_sharing_heatmap
+    sharing_heatmap = type_sharing_heatmap,
+    module_compare = type_module_compare,
+    cross_network = type_module_compare,
+    module_overlap = type_module_compare,
+    module_trait = type_module_trait,
+    module_env = type_module_trait,
+    module_cor = type_module_trait
   )
 
   if (type %in% names(type_map)) {

@@ -290,7 +290,7 @@ Datasets: mouse urinary bladder MALDI-MSI (PRIDE `PXD001283`), Parkinson mouse b
 | **Parallel Coords** | **Spineplot** | **Waffle** |
 | [![Parallel](man/figures/parallel.png)](man/figures/parallel.png) | [![Spineplot](man/figures/spineplot.png)](man/figures/spineplot.png) | [![Waffle](man/figures/waffle.png)](man/figures/waffle.png) |
 
-Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`, `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`, `donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`.
+Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`, `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`, `donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`, `module_compare`, `cross_network`, `module_trait`, `module_env`.
 
 ---
 

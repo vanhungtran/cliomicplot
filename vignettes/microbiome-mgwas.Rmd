@@ -177,3 +177,88 @@ cliplot(
   title = "Mother-Infant Strain Transmission at 12 Months"
 )
 ```
+
+---
+
+## 5. Cross-Network Module Comparison
+
+Co-occurrence networks constructed in discovery cohorts must be compared against replication cohorts to assess whether microbial communities reorganize or remain preserved. `type_module_compare()` (alias `type = "cross_network"`) computes hypergeometric overlap statistics, Jaccard similarity indices, and representation factors across module pairs:
+
+```{r module-comparison, fig.width=6.8, fig.height=4.2}
+set.seed(42)
+taxa_pool <- paste0("Taxon_", 1:150)
+net_discovery <- sample(c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"), 150, replace = TRUE)
+net_replication <- net_discovery
+
+# Reorganize 35% of taxa to simulate biological perturbation
+perm_idx <- sample(1:150, 50)
+net_replication[perm_idx] <- sample(c("ModA_Commensal", "ModB_LipidUtil", "ModC_Actinobacteria", "ModD_Inflammation"), 50, replace = TRUE)
+net_replication[-perm_idx] <- gsub("M1_StaphCommensal", "ModA_Commensal", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M2_Lipophilic", "ModB_LipidUtil", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M3_Coryneform", "ModC_Actinobacteria", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M4_PathogenCluster", "ModD_Inflammation", net_replication[-perm_idx])
+
+network_df <- data.frame(
+  Taxon = taxa_pool,
+  Discovery = net_discovery,
+  Replication = net_replication,
+  stringsAsFactors = FALSE
+)
+
+cliplot(
+  Replication ~ Discovery,
+  data = network_df,
+  type = type_module_compare(
+    fill_by = "log10p",
+    show_counts = TRUE,
+    show_stars = TRUE,
+    show_totals = TRUE
+  ),
+  title = "Cross-Network Module Preservation: Discovery vs Replication Cohorts",
+  xlab = "Discovery Cohort Microbial Modules",
+  ylab = "Replication Cohort Microbial Modules"
+)
+```
+
+---
+
+## 6. Correlation Analysis Between Modules and Environmental Factors
+
+Connecting microbial community modules with micro-environmental exposures and clinical phenotypes elucidates how extrinsic conditions shape mucosal barrier dysfunction. `type_module_trait()` (alias `type = "module_env"`) calculates Pearson or Spearman correlations, exact p-values, and performs two-way hierarchical clustering across modules and environmental parameters:
+
+```{r module-trait-correlation, fig.width=7.2, fig.height=4.2}
+cor_env_df <- expand.grid(
+  Module = c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"),
+  Factor = c("Skin_pH", "Transepidermal_Water_Loss", "PM25_Exposure", "Ambient_Temp", "Relative_Humidity", "SCORAD_Severity"),
+  stringsAsFactors = FALSE
+)
+
+# Assigned biological associations
+cor_env_df$cor <- c(
+  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72, # Skin_pH
+  -0.28,  0.38,  0.15, -0.08,  0.45,  0.64, # TEWL
+   0.45, -0.22, -0.35,  0.18, -0.15,  0.41, # PM25
+  -0.12,  0.08,  0.15,  0.52,  0.44, -0.19, # Temp
+  -0.25, -0.31,  0.20,  0.38,  0.55, -0.28, # Humidity
+   0.68,  0.48, -0.32, -0.14, -0.22,  0.81  # SCORAD
+)[1:nrow(cor_env_df)]
+
+# Calculate exact two-sided p-values for n=75
+n_samples <- 75
+t_stat <- cor_env_df$cor * sqrt((n_samples - 2) / (1 - cor_env_df$cor^2))
+cor_env_df$pvalue <- 2 * stats::pt(-abs(t_stat), df = n_samples - 2)
+
+cliplot(
+  Module ~ Factor,
+  data = cor_env_df,
+  type = type_module_trait(
+    show_labels = "both",
+    cluster_modules = TRUE,
+    cluster_env = TRUE,
+    sig_digits = 2
+  ),
+  title = "Correlation Analysis: Microbial Modules vs Environmental Exposures",
+  xlab = "Micro-Environmental & Clinical Phenotypes",
+  ylab = "Microbial Network Modules"
+)
+```
