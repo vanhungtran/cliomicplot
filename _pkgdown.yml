@@ -38,6 +38,7 @@ reference:
       - cli_legend_out
       - cli_save
       - cli_journal_size
+      - cli_scifig_qa
   - title: Palettes
     contents:
       - cli_palette_list

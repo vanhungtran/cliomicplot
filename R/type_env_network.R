@@ -73,6 +73,10 @@
 #' @param diag_point_color Border color of diagonal indicator points (default \code{"#C51B7D"}).
 #' @param node_size_range Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).
 #' @param hull_alpha Shading transparency for module cluster hulls (default 0.18).
+#' @param preset Character string specifying publisher style preset: \code{"default"},
+#'   \code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.
+#' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
+#'   line floor >= 0.25 pt, zero sign suppression, and CVD compliant palettes).
 #' @param title Optional plot title.
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
@@ -124,11 +128,24 @@ type_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
+    preset             = c("default", "nature", "cell", "science", "lancet"),
+    scifig             = FALSE,
     title              = NULL
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
+  preset <- match.arg(preset)
+
+  if (isTRUE(scifig) && preset == "default") preset <- "nature"
+  if (preset != "default") {
+    # Enforce AI4SciFig quality gates
+    env_label_size     <- max(env_label_size %||% 1.8, 1.8)     # >= 5.1 pt floor
+    link_value_size    <- max(link_value_size %||% 1.85, 1.85)  # >= 5.25 pt floor
+    module_label_size  <- max(module_label_size %||% 2.2, 2.2)   # >= 6.2 pt
+    circle_width       <- max(circle_width %||% 0.35, 0.35)
+    intra_edge_width   <- max(intra_edge_width %||% 0.25, 0.25) # >= 0.25 pt hairline floor
+  }
 
   resolved_label_type <- if (label_type == "auto") {
     if (isTRUE(show_values)) {
@@ -195,7 +212,9 @@ type_env_network = function(
         diag_point_color    = diag_point_color,
         node_size_range     = node_size_range,
         hull_alpha          = hull_alpha,
-        curvature           = curvature
+        curvature           = curvature,
+        preset              = preset,
+        scifig              = scifig
       )
 
       plot_obj <- res$plot
@@ -299,12 +318,15 @@ cliplot_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
+    preset             = c("default", "nature", "cell", "science", "lancet"),
+    scifig             = FALSE,
     title              = NULL,
     ...
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
+  preset <- match.arg(preset)
 
   net_data <- list(nodes = nodes, edges = edges)
   t_obj <- type_env_network(
@@ -352,6 +374,8 @@ cliplot_env_network = function(
     node_size_range    = node_size_range,
     hull_alpha         = hull_alpha,
     curvature          = curvature,
+    preset             = preset,
+    scifig             = scifig,
     title              = title,
     ...
   )
@@ -403,7 +427,9 @@ build_env_network_layers = function(
     diag_point_color    = "#C51B7D",
     node_size_range     = c(1.1, 3.8),
     hull_alpha          = 0.18,
-    curvature           = 0.14
+    curvature           = 0.14,
+    preset              = "default",
+    scifig              = FALSE
 ) {
   # 1. Module configuration
   n_mods <- 7
@@ -543,7 +569,7 @@ build_env_network_layers = function(
         var_names <- item
       }
     }
-    if (is.null(var_names) || length(var_names) < 3) {
+    if (is.null(var_names) || length(var_names) < 2) {
       var_names <- paste0(env_vars_default, "_", c_idx)
     }
 
@@ -655,9 +681,15 @@ build_env_network_layers = function(
 
     # Formatting numerical correlation values
     fmt_r <- sprintf(paste0("%.", value_digits, "f"), r_vals)
+    zero_pat <- paste0("^-0\\.", paste(rep("0", value_digits), collapse = ""), "$")
+    fmt_r <- sub(zero_pat, paste0("0.", paste(rep("0", value_digits), collapse = "")), fmt_r)
+    fmt_r <- sub("^-0$", "0", fmt_r)
     if (compact) {
       fmt_r <- sub("^(-?)0\\.", "\\1.", fmt_r)
       fmt_r[r_vals == 1.0] <- "1"
+      fmt_r[r_vals == -1.0] <- "-1"
+      fmt_r <- sub(paste0("^-\\.", paste(rep("0", value_digits), collapse = ""), "$"),
+                   paste0(".", paste(rep("0", value_digits), collapse = "")), fmt_r)
     }
 
     tile_label <- switch(
@@ -792,8 +824,15 @@ build_env_network_layers = function(
     my <- (all_links$y + all_links$yend) / 2 + curv * dx * 0.40
 
     fmt_link_r <- sprintf(paste0("%.", link_value_digits, "f"), all_links$r)
+    link_zero_pat <- paste0("^-0\\.", paste(rep("0", link_value_digits), collapse = ""), "$")
+    fmt_link_r <- sub(link_zero_pat, paste0("0.", paste(rep("0", link_value_digits), collapse = "")), fmt_link_r)
+    fmt_link_r <- sub("^-0$", "0", fmt_link_r)
     if (isTRUE(compact)) {
       fmt_link_r <- sub("^(-?)0\\.", "\\1.", fmt_link_r)
+      fmt_link_r[all_links$r == 1.0] <- "1"
+      fmt_link_r[all_links$r == -1.0] <- "-1"
+      fmt_link_r <- sub(paste0("^-\\.", paste(rep("0", link_value_digits), collapse = ""), "$"),
+                        paste0(".", paste(rep("0", link_value_digits), collapse = "")), fmt_link_r)
     }
 
     link_val_df <- data.frame(
@@ -842,6 +881,9 @@ build_env_network_layers = function(
       char_count <- if (resolved_label_type %in% c("coef_stars", "both")) 5.2 else if (resolved_label_type == "coef") 3.8 else 2.2
       calc_fit_size <- max(0.9, min(2.5, min_step / (char_count * 0.038)))
       opt_size <- if (!is.null(value_size)) value_size else calc_fit_size
+      if (preset != "default" || isTRUE(scifig)) {
+        opt_size <- max(1.76, opt_size)
+      }
 
       sub_dark <- sub_tiles[sub_tiles$text_color == "white", ]
       sub_light <- sub_tiles[sub_tiles$text_color != "white", ]

@@ -14,6 +14,7 @@ cli_save(
   height = NULL,
   dpi = 300,
   units = "in",
+  qa = FALSE,
   ...
 )
 }
@@ -38,6 +39,9 @@ submission-ready line art).}
 
 \item{units}{Units for \code{width}/\code{height} (default "in").}
 
+\item{qa}{Logical. If TRUE, runs a SciFig quality assurance compliance audit
+against the target journal preset and prints the report. Default FALSE.}
+
 \item{...}{Additional arguments passed to \code{ggplot2::ggsave()}.}
 }
 \value{
@@ -52,7 +56,7 @@ Saves a ggplot at the exact width (and optional height) required
 \examples{
 \dontrun{
 p = cliplot(mpg ~ wt, data = mtcars, theme = "nature")
-cli_save(p, "figure1.pdf", journal = "nature", column = "double", dpi = 600)
+cli_save(p, "figure1.pdf", journal = "nature", column = "double", dpi = 600, qa = TRUE)
 }
 
 }

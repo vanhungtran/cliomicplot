@@ -23,6 +23,8 @@ cliplot_cross_network_graph(
   meta_label_color = "grey15",
   module_size_range = c(3.5, 8.5),
   circle_radius = 1.05,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE,
   title = NULL,
   ...
 )

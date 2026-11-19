@@ -50,6 +50,8 @@ type_env_network(
   node_size_range = c(1.1, 3.8),
   hull_alpha = 0.18,
   curvature = 0.14,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE,
   title = NULL
 )
 }
@@ -157,6 +159,12 @@ inter-domain links (default FALSE).}
 \item{hull_alpha}{Shading transparency for module cluster hulls (default 0.18).}
 
 \item{curvature}{Numeric curvature of inter-domain connecting lines (default 0.14).}
+
+\item{preset}{Character string specifying publisher style preset: \code{"default"},
+\code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.}
+
+\item{scifig}{Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
+line floor >= 0.25 pt, zero sign suppression, and CVD compliant palettes).}
 
 \item{title}{Optional plot title.}
 }

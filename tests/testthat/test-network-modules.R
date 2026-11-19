@@ -298,3 +298,36 @@ test_that("cli_module_summary and cli_network_rewiring work", {
   expect_true(is.data.frame(rewire$edges))
   expect_true(is.data.frame(rewire$node_rewiring))
 })
+
+test_that("cli_scifig_qa and AI4SciFig publication gates work", {
+  # Build a nature-preset coupled network
+  cors <- list(
+    "Env A" = matrix(c(1.0, -0.001, -0.001, 1.0), 2, 2, dimnames = list(c("V1", "V2"), c("V1", "V2"))),
+    "Env B" = matrix(c(1.0, 0.45, 0.45, 1.0), 2, 2, dimnames = list(c("V3", "V4"), c("V3", "V4")))
+  )
+
+  p <- cliplot_env_network(
+    env_cors     = cors,
+    show_values  = TRUE,
+    compact      = TRUE,
+    preset       = "nature",
+    scifig       = TRUE
+  )
+
+  expect_s3_class(p, "ggplot")
+
+  # Run SciFig QA audit
+  qa <- cli_scifig_qa(p, journal = "nature", column = "double")
+  expect_s3_class(qa, "cli_scifig_qa")
+  expect_true(is.data.frame(qa))
+  expect_true(all(c("gate", "status", "measurement", "rule_source") %in% names(qa)))
+
+  # Verify Zero Sign Suppression gate passes
+  zero_row <- qa[qa$gate == "Zero Sign Suppression", ]
+  expect_equal(zero_row$status, "PASS")
+  expect_false(grepl("Negative zero detected", zero_row$measurement))
+
+  # Test print method
+  out_txt <- capture.output(print(qa))
+  expect_true(any(grepl("SciFig QA Journal Compliance Report", out_txt)))
+})

@@ -28,7 +28,9 @@ type_cross_network_graph(
   meta_label_size = 3.2,
   meta_label_color = "grey15",
   module_size_range = c(3.5, 8.5),
-  circle_radius = 1.05
+  circle_radius = 1.05,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE
 )
 }
 \arguments{
@@ -82,6 +84,12 @@ Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node
 \item{module_size_range}{Numeric vector of length 2 specifying point size range for module circles (default \code{c(3.5, 8.5)}).}
 
 \item{circle_radius}{Radius for module circle ring layout when \code{level = "module"} (default 1.05).}
+
+\item{preset}{Character string specifying publisher style preset: \code{"default"},
+\code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.}
+
+\item{scifig}{Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
+line floor >= 0.25 pt, and CVD compliant palettes).}
 }
 \value{
 A \code{cliplot_type} object for use with \code{\link{cliplot}}.

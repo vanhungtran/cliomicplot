@@ -47,6 +47,10 @@
 #' @param meta_label_color Text color for group metadata text (default \code{"grey15"}).
 #' @param module_size_range Numeric vector of length 2 specifying point size range for module circles (default \code{c(3.5, 8.5)}).
 #' @param circle_radius Radius for module circle ring layout when \code{level = "module"} (default 1.05).
+#' @param preset Character string specifying publisher style preset: \code{"default"},
+#'   \code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.
+#' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
+#'   line floor >= 0.25 pt, and CVD compliant palettes).
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
 #'
@@ -75,10 +79,21 @@ type_cross_network_graph = function(
     meta_label_size    = 3.2,
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
-    circle_radius      = 1.05
+    circle_radius      = 1.05,
+    preset             = c("default", "nature", "cell", "science", "lancet"),
+    scifig             = FALSE
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
+  preset <- match.arg(preset)
+
+  if (isTRUE(scifig) && preset == "default") preset <- "nature"
+  if (preset != "default") {
+    meta_label_size    <- max(meta_label_size %||% 2.8, 2.8)
+    module_label_size  <- max(module_label_size %||% 2.2, 2.2)
+    edge_width         <- max(edge_width %||% 0.25, 0.25)
+    cross_width        <- max(cross_width %||% 0.45, 0.45)
+  }
 
   cliplot_type(
     data = function(settings, ...) {
@@ -171,11 +186,14 @@ cliplot_cross_network_graph = function(
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
     circle_radius      = 1.05,
+    preset             = c("default", "nature", "cell", "science", "lancet"),
+    scifig             = FALSE,
     title              = NULL,
     ...
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
+  preset <- match.arg(preset)
 
   network_data <- list(
     nodes       = nodes,
@@ -199,6 +217,8 @@ cliplot_cross_network_graph = function(
     meta_label_color   = meta_label_color,
     module_size_range  = module_size_range,
     circle_radius      = circle_radius,
+    preset             = preset,
+    scifig             = scifig,
     ...
   )
 
