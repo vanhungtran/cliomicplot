@@ -75,11 +75,35 @@ and colored by correlation direction.</p>
 <span>  module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  module_label_size <span class="op">=</span> <span class="fl">2.8</span>,</span>
 <span>  module_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_label_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  module_label_bg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  module_label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  module_label_pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"radial"</span>, <span class="st">"centroid"</span><span class="op">)</span>,</span>
-<span>  curvature <span class="op">=</span> <span class="fl">0.14</span>,</span>
+<span>  env_label_size <span class="op">=</span> <span class="fl">1.8</span>,</span>
+<span>  env_label_color <span class="op">=</span> <span class="st">"grey20"</span>,</span>
+<span>  env_label_face <span class="op">=</span> <span class="st">"plain"</span>,</span>
+<span>  link_width_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">1.4</span><span class="op">)</span>,</span>
+<span>  link_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  link_alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>  show_link_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  link_value_size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  link_value_digits <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  circle_radius <span class="op">=</span> <span class="fl">2.45</span>,</span>
+<span>  circle_width <span class="op">=</span> <span class="fl">0.4</span>,</span>
+<span>  circle_color <span class="op">=</span> <span class="st">"grey65"</span>,</span>
+<span>  circle_linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>  outer_ring_size <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  outer_ring_color <span class="op">=</span> <span class="st">"grey60"</span>,</span>
+<span>  outer_ring_alpha <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  intra_edge_width <span class="op">=</span> <span class="fl">0.18</span>,</span>
+<span>  intra_edge_color <span class="op">=</span> <span class="st">"grey82"</span>,</span>
+<span>  intra_edge_alpha <span class="op">=</span> <span class="fl">0.35</span>,</span>
+<span>  diag_point_size <span class="op">=</span> <span class="fl">1.8</span>,</span>
+<span>  diag_point_fill <span class="op">=</span> <span class="st">"#F781BF"</span>,</span>
+<span>  diag_point_color <span class="op">=</span> <span class="st">"#C51B7D"</span>,</span>
+<span>  node_size_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.1</span>, <span class="fl">3.8</span><span class="op">)</span>,</span>
+<span>  hull_alpha <span class="op">=</span> <span class="fl">0.18</span>,</span>
+<span>  curvature <span class="op">=</span> <span class="fl">0.14</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -161,9 +185,12 @@ to custom display labels (e.g. <code>c("Mod_1" = "M1: S. aureus core")</code>).<
 <dd><p>Color of module label text and borders (default <code>"grey15"</code>).</p></dd>
 
 
+<dt id="arg-module-label-fill">module_label_fill<a class="anchor" aria-label="anchor" href="#arg-module-label-fill"></a></dt>
+<dd><p>Background fill color for module labels (default <code>"white"</code>).</p></dd>
+
+
 <dt id="arg-module-label-bg">module_label_bg<a class="anchor" aria-label="anchor" href="#arg-module-label-bg"></a></dt>
-<dd><p>Logical. If TRUE (default), renders labels inside rounded opaque white
-badges for high contrast against network nodes and links.</p></dd>
+<dd><p>Logical. If TRUE (default), renders labels inside rounded opaque badges.</p></dd>
 
 
 <dt id="arg-module-label-alpha">module_label_alpha<a class="anchor" aria-label="anchor" href="#arg-module-label-alpha"></a></dt>
@@ -176,12 +203,107 @@ outward toward the circle boundary to avoid overlapping dense core nodes) or <co
 (placed directly at module centroid).</p></dd>
 
 
-<dt id="arg-curvature">curvature<a class="anchor" aria-label="anchor" href="#arg-curvature"></a></dt>
-<dd><p>Numeric curvature of inter-domain connecting lines (default 0.14).</p></dd>
+<dt id="arg-env-label-size">env_label_size<a class="anchor" aria-label="anchor" href="#arg-env-label-size"></a></dt>
+<dd><p>Font size for environmental variable labels outside corner heatmaps (default 1.8).</p></dd>
+
+
+<dt id="arg-env-label-color">env_label_color<a class="anchor" aria-label="anchor" href="#arg-env-label-color"></a></dt>
+<dd><p>Text color for environmental variable labels (default <code>"grey20"</code>).</p></dd>
+
+
+<dt id="arg-env-label-face">env_label_face<a class="anchor" aria-label="anchor" href="#arg-env-label-face"></a></dt>
+<dd><p>Font face for environmental variable labels (default <code>"plain"</code>).</p></dd>
+
+
+<dt id="arg-link-width-range">link_width_range<a class="anchor" aria-label="anchor" href="#arg-link-width-range"></a></dt>
+<dd><p>Numeric vector of length 2 specifying line width range for inter-domain
+curved links scaled by significance (default <code>c(0.4, 1.4)</code>).</p></dd>
+
+
+<dt id="arg-link-width">link_width<a class="anchor" aria-label="anchor" href="#arg-link-width"></a></dt>
+<dd><p>Optional numeric constant line width for inter-domain links. If non-NULL, overrides
+<code>link_width_range</code>.</p></dd>
+
+
+<dt id="arg-link-alpha">link_alpha<a class="anchor" aria-label="anchor" href="#arg-link-alpha"></a></dt>
+<dd><p>Transparency for inter-domain curved links (default 0.70).</p></dd>
+
+
+<dt id="arg-show-link-values">show_link_values<a class="anchor" aria-label="anchor" href="#arg-show-link-values"></a></dt>
+<dd><p>Logical. If TRUE, displays numerical correlation coefficients on the curved
+inter-domain links (default FALSE).</p></dd>
+
+
+<dt id="arg-link-value-size">link_value_size<a class="anchor" aria-label="anchor" href="#arg-link-value-size"></a></dt>
+<dd><p>Font size for correlation digits on inter-domain links (default 2.0).</p></dd>
+
+
+<dt id="arg-link-value-digits">link_value_digits<a class="anchor" aria-label="anchor" href="#arg-link-value-digits"></a></dt>
+<dd><p>Integer number of decimal places for link correlation digits (default 2).</p></dd>
 
 
 <dt id="arg-circle-radius">circle_radius<a class="anchor" aria-label="anchor" href="#arg-circle-radius"></a></dt>
 <dd><p>Numeric radius of the central boundary circle (default 2.45).</p></dd>
+
+
+<dt id="arg-circle-width">circle_width<a class="anchor" aria-label="anchor" href="#arg-circle-width"></a></dt>
+<dd><p>Line width of the central boundary circle (default 0.4).</p></dd>
+
+
+<dt id="arg-circle-color">circle_color<a class="anchor" aria-label="anchor" href="#arg-circle-color"></a></dt>
+<dd><p>Line color of the central boundary circle (default <code>"grey65"</code>).</p></dd>
+
+
+<dt id="arg-circle-linetype">circle_linetype<a class="anchor" aria-label="anchor" href="#arg-circle-linetype"></a></dt>
+<dd><p>Linetype of the central boundary circle (default <code>"dashed"</code>).</p></dd>
+
+
+<dt id="arg-outer-ring-size">outer_ring_size<a class="anchor" aria-label="anchor" href="#arg-outer-ring-size"></a></dt>
+<dd><p>Size of dots along the outer boundary circle (default 0.6).</p></dd>
+
+
+<dt id="arg-outer-ring-color">outer_ring_color<a class="anchor" aria-label="anchor" href="#arg-outer-ring-color"></a></dt>
+<dd><p>Color of dots along the outer boundary circle (default <code>"grey60"</code>).</p></dd>
+
+
+<dt id="arg-outer-ring-alpha">outer_ring_alpha<a class="anchor" aria-label="anchor" href="#arg-outer-ring-alpha"></a></dt>
+<dd><p>Transparency of dots along the outer boundary circle (default 0.6).</p></dd>
+
+
+<dt id="arg-intra-edge-width">intra_edge_width<a class="anchor" aria-label="anchor" href="#arg-intra-edge-width"></a></dt>
+<dd><p>Line width of intra-module network edges (default 0.18).</p></dd>
+
+
+<dt id="arg-intra-edge-color">intra_edge_color<a class="anchor" aria-label="anchor" href="#arg-intra-edge-color"></a></dt>
+<dd><p>Color of intra-module network edges (default <code>"grey82"</code>).</p></dd>
+
+
+<dt id="arg-intra-edge-alpha">intra_edge_alpha<a class="anchor" aria-label="anchor" href="#arg-intra-edge-alpha"></a></dt>
+<dd><p>Transparency of intra-module network edges (default 0.35).</p></dd>
+
+
+<dt id="arg-diag-point-size">diag_point_size<a class="anchor" aria-label="anchor" href="#arg-diag-point-size"></a></dt>
+<dd><p>Size of diagonal indicator connector points on heatmaps (default 1.8).</p></dd>
+
+
+<dt id="arg-diag-point-fill">diag_point_fill<a class="anchor" aria-label="anchor" href="#arg-diag-point-fill"></a></dt>
+<dd><p>Fill color of diagonal indicator points (default <code>"#F781BF"</code>).</p></dd>
+
+
+<dt id="arg-diag-point-color">diag_point_color<a class="anchor" aria-label="anchor" href="#arg-diag-point-color"></a></dt>
+<dd><p>Border color of diagonal indicator points (default <code>"#C51B7D"</code>).</p></dd>
+
+
+<dt id="arg-node-size-range">node_size_range<a class="anchor" aria-label="anchor" href="#arg-node-size-range"></a></dt>
+<dd><p>Numeric vector of length 2 specifying size range for network nodes (default <code>c(1.1, 3.8)</code>).</p></dd>
+
+
+<dt id="arg-hull-alpha">hull_alpha<a class="anchor" aria-label="anchor" href="#arg-hull-alpha"></a></dt>
+<dd><p>Shading transparency for module cluster hulls (default 0.18).</p></dd>
+
+
+<dt id="arg-curvature">curvature<a class="anchor" aria-label="anchor" href="#arg-curvature"></a></dt>
+<dd><p>Numeric curvature of inter-domain connecting lines (default 0.14).</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>

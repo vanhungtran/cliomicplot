@@ -18,7 +18,12 @@ cliplot_cross_network_graph(
   module_labels = NULL,
   module_label_size = 2.6,
   module_label_color = "grey15",
+  module_label_fill = "white",
   module_label_bg = TRUE,
+  meta_label_size = 3.2,
+  meta_label_color = "grey15",
+  module_size_range = c(3.5, 8.5),
+  circle_radius = 1.05,
   title = NULL,
   ...
 )
@@ -82,10 +87,30 @@ cliplot_cross_network_graph(
 
   Color of module labels (default `"grey15"`).
 
+- module_label_fill:
+
+  Background fill color for module labels (default `"white"`).
+
 - module_label_bg:
 
   Logical. If TRUE (default), renders labels in a semi-transparent white
   pill badge.
+
+- meta_label_size:
+
+  Font size for group metadata text (default 3.2).
+
+- meta_label_color:
+
+  Text color for group metadata text (default `"grey15"`).
+
+- module_size_range:
+
+  Size range for module circles (default `c(3.5, 8.5)`).
+
+- circle_radius:
+
+  Radius for module circle ring layout (default 1.05).
 
 - title:
 

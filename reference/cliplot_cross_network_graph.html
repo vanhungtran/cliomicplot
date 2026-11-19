@@ -53,7 +53,12 @@
 <span>  module_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  module_label_size <span class="op">=</span> <span class="fl">2.6</span>,</span>
 <span>  module_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_label_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  module_label_bg <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  meta_label_size <span class="op">=</span> <span class="fl">3.2</span>,</span>
+<span>  meta_label_color <span class="op">=</span> <span class="st">"grey15"</span>,</span>
+<span>  module_size_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.5</span>, <span class="fl">8.5</span><span class="op">)</span>,</span>
+<span>  circle_radius <span class="op">=</span> <span class="fl">1.05</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -114,8 +119,28 @@ Defaults to TRUE when <code>level = "module"</code> and FALSE when <code>level =
 <dd><p>Color of module labels (default <code>"grey15"</code>).</p></dd>
 
 
+<dt id="arg-module-label-fill">module_label_fill<a class="anchor" aria-label="anchor" href="#arg-module-label-fill"></a></dt>
+<dd><p>Background fill color for module labels (default <code>"white"</code>).</p></dd>
+
+
 <dt id="arg-module-label-bg">module_label_bg<a class="anchor" aria-label="anchor" href="#arg-module-label-bg"></a></dt>
 <dd><p>Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.</p></dd>
+
+
+<dt id="arg-meta-label-size">meta_label_size<a class="anchor" aria-label="anchor" href="#arg-meta-label-size"></a></dt>
+<dd><p>Font size for group metadata text (default 3.2).</p></dd>
+
+
+<dt id="arg-meta-label-color">meta_label_color<a class="anchor" aria-label="anchor" href="#arg-meta-label-color"></a></dt>
+<dd><p>Text color for group metadata text (default <code>"grey15"</code>).</p></dd>
+
+
+<dt id="arg-module-size-range">module_size_range<a class="anchor" aria-label="anchor" href="#arg-module-size-range"></a></dt>
+<dd><p>Size range for module circles (default <code>c(3.5, 8.5)</code>).</p></dd>
+
+
+<dt id="arg-circle-radius">circle_radius<a class="anchor" aria-label="anchor" href="#arg-circle-radius"></a></dt>
+<dd><p>Radius for module circle ring layout (default 1.05).</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
