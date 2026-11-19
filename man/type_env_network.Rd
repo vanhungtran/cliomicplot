@@ -21,11 +21,35 @@ type_env_network(
   module_labels = NULL,
   module_label_size = 2.8,
   module_label_color = "grey15",
+  module_label_fill = "white",
   module_label_bg = TRUE,
   module_label_alpha = 1,
   module_label_pos = c("radial", "centroid"),
-  curvature = 0.14,
+  env_label_size = 1.8,
+  env_label_color = "grey20",
+  env_label_face = "plain",
+  link_width_range = c(0.4, 1.4),
+  link_width = NULL,
+  link_alpha = 0.7,
+  show_link_values = FALSE,
+  link_value_size = 2,
+  link_value_digits = 2,
   circle_radius = 2.45,
+  circle_width = 0.4,
+  circle_color = "grey65",
+  circle_linetype = "dashed",
+  outer_ring_size = 0.6,
+  outer_ring_color = "grey60",
+  outer_ring_alpha = 0.6,
+  intra_edge_width = 0.18,
+  intra_edge_color = "grey82",
+  intra_edge_alpha = 0.35,
+  diag_point_size = 1.8,
+  diag_point_fill = "#F781BF",
+  diag_point_color = "#C51B7D",
+  node_size_range = c(1.1, 3.8),
+  hull_alpha = 0.18,
+  curvature = 0.14,
   title = NULL
 )
 }
@@ -71,8 +95,9 @@ to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).}
 
 \item{module_label_color}{Color of module label text and borders (default \code{"grey15"}).}
 
-\item{module_label_bg}{Logical. If TRUE (default), renders labels inside rounded opaque white
-badges for high contrast against network nodes and links.}
+\item{module_label_fill}{Background fill color for module labels (default \code{"white"}).}
+
+\item{module_label_bg}{Logical. If TRUE (default), renders labels inside rounded opaque badges.}
 
 \item{module_label_alpha}{Numeric fill transparency for module label badges (default 1.0, fully opaque).}
 
@@ -80,9 +105,58 @@ badges for high contrast against network nodes and links.}
 outward toward the circle boundary to avoid overlapping dense core nodes) or \code{"centroid"}
 (placed directly at module centroid).}
 
-\item{curvature}{Numeric curvature of inter-domain connecting lines (default 0.14).}
+\item{env_label_size}{Font size for environmental variable labels outside corner heatmaps (default 1.8).}
+
+\item{env_label_color}{Text color for environmental variable labels (default \code{"grey20"}).}
+
+\item{env_label_face}{Font face for environmental variable labels (default \code{"plain"}).}
+
+\item{link_width_range}{Numeric vector of length 2 specifying line width range for inter-domain
+curved links scaled by significance (default \code{c(0.4, 1.4)}).}
+
+\item{link_width}{Optional numeric constant line width for inter-domain links. If non-NULL, overrides
+\code{link_width_range}.}
+
+\item{link_alpha}{Transparency for inter-domain curved links (default 0.70).}
+
+\item{show_link_values}{Logical. If TRUE, displays numerical correlation coefficients on the curved
+inter-domain links (default FALSE).}
+
+\item{link_value_size}{Font size for correlation digits on inter-domain links (default 2.0).}
+
+\item{link_value_digits}{Integer number of decimal places for link correlation digits (default 2).}
 
 \item{circle_radius}{Numeric radius of the central boundary circle (default 2.45).}
+
+\item{circle_width}{Line width of the central boundary circle (default 0.4).}
+
+\item{circle_color}{Line color of the central boundary circle (default \code{"grey65"}).}
+
+\item{circle_linetype}{Linetype of the central boundary circle (default \code{"dashed"}).}
+
+\item{outer_ring_size}{Size of dots along the outer boundary circle (default 0.6).}
+
+\item{outer_ring_color}{Color of dots along the outer boundary circle (default \code{"grey60"}).}
+
+\item{outer_ring_alpha}{Transparency of dots along the outer boundary circle (default 0.6).}
+
+\item{intra_edge_width}{Line width of intra-module network edges (default 0.18).}
+
+\item{intra_edge_color}{Color of intra-module network edges (default \code{"grey82"}).}
+
+\item{intra_edge_alpha}{Transparency of intra-module network edges (default 0.35).}
+
+\item{diag_point_size}{Size of diagonal indicator connector points on heatmaps (default 1.8).}
+
+\item{diag_point_fill}{Fill color of diagonal indicator points (default \code{"#F781BF"}).}
+
+\item{diag_point_color}{Border color of diagonal indicator points (default \code{"#C51B7D"}).}
+
+\item{node_size_range}{Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).}
+
+\item{hull_alpha}{Shading transparency for module cluster hulls (default 0.18).}
+
+\item{curvature}{Numeric curvature of inter-domain connecting lines (default 0.14).}
 
 \item{title}{Optional plot title.}
 }

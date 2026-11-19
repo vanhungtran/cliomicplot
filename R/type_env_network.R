@@ -39,14 +39,40 @@
 #'   to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).
 #' @param module_label_size Numeric font size for module labels inside the circle (default 2.8).
 #' @param module_label_color Color of module label text and borders (default \code{"grey15"}).
-#' @param module_label_bg Logical. If TRUE (default), renders labels inside rounded opaque white
-#'   badges for high contrast against network nodes and links.
+#' @param module_label_fill Background fill color for module labels (default \code{"white"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels inside rounded opaque badges.
 #' @param module_label_alpha Numeric fill transparency for module label badges (default 1.0, fully opaque).
 #' @param module_label_pos Placement of module labels: \code{"radial"} (default, placed radially
 #'   outward toward the circle boundary to avoid overlapping dense core nodes) or \code{"centroid"}
 #'   (placed directly at module centroid).
+#' @param env_label_size Font size for environmental variable labels outside corner heatmaps (default 1.8).
+#' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
+#' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
+#' @param link_width_range Numeric vector of length 2 specifying line width range for inter-domain
+#'   curved links scaled by significance (default \code{c(0.4, 1.4)}).
+#' @param link_width Optional numeric constant line width for inter-domain links. If non-NULL, overrides
+#'   \code{link_width_range}.
+#' @param link_alpha Transparency for inter-domain curved links (default 0.70).
 #' @param curvature Numeric curvature of inter-domain connecting lines (default 0.14).
+#' @param show_link_values Logical. If TRUE, displays numerical correlation coefficients on the curved
+#'   inter-domain links (default FALSE).
+#' @param link_value_size Font size for correlation digits on inter-domain links (default 2.0).
+#' @param link_value_digits Integer number of decimal places for link correlation digits (default 2).
 #' @param circle_radius Numeric radius of the central boundary circle (default 2.45).
+#' @param circle_width Line width of the central boundary circle (default 0.4).
+#' @param circle_color Line color of the central boundary circle (default \code{"grey65"}).
+#' @param circle_linetype Linetype of the central boundary circle (default \code{"dashed"}).
+#' @param outer_ring_size Size of dots along the outer boundary circle (default 0.6).
+#' @param outer_ring_color Color of dots along the outer boundary circle (default \code{"grey60"}).
+#' @param outer_ring_alpha Transparency of dots along the outer boundary circle (default 0.6).
+#' @param intra_edge_width Line width of intra-module network edges (default 0.18).
+#' @param intra_edge_color Color of intra-module network edges (default \code{"grey82"}).
+#' @param intra_edge_alpha Transparency of intra-module network edges (default 0.35).
+#' @param diag_point_size Size of diagonal indicator connector points on heatmaps (default 1.8).
+#' @param diag_point_fill Fill color of diagonal indicator points (default \code{"#F781BF"}).
+#' @param diag_point_color Border color of diagonal indicator points (default \code{"#C51B7D"}).
+#' @param node_size_range Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).
+#' @param hull_alpha Shading transparency for module cluster hulls (default 0.18).
 #' @param title Optional plot title.
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
@@ -69,11 +95,35 @@ type_env_network = function(
     module_labels      = NULL,
     module_label_size  = 2.8,
     module_label_color = "grey15",
+    module_label_fill  = "white",
     module_label_bg    = TRUE,
     module_label_alpha = 1.0,
     module_label_pos   = c("radial", "centroid"),
-    curvature          = 0.14,
+    env_label_size     = 1.8,
+    env_label_color    = "grey20",
+    env_label_face     = "plain",
+    link_width_range   = c(0.4, 1.4),
+    link_width         = NULL,
+    link_alpha         = 0.70,
+    show_link_values   = FALSE,
+    link_value_size    = 2.0,
+    link_value_digits  = 2,
     circle_radius      = 2.45,
+    circle_width       = 0.4,
+    circle_color       = "grey65",
+    circle_linetype    = "dashed",
+    outer_ring_size    = 0.6,
+    outer_ring_color   = "grey60",
+    outer_ring_alpha   = 0.6,
+    intra_edge_width   = 0.18,
+    intra_edge_color   = "grey82",
+    intra_edge_alpha   = 0.35,
+    diag_point_size    = 1.8,
+    diag_point_fill    = "#F781BF",
+    diag_point_color   = "#C51B7D",
+    node_size_range    = c(1.1, 3.8),
+    hull_alpha         = 0.18,
+    curvature          = 0.14,
     title              = NULL
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
@@ -117,11 +167,35 @@ type_env_network = function(
         module_labels       = module_labels,
         module_label_size   = module_label_size,
         module_label_color  = module_label_color,
+        module_label_fill   = module_label_fill,
         module_label_bg     = module_label_bg,
         module_label_alpha  = module_label_alpha,
         module_label_pos    = module_label_pos,
-        curvature           = curvature,
-        circle_radius       = circle_radius
+        env_label_size      = env_label_size,
+        env_label_color     = env_label_color,
+        env_label_face      = env_label_face,
+        link_width_range    = link_width_range,
+        link_width          = link_width,
+        link_alpha          = link_alpha,
+        show_link_values    = show_link_values,
+        link_value_size     = link_value_size,
+        link_value_digits   = link_value_digits,
+        circle_radius       = circle_radius,
+        circle_width        = circle_width,
+        circle_color        = circle_color,
+        circle_linetype     = circle_linetype,
+        outer_ring_size     = outer_ring_size,
+        outer_ring_color    = outer_ring_color,
+        outer_ring_alpha    = outer_ring_alpha,
+        intra_edge_width    = intra_edge_width,
+        intra_edge_color    = intra_edge_color,
+        intra_edge_alpha    = intra_edge_alpha,
+        diag_point_size     = diag_point_size,
+        diag_point_fill     = diag_point_fill,
+        diag_point_color    = diag_point_color,
+        node_size_range     = node_size_range,
+        hull_alpha          = hull_alpha,
+        curvature           = curvature
       )
 
       plot_obj <- res$plot
@@ -146,13 +220,32 @@ type_env_network = function(
 #' @param value_digits Decimal places for correlation coefficients (default 2).
 #' @param value_size Font size for tile text (default auto-scaled).
 #' @param compact Logical. If TRUE (default), omits leading zero for compact fitting.
-#' @param show_module_labels Logical. If TRUE (default), displays text labels for modules inside the central circle.
-#' @param module_labels Optional named vector of custom labels for modules inside the circle.
-#' @param module_label_size Numeric font size for module labels (default 2.8).
-#' @param module_label_color Color of module labels (default \code{"grey15"}).
-#' @param module_label_bg Logical. If TRUE (default), renders labels in an opaque white pill badge.
-#' @param module_label_alpha Numeric fill transparency for module label badge (default 1.0, fully opaque).
-#' @param module_label_pos Placement of labels: \code{"radial"} (default) or \code{"centroid"}.
+#' @param env_label_size Font size for environmental variable labels (default 1.8).
+#' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
+#' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
+#' @param module_label_fill Background fill color for module labels (default \code{"white"}).
+#' @param link_width_range Line width range for inter-domain links (default \code{c(0.4, 1.4)}).
+#' @param link_width Optional constant line width for inter-domain links. Overrides \code{link_width_range}.
+#' @param link_alpha Transparency for inter-domain curved links (default 0.70).
+#' @param show_link_values Logical. If TRUE, shows correlation coefficients on inter-domain links (default FALSE).
+#' @param link_value_size Font size for link correlation digits (default 2.0).
+#' @param link_value_digits Decimal places for link correlation digits (default 2).
+#' @param circle_width Line width of the boundary circle (default 0.4).
+#' @param circle_color Color of the boundary circle (default \code{"grey65"}).
+#' @param circle_linetype Linetype of the boundary circle (default \code{"dashed"}).
+#' @param outer_ring_size Size of outer boundary ring dots (default 0.6).
+#' @param outer_ring_color Color of outer boundary ring dots (default \code{"grey60"}).
+#' @param outer_ring_alpha Transparency of outer boundary ring dots (default 0.6).
+#' @param intra_edge_width Width of intra-module edges (default 0.18).
+#' @param intra_edge_color Color of intra-module edges (default \code{"grey82"}).
+#' @param intra_edge_alpha Transparency of intra-module edges (default 0.35).
+#' @param diag_point_size Size of diagonal connector points on heatmaps (default 1.8).
+#' @param diag_point_fill Fill color of diagonal connector points (default \code{"#F781BF"}).
+#' @param diag_point_color Border color of diagonal connector points (default \code{"#C51B7D"}).
+#' @param node_size_range Point size range for central network nodes (default \code{c(1.1, 3.8)}).
+#' @param hull_alpha Transparency for module cluster hulls (default 0.18).
+#' @param curvature Curvature of inter-domain curved links (default 0.14).
+#' @param circle_radius Radius of central boundary circle (default 2.45).
 #' @param title Plot title.
 #' @param ... Additional arguments.
 #'
@@ -165,6 +258,7 @@ cliplot_env_network = function(
     links              = NULL,
     module_colors      = NULL,
     corner_palettes    = NULL,
+    link_colors        = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
     show_asterisks     = TRUE,
     show_values        = FALSE,
     show_cor           = NULL,
@@ -176,9 +270,35 @@ cliplot_env_network = function(
     module_labels      = NULL,
     module_label_size  = 2.8,
     module_label_color = "grey15",
+    module_label_fill  = "white",
     module_label_bg    = TRUE,
     module_label_alpha = 1.0,
     module_label_pos   = c("radial", "centroid"),
+    env_label_size     = 1.8,
+    env_label_color    = "grey20",
+    env_label_face     = "plain",
+    link_width_range   = c(0.4, 1.4),
+    link_width         = NULL,
+    link_alpha         = 0.70,
+    show_link_values   = FALSE,
+    link_value_size    = 2.0,
+    link_value_digits  = 2,
+    circle_radius      = 2.45,
+    circle_width       = 0.4,
+    circle_color       = "grey65",
+    circle_linetype    = "dashed",
+    outer_ring_size    = 0.6,
+    outer_ring_color   = "grey60",
+    outer_ring_alpha   = 0.6,
+    intra_edge_width   = 0.18,
+    intra_edge_color   = "grey82",
+    intra_edge_alpha   = 0.35,
+    diag_point_size    = 1.8,
+    diag_point_fill    = "#F781BF",
+    diag_point_color   = "#C51B7D",
+    node_size_range    = c(1.1, 3.8),
+    hull_alpha         = 0.18,
+    curvature          = 0.14,
     title              = NULL,
     ...
 ) {
@@ -192,6 +312,7 @@ cliplot_env_network = function(
     links              = links,
     module_colors      = module_colors,
     corner_palettes    = corner_palettes,
+    link_colors        = link_colors,
     show_asterisks     = show_asterisks,
     show_values        = show_values,
     label_type         = label_type,
@@ -202,9 +323,35 @@ cliplot_env_network = function(
     module_labels      = module_labels,
     module_label_size  = module_label_size,
     module_label_color = module_label_color,
+    module_label_fill  = module_label_fill,
     module_label_bg    = module_label_bg,
     module_label_alpha = module_label_alpha,
     module_label_pos   = module_label_pos,
+    env_label_size     = env_label_size,
+    env_label_color    = env_label_color,
+    env_label_face     = env_label_face,
+    link_width_range   = link_width_range,
+    link_width         = link_width,
+    link_alpha         = link_alpha,
+    show_link_values   = show_link_values,
+    link_value_size    = link_value_size,
+    link_value_digits  = link_value_digits,
+    circle_radius      = circle_radius,
+    circle_width       = circle_width,
+    circle_color       = circle_color,
+    circle_linetype    = circle_linetype,
+    outer_ring_size    = outer_ring_size,
+    outer_ring_color   = outer_ring_color,
+    outer_ring_alpha   = outer_ring_alpha,
+    intra_edge_width   = intra_edge_width,
+    intra_edge_color   = intra_edge_color,
+    intra_edge_alpha   = intra_edge_alpha,
+    diag_point_size    = diag_point_size,
+    diag_point_fill    = diag_point_fill,
+    diag_point_color   = diag_point_color,
+    node_size_range    = node_size_range,
+    hull_alpha         = hull_alpha,
+    curvature          = curvature,
     title              = title,
     ...
   )
@@ -228,11 +375,35 @@ build_env_network_layers = function(
     module_labels       = NULL,
     module_label_size   = 2.8,
     module_label_color  = "grey15",
+    module_label_fill   = "white",
     module_label_bg     = TRUE,
     module_label_alpha  = 1.0,
     module_label_pos    = "radial",
-    curvature           = 0.14,
-    circle_radius       = 2.45
+    env_label_size      = 1.8,
+    env_label_color     = "grey20",
+    env_label_face      = "plain",
+    link_width_range    = c(0.4, 1.4),
+    link_width          = NULL,
+    link_alpha          = 0.70,
+    show_link_values    = FALSE,
+    link_value_size     = 2.0,
+    link_value_digits   = 2,
+    circle_radius       = 2.45,
+    circle_width        = 0.4,
+    circle_color        = "grey65",
+    circle_linetype     = "dashed",
+    outer_ring_size     = 0.6,
+    outer_ring_color    = "grey60",
+    outer_ring_alpha    = 0.6,
+    intra_edge_width    = 0.18,
+    intra_edge_color    = "grey82",
+    intra_edge_alpha    = 0.35,
+    diag_point_size     = 1.8,
+    diag_point_fill     = "#F781BF",
+    diag_point_color    = "#C51B7D",
+    node_size_range     = c(1.1, 3.8),
+    hull_alpha          = 0.18,
+    curvature           = 0.14
 ) {
   # 1. Module configuration
   n_mods <- 7
@@ -575,40 +746,86 @@ build_env_network_layers = function(
   p <- ggplot2::ggplot() +
     ggplot2::geom_path(
       data = center_ring, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      linetype = "dashed", color = "grey65", linewidth = 0.4
+      linetype = circle_linetype, color = circle_color, linewidth = circle_width
     ) +
     ggplot2::geom_point(
       data = outer_ring_nodes, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      size = 0.6, color = "grey60", alpha = 0.6
+      size = outer_ring_size, color = outer_ring_color, alpha = outer_ring_alpha
     ) +
     ggplot2::geom_polygon(
       data = center_hulls,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["id"]], fill = .data[["module"]]),
-      alpha = 0.18, show.legend = FALSE
+      alpha = hull_alpha, show.legend = FALSE
     ) +
     ggplot2::geom_segment(
       data = center_edges,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]]),
-      color = "grey82", alpha = 0.35, linewidth = 0.18
-    ) +
-    ggplot2::geom_curve(
+      color = intra_edge_color, alpha = intra_edge_alpha, linewidth = intra_edge_width
+    )
+
+  if (!is.null(link_width)) {
+    p <- p + ggplot2::geom_curve(
+      data = all_links,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]]),
+      curvature = curvature, alpha = link_alpha, linewidth = link_width
+    )
+  } else {
+    p <- p + ggplot2::geom_curve(
       data = all_links,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]], linewidth = .data[["log10p"]]),
-      curvature = curvature, alpha = 0.70
+      curvature = curvature, alpha = link_alpha
     ) +
-    ggplot2::scale_color_manual(values = link_colors, name = "Correlation") +
     ggplot2::scale_linewidth_continuous(
-      range = c(0.4, 1.4),
+      range = link_width_range,
       breaks = c(1.5, 2.0, 2.5, 3.0),
       name = expression(-log[10](italic(P)-value))
-    ) +
+    )
+  }
+
+  p <- p + ggplot2::scale_color_manual(values = link_colors, name = "Correlation")
+
+  if (isTRUE(show_link_values) && nrow(all_links) > 0) {
+    dx <- all_links$xend - all_links$x
+    dy <- all_links$yend - all_links$y
+    curv <- all_links$curvature
+    mx <- (all_links$x + all_links$xend) / 2 - curv * dy * 0.40
+    my <- (all_links$y + all_links$yend) / 2 + curv * dx * 0.40
+
+    fmt_link_r <- sprintf(paste0("%.", link_value_digits, "f"), all_links$r)
+    if (isTRUE(compact)) {
+      fmt_link_r <- sub("^(-?)0\\.", "\\1.", fmt_link_r)
+    }
+
+    link_val_df <- data.frame(
+      x = mx,
+      y = my,
+      label = fmt_link_r,
+      sign = all_links$sign,
+      stringsAsFactors = FALSE
+    )
+
+    p <- p + ggplot2::geom_label(
+      data = link_val_df,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]], color = .data[["sign"]]),
+      size = link_value_size,
+      fill = "white",
+      alpha = 0.95,
+      fontface = "bold",
+      label.padding = ggplot2::unit(0.12, "lines"),
+      label.r = ggplot2::unit(0.12, "lines"),
+      linewidth = 0.20,
+      show.legend = FALSE
+    )
+  }
+
+  p <- p +
     ggplot2::geom_point(
       data = nodes_df,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["module"]], size = .data[["degree"]]),
       shape = 21, color = "grey25", stroke = 0.2
     ) +
     ggplot2::scale_fill_manual(values = module_colors, name = "Network Module") +
-    ggplot2::scale_size_continuous(range = c(1.1, 3.8), guide = "none") +
+    ggplot2::scale_size_continuous(range = node_size_range, guide = "none") +
     ggplot2::geom_tile(
       data = all_tiles,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
@@ -694,7 +911,7 @@ build_env_network_layers = function(
       p <- p + ggplot2::geom_label(
         data = mod_labels_df,
         ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
-        fill = "white",
+        fill = module_label_fill,
         color = module_label_color,
         fontface = "bold",
         size = module_label_size,
@@ -720,12 +937,12 @@ build_env_network_layers = function(
     ggplot2::geom_point(
       data = all_diag,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      shape = 21, fill = "#F781BF", color = "#C51B7D", size = 1.8, stroke = 0.3
+      shape = 21, fill = diag_point_fill, color = diag_point_color, size = diag_point_size, stroke = 0.3
     ) +
     ggplot2::geom_text(
       data = all_env_labels,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["var"]], angle = .data[["angle"]], hjust = .data[["hjust"]], vjust = .data[["vjust"]]),
-      size = 1.8, fontface = "plain", color = "grey20"
+      size = env_label_size, fontface = env_label_face, color = env_label_color
     ) +
     ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
     ggplot2::theme_void() +

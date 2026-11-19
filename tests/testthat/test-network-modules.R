@@ -139,12 +139,17 @@ test_that("type_cross_network_graph and cliplot_cross_network_graph work", {
   )
   expect_s3_class(p_node, "ggplot")
   
-  # Module-level graph
+  # Module-level graph with custom sizes and styling
   p_mod <- cliplot_cross_network_graph(
-    nodes = demo$nodes,
-    edges = demo$edges,
-    cross_edges = demo$cross_edges,
-    level = "module"
+    nodes              = demo$nodes,
+    edges              = demo$edges,
+    cross_edges        = demo$cross_edges,
+    level              = "module",
+    show_module_labels = TRUE,
+    module_label_size  = 3.0,
+    meta_label_size    = 3.5,
+    module_size_range  = c(4.0, 9.0),
+    circle_radius      = 1.15
   )
   expect_s3_class(p_mod, "ggplot")
   
@@ -170,6 +175,22 @@ test_that("type_env_network and cliplot_env_network work", {
   # With module labels disabled
   p_nolbl <- cliplot_env_network(show_module_labels = FALSE)
   expect_s3_class(p_nolbl, "ggplot")
+
+  # With customizable edge styling, colors, and link correlation digits
+  p_custom <- cliplot_env_network(
+    show_values        = TRUE,
+    value_digits       = 3,
+    show_link_values   = TRUE,
+    link_value_size    = 2.2,
+    link_width         = 0.9,
+    circle_color       = "#1F77B4",
+    circle_width       = 0.6,
+    env_label_size     = 2.2,
+    env_label_color    = "darkblue",
+    diag_point_size    = 2.2,
+    diag_point_fill    = "gold"
+  )
+  expect_s3_class(p_custom, "ggplot")
 
   # With coef label_type
   p_coef <- cliplot_env_network(label_type = "coef", value_size = 1.5)

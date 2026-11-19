@@ -24,7 +24,12 @@ build_cross_network_layers(
   module_labels = NULL,
   module_label_size = 2.6,
   module_label_color = "grey15",
-  module_label_bg = TRUE
+  module_label_fill = "white",
+  module_label_bg = TRUE,
+  meta_label_size = 3.2,
+  meta_label_color = "grey15",
+  module_size_range = c(3.5, 8.5),
+  circle_radius = 1.05
 )
 }
 \description{

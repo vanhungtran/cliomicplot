@@ -41,7 +41,12 @@
 #' @param module_labels Optional named vector of custom labels for modules.
 #' @param module_label_size Numeric font size for module labels (default 2.6).
 #' @param module_label_color Color of module labels (default \code{"grey15"}).
-#' @param module_label_bg Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.
+#' @param module_label_fill Background fill color for module labels (default \code{"white"}).
+#' @param module_label_bg Logical. If TRUE (default), renders labels in a pill badge.
+#' @param meta_label_size Font size for group metadata text (default 3.2).
+#' @param meta_label_color Text color for group metadata text (default \code{"grey15"}).
+#' @param module_size_range Numeric vector of length 2 specifying point size range for module circles (default \code{c(3.5, 8.5)}).
+#' @param circle_radius Radius for module circle ring layout when \code{level = "module"} (default 1.05).
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
 #'
@@ -65,7 +70,12 @@ type_cross_network_graph = function(
     module_labels      = NULL,
     module_label_size  = 2.6,
     module_label_color = "grey15",
-    module_label_bg    = TRUE
+    module_label_fill  = "white",
+    module_label_bg    = TRUE,
+    meta_label_size    = 3.2,
+    meta_label_color   = "grey15",
+    module_size_range  = c(3.5, 8.5),
+    circle_radius      = 1.05
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
@@ -101,7 +111,12 @@ type_cross_network_graph = function(
         module_labels      = module_labels,
         module_label_size  = module_label_size,
         module_label_color = module_label_color,
-        module_label_bg    = module_label_bg
+        module_label_fill  = module_label_fill,
+        module_label_bg    = module_label_bg,
+        meta_label_size    = meta_label_size,
+        meta_label_color   = meta_label_color,
+        module_size_range  = module_size_range,
+        circle_radius      = circle_radius
       )
 
       res$plot
@@ -126,7 +141,12 @@ type_cross_network_graph = function(
 #' @param module_labels Optional named vector of custom labels for modules.
 #' @param module_label_size Numeric font size for module labels (default 2.6).
 #' @param module_label_color Color of module labels (default \code{"grey15"}).
+#' @param module_label_fill Background fill color for module labels (default \code{"white"}).
 #' @param module_label_bg Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.
+#' @param meta_label_size Font size for group metadata text (default 3.2).
+#' @param meta_label_color Text color for group metadata text (default \code{"grey15"}).
+#' @param module_size_range Size range for module circles (default \code{c(3.5, 8.5)}).
+#' @param circle_radius Radius for module circle ring layout (default 1.05).
 #' @param title Optional plot title.
 #' @param ... Additional graphic arguments.
 #'
@@ -145,7 +165,12 @@ cliplot_cross_network_graph = function(
     module_labels      = NULL,
     module_label_size  = 2.6,
     module_label_color = "grey15",
+    module_label_fill  = "white",
     module_label_bg    = TRUE,
+    meta_label_size    = 3.2,
+    meta_label_color   = "grey15",
+    module_size_range  = c(3.5, 8.5),
+    circle_radius      = 1.05,
     title              = NULL,
     ...
 ) {
@@ -168,7 +193,12 @@ cliplot_cross_network_graph = function(
     module_labels      = module_labels,
     module_label_size  = module_label_size,
     module_label_color = module_label_color,
+    module_label_fill  = module_label_fill,
     module_label_bg    = module_label_bg,
+    meta_label_size    = meta_label_size,
+    meta_label_color   = meta_label_color,
+    module_size_range  = module_size_range,
+    circle_radius      = circle_radius,
     ...
   )
 
@@ -199,7 +229,12 @@ build_cross_network_layers = function(
     module_labels      = NULL,
     module_label_size  = 2.6,
     module_label_color = "grey15",
-    module_label_bg    = TRUE
+    module_label_fill  = "white",
+    module_label_bg    = TRUE,
+    meta_label_size    = 3.2,
+    meta_label_color   = "grey15",
+    module_size_range  = c(3.5, 8.5),
+    circle_radius      = 1.05
 ) {
   # Extract components
   if (is.list(custom_data) && !is.data.frame(custom_data)) {
@@ -250,8 +285,8 @@ build_cross_network_layers = function(
       c_xy <- grp_centers[[g]]
       if (level == "module") {
         angles <- seq(0, 2*pi, length.out = n_g + 1)[1:n_g]
-        nodes_df$x[idx] <- c_xy[1] + 1.05 * cos(angles)
-        nodes_df$y[idx] <- c_xy[2] + 1.05 * sin(angles)
+        nodes_df$x[idx] <- c_xy[1] + circle_radius * cos(angles)
+        nodes_df$y[idx] <- c_xy[2] + circle_radius * sin(angles)
       } else {
         mods <- unique(nodes_df$module[idx])
         n_m <- length(mods)
@@ -440,7 +475,7 @@ build_cross_network_layers = function(
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["degree"]], fill = .data[["module"]]),
       shape = 21, color = "white", stroke = 0.5
     ) +
-    ggplot2::scale_size_continuous(range = c(3.5, 8.5), name = "Module Size")
+    ggplot2::scale_size_continuous(range = module_size_range, name = "Module Size")
   } else {
     p <- p + ggplot2::geom_point(
       data = nodes_df,
@@ -480,10 +515,10 @@ build_cross_network_layers = function(
           data = nodes_lbl_df,
           ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["lbl"]]),
           size = module_label_size,
-          fill = "white",
+          fill = module_label_fill,
           color = module_label_color,
           fontface = "bold",
-          alpha = 0.88,
+          alpha = 0.95,
           label.padding = ggplot2::unit(0.18, "lines"),
           label.r = ggplot2::unit(0.16, "lines"),
           linewidth = 0.2,
@@ -527,10 +562,10 @@ build_cross_network_layers = function(
             data = mod_cents,
             ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
             size = module_label_size,
-            fill = "white",
+            fill = module_label_fill,
             color = module_label_color,
             fontface = "bold",
-            alpha = 0.88,
+            alpha = 0.95,
             label.padding = ggplot2::unit(0.20, "lines"),
             label.r = ggplot2::unit(0.18, "lines"),
             linewidth = 0.2,
@@ -554,7 +589,7 @@ build_cross_network_layers = function(
     p <- p + ggplot2::geom_text(
       data = meta_df,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
-      size = 3.2, fontface = "bold", lineheight = 0.95
+      size = meta_label_size, color = meta_label_color, fontface = "bold", lineheight = 0.95
     )
   }
 

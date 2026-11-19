@@ -23,7 +23,12 @@ type_cross_network_graph(
   module_labels = NULL,
   module_label_size = 2.6,
   module_label_color = "grey15",
-  module_label_bg = TRUE
+  module_label_fill = "white",
+  module_label_bg = TRUE,
+  meta_label_size = 3.2,
+  meta_label_color = "grey15",
+  module_size_range = c(3.5, 8.5),
+  circle_radius = 1.05
 )
 }
 \arguments{
@@ -66,7 +71,17 @@ Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node
 
 \item{module_label_color}{Color of module labels (default \code{"grey15"}).}
 
-\item{module_label_bg}{Logical. If TRUE (default), renders labels in a semi-transparent white pill badge.}
+\item{module_label_fill}{Background fill color for module labels (default \code{"white"}).}
+
+\item{module_label_bg}{Logical. If TRUE (default), renders labels in a pill badge.}
+
+\item{meta_label_size}{Font size for group metadata text (default 3.2).}
+
+\item{meta_label_color}{Text color for group metadata text (default \code{"grey15"}).}
+
+\item{module_size_range}{Numeric vector of length 2 specifying point size range for module circles (default \code{c(3.5, 8.5)}).}
+
+\item{circle_radius}{Radius for module circle ring layout when \code{level = "module"} (default 1.05).}
 }
 \value{
 A \code{cliplot_type} object for use with \code{\link{cliplot}}.
