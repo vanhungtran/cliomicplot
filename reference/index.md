@@ -64,6 +64,8 @@ The main plotting function and layer helpers.
   : Save a Figure at Journal-Reference Dimensions
 - [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
   : Get Exact Figure Dimensions for Specific Scientific Journals
+- [`cli_scifig_qa()`](https://vanhungtran.github.io/cliomicplot/reference/cli_scifig_qa.md)
+  : SciFig Quality Assurance and Journal Compliance Audit
 
 ## Palettes
 

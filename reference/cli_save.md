@@ -18,6 +18,7 @@ cli_save(
   height = NULL,
   dpi = 300,
   units = "in",
+  qa = FALSE,
   ...
 )
 ```
@@ -57,6 +58,12 @@ cli_save(
 
   Units for `width`/`height` (default "in").
 
+- qa:
+
+  Logical. If TRUE, runs a SciFig quality assurance compliance audit
+  against the target journal preset and prints the report. Default
+  FALSE.
+
 - ...:
 
   Additional arguments passed to
@@ -71,6 +78,6 @@ Invisibly returns the file path.
 ``` r
 if (FALSE) { # \dontrun{
 p = cliplot(mpg ~ wt, data = mtcars, theme = "nature")
-cli_save(p, "figure1.pdf", journal = "nature", column = "double", dpi = 600)
+cli_save(p, "figure1.pdf", journal = "nature", column = "double", dpi = 600, qa = TRUE)
 } # }
 ```

@@ -2,6 +2,44 @@
 
 ## cliomicplot 0.1.5
 
+### Systems Biology Networks & AI4SciFig Publication Standards
+
+- **Cross-Network Architecture & Preservation Graphs
+  ([`type_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/type_cross_network_graph.md),
+  [`cliplot_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.md))**:
+  Multi-group network comparison for systems biology and multi-omics.
+  Supports node-level topology with modular clusters, transparent convex
+  hulls, intra-group edges, and conserved cross-links, as well as
+  module-level ring architectures with member size scaling and
+  cross-module preservation.
+
+- **Coupled Modular Networks with Environmental Correlation Heatmaps
+  ([`type_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/type_env_network.md),
+  [`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md))**:
+  Multi-domain integration networks coupling a central circular
+  co-occurrence network with 4 peripheral triangular correlation
+  heatmaps of environmental, clinical, or host-associated indicators.
+  Includes curved inter-domain links weighted by
+  $`-\log_{10}(P\text{-value})`$, colored by correlation sign, with
+  correlation digit badges and opaque white pills.
+
+- **AI4SciFig Quality Assurance Audit
+  ([`cli_scifig_qa()`](https://vanhungtran.github.io/cliomicplot/reference/cli_scifig_qa.md))**:
+  Integrated publisher compliance checking against official journal
+  specifications (Nature, Science, Cell, NEJM, Lancet). Audits physical
+  dimensions, minimum font floors (\>= 5.0 pt), stroke hairline floors
+  (\>= 0.25 pt), zero sign suppression (eliminating `-0.00` and `-.00`),
+  and CVD color accessibility. Seamlessly integrated into
+  `cli_save(qa = TRUE)`.
+
+- **Publisher Presets & Zero Sign Suppression**: `preset = "nature"`
+  parameter added to
+  [`type_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/type_env_network.md)
+  and
+  [`type_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/type_cross_network_graph.md),
+  enforcing font floors, stroke floors, and Wong (2011) / ColorBrewer
+  colorblind-safe diverging palettes with neutral white midpoints.
+
 ### Microbial Genomics & mGWAS Figure Archetypes
 
 - **Microbial GWAS & Genomics Manhattan Plot

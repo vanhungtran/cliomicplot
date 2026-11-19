@@ -48,6 +48,8 @@ build_env_network_layers(
   diag_point_color = "#C51B7D",
   node_size_range = c(1.1, 3.8),
   hull_alpha = 0.18,
-  curvature = 0.14
+  curvature = 0.14,
+  preset = "default",
+  scifig = FALSE
 )
 ```

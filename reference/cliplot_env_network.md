@@ -54,6 +54,8 @@ cliplot_env_network(
   node_size_range = c(1.1, 3.8),
   hull_alpha = 0.18,
   curvature = 0.14,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE,
   title = NULL,
   ...
 )

@@ -59,6 +59,7 @@
 <span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dpi <span class="op">=</span> <span class="fl">300</span>,</span>
 <span>  units <span class="op">=</span> <span class="st">"in"</span>,</span>
+<span>  qa <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -101,6 +102,11 @@ submission-ready line art).</p></dd>
 <dd><p>Units for <code>width</code>/<code>height</code> (default "in").</p></dd>
 
 
+<dt id="arg-qa">qa<a class="anchor" aria-label="anchor" href="#arg-qa"></a></dt>
+<dd><p>Logical. If TRUE, runs a SciFig quality assurance compliance audit
+against the target journal preset and prints the report. Default FALSE.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggplot2::ggsave()</a></code>.</p></dd>
 
@@ -114,7 +120,7 @@ submission-ready line art).</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">=</span> <span class="fu"><a href="cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">wt</span>, data <span class="op">=</span> <span class="va">mtcars</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">cli_save</span><span class="op">(</span><span class="va">p</span>, <span class="st">"figure1.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cli_save</span><span class="op">(</span><span class="va">p</span>, <span class="st">"figure1.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span>, dpi <span class="op">=</span> <span class="fl">600</span>, qa <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

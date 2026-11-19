@@ -58,6 +58,8 @@ type_env_network(
   node_size_range = c(1.1, 3.8),
   hull_alpha = 0.18,
   curvature = 0.14,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE,
   title = NULL
 )
 ```
@@ -272,6 +274,17 @@ type_env_network(
 - curvature:
 
   Numeric curvature of inter-domain connecting lines (default 0.14).
+
+- preset:
+
+  Character string specifying publisher style preset: `"default"`,
+  `"nature"`, `"cell"`, `"science"`, or `"lancet"`.
+
+- scifig:
+
+  Logical. If TRUE, enforces AI4SciFig publication gates (font floor \>=
+  5 pt, line floor \>= 0.25 pt, zero sign suppression, and CVD compliant
+  palettes).
 
 - title:
 

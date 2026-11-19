@@ -41,7 +41,9 @@ type_cross_network_graph(
   meta_label_size = 3.2,
   meta_label_color = "grey15",
   module_size_range = c(3.5, 8.5),
-  circle_radius = 1.05
+  circle_radius = 1.05,
+  preset = c("default", "nature", "cell", "science", "lancet"),
+  scifig = FALSE
 )
 ```
 
@@ -153,6 +155,16 @@ type_cross_network_graph(
 
   Radius for module circle ring layout when `level = "module"` (default
   1.05).
+
+- preset:
+
+  Character string specifying publisher style preset: `"default"`,
+  `"nature"`, `"cell"`, `"science"`, or `"lancet"`.
+
+- scifig:
+
+  Logical. If TRUE, enforces AI4SciFig publication gates (font floor \>=
+  5 pt, line floor \>= 0.25 pt, and CVD compliant palettes).
 
 ## Value
 
