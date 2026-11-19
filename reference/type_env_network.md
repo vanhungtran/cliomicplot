@@ -19,6 +19,12 @@ type_env_network(
   corner_palettes = NULL,
   link_colors = c(Positive = "#E64B35", Negative = "#4DBBD5"),
   show_asterisks = TRUE,
+  show_values = FALSE,
+  show_cor = NULL,
+  label_type = c("auto", "stars", "coef", "coef_stars", "none"),
+  value_digits = 2,
+  value_size = NULL,
+  compact = TRUE,
   curvature = 0.14,
   circle_radius = 2.45,
   title = NULL
@@ -57,6 +63,38 @@ type_env_network(
 
   Logical. If TRUE, overlays significance asterisks (\*, \*\*, \*\*\*)
   in correlation tiles. Default TRUE.
+
+- show_values:
+
+  Logical. If TRUE, displays numerical correlation values in correlation
+  tiles. Default FALSE.
+
+- show_cor:
+
+  Logical alias for `show_values`. If non-NULL, overrides `show_values`.
+
+- label_type:
+
+  Character string specifying tile annotation format: `"auto"` (default,
+  determined by `show_values` and `show_asterisks`), `"coef"` (e.g.
+  `".42"`), `"coef_stars"` (e.g. `".42***"`), `"stars"` (e.g. `"***"`),
+  or `"none"`.
+
+- value_digits:
+
+  Integer number of decimal places for correlation coefficients (default
+  2).
+
+- value_size:
+
+  Optional numeric font size for tile text. If NULL (default),
+  automatically calculated based on tile step dimensions so numbers fit
+  inside without clipping.
+
+- compact:
+
+  Logical. If TRUE (default), strips leading zeros (e.g. `".42"` instead
+  of `"0.42"`) for compact, high-density tile fitting.
 
 - curvature:
 

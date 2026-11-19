@@ -47,6 +47,13 @@
 <span>  links <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  module_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  corner_palettes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_asterisks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_cor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"stars"</span>, <span class="st">"coef"</span>, <span class="st">"coef_stars"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  value_digits <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  value_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  compact <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -78,6 +85,34 @@
 
 <dt id="arg-corner-palettes">corner_palettes<a class="anchor" aria-label="anchor" href="#arg-corner-palettes"></a></dt>
 <dd><p>List of color gradients for corner heatmaps.</p></dd>
+
+
+<dt id="arg-show-asterisks">show_asterisks<a class="anchor" aria-label="anchor" href="#arg-show-asterisks"></a></dt>
+<dd><p>Logical. If TRUE, shows significance asterisks. Default TRUE.</p></dd>
+
+
+<dt id="arg-show-values">show_values<a class="anchor" aria-label="anchor" href="#arg-show-values"></a></dt>
+<dd><p>Logical. If TRUE, displays numerical correlation values in tiles. Default FALSE.</p></dd>
+
+
+<dt id="arg-show-cor">show_cor<a class="anchor" aria-label="anchor" href="#arg-show-cor"></a></dt>
+<dd><p>Logical alias for <code>show_values</code>.</p></dd>
+
+
+<dt id="arg-label-type">label_type<a class="anchor" aria-label="anchor" href="#arg-label-type"></a></dt>
+<dd><p>Character string specifying tile label format: <code>"auto"</code>, <code>"coef"</code>, <code>"coef_stars"</code>, <code>"stars"</code>, or <code>"none"</code>.</p></dd>
+
+
+<dt id="arg-value-digits">value_digits<a class="anchor" aria-label="anchor" href="#arg-value-digits"></a></dt>
+<dd><p>Decimal places for correlation coefficients (default 2).</p></dd>
+
+
+<dt id="arg-value-size">value_size<a class="anchor" aria-label="anchor" href="#arg-value-size"></a></dt>
+<dd><p>Font size for tile text (default auto-scaled).</p></dd>
+
+
+<dt id="arg-compact">compact<a class="anchor" aria-label="anchor" href="#arg-compact"></a></dt>
+<dd><p>Logical. If TRUE (default), omits leading zero for compact fitting.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>

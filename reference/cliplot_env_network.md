@@ -13,6 +13,13 @@ cliplot_env_network(
   links = NULL,
   module_colors = NULL,
   corner_palettes = NULL,
+  show_asterisks = TRUE,
+  show_values = FALSE,
+  show_cor = NULL,
+  label_type = c("auto", "stars", "coef", "coef_stars", "none"),
+  value_digits = 2,
+  value_size = NULL,
+  compact = TRUE,
   title = NULL,
   ...
 )
@@ -45,6 +52,36 @@ cliplot_env_network(
 - corner_palettes:
 
   List of color gradients for corner heatmaps.
+
+- show_asterisks:
+
+  Logical. If TRUE, shows significance asterisks. Default TRUE.
+
+- show_values:
+
+  Logical. If TRUE, displays numerical correlation values in tiles.
+  Default FALSE.
+
+- show_cor:
+
+  Logical alias for `show_values`.
+
+- label_type:
+
+  Character string specifying tile label format: `"auto"`, `"coef"`,
+  `"coef_stars"`, `"stars"`, or `"none"`.
+
+- value_digits:
+
+  Decimal places for correlation coefficients (default 2).
+
+- value_size:
+
+  Font size for tile text (default auto-scaled).
+
+- compact:
+
+  Logical. If TRUE (default), omits leading zero for compact fitting.
 
 - title:
 
