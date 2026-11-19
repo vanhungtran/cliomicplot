@@ -264,21 +264,37 @@ build_cross_network_layers = function(
   # Build Cross-edges
   cross_coords <- NULL
   if (is.null(cross_df) || nrow(cross_df) == 0) {
-    # Detect shared IDs across groups
+    # Detect shared IDs or modules across groups
     shared_pairs <- list()
     for (i in 1:(n_grp - 1)) {
       for (j in (i + 1):n_grp) {
         g1 <- grp_names[i]; g2 <- grp_names[j]
-        id1 <- nodes_df$id[nodes_df$group == g1]
-        id2 <- nodes_df$id[nodes_df$group == g2]
-        common <- intersect(id1, id2)
-        if (length(common) > 0) {
-          shared_pairs[[length(shared_pairs) + 1]] <- data.frame(
-            from = common, to = common,
-            group1 = g1, group2 = g2,
-            type = paste0(g1, " - ", g2),
-            stringsAsFactors = FALSE
-          )
+        if (level == "module") {
+          mod1 <- nodes_df$module[nodes_df$group == g1]
+          mod2 <- nodes_df$module[nodes_df$group == g2]
+          common_mod <- intersect(mod1, mod2)
+          for (cm in common_mod) {
+            id1 <- nodes_df$id[nodes_df$group == g1 & nodes_df$module == cm][1]
+            id2 <- nodes_df$id[nodes_df$group == g2 & nodes_df$module == cm][1]
+            shared_pairs[[length(shared_pairs) + 1]] <- data.frame(
+              from = id1, to = id2,
+              group1 = g1, group2 = g2,
+              type = paste0(g1, " - ", g2),
+              stringsAsFactors = FALSE
+            )
+          }
+        } else {
+          id1 <- nodes_df$id[nodes_df$group == g1]
+          id2 <- nodes_df$id[nodes_df$group == g2]
+          common <- intersect(id1, id2)
+          if (length(common) > 0) {
+            shared_pairs[[length(shared_pairs) + 1]] <- data.frame(
+              from = common, to = common,
+              group1 = g1, group2 = g2,
+              type = paste0(g1, " - ", g2),
+              stringsAsFactors = FALSE
+            )
+          }
         }
       }
     }
@@ -408,7 +424,7 @@ build_cross_network_layers = function(
   }
 
   p <- p +
-    ggplot2::coord_fixed() +
+    ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = c(-3.8, 6.2)) +
     ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = "right",

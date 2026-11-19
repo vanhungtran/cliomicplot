@@ -216,14 +216,57 @@ build_env_network_layers = function(
   )
 
   # 2. Four Corner Environmental Triangles
+  # Check if user supplied env_cors
+  corner_configs <- list(
+    list(corner = "top_left", center_x = -5.0, center_y = 5.0, default_pal = c("#4DAF4A", "#FFFFFF", "#E41A1C")),
+    list(corner = "top_right", center_x = 5.0, center_y = 5.0, default_pal = c("#984EA3", "#FFFFFF", "#FF7F00")),
+    list(corner = "bottom_left", center_x = -5.0, center_y = -5.0, default_pal = c("#66C2A5", "#FFFFFF", "#FC8D62")),
+    list(corner = "bottom_right", center_x = 5.0, center_y = -5.0, default_pal = c("#377EB8", "#FFFFFF", "#E41A1C"))
+  )
+
+  tiles_list <- list()
+  diag_list  <- list()
+  labels_list <- list()
+
   env_vars_default <- c("pH", "Humdepth", "Baresoil", "Mo", "Zn", "Mn", "Fe", "Al", "S", "Mg", "Ca", "K", "P", "N")
 
-  make_corner_triangle <- function(env_names, corner, center_x, center_y, size = 2.3, ramp_colors) {
-    p <- length(env_names)
-    grid <- expand.grid(row = 1:p, col = 1:p)
+  n_corners_to_draw <- if (!is.null(env_cors) && length(env_cors) > 0) min(length(env_cors), 4) else 4
+
+  for (c_idx in 1:n_corners_to_draw) {
+    cfg <- corner_configs[[c_idx]]
+    c_name <- if (!is.null(env_cors) && !is.null(names(env_cors)[c_idx])) names(env_cors)[c_idx] else paste0("Env ", c_idx)
+    
+    # Extract variable names and correlation matrix if provided
+    var_names <- NULL
+    mat_r     <- NULL
+    if (!is.null(env_cors) && length(env_cors) >= c_idx) {
+      item <- env_cors[[c_idx]]
+      if (is.matrix(item) || is.data.frame(item)) {
+        var_names <- colnames(item)
+        mat_r     <- as.matrix(item)
+      } else if (is.character(item)) {
+        var_names <- item
+      }
+    }
+    if (is.null(var_names) || length(var_names) < 3) {
+      var_names <- paste0(env_vars_default, "_", c_idx)
+    }
+
+    pal <- if (!is.null(corner_palettes) && length(corner_palettes) >= c_idx) corner_palettes[[c_idx]] else cfg$default_pal
+
+    p_dim <- length(var_names)
+    grid <- expand.grid(row = 1:p_dim, col = 1:p_dim)
     grid <- grid[grid$row >= grid$col, ]
-    r_vals <- stats::runif(nrow(grid), -0.75, 0.85)
-    r_vals[grid$row == grid$col] <- 1.0
+
+    if (!is.null(mat_r) && nrow(mat_r) == p_dim && ncol(mat_r) == p_dim) {
+      r_vals <- numeric(nrow(grid))
+      for (g_i in seq_len(nrow(grid))) {
+        r_vals[g_i] <- mat_r[grid$row[g_i], grid$col[g_i]]
+      }
+    } else {
+      r_vals <- stats::runif(nrow(grid), -0.75, 0.85)
+      r_vals[grid$row == grid$col] <- 1.0
+    }
 
     stars <- rep("", nrow(grid))
     for (idx in seq_len(nrow(grid))) {
@@ -239,155 +282,148 @@ build_env_network_layers = function(
       }
     }
 
-    step <- size / p
+    size_box <- 2.3
+    step <- size_box / p_dim
+    corner_type <- cfg$corner
+    center_x <- cfg$center_x
+    center_y <- cfg$center_y
 
-    if (corner == "top_left") {
+    if (corner_type == "top_left") {
       xs <- center_x + (grid$col - 1) * step
       ys <- center_y - (grid$row - 1) * step
       diag_pts <- data.frame(
-        var = env_names,
-        x = center_x + (1:p - 1) * step + step * 0.5,
-        y = center_y - (1:p - 1) * step - step * 0.5,
+        var = var_names,
+        x = center_x + (1:p_dim - 1) * step + step * 0.5,
+        y = center_y - (1:p_dim - 1) * step - step * 0.5,
         stringsAsFactors = FALSE
       )
       top_labels <- data.frame(
-        var = env_names,
-        x = center_x + (1:p - 1) * step,
-        y = center_y + step * 0.6,
+        var = var_names, x = center_x + (1:p_dim - 1) * step, y = center_y + step * 0.6,
         angle = 45, hjust = 0, vjust = 0, stringsAsFactors = FALSE
       )
       left_labels <- data.frame(
-        var = env_names,
-        x = center_x - step * 0.6,
-        y = center_y - (1:p - 1) * step,
+        var = var_names, x = center_x - step * 0.6, y = center_y - (1:p_dim - 1) * step,
         angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
       )
-    } else if (corner == "top_right") {
+    } else if (corner_type == "top_right") {
       xs <- center_x - (grid$col - 1) * step
       ys <- center_y - (grid$row - 1) * step
       diag_pts <- data.frame(
-        var = env_names,
-        x = center_x - (1:p - 1) * step - step * 0.5,
-        y = center_y - (1:p - 1) * step - step * 0.5,
+        var = var_names,
+        x = center_x - (1:p_dim - 1) * step - step * 0.5,
+        y = center_y - (1:p_dim - 1) * step - step * 0.5,
         stringsAsFactors = FALSE
       )
       top_labels <- data.frame(
-        var = env_names,
-        x = center_x - (1:p - 1) * step,
-        y = center_y + step * 0.6,
+        var = var_names, x = center_x - (1:p_dim - 1) * step, y = center_y + step * 0.6,
         angle = 45, hjust = 0, vjust = 0, stringsAsFactors = FALSE
       )
       left_labels <- data.frame(
-        var = env_names,
-        x = center_x + step * 0.6,
-        y = center_y - (1:p - 1) * step,
+        var = var_names, x = center_x + step * 0.6, y = center_y - (1:p_dim - 1) * step,
         angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
       )
-    } else if (corner == "bottom_left") {
+    } else if (corner_type == "bottom_left") {
       xs <- center_x + (grid$col - 1) * step
       ys <- center_y + (grid$row - 1) * step
       diag_pts <- data.frame(
-        var = env_names,
-        x = center_x + (1:p - 1) * step + step * 0.5,
-        y = center_y + (1:p - 1) * step + step * 0.5,
+        var = var_names,
+        x = center_x + (1:p_dim - 1) * step + step * 0.5,
+        y = center_y + (1:p_dim - 1) * step + step * 0.5,
         stringsAsFactors = FALSE
       )
       top_labels <- data.frame(
-        var = env_names,
-        x = center_x + (1:p - 1) * step,
-        y = center_y - step * 0.6,
+        var = var_names, x = center_x + (1:p_dim - 1) * step, y = center_y - step * 0.6,
         angle = 45, hjust = 1, vjust = 1, stringsAsFactors = FALSE
       )
       left_labels <- data.frame(
-        var = env_names,
-        x = center_x - step * 0.6,
-        y = center_y + (1:p - 1) * step,
+        var = var_names, x = center_x - step * 0.6, y = center_y + (1:p_dim - 1) * step,
         angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
       )
     } else {
       xs <- center_x - (grid$col - 1) * step
       ys <- center_y + (grid$row - 1) * step
       diag_pts <- data.frame(
-        var = env_names,
-        x = center_x - (1:p - 1) * step - step * 0.5,
-        y = center_y + (1:p - 1) * step + step * 0.5,
+        var = var_names,
+        x = center_x - (1:p_dim - 1) * step - step * 0.5,
+        y = center_y + (1:p_dim - 1) * step + step * 0.5,
         stringsAsFactors = FALSE
       )
       top_labels <- data.frame(
-        var = env_names,
-        x = center_x - (1:p - 1) * step,
-        y = center_y - step * 0.6,
+        var = var_names, x = center_x - (1:p_dim - 1) * step, y = center_y - step * 0.6,
         angle = 45, hjust = 1, vjust = 1, stringsAsFactors = FALSE
       )
       left_labels <- data.frame(
-        var = env_names,
-        x = center_x + step * 0.6,
-        y = center_y + (1:p - 1) * step,
+        var = var_names, x = center_x + step * 0.6, y = center_y + (1:p_dim - 1) * step,
         angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
       )
     }
 
-    col_ramp <- scales::col_numeric(ramp_colors, domain = c(-1, 1))
-
-    tiles <- data.frame(
+    col_ramp <- scales::col_numeric(pal, domain = c(-1, 1))
+    tiles_list[[c_idx]] <- data.frame(
       x = xs, y = ys, r = r_vals, stars = stars,
-      fill_col = col_ramp(r_vals), step = step, stringsAsFactors = FALSE
+      fill_col = col_ramp(r_vals), step = step, corner = c_name, stringsAsFactors = FALSE
     )
-
-    labels_all <- rbind(top_labels, left_labels)
-    list(tiles = tiles, diag_pts = diag_pts, labels = labels_all, step = step)
+    diag_list[[c_idx]] <- cbind(diag_pts, corner = c_name)
+    labels_list[[c_idx]] <- cbind(rbind(top_labels, left_labels), corner = c_name)
   }
 
-  c_tl <- make_corner_triangle(paste0(env_vars_default, "_3"), "top_left", center_x = -5.0, center_y = 5.0, ramp_colors = c("#4DAF4A", "#FFFFFF", "#E41A1C"))
-  c_tr <- make_corner_triangle(paste0(env_vars_default, "_1"), "top_right", center_x = 5.0, center_y = 5.0, ramp_colors = c("#984EA3", "#FFFFFF", "#FF7F00"))
-  c_bl <- make_corner_triangle(paste0(env_vars_default, "_4"), "bottom_left", center_x = -5.0, center_y = -5.0, ramp_colors = c("#66C2A5", "#FFFFFF", "#FC8D62"))
-  c_br <- make_corner_triangle(paste0(env_vars_default, "_2"), "bottom_right", center_x = 5.0, center_y = -5.0, ramp_colors = c("#377EB8", "#FFFFFF", "#E41A1C"))
-
-  all_tiles <- rbind(
-    cbind(c_tl$tiles, corner = "Env 1"),
-    cbind(c_tr$tiles, corner = "Env 2"),
-    cbind(c_bl$tiles, corner = "Env 4"),
-    cbind(c_br$tiles, corner = "Env 3")
-  )
-
-  all_diag <- rbind(
-    cbind(c_tl$diag_pts, corner = "Env 1"),
-    cbind(c_tr$diag_pts, corner = "Env 2"),
-    cbind(c_bl$diag_pts, corner = "Env 4"),
-    cbind(c_br$diag_pts, corner = "Env 3")
-  )
-
-  all_env_labels <- rbind(
-    cbind(c_tl$labels, corner = "Env 1"),
-    cbind(c_tr$labels, corner = "Env 2"),
-    cbind(c_bl$labels, corner = "Env 4"),
-    cbind(c_br$labels, corner = "Env 3")
-  )
+  all_tiles <- do.call(rbind, tiles_list)
+  all_diag  <- do.call(rbind, diag_list)
+  all_env_labels <- do.call(rbind, labels_list)
 
   # 3. Inter-domain connecting links
   link_list <- list()
-  for (c_name in c("Env 1", "Env 2", "Env 4", "Env 3")) {
-    c_pts <- all_diag[all_diag$corner == c_name, ]
-    chosen_vars <- sample(c_pts$var, 5)
-    chosen_mods <- sample(mod_centers$module, 5, replace = TRUE)
-    for (k in 1:5) {
-      pt <- c_pts[c_pts$var == chosen_vars[k], ]
-      mc <- mod_centers[mod_centers$module == chosen_mods[k], ]
-      r_val <- sample(c(0.72, 0.58, -0.64, 0.45, -0.52), 1)
-      p_val <- stats::runif(1, 1e-4, 0.015)
-      curv <- if (c_name %in% c("Env 1", "Env 3")) curvature else -curvature
+  if (!is.null(links) && nrow(links) > 0 && all(c("env", "module") %in% names(links))) {
+    # Match user supplied links
+    for (l_i in seq_len(nrow(links))) {
+      e_var <- as.character(links$env[l_i])
+      m_tgt <- as.character(links$module[l_i])
+      pt <- all_diag[all_diag$var == e_var, ]
+      mc <- mod_centers[mod_centers$module == m_tgt, ]
+      if (nrow(pt) > 0 && nrow(mc) > 0) {
+        pt <- pt[1, ]
+        mc <- mc[1, ]
+        r_val <- if ("r" %in% names(links)) links$r[l_i] else if ("cor" %in% names(links)) links$cor[l_i] else 0.5
+        p_val <- if ("p" %in% names(links)) links$p[l_i] else if ("pvalue" %in% names(links)) links$pvalue[l_i] else 0.01
+        log10_p <- if ("log10p" %in% names(links)) links$log10p[l_i] else -log10(max(p_val, 1e-10))
+        curv <- if (pt$x < 0) curvature else -curvature
 
-      link_list[[length(link_list) + 1]] <- data.frame(
-        x = pt$x,
-        y = pt$y,
-        xend = mc$cx,
-        yend = mc$cy,
-        r = r_val,
-        log10p = -log10(p_val),
-        sign = ifelse(r_val > 0, "Positive", "Negative"),
-        curvature = curv,
-        stringsAsFactors = FALSE
-      )
+        link_list[[length(link_list) + 1]] <- data.frame(
+          x = pt$x, y = pt$y, xend = mc$cx, yend = mc$cy,
+          r = r_val, log10p = log10_p,
+          sign = ifelse(r_val > 0, "Positive", "Negative"),
+          curvature = curv, stringsAsFactors = FALSE
+        )
+      }
+    }
+  }
+
+  if (length(link_list) == 0) {
+    u_corners <- unique(all_diag$corner)
+    for (c_name in u_corners) {
+      c_pts <- all_diag[all_diag$corner == c_name, ]
+      n_pick <- min(5, nrow(c_pts))
+      chosen_vars <- sample(c_pts$var, n_pick)
+      chosen_mods <- sample(mod_centers$module, n_pick, replace = TRUE)
+      for (k in seq_len(n_pick)) {
+        pt <- c_pts[c_pts$var == chosen_vars[k], ]
+        mc <- mod_centers[mod_centers$module == chosen_mods[k], ]
+        r_val <- sample(c(0.72, 0.58, -0.64, 0.45, -0.52), 1)
+        p_val <- stats::runif(1, 1e-4, 0.015)
+        curv <- if (pt$x < 0) curvature else -curvature
+
+        link_list[[length(link_list) + 1]] <- data.frame(
+          x = pt$x,
+          y = pt$y,
+          xend = mc$cx,
+          yend = mc$cy,
+          r = r_val,
+          log10p = -log10(p_val),
+          sign = ifelse(r_val > 0, "Positive", "Negative"),
+          curvature = curv,
+          stringsAsFactors = FALSE
+        )
+      }
     }
   }
   all_links <- do.call(rbind, link_list)
