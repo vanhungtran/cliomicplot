@@ -11,7 +11,10 @@ build_env_network_layers(
   module_colors,
   corner_palettes,
   link_colors,
-  show_asterisks,
+  resolved_label_type,
+  value_digits,
+  value_size,
+  compact,
   curvature,
   circle_radius
 )

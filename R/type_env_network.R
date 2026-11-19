@@ -23,6 +23,16 @@
 #' @param corner_palettes Optional list of color vectors for the corner heatmaps.
 #' @param link_colors Named vector of colors for link signs (default \code{c("Positive" = "#E64B35", "Negative" = "#4DBBD5")}).
 #' @param show_asterisks Logical. If TRUE, overlays significance asterisks (*, **, ***) in correlation tiles. Default TRUE.
+#' @param show_values Logical. If TRUE, displays numerical correlation values in correlation tiles. Default FALSE.
+#' @param show_cor Logical alias for \code{show_values}. If non-NULL, overrides \code{show_values}.
+#' @param label_type Character string specifying tile annotation format: \code{"auto"} (default, determined by
+#'   \code{show_values} and \code{show_asterisks}), \code{"coef"} (e.g. \code{".42"}),
+#'   \code{"coef_stars"} (e.g. \code{".42***"}), \code{"stars"} (e.g. \code{"***"}), or \code{"none"}.
+#' @param value_digits Integer number of decimal places for correlation coefficients (default 2).
+#' @param value_size Optional numeric font size for tile text. If NULL (default), automatically calculated
+#'   based on tile step dimensions so numbers fit inside without clipping.
+#' @param compact Logical. If TRUE (default), strips leading zeros (e.g. \code{".42"} instead of \code{"0.42"})
+#'   for compact, high-density tile fitting.
 #' @param curvature Numeric curvature of inter-domain connecting lines (default 0.14).
 #' @param circle_radius Numeric radius of the central boundary circle (default 2.45).
 #' @param title Optional plot title.
@@ -37,10 +47,31 @@ type_env_network = function(
     corner_palettes = NULL,
     link_colors     = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
     show_asterisks  = TRUE,
+    show_values     = FALSE,
+    show_cor        = NULL,
+    label_type      = c("auto", "stars", "coef", "coef_stars", "none"),
+    value_digits    = 2,
+    value_size      = NULL,
+    compact         = TRUE,
     curvature       = 0.14,
     circle_radius   = 2.45,
     title           = NULL
 ) {
+  if (!is.null(show_cor)) show_values <- show_cor
+  label_type <- match.arg(label_type)
+
+  resolved_label_type <- if (label_type == "auto") {
+    if (isTRUE(show_values)) {
+      if (isTRUE(show_asterisks)) "coef_stars" else "coef"
+    } else if (isTRUE(show_asterisks)) {
+      "stars"
+    } else {
+      "none"
+    }
+  } else {
+    label_type
+  }
+
   cliplot_type(
     data = function(settings, ...) {
       df <- settings$data
@@ -52,15 +83,18 @@ type_env_network = function(
       custom_data <- args$network_data %||% settings$data
 
       res <- build_env_network_layers(
-        custom_data     = custom_data,
-        env_cors        = env_cors,
-        links           = links,
-        module_colors   = module_colors,
-        corner_palettes = corner_palettes,
-        link_colors     = link_colors,
-        show_asterisks  = show_asterisks,
-        curvature       = curvature,
-        circle_radius   = circle_radius
+        custom_data         = custom_data,
+        env_cors            = env_cors,
+        links               = links,
+        module_colors       = module_colors,
+        corner_palettes     = corner_palettes,
+        link_colors         = link_colors,
+        resolved_label_type = resolved_label_type,
+        value_digits        = value_digits,
+        value_size          = value_size,
+        compact             = compact,
+        curvature           = curvature,
+        circle_radius       = circle_radius
       )
 
       plot_obj <- res$plot
@@ -78,6 +112,13 @@ type_env_network = function(
 #' @param links Data frame of environmental-to-module links.
 #' @param module_colors Named color vector for modules.
 #' @param corner_palettes List of color gradients for corner heatmaps.
+#' @param show_asterisks Logical. If TRUE, shows significance asterisks. Default TRUE.
+#' @param show_values Logical. If TRUE, displays numerical correlation values in tiles. Default FALSE.
+#' @param show_cor Logical alias for \code{show_values}.
+#' @param label_type Character string specifying tile label format: \code{"auto"}, \code{"coef"}, \code{"coef_stars"}, \code{"stars"}, or \code{"none"}.
+#' @param value_digits Decimal places for correlation coefficients (default 2).
+#' @param value_size Font size for tile text (default auto-scaled).
+#' @param compact Logical. If TRUE (default), omits leading zero for compact fitting.
 #' @param title Plot title.
 #' @param ... Additional arguments.
 #'
@@ -90,15 +131,31 @@ cliplot_env_network = function(
     links           = NULL,
     module_colors   = NULL,
     corner_palettes = NULL,
+    show_asterisks  = TRUE,
+    show_values     = FALSE,
+    show_cor        = NULL,
+    label_type      = c("auto", "stars", "coef", "coef_stars", "none"),
+    value_digits    = 2,
+    value_size      = NULL,
+    compact         = TRUE,
     title           = NULL,
     ...
 ) {
+  if (!is.null(show_cor)) show_values <- show_cor
+  label_type <- match.arg(label_type)
+
   net_data <- list(nodes = nodes, edges = edges)
   t_obj <- type_env_network(
     env_cors        = env_cors,
     links           = links,
     module_colors   = module_colors,
     corner_palettes = corner_palettes,
+    show_asterisks  = show_asterisks,
+    show_values     = show_values,
+    label_type      = label_type,
+    value_digits    = value_digits,
+    value_size      = value_size,
+    compact         = compact,
     title           = title,
     ...
   )
@@ -114,7 +171,10 @@ build_env_network_layers = function(
     module_colors,
     corner_palettes,
     link_colors,
-    show_asterisks,
+    resolved_label_type,
+    value_digits,
+    value_size,
+    compact,
     curvature,
     circle_radius
 ) {
@@ -358,9 +418,28 @@ build_env_network_layers = function(
       )
     }
 
+    # Formatting numerical correlation values
+    fmt_r <- sprintf(paste0("%.", value_digits, "f"), r_vals)
+    if (compact) {
+      fmt_r <- sub("^(-?)0\\.", "\\1.", fmt_r)
+      fmt_r[r_vals == 1.0] <- "1"
+    }
+
+    tile_label <- switch(
+      resolved_label_type,
+      "coef"       = fmt_r,
+      "coef_stars" = ifelse(grid$row == grid$col, fmt_r, paste0(fmt_r, stars)),
+      "stars"      = stars,
+      "none"       = rep("", length(r_vals)),
+      stars
+    )
+
+    text_col <- ifelse(abs(r_vals) > 0.60, "white", "grey18")
+
     col_ramp <- scales::col_numeric(pal, domain = c(-1, 1))
     tiles_list[[c_idx]] <- data.frame(
       x = xs, y = ys, r = r_vals, stars = stars,
+      label = tile_label, text_color = text_col,
       fill_col = col_ramp(r_vals), step = step, corner = c_name, stringsAsFactors = FALSE
     )
     diag_list[[c_idx]] <- cbind(diag_pts, corner = c_name)
@@ -473,12 +552,34 @@ build_env_network_layers = function(
       color = "white", linewidth = 0.15
     )
 
-  if (show_asterisks) {
-    p <- p + ggplot2::geom_text(
-      data = all_tiles[all_tiles$stars != "", ],
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["stars"]]),
-      size = 1.6, color = "grey15", vjust = 0.75
-    )
+  if (resolved_label_type != "none") {
+    valid_text <- all_tiles$label != ""
+    if (any(valid_text)) {
+      sub_tiles <- all_tiles[valid_text, ]
+
+      min_step <- min(all_tiles$step)
+      char_count <- if (resolved_label_type %in% c("coef_stars", "both")) 5.2 else if (resolved_label_type == "coef") 3.8 else 2.2
+      calc_fit_size <- max(0.9, min(2.5, min_step / (char_count * 0.038)))
+      opt_size <- if (!is.null(value_size)) value_size else calc_fit_size
+
+      sub_dark <- sub_tiles[sub_tiles$text_color == "white", ]
+      sub_light <- sub_tiles[sub_tiles$text_color != "white", ]
+
+      if (nrow(sub_dark) > 0) {
+        p <- p + ggplot2::geom_text(
+          data = sub_dark,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = opt_size, color = "white", vjust = 0.5, hjust = 0.5
+        )
+      }
+      if (nrow(sub_light) > 0) {
+        p <- p + ggplot2::geom_text(
+          data = sub_light,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = opt_size, color = "grey18", vjust = 0.5, hjust = 0.5
+        )
+      }
+    }
   }
 
   p <- p +

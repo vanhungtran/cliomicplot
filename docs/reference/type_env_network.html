@@ -65,6 +65,12 @@ and colored by correlation direction.</p>
 <span>  corner_palettes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  link_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Positive <span class="op">=</span> <span class="st">"#E64B35"</span>, Negative <span class="op">=</span> <span class="st">"#4DBBD5"</span><span class="op">)</span>,</span>
 <span>  show_asterisks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_cor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"stars"</span>, <span class="st">"coef"</span>, <span class="st">"coef_stars"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  value_digits <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  value_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  compact <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  curvature <span class="op">=</span> <span class="fl">0.14</span>,</span>
 <span>  circle_radius <span class="op">=</span> <span class="fl">2.45</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -100,6 +106,34 @@ If NULL, significant links are computed or sampled automatically from input data
 
 <dt id="arg-show-asterisks">show_asterisks<a class="anchor" aria-label="anchor" href="#arg-show-asterisks"></a></dt>
 <dd><p>Logical. If TRUE, overlays significance asterisks (*, **, ***) in correlation tiles. Default TRUE.</p></dd>
+
+
+<dt id="arg-show-values">show_values<a class="anchor" aria-label="anchor" href="#arg-show-values"></a></dt>
+<dd><p>Logical. If TRUE, displays numerical correlation values in correlation tiles. Default FALSE.</p></dd>
+
+
+<dt id="arg-show-cor">show_cor<a class="anchor" aria-label="anchor" href="#arg-show-cor"></a></dt>
+<dd><p>Logical alias for <code>show_values</code>. If non-NULL, overrides <code>show_values</code>.</p></dd>
+
+
+<dt id="arg-label-type">label_type<a class="anchor" aria-label="anchor" href="#arg-label-type"></a></dt>
+<dd><p>Character string specifying tile annotation format: <code>"auto"</code> (default, determined by
+<code>show_values</code> and <code>show_asterisks</code>), <code>"coef"</code> (e.g. <code>".42"</code>),
+<code>"coef_stars"</code> (e.g. <code>".42***"</code>), <code>"stars"</code> (e.g. <code>"***"</code>), or <code>"none"</code>.</p></dd>
+
+
+<dt id="arg-value-digits">value_digits<a class="anchor" aria-label="anchor" href="#arg-value-digits"></a></dt>
+<dd><p>Integer number of decimal places for correlation coefficients (default 2).</p></dd>
+
+
+<dt id="arg-value-size">value_size<a class="anchor" aria-label="anchor" href="#arg-value-size"></a></dt>
+<dd><p>Optional numeric font size for tile text. If NULL (default), automatically calculated
+based on tile step dimensions so numbers fit inside without clipping.</p></dd>
+
+
+<dt id="arg-compact">compact<a class="anchor" aria-label="anchor" href="#arg-compact"></a></dt>
+<dd><p>Logical. If TRUE (default), strips leading zeros (e.g. <code>".42"</code> instead of <code>"0.42"</code>)
+for compact, high-density tile fitting.</p></dd>
 
 
 <dt id="arg-curvature">curvature<a class="anchor" aria-label="anchor" href="#arg-curvature"></a></dt>

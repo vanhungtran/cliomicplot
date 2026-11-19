@@ -84,8 +84,11 @@ env_cors <- list(
 )
 
 p_c <- cliplot_env_network(
-  env_cors = env_cors,
-  title    = "(c) Central Modular Network Coupled with Environmental Drivers"
+  env_cors    = env_cors,
+  show_values = TRUE,  # Display compact, contrast-aware correlation coefficients
+  value_digits = 2,    # Number of decimal places
+  compact     = TRUE,  # Strip leading zero (.42 instead of 0.42) to fit snugly in tiles
+  title       = "(c) Central Modular Network Coupled with Environmental Drivers"
 )
 
 # ==============================================================================

@@ -11,6 +11,12 @@ type_env_network(
   corner_palettes = NULL,
   link_colors = c(Positive = "#E64B35", Negative = "#4DBBD5"),
   show_asterisks = TRUE,
+  show_values = FALSE,
+  show_cor = NULL,
+  label_type = c("auto", "stars", "coef", "coef_stars", "none"),
+  value_digits = 2,
+  value_size = NULL,
+  compact = TRUE,
   curvature = 0.14,
   circle_radius = 2.45,
   title = NULL
@@ -31,6 +37,22 @@ If NULL, significant links are computed or sampled automatically from input data
 \item{link_colors}{Named vector of colors for link signs (default \code{c("Positive" = "#E64B35", "Negative" = "#4DBBD5")}).}
 
 \item{show_asterisks}{Logical. If TRUE, overlays significance asterisks (*, **, ***) in correlation tiles. Default TRUE.}
+
+\item{show_values}{Logical. If TRUE, displays numerical correlation values in correlation tiles. Default FALSE.}
+
+\item{show_cor}{Logical alias for \code{show_values}. If non-NULL, overrides \code{show_values}.}
+
+\item{label_type}{Character string specifying tile annotation format: \code{"auto"} (default, determined by
+\code{show_values} and \code{show_asterisks}), \code{"coef"} (e.g. \code{".42"}),
+\code{"coef_stars"} (e.g. \code{".42***"}), \code{"stars"} (e.g. \code{"***"}), or \code{"none"}.}
+
+\item{value_digits}{Integer number of decimal places for correlation coefficients (default 2).}
+
+\item{value_size}{Optional numeric font size for tile text. If NULL (default), automatically calculated
+based on tile step dimensions so numbers fit inside without clipping.}
+
+\item{compact}{Logical. If TRUE (default), strips leading zeros (e.g. \code{".42"} instead of \code{"0.42"})
+for compact, high-density tile fitting.}
 
 \item{curvature}{Numeric curvature of inter-domain connecting lines (default 0.14).}
 

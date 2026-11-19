@@ -158,6 +158,14 @@ test_that("type_env_network and cliplot_env_network work", {
   p_env <- cliplot_env_network(title = "Central Network Coupled with Environmental Factors")
   expect_s3_class(p_env, "ggplot")
   
+  # With correlation values enabled
+  p_vals <- cliplot_env_network(show_values = TRUE, value_digits = 2, compact = TRUE)
+  expect_s3_class(p_vals, "ggplot")
+
+  # With coef label_type
+  p_coef <- cliplot_env_network(label_type = "coef", value_size = 1.5)
+  expect_s3_class(p_coef, "ggplot")
+  
   # Via cliplot dispatch
   p_cli_env <- cliplot(data.frame(), type = "env_network")
   expect_s3_class(p_cli_env, "ggplot")

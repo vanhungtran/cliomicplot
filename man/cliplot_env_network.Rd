@@ -11,6 +11,13 @@ cliplot_env_network(
   links = NULL,
   module_colors = NULL,
   corner_palettes = NULL,
+  show_asterisks = TRUE,
+  show_values = FALSE,
+  show_cor = NULL,
+  label_type = c("auto", "stars", "coef", "coef_stars", "none"),
+  value_digits = 2,
+  value_size = NULL,
+  compact = TRUE,
   title = NULL,
   ...
 )
@@ -27,6 +34,20 @@ cliplot_env_network(
 \item{module_colors}{Named color vector for modules.}
 
 \item{corner_palettes}{List of color gradients for corner heatmaps.}
+
+\item{show_asterisks}{Logical. If TRUE, shows significance asterisks. Default TRUE.}
+
+\item{show_values}{Logical. If TRUE, displays numerical correlation values in tiles. Default FALSE.}
+
+\item{show_cor}{Logical alias for \code{show_values}.}
+
+\item{label_type}{Character string specifying tile label format: \code{"auto"}, \code{"coef"}, \code{"coef_stars"}, \code{"stars"}, or \code{"none"}.}
+
+\item{value_digits}{Decimal places for correlation coefficients (default 2).}
+
+\item{value_size}{Font size for tile text (default auto-scaled).}
+
+\item{compact}{Logical. If TRUE (default), omits leading zero for compact fitting.}
 
 \item{title}{Plot title.}
 
