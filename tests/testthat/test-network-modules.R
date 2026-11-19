@@ -125,3 +125,40 @@ test_that("type_module_trait works with sample-level multi-variable data", {
   p_mat <- cliplot(mat, type = "module_trait")
   expect_s3_class(p_mat, "ggplot")
 })
+
+test_that("type_cross_network_graph and cliplot_cross_network_graph work", {
+  demo <- generate_demo_cross_network()
+  
+  # Node-level graph
+  p_node <- cliplot_cross_network_graph(
+    nodes = demo$nodes,
+    edges = demo$edges,
+    cross_edges = demo$cross_edges,
+    level = "node",
+    title = "Cross Network Topology"
+  )
+  expect_s3_class(p_node, "ggplot")
+  
+  # Module-level graph
+  p_mod <- cliplot_cross_network_graph(
+    nodes = demo$nodes,
+    edges = demo$edges,
+    cross_edges = demo$cross_edges,
+    level = "module"
+  )
+  expect_s3_class(p_mod, "ggplot")
+  
+  # Via cliplot dispatch
+  p_cli <- cliplot(demo$nodes, type = "cross_network_graph")
+  expect_s3_class(p_cli, "ggplot")
+})
+
+test_that("type_env_network and cliplot_env_network work", {
+  # Direct function call
+  p_env <- cliplot_env_network(title = "Central Network Coupled with Environmental Factors")
+  expect_s3_class(p_env, "ggplot")
+  
+  # Via cliplot dispatch
+  p_cli_env <- cliplot(data.frame(), type = "env_network")
+  expect_s3_class(p_cli_env, "ggplot")
+})

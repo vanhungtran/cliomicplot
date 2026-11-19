@@ -65,6 +65,15 @@ reference:
       - type_boxplot
       - type_violin
       - type_bubble_heatmap
+  - title: Systems Biology & Microbial Networks
+    contents:
+      - cliplot_cross_network_graph
+      - type_cross_network_graph
+      - cliplot_env_network
+      - type_env_network
+      - type_module_compare
+      - type_module_trait
+      - generate_demo_cross_network
   - title: General plot types
     contents:
       - starts_with("type_")
