@@ -180,7 +180,10 @@ type_mcid = function(
         ) +
         ggplot2::scale_size_continuous(
           range = settings$point_size_range,
-          name  = "Sample size (N)"
+          name  = "Sample size (N)",
+          guide = ggplot2::guide_legend(
+            override.aes = list(fill = "grey40", colour = "grey40", shape = 21)
+          )
         ) +
         ggplot2::scale_color_manual(
           values = settings$mcid_colors,

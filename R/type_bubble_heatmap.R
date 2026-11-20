@@ -137,7 +137,8 @@ type_bubble_heatmap = function(
           guide    = ggplot2::guide_legend(
             order = 2,
             keywidth = ggplot2::unit(12, "pt"),
-            keyheight = ggplot2::unit(12, "pt")
+            keyheight = ggplot2::unit(12, "pt"),
+            override.aes = list(fill = "grey40", colour = "grey40", shape = 23)
           )
         ) +
         ggplot2::scale_fill_gradientn(

@@ -169,8 +169,8 @@ type_waterfall = function(
             linewidth = 0, fill = "white", color = "#4A4F57", alpha = 0.9
           ) +
           ggplot2::annotate(
-            "label", x = Inf, y = ref_lines[3], label = "PR -30%",
-            hjust = 1.05, vjust = 1.25, size = 3,
+            "label", x = -Inf, y = ref_lines[3], label = "PR -30%",
+            hjust = -0.1, vjust = 1.25, size = 3,
             linewidth = 0, fill = "white", color = "#4A4F57", alpha = 0.9
           )
       }

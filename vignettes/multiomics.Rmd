@@ -165,7 +165,7 @@ AD, PD, and AD+PD groups show distinct separation from controls along PC1.
 Pairwise protein expression correlations across the top 50 most variable
 proteins, with hierarchical clustering and significance stars:
 
-```{r, fig.width=8, fig.height=7.2}
+```{r, fig.width=8.5, fig.height=7.5}
 # Select top 50 most variable proteins and format concise gene symbols
 variances = apply(adpd$wide_clean, 1, var, na.rm = TRUE)
 top50 = names(sort(variances, decreasing = TRUE)[1:50])
@@ -434,7 +434,7 @@ cat(sprintf("Dynamic range: %.0f – %.0f (%.0f×)\n",
             max(stroke_expr$Intensity) / min(stroke_expr$Intensity)))
 ```
 
-```{r}
+```{r, fig.width=8.0, fig.height=5.5}
 clitheme("science")
 
 cliplot(Intensity ~ Rank, data = stroke_expr,
@@ -481,14 +481,14 @@ names(deg2_clean)[names(deg2_clean) == "logFC"] = "logFC_comp2"
 
 # Label top concordant hits
 deg_merged$effect = abs(deg_merged$logFC_AD) + abs(deg_merged$logFC_PD)
-top_labels = head(deg_merged[order(-deg_merged$effect), ], 15)$UniqueID
+top_labels = head(deg_merged[order(-deg_merged$effect), ], 12)$UniqueID
 
 cat(sprintf("Merged proteins: %d\n", nrow(deg_merged)))
 cat(sprintf("Concordant direction: %.1f%%\n",
             100 * sum(sign(deg_merged$logFC_AD) == sign(deg_merged$logFC_PD), na.rm = TRUE) / nrow(deg_merged)))
 ```
 
-```{r}
+```{r, fig.width=8.0, fig.height=5.8}
 clitheme("cell")
 
 cliplot(logFC_AD ~ UniqueID, data = deg_merged,
@@ -501,7 +501,9 @@ cliplot(logFC_AD ~ UniqueID, data = deg_merged,
         ),
         stat.test = NULL,
         title    = "**Figure 9** — Cross-Disease DEG Comparison",
-        subtitle = "log₂FC: AD vs. Control × PD vs. Control (cortex proteomics)") +
+        subtitle = "log₂FC: AD vs. Control × PD vs. Control (cortex proteomics)",
+        xlab     = "log₂FC (PD vs. Control)",
+        ylab     = "log₂FC (AD vs. Control)") +
   cli_markdown()
 ```
 
@@ -548,7 +550,7 @@ bh_rows$absFC = abs(bh_rows$logFC)
 bh_rows$Gene  = sub("_.*", "", bh_rows$Protein)
 ```
 
-```{r, fig.width=7.5, fig.height=8.5}
+```{r, fig.width=8.5, fig.height=8.5}
 cliplot(Gene ~ Comparison, data = bh_rows,
         by = bh_rows$absFC,
         type = type_bubble_heatmap(
@@ -563,7 +565,7 @@ cliplot(Gene ~ Comparison, data = bh_rows,
         extra_data = list(fill = bh_rows$PValue),
         stat.test  = NULL,
         title      = "**Figure 10** — Diamond Bubble Heatmap",
-        subtitle   = "Top DE Proteins × AD/PD Comparisons | size = |log₂FC|, colour = significance") +
+        subtitle   = "Top DE Proteins × AD/PD Comparisons (size = |log₂FC|, colour = significance)") +
   cli_markdown()
 ```
 

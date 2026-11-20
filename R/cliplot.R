@@ -222,8 +222,8 @@ cliplot.default = function(
     # ---- Apply legend position ----
     p = p + ggplot2::theme(legend.position = settings$legend)
 
-    # ---- Maintain angled x-axis text for matrix and heatmap types ----
-    if (settings$type_name %in% c("module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix", "bubble_heatmap")) {
+    # ---- Maintain angled x-axis text for matrix, heatmap, and waterfall types ----
+    if (settings$type_name %in% c("waterfall", "module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix", "bubble_heatmap")) {
       sz_x = settings$axis_text_size %||% settings$cor_axis_size %||% settings$bh_axis_x_size
       sz_y = settings$axis_text_size %||% settings$cor_axis_size %||% settings$bh_axis_y_size
       ang = settings$axis_text_angle %||% settings$cor_axis_angle %||% settings$bh_axis_angle %||% 45

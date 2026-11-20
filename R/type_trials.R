@@ -147,6 +147,8 @@ type_trials = function(
       # Tell the engine not to auto-apply a palette — this type colours
       # everything itself via scale_fill_manual / scale_colour_manual.
       settings$by <- NULL
+      settings$xlab <- NULL
+      settings$ylab <- NULL
     },
 
     draw = function(data, mapping, settings, ...) {
@@ -219,8 +221,10 @@ type_trials = function(
           limits  = c(0, xlim),
           expand  = ggplot2::expansion(mult = c(0, 0))
         ) +
-        ggplot2::scale_y_discrete(
-          labels = function(x) gsub("&", "&\n", x)
+        ggplot2::scale_y_continuous(
+          breaks = seq_along(levels(df$category)),
+          labels = gsub("&", "&\n", levels(df$category)),
+          expand = ggplot2::expansion(mult = c(0.04, 0.04))
         ) +
         ggplot2::labs(x = NULL, y = NULL, fill = NULL) +
         ggplot2::guides(

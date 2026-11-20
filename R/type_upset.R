@@ -225,9 +225,10 @@ type_upset = function(
         ) +
         ggplot2::geom_text(
           ggplot2::aes(label = .data[["size"]]),
-          hjust = -0.3, size = 3
+          hjust = -0.2, size = 3
         ) +
-        ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.15))) +
+        ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.28))) +
+        ggplot2::coord_cartesian(clip = "off") +
         ggplot2::theme(
           axis.text.y = ggplot2::element_text(face = "bold", size = 9),
           panel.grid.major.y = ggplot2::element_blank()
@@ -249,7 +250,7 @@ type_upset = function(
       right = p_bars / p_matrix +
         patchwork::plot_layout(heights = c(2, 3))
       layout = p_sets + right +
-        patchwork::plot_layout(widths = c(1, 4))
+        patchwork::plot_layout(widths = c(1.2, 3.8))
       layout
     },
     name = "upset"

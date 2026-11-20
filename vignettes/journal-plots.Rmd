@@ -106,7 +106,7 @@ ROC curves evaluate classifier sensitivity and specificity across all thresholds
 
 Here, we evaluate top differentially expressed cortex proteins for distinguishing Alzheimer's disease (AD) from neurologically normal controls (CTL):
 
-```{r fig1-roc}
+```{r fig1-roc, fig.width=7.0, fig.height=5.0}
 meta_adctl = adpd_meta[adpd_meta$group %in% c("AD", "CTL"), ]
 samples = as.character(meta_adctl$sampleid)
 top_markers = c("SMOC1_A0A024R6E0", "APP_A0A218KGR2", "MDK_E9PPJ5")
@@ -120,7 +120,8 @@ roc_df = data.frame(
 cliplot(roc_df,
         type = type_roc(predictors = top_markers, response = "disease"),
         theme = "nature", palette = "npg") +
-  cli_panel_label("a")
+  labs(tag = "a") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ---
@@ -129,7 +130,7 @@ cliplot(roc_df,
 
 Enrichment dot plots order biological pathways or gene sets by Normalized Enrichment Score (NES), encoding statistical significance ($-\log_{10} \text{FDR}$) in dot size and regulation direction in color:
 
-```{r fig2-gsea}
+```{r fig2-gsea, fig.width=7.5, fig.height=5.8}
 # Extract top DE proteins from AD vs CTL comparison
 r_adctl = adpd_res[adpd_res$test == "ADvsCTL", ]
 r_adctl = r_adctl[order(r_adctl$Adj.P.Value), ]
@@ -141,7 +142,8 @@ top_pathways = data.frame(
 )
 
 cliplot(top_pathways, type = "gsea", top_term = 18, theme = "nature") +
-  cli_panel_label("b")
+  labs(tag = "b") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ---
@@ -150,7 +152,7 @@ cliplot(top_pathways, type = "gsea", top_term = 18, theme = "nature") +
 
 UpSet plots supersede Venn diagrams when tracking differentially expressed gene or metabolite overlap across $\ge 4$ biological contrasts:
 
-```{r fig3-upset}
+```{r fig3-upset, fig.width=8.0, fig.height=5.2}
 deg_sets = lapply(unique(adpd_res$test), function(tt) {
   sub = adpd_res[adpd_res$test == tt, ]
   sub$UniqueID[sub$Adj.P.Value < 0.05 & abs(sub$logFC) > 0.5]
@@ -159,7 +161,8 @@ names(deg_sets) = unique(adpd_res$test)
 deg_sets = deg_sets[vapply(deg_sets, length, integer(1)) > 0]
 
 cliplot(deg_sets, type = "upset", theme = "cell") +
-  cli_panel_label("c")
+  labs(tag = "c") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ---
@@ -168,7 +171,7 @@ cliplot(deg_sets, type = "upset", theme = "cell") +
 
 For manuscripts submitted to Elsevier, IEEE, and SCI journals requiring full four-sided spines and outward tick marks, `theme_cli_scifig()` provides a crisp box frame with a subtle dashed reference grid:
 
-```{r fig4-scifig}
+```{r fig4-scifig, fig.width=7.5, fig.height=5.0}
 # Protein abundance across stroke recovery time-points
 lxn_sub = stroke_long[stroke_long$UniqueID == "Lxn_P70202", ]
 lxn_sub$timepoint = factor(paste0("Day ", lxn_sub$conc),
@@ -180,7 +183,8 @@ cliplot(expr ~ timepoint | treatment, data = lxn_sub,
         palette = "npg",
         xlab = "Recovery Time-Point",
         ylab = "Normalized Abundance (LFQ Intensity)") +
-  cli_panel_label("d")
+  labs(tag = "d") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ---
@@ -189,16 +193,17 @@ cliplot(expr ~ timepoint | treatment, data = lxn_sub,
 
 A key requirement in CNS journals is assembling modular panels into a unified figure and exporting at exact physical millimeter trim width:
 
-```{r composite-assembly, fig.width=8.5, fig.height=4.2}
+```{r composite-assembly, fig.width=9.0, fig.height=4.8}
 panel_a = cliplot(roc_df, type = type_roc(predictors = top_markers[1:2], response = "disease"),
-                  theme = "nature", palette = "npg") +
-  cli_panel_label("a")
+                  theme = "nature", palette = "npg")
 
-panel_b = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature") +
-  cli_panel_label("b")
+panel_b = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature")
 
 # Combine side-by-side using patchwork
-composite_fig = panel_a + panel_b + plot_layout(widths = c(1, 1.25))
+composite_fig = (panel_a + panel_b) +
+  plot_layout(widths = c(1, 1.25)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 composite_fig
 ```
 

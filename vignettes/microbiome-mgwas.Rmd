@@ -86,7 +86,7 @@ cliplot(
 
 Differential abundance tests report both directional effect size (signed $\log_2\text{FC}$) and statistical significance ($-\log_{10} q$). `type_bubble_matrix()` renders both across anatomical sampling sites and study visits:
 
-```{r bubble-matrix, fig.width=6.8, fig.height=4.6}
+```{r bubble-matrix, fig.width=8.0, fig.height=4.8}
 set.seed(42)
 species <- c("S. aureus", "S. epidermidis", "S. hominis", "C. acnes",
              "M. restricta", "P. melaninogenica", "V. parvula", "S. mitis")
@@ -234,16 +234,16 @@ cliplot(
 
 Connecting microbial community modules with micro-environmental exposures and clinical phenotypes elucidates how extrinsic conditions shape mucosal barrier dysfunction. `type_module_trait()` (alias `type = "module_env"`) calculates Pearson or Spearman correlations, exact p-values, and performs two-way hierarchical clustering across modules and environmental parameters:
 
-```{r module-trait-correlation, fig.width=7.2, fig.height=4.2}
+```{r module-trait-correlation, fig.width=8.5, fig.height=4.8}
 cor_env_df <- expand.grid(
   Module = c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"),
-  Factor = c("Skin_pH", "Transepidermal_Water_Loss", "PM25_Exposure", "Ambient_Temp", "Relative_Humidity", "SCORAD_Severity"),
+  Factor = c("Skin pH", "Transepidermal Water Loss", "PM25 Exposure", "Ambient Temp", "Relative Humidity", "SCORAD Severity"),
   stringsAsFactors = FALSE
 )
 
 # Assigned biological associations
 cor_env_df$cor <- c(
-  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72, # Skin_pH
+  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72, # Skin pH
   -0.28,  0.38,  0.15, -0.08,  0.45,  0.64, # TEWL
    0.45, -0.22, -0.35,  0.18, -0.15,  0.41, # PM25
   -0.12,  0.08,  0.15,  0.52,  0.44, -0.19, # Temp
@@ -465,7 +465,7 @@ In peer-reviewed publications, individual network analyses are assembled into un
 
 Using `patchwork`, the left column stacks Panel (a) and Panel (b), while the right column showcases the coupled network (Panel c):
 
-```{r publication-composite, fig.width=7.2, fig.height=6.7}
+```{r publication-composite, fig.width=8.5, fig.height=7.2}
 library(patchwork)
 
 # Build panels with Nature publication preset and SciFig quality gates
@@ -475,8 +475,9 @@ p_a <- cliplot_cross_network_graph(
   cross_edges = demo_net$cross_edges,
   level       = "node",
   preset      = "nature",
-  scifig      = TRUE
-)
+  scifig      = TRUE,
+  show_meta   = FALSE
+) + theme(legend.position = "none")
 
 p_b <- cliplot_cross_network_graph(
   nodes       = demo_net$nodes,
@@ -484,26 +485,25 @@ p_b <- cliplot_cross_network_graph(
   cross_edges = demo_net$cross_edges,
   level       = "module",
   preset      = "nature",
-  scifig      = TRUE
-)
+  scifig      = TRUE,
+  show_meta   = FALSE
+) + theme(legend.position = "none")
 
 p_c <- cliplot_env_network(
   preset             = "nature",
   scifig             = TRUE,
-  show_values        = TRUE,
+  show_values        = FALSE,
   show_domain_labels = TRUE,
-  value_digits       = 2,
   compact            = TRUE
 )
 
 fig3_composite <- (p_a / p_b) | p_c
 fig3_composite <- fig3_composite +
-  plot_layout(widths = c(1, 1.35)) +
+  plot_layout(widths = c(1, 1.4)) +
   plot_annotation(tag_levels = "a") &
   theme(
-    plot.tag = element_text(size = 8, face = "bold", family = "sans"),
-    plot.tag.position = c(0.02, 0.98),
-    plot.margin = margin(1.5, 1.5, 1.5, 1.5, "mm")
+    plot.tag = element_text(size = 9, face = "bold", family = "sans"),
+    plot.margin = margin(2, 2, 2, 2, "mm")
   )
 
 fig3_composite
