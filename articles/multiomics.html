@@ -634,13 +634,14 @@ all six AD/PD comparisons:</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">bh_rows</span> <span class="op">=</span> <span class="va">bh_rows</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">bh_rows</span><span class="op">$</span><span class="va">logFC</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">bh_rows</span><span class="op">$</span><span class="va">absFC</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">bh_rows</span><span class="op">$</span><span class="va">logFC</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">bh_rows</span><span class="op">$</span><span class="va">absFC</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">bh_rows</span><span class="op">$</span><span class="va">logFC</span><span class="op">)</span></span>
+<span><span class="va">bh_rows</span><span class="op">$</span><span class="va">Gene</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"_.*"</span>, <span class="st">""</span>, <span class="va">bh_rows</span><span class="op">$</span><span class="va">Protein</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Protein</span> <span class="op">~</span> <span class="va">Comparison</span>, data <span class="op">=</span> <span class="va">bh_rows</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Gene</span> <span class="op">~</span> <span class="va">Comparison</span>, data <span class="op">=</span> <span class="va">bh_rows</span>,</span>
 <span>        by <span class="op">=</span> <span class="va">bh_rows</span><span class="op">$</span><span class="va">absFC</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_bubble_heatmap.html">type_bubble_heatmap</a></span><span class="op">(</span></span>
-<span>          label_threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>          max_size        <span class="op">=</span> <span class="fl">14</span>,</span>
+<span>          label_threshold <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>          max_size        <span class="op">=</span> <span class="fl">8.5</span>,</span>
 <span>          size_name       <span class="op">=</span> <span class="st">"|log₂FC|"</span>,</span>
 <span>          fill_name       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="op">-</span><span class="va">log</span><span class="op">[</span><span class="fl">10</span><span class="op">]</span><span class="op">~</span><span class="st">"P"</span><span class="op">)</span>,</span>
 <span>          fill_low        <span class="op">=</span> <span class="st">"#4575B4"</span>,</span>
