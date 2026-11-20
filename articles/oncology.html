@@ -276,17 +276,18 @@ individual patient.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span></span>
-<span>          show_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          label_size  <span class="op">=</span> <span class="fl">2.4</span>,</span>
-<span>          bar_width   <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>          show_labels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>          n_skip_label <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>          bar_width   <span class="op">=</span> <span class="fl">0.72</span>,</span>
 <span>          response_thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PD"</span> <span class="op">=</span> <span class="fl">20</span>, <span class="st">"PR"</span> <span class="op">=</span> <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        title    <span class="op">=</span> <span class="st">"**Figure 3A** — Best Tumor Response from Baseline (Waterfall)"</span>,</span>
 <span>        subtitle <span class="op">=</span> <span class="st">"RECIST v1.1 Thresholds: PD (+20%) and PR (-30%)"</span>,</span>
 <span>        ylab     <span class="op">=</span> <span class="st">"Best % Change in Target Lesions"</span>,</span>
 <span>        legend   <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">6.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig3a-waterfall-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig3a-waterfall-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -301,15 +302,15 @@ with RECIST glyphs:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">n_events_per_pt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n_pts</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">n_total_events</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_events_per_pt</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">events_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  ID    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">imtrial</span><span class="op">$</span><span class="va">Patient</span>, times <span class="op">=</span> <span class="va">n_events_per_pt</span><span class="op">)</span>,</span>
-<span>  Time  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_total_events</span>, <span class="fl">1</span>, <span class="fl">26</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  Event <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Progression"</span>, <span class="st">"AE"</span>, <span class="st">"Dose Reduction"</span>, <span class="st">"Response"</span>, <span class="st">"Surgery"</span><span class="op">)</span>,</span>
-<span>                 <span class="va">n_total_events</span>,</span>
-<span>                 replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">events_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">n_pts</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">n_ev</span> <span class="op">&lt;-</span> <span class="va">n_events_per_pt</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>  <span class="va">dur</span>  <span class="op">&lt;-</span> <span class="va">imtrial</span><span class="op">$</span><span class="va">Duration</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>  <span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_ev</span>, min <span class="op">=</span> <span class="fl">0.5</span>, max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1.0</span>, <span class="va">dur</span> <span class="op">-</span> <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">ev_types</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Progression"</span>, <span class="st">"AE"</span>, <span class="st">"Dose Reduction"</span>, <span class="st">"Response"</span>, <span class="st">"Surgery"</span><span class="op">)</span>,</span>
+<span>                     <span class="va">n_ev</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.10</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ID <span class="op">=</span> <span class="va">imtrial</span><span class="op">$</span><span class="va">Patient</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, Time <span class="op">=</span> <span class="va">times</span>, Event <span class="op">=</span> <span class="va">ev_types</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">events_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">events_list</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"cell"</span><span class="op">)</span></span>
 <span></span>
@@ -320,7 +321,7 @@ with RECIST glyphs:</p>
 <span>          event_times   <span class="op">=</span> <span class="va">events_df</span>,</span>
 <span>          show_duration <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>          bar_alpha     <span class="op">=</span> <span class="fl">0.85</span>,</span>
-<span>          bar_linewidth <span class="op">=</span> <span class="fl">4.2</span></span>
+<span>          bar_linewidth <span class="op">=</span> <span class="fl">4.0</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        bar_palette <span class="op">=</span> <span class="st">"jama"</span>,</span>
 <span>        title   <span class="op">=</span> <span class="st">"**Figure 3B** — Patient Treatment Trajectories (Swimmer)"</span>,</span>
@@ -330,7 +331,7 @@ with RECIST glyphs:</p>
 <span>        legend  <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig3b-swimmer-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig3b-swimmer-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -372,7 +373,7 @@ and sorting endpoints by their effect-to-MCID ratio:</p>
 <span>        subtitle <span class="op">=</span> <span class="st">"Comparing observed clinical effects to validated instrument thresholds"</span>,</span>
 <span>        xlab     <span class="op">=</span> <span class="st">"Absolute Effect Estimate (|estimate|)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig4-mcid-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig4-mcid-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -411,8 +412,9 @@ Severe), anchored by a bold group mean ribbon and sample size callouts
 <span>        title    <span class="op">=</span> <span class="st">"**Figure 5** — Longitudinal Biomarker Response Trajectories"</span>,</span>
 <span>        subtitle <span class="op">=</span> <span class="st">"Circulating Tumor Protein Dynamics with Severity Stratification"</span>,</span>
 <span>        ylab     <span class="op">=</span> <span class="st">"Tumor Biomarker Concentration (ng/mL)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.margin <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">margin</a></span><span class="op">(</span><span class="fl">5.5</span>, <span class="fl">22</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="st">"pt"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig5-trajectory-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig5-trajectory-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -505,19 +507,23 @@ statistical annotations:</p>
 <span></span>
 <span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"scifig"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Group</span> <span class="op">|</span> <span class="va">UniqueID</span>, data <span class="op">=</span> <span class="va">met_data</span>,</span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Group</span> <span class="op">|</span> <span class="va">Group</span>, data <span class="op">=</span> <span class="va">met_data</span>,</span>
+<span>        facet <span class="op">=</span> <span class="op">~</span> <span class="va">UniqueID</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_boxplot.html">type_boxplot</a></span><span class="op">(</span></span>
 <span>          add_jitter   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          jitter_width <span class="op">=</span> <span class="fl">0.22</span></span>
+<span>          jitter_width <span class="op">=</span> <span class="fl">0.20</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        stat.test <span class="op">=</span> <span class="st">"anova"</span>,</span>
 <span>        stat.label <span class="op">=</span> <span class="st">"p.signif"</span>,</span>
 <span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
 <span>        title   <span class="op">=</span> <span class="st">"**Figure 6C** — Metabolite Levels by Age × Diet Group"</span>,</span>
 <span>        subtitle <span class="op">=</span> <span class="st">"Top 4 DE metabolites | One-way ANOVA with significance stars"</span>,</span>
-<span>        ylab    <span class="op">=</span> <span class="st">"Metabolite Abundance (log2)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        xlab    <span class="op">=</span> <span class="st">"Experimental Group"</span>,</span>
+<span>        ylab    <span class="op">=</span> <span class="st">"Metabolite Abundance (log2)"</span>,</span>
+<span>        legend  <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">7.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig6c-anova-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig6c-anova-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -541,17 +547,23 @@ portfolios categorized by clinical trial phase:</p>
 <span>  <span class="st">"II/III"</span> <span class="op">=</span> <span class="st">"#B76348"</span>, <span class="st">"III"</span>    <span class="op">=</span> <span class="st">"#123F2A"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">phase_text_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"I"</span>      <span class="op">=</span> <span class="st">"#333333"</span>, <span class="st">"I/II"</span>   <span class="op">=</span> <span class="st">"#FFFFFF"</span>, <span class="st">"II"</span>     <span class="op">=</span> <span class="st">"#333333"</span>,</span>
+<span>  <span class="st">"II/III"</span> <span class="op">=</span> <span class="st">"#FFFFFF"</span>, <span class="st">"III"</span>    <span class="op">=</span> <span class="st">"#FFFFFF"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"cli_bw"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">n</span> <span class="op">~</span> <span class="va">company</span> <span class="op">|</span> <span class="va">phase</span>, data <span class="op">=</span> <span class="va">pipeline</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_trials.html">type_trials</a></span><span class="op">(</span></span>
-<span>          segment_colors  <span class="op">=</span> <span class="va">phase_colors</span>,</span>
-<span>          label_threshold <span class="op">=</span> <span class="fl">3</span></span>
+<span>          segment_colors      <span class="op">=</span> <span class="va">phase_colors</span>,</span>
+<span>          segment_text_colors <span class="op">=</span> <span class="va">phase_text_colors</span>,</span>
+<span>          label_threshold     <span class="op">=</span> <span class="fl">3</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        title    <span class="op">=</span> <span class="st">"**Figure 7** — Oncology Pipeline Activity by Development Phase"</span>,</span>
 <span>        subtitle <span class="op">=</span> <span class="st">"Global Pharmaceutical Portfolios with ≥ 25 Active Clinical Trials"</span>,</span>
 <span>        caption  <span class="op">=</span> <span class="st">"Source: Citeline Annual Clinical Trial Report"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig7-trials-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig7-trials-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -562,9 +574,14 @@ bold panel labels (<strong>a</strong>, <strong>b</strong> or
 <strong>A</strong>, <strong>B</strong>) and synchronized typography:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_waterfall</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
-<span>                       type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">FALSE</span>, bar_width <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span>,</span>
+<span>                       type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span></span>
+<span>                         show_labels  <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                         n_skip_label <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                         bar_width    <span class="op">=</span> <span class="fl">0.65</span></span>
+<span>                       <span class="op">)</span>,</span>
 <span>                       theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
 <span>                       title <span class="op">=</span> <span class="st">"Best Tumor Response"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">6.0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_swimmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
@@ -586,7 +603,7 @@ bold panel labels (<strong>a</strong>, <strong>b</strong> or
 <span>    caption <span class="op">=</span> <span class="st">"Simulated trial data: 30 evaluable patients | Arrows indicate ongoing therapy at data lock"</span>,</span>
 <span>    theme   <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">element_markdown</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">13</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig8-composite-1.png" class="r-plt" alt="" width="940.8" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig8-composite-1.png" class="r-plt" alt="" width="1008" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">

@@ -15,9 +15,8 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started with cliomicplot">
-  <link href="../extra.css" rel="stylesheet">
-  <script src="../extra.js"></script>
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../extra.js"></script><meta property="og:title" content="Getting Started with cliomicplot">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -62,7 +61,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-10-31</h4>
+            <h4 data-toc-skip class="date">2026-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/cliomicplot.Rmd" class="external-link"><code>vignettes/cliomicplot.Rmd</code></a></small>
       <div class="d-none name"><code>cliomicplot.Rmd</code></div>
@@ -315,15 +314,18 @@ them with <code><a href="../reference/cli_panel_label.html">cli_panel_label()</a
 <strong>B</strong>) standards:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Petal.Length</span> <span class="op">|</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>              palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Scatter Distribution"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
+<span>              palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Scatter Distribution"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Sepal.Length</span> <span class="op">~</span> <span class="va">Species</span>, data <span class="op">=</span> <span class="va">iris</span>,</span>
-<span>              type <span class="op">=</span> <span class="st">"boxplot"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Species Boxplot"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span>              type <span class="op">=</span> <span class="st">"boxplot"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>, title <span class="op">=</span> <span class="st">"Species Boxplot"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Composite Biomarker Panel (Nature Design Language)"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">(</span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span></span>
+<span>    tag_levels <span class="op">=</span> <span class="st">"a"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Composite Biomarker Panel (Nature Design Language)"</span></span>
+<span>  <span class="op">)</span> <span class="op">&amp;</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cliomicplot_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="912" style="display: block; margin: auto;"></p>
 <hr>
 </div>
