@@ -100,6 +100,21 @@ test_that("type_correlation works with lower triangle", {
   expect_s3_class(p, "ggplot")
 })
 
+test_that("type_correlation supports custom and adaptive axis/legend sizing", {
+  p <- cliplot(mtcars,
+               type = type_correlation(
+                 type            = "lower",
+                 axis_text_size  = 6,
+                 axis_text_angle = 90,
+                 tile_border_width = 0.2,
+                 legend_barheight = 40
+               ))
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$theme$axis.text.x$size, 6)
+  expect_equal(p$theme$axis.text.y$size, 6)
+  expect_equal(p$theme$axis.text.x$angle, 90)
+})
+
 # ---- forest ----
 
 test_that("type_forest works", {

@@ -224,7 +224,31 @@ cliplot.default = function(
 
     # ---- Maintain angled x-axis text for matrix and heatmap types ----
     if (settings$type_name %in% c("module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix")) {
-      p = p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1))
+      sz = settings$axis_text_size %||% settings$cor_axis_size
+      ang = settings$axis_text_angle %||% settings$cor_axis_angle %||% 45
+      show_ax = if (!is.null(settings$cor_show_axis)) settings$cor_show_axis else TRUE
+
+      if (!isTRUE(show_ax)) {
+        p = p + ggplot2::theme(
+          axis.text.x = ggplot2::element_blank(),
+          axis.text.y = ggplot2::element_blank()
+        )
+      } else if (!is.null(sz)) {
+        p = p + ggplot2::theme(
+          axis.text.x = ggplot2::element_text(angle = ang, hjust = 1, vjust = 1, size = sz),
+          axis.text.y = ggplot2::element_text(size = sz)
+        )
+      } else {
+        p = p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = ang, hjust = 1, vjust = 1))
+      }
+    }
+
+    # ---- Maintain clean matrix borders and backgrounds for correlation matrices ----
+    if (settings$type_name == "correlation") {
+      p = p + ggplot2::theme(
+        panel.grid   = ggplot2::element_blank(),
+        panel.border = ggplot2::element_blank()
+      )
     }
   }
 
