@@ -1058,6 +1058,8 @@ build_env_network_layers = function(
     ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
     ggplot2::theme_void() +
     ggplot2::theme(
+      plot.background      = ggplot2::element_rect(fill = "white", color = NA),
+      panel.background     = ggplot2::element_rect(fill = "white", color = NA),
       legend.position      = legend_position,
       legend.box           = "vertical",
       legend.box.just      = "center",

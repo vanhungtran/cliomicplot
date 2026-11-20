@@ -617,6 +617,8 @@ build_cross_network_layers = function(
     ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = c(-3.8, 6.2)) +
     ggplot2::theme_void() +
     ggplot2::theme(
+      plot.background  = ggplot2::element_rect(fill = "white", color = NA),
+      panel.background = ggplot2::element_rect(fill = "white", color = NA),
       legend.position = "right",
       legend.title = ggplot2::element_text(size = 9, face = "bold"),
       legend.text  = ggplot2::element_text(size = 8)
