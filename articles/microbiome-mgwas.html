@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-11-20</h4>
+            <h4 data-toc-skip class="date">2026-11-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/microbiome-mgwas.Rmd" class="external-link"><code>vignettes/microbiome-mgwas.Rmd</code></a></small>
       <div class="d-none name"><code>microbiome-mgwas.Rmd</code></div>
@@ -491,27 +491,30 @@ significance-weighted curved links:</p>
 <h3 id="interpretation-and-visual-grammar-3">Interpretation and Visual Grammar<a class="anchor" aria-label="anchor" href="#interpretation-and-visual-grammar-3"></a>
 </h3>
 <p>This standalone architecture integrates three analytical layers on a
-unified coordinate plane:</p>
+unified coordinate plane conforming to Fig4papers publication
+standards:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Central Circular Network
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>2.45</mn></mrow><annotation encoding="application/x-tex">r = 2.45</annotation></semantics></math>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>2.80</mn></mrow><annotation encoding="application/x-tex">r = 2.80</annotation></semantics></math>
 boundary)</strong>:
 <ul>
 <li>Displays the biological co-occurrence network partitioned into
 functional modules
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mtext mathvariant="normal">–</mtext><msub><mi>M</mi><mn>7</mn></msub></mrow><annotation encoding="application/x-tex">M_1\text{--}M_7</annotation></semantics></math>).</li>
-<li>Features compact two-line opaque badges (<code>M1\nCore</code>,
-<code>M5\nAMP</code>, etc.) that avoid label collision.</li>
-<li>Grey intra-module edges connect co-occurring taxa.</li>
+<li>Features bold opaque badges (<code>M1: Core</code>,
+<code>M2: Barrier</code>, etc.) positioned radially with edge-exclusion
+boundaries to eliminate text-stroke overlap.</li>
+<li>Network nodes use fill-only vector geometry
+(<code>shape = 16</code>) to guarantee zero stroke collisions.</li>
 </ul>
 </li>
 <li>
 <strong>Four Corner Triangular Heatmaps</strong>:
 <ul>
-<li>Evaluate pairwise correlations <em>within</em> each external domain
-(Biophysical Barrier, Clinical Severity, Host Biomarkers, Environmental
-Exposome).</li>
+<li>Evaluate pairwise correlations <em>within</em> each external
+clinical domain (Biophysical Barrier, Clinical Severity, Host
+Biomarkers, Environmental Exposome).</li>
 <li>Display lower-triangle correlation tiles with off-diagonal
 significance asterisks
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>*</mi><mi>P</mi><mo>&lt;</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">*P &lt; 0.05</annotation></semantics></math>,
@@ -520,35 +523,33 @@ significance asterisks
 <li>Diagonal self-correlations
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">r = 1.0</annotation></semantics></math>)
 are unstarred to eliminate redundancy.</li>
-<li>Pink diagonal dots mark individual environmental variables.</li>
-<li>Anchored domain headers sit above and below rotated labels without
-text collisions.</li>
+<li>Variable labels are rotated at 78° along outer margins to prevent
+label overlap.</li>
 </ul>
 </li>
 <li>
-<strong>Inter-Domain Curved Links (The Coupling)</strong>:
+<strong>Inter-Domain Connecting Links</strong>:
 <ul>
-<li>Arcs bridge diagonal environmental variables to central module
-centroids.</li>
+<li>Environmental indicator dots are positioned in the clear annular
+corridor
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>≈</mo><mn>3.38</mn></mrow><annotation encoding="application/x-tex">r \approx 3.38</annotation></semantics></math>)
+facing each quadrant.</li>
+<li>Links connect directly to the central network perimeter
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>≈</mo><mn>2.74</mn></mrow><annotation encoding="application/x-tex">r \approx 2.74</annotation></semantics></math>),
+remaining entirely within open space and never intersecting heatmap
+tiles or central badges.</li>
 <li>Color encodes direction (red for positive correlation, cyan for
-negative correlation).</li>
-<li>Linewidth encodes significance
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mtext mathvariant="normal">-value</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">-\log_{10}(P\text{-value})</annotation></semantics></math>).</li>
-<li>Opaque numeric badges display exact correlation values (e.g.,
-<code>.72</code>, <code>-.64</code>).</li>
-<li>Badges are anchored at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>0.38</mn></mrow><annotation encoding="application/x-tex">t = 0.38</annotation></semantics></math>
-along the arc, positioning them in the clear annular space between the
-circle boundary and the corner heatmaps.</li>
+negative correlation) and linewidth encodes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>P</mi><mtext mathvariant="normal">-value</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">-\log_{10}(P\text{-value})</annotation></semantics></math>.</li>
 </ul>
 </li>
 <li>
-<strong>Compact Legend</strong>:
+<strong>Compact Publication Legend</strong>:
 <ul>
-<li>Formatted horizontally with <code>title.position = "left"</code> and
-minimal vertical spacing
-(<code>legend.spacing.y = unit(1.0, "pt")</code>), eliminating dead
-vertical space.</li>
+<li>Horizontal multi-tier legend formatted with
+<code>title.position = "left"</code> and strict font floor compliance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>5.0</mn></mrow><annotation encoding="application/x-tex">\ge 5.0</annotation></semantics></math>
+pt).</li>
 </ul>
 </li>
 </ol>
@@ -848,7 +849,7 @@ journal submission criteria:</p>
 <span><span class="co">#&gt;          Rule: NATURE double-column specification</span></span>
 <span><span class="co">#&gt; [PASS]   Physical Height        : 170.0 mm (Max: 170.0 mm)           </span></span>
 <span><span class="co">#&gt;          Rule: NATURE printable page boundary</span></span>
-<span><span class="co">#&gt; [PASS]   Font Size Floor        : Min text size: 5.1 pt (Floor: 5.0 pt)</span></span>
+<span><span class="co">#&gt; [PASS]   Font Size Floor        : Min text size: 5.5 pt (Floor: 5.0 pt)</span></span>
 <span><span class="co">#&gt;          Rule: NATURE font-floor specification</span></span>
 <span><span class="co">#&gt; [PASS]   Stroke Width Floor     : Min stroke: 0.71 pt (Floor: 0.25 pt)</span></span>
 <span><span class="co">#&gt;          Rule: NATURE hairline-floor specification</span></span>
