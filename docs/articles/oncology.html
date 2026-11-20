@@ -15,9 +15,8 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="End-to-End Oncology Analysis with cliomicplot">
-  <link href="../extra.css" rel="stylesheet">
-  <script src="../extra.js"></script>
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../extra.js"></script><meta property="og:title" content="End-to-End Oncology Analysis with cliomicplot">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -62,7 +61,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-10-31</h4>
+            <h4 data-toc-skip class="date">2026-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/oncology.Rmd" class="external-link"><code>vignettes/oncology.Rmd</code></a></small>
       <div class="d-none name"><code>oncology.Rmd</code></div>
@@ -125,6 +124,7 @@ pipeline</li>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Set global defaults for publication styling</span></span>
 <span><span class="fu"><a href="../reference/clipar.html">clipar</a></span><span class="op">(</span></span>
@@ -319,7 +319,8 @@ with RECIST glyphs:</p>
 <span>          ongoing       <span class="op">=</span> <span class="st">"Ongoing"</span>,</span>
 <span>          event_times   <span class="op">=</span> <span class="va">events_df</span>,</span>
 <span>          show_duration <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          bar_alpha     <span class="op">=</span> <span class="fl">0.85</span></span>
+<span>          bar_alpha     <span class="op">=</span> <span class="fl">0.85</span>,</span>
+<span>          bar_linewidth <span class="op">=</span> <span class="fl">4.2</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        bar_palette <span class="op">=</span> <span class="st">"jama"</span>,</span>
 <span>        title   <span class="op">=</span> <span class="st">"**Figure 3B** — Patient Treatment Trajectories (Swimmer)"</span>,</span>
@@ -327,6 +328,7 @@ with RECIST glyphs:</p>
 <span>        xlab    <span class="op">=</span> <span class="st">""</span>,</span>
 <span>        ylab    <span class="op">=</span> <span class="st">"Time on Study (months)"</span>,</span>
 <span>        legend  <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="oncology_files/figure-html/fig3b-swimmer-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
@@ -560,29 +562,31 @@ bold panel labels (<strong>a</strong>, <strong>b</strong> or
 <strong>A</strong>, <strong>B</strong>) and synchronized typography:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_waterfall</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">BestChange</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
-<span>                       type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">FALSE</span>, bar_width <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>,</span>
+<span>                       type <span class="op">=</span> <span class="fu"><a href="../reference/type_waterfall.html">type_waterfall</a></span><span class="op">(</span>show_labels <span class="op">=</span> <span class="cn">FALSE</span>, bar_width <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span>,</span>
 <span>                       theme <span class="op">=</span> <span class="st">"cell"</span>,</span>
 <span>                       title <span class="op">=</span> <span class="st">"Best Tumor Response"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_swimmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Duration</span> <span class="op">~</span> <span class="va">Patient</span>, data <span class="op">=</span> <span class="va">imtrial</span>,</span>
 <span>                     type <span class="op">=</span> <span class="fu"><a href="../reference/type_swimmer.html">type_swimmer</a></span><span class="op">(</span></span>
-<span>                       bar_fill    <span class="op">=</span> <span class="st">"BestResp"</span>,</span>
-<span>                       ongoing     <span class="op">=</span> <span class="st">"Ongoing"</span>,</span>
-<span>                       event_times <span class="op">=</span> <span class="va">events_df</span></span>
+<span>                       bar_fill      <span class="op">=</span> <span class="st">"BestResp"</span>,</span>
+<span>                       ongoing       <span class="op">=</span> <span class="st">"Ongoing"</span>,</span>
+<span>                       event_times   <span class="op">=</span> <span class="va">events_df</span>,</span>
+<span>                       bar_linewidth <span class="op">=</span> <span class="fl">3.6</span></span>
 <span>                     <span class="op">)</span>,</span>
 <span>                     theme <span class="op">=</span> <span class="st">"cell"</span>, bar_palette <span class="op">=</span> <span class="st">"jama"</span>,</span>
 <span>                     title <span class="op">=</span> <span class="st">"Treatment Duration &amp; Events"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_waterfall</span> <span class="op">+</span> <span class="va">p_swimmer</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span></span>
 <span>    title   <span class="op">=</span> <span class="st">"**Figure 8** — RECIST Response Assessment in Phase II Immunotherapy"</span>,</span>
-<span>    caption <span class="op">=</span> <span class="st">"Simulated trial data: 30 evaluable patients"</span>,</span>
+<span>    caption <span class="op">=</span> <span class="st">"Simulated trial data: 30 evaluable patients | Arrows indicate ongoing therapy at data lock"</span>,</span>
 <span>    theme   <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">element_markdown</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">13</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="oncology_files/figure-html/fig8-composite-1.png" class="r-plt" alt="" width="912" style="display: block; margin: auto;"></p>
+<p><img src="oncology_files/figure-html/fig8-composite-1.png" class="r-plt" alt="" width="940.8" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
