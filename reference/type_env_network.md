@@ -35,6 +35,7 @@ type_env_network(
   module_label_pos = c("radial", "centroid"),
   show_module_legend = TRUE,
   legend_position = "top",
+  show_domain_labels = FALSE,
   env_label_size = 1.8,
   env_label_color = "grey20",
   env_label_face = "plain",
@@ -178,6 +179,11 @@ type_env_network(
 
   Position of the legend: `"top"` (default), `"bottom"`, `"right"`,
   `"left"`, or `"none"`.
+
+- show_domain_labels:
+
+  Logical. If TRUE, displays domain headers for the corner heatmaps.
+  Default FALSE.
 
 - env_label_size:
 
