@@ -47,6 +47,7 @@
 #'   (placed directly at module centroid).
 #' @param show_module_legend Logical. If TRUE, shows the module color legend. Default TRUE.
 #' @param legend_position Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.
+#' @param show_domain_labels Logical. If TRUE, displays domain headers for the corner heatmaps. Default FALSE.
 #' @param env_label_size Font size for environmental variable labels outside corner heatmaps (default 1.8).
 #' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
 #' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
@@ -107,6 +108,7 @@ type_env_network = function(
     module_label_pos   = c("radial", "centroid"),
     show_module_legend = TRUE,
     legend_position    = "top",
+    show_domain_labels = FALSE,
     env_label_size     = 1.8,
     env_label_color    = "grey20",
     env_label_face     = "plain",
@@ -194,6 +196,7 @@ type_env_network = function(
         module_label_pos    = module_label_pos,
         show_module_legend  = show_module_legend,
         legend_position     = legend_position,
+        show_domain_labels  = show_domain_labels,
         env_label_size      = env_label_size,
         env_label_color     = env_label_color,
         env_label_face      = env_label_face,
@@ -301,6 +304,7 @@ cliplot_env_network = function(
     module_label_pos   = c("radial", "centroid"),
     show_module_legend = TRUE,
     legend_position    = "top",
+    show_domain_labels = FALSE,
     env_label_size     = 1.8,
     env_label_color    = "grey20",
     env_label_face     = "plain",
@@ -359,6 +363,7 @@ cliplot_env_network = function(
     module_label_pos   = module_label_pos,
     show_module_legend = show_module_legend,
     legend_position    = legend_position,
+    show_domain_labels = show_domain_labels,
     env_label_size     = env_label_size,
     env_label_color    = env_label_color,
     env_label_face     = env_label_face,
@@ -415,6 +420,7 @@ build_env_network_layers = function(
     module_label_pos    = "radial",
     show_module_legend  = TRUE,
     legend_position     = "top",
+    show_domain_labels  = FALSE,
     env_label_size      = 1.8,
     env_label_color     = "grey20",
     env_label_face      = "plain",
@@ -708,7 +714,7 @@ build_env_network_layers = function(
       resolved_label_type,
       "coef"       = fmt_r,
       "coef_stars" = ifelse(grid$row == grid$col, fmt_r, paste0(fmt_r, stars)),
-      "stars"      = stars,
+      "stars"      = ifelse(grid$row == grid$col, "", stars),
       "none"       = rep("", length(r_vals)),
       stars
     )
@@ -832,8 +838,9 @@ build_env_network_layers = function(
     dx <- all_links$xend - all_links$x
     dy <- all_links$yend - all_links$y
     curv <- all_links$curvature
-    mx <- (all_links$x + all_links$xend) / 2 - curv * dy * 0.40
-    my <- (all_links$y + all_links$yend) / 2 + curv * dx * 0.40
+    t_pos <- 0.38
+    mx <- all_links$x + t_pos * dx - curv * dy * 0.35
+    my <- all_links$y + t_pos * dy + curv * dx * 0.35
 
     fmt_link_r <- sprintf(paste0("%.", link_value_digits, "f"), all_links$r)
     link_zero_pat <- paste0("^-0\\.", paste(rep("0", link_value_digits), collapse = ""), "$")
@@ -970,6 +977,7 @@ build_env_network_layers = function(
         fontface = "bold",
         size = module_label_size,
         alpha = module_label_alpha,
+        lineheight = 0.88,
         label.padding = ggplot2::unit(0.22, "lines"),
         label.r = ggplot2::unit(0.20, "lines"),
         linewidth = 0.25,
@@ -982,6 +990,7 @@ build_env_network_layers = function(
         color = module_label_color,
         fontface = "bold",
         size = module_label_size,
+        lineheight = 0.88,
         show.legend = FALSE
       )
     }
@@ -997,7 +1006,42 @@ build_env_network_layers = function(
       data = all_env_labels,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["var"]], angle = .data[["angle"]], hjust = .data[["hjust"]], vjust = .data[["vjust"]]),
       size = env_label_size, fontface = env_label_face, color = env_label_color
-    ) +
+    )
+
+  if (isTRUE(show_domain_labels) && !is.null(names(env_cors))) {
+    d_names <- names(env_cors)
+    d_pos <- list(
+      top_left     = c(x = -4.2, y = 6.2,   hjust = 0.5),
+      top_right    = c(x = 4.2,  y = 6.2,   hjust = 0.5),
+      bottom_left  = c(x = -3.8, y = -6.55, hjust = 0.5),
+      bottom_right = c(x = 3.8,  y = -6.55, hjust = 0.5)
+    )
+    d_cols <- c("#2166AC", "#1B7837", "#8C510A", "#B35806")
+    d_rows <- list()
+    for (i in seq_along(d_names)) {
+      c_k <- names(c_configs)[i]
+      if (!is.null(c_k) && c_k %in% names(d_pos)) {
+        pos <- d_pos[[c_k]]
+        d_rows[[i]] <- data.frame(
+          x = as.numeric(pos["x"]), y = as.numeric(pos["y"]),
+          label = d_names[i],
+          color = d_cols[((i - 1) %% length(d_cols)) + 1],
+          hjust = as.numeric(pos["hjust"]),
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+    if (length(d_rows) > 0) {
+      d_df <- do.call(rbind, d_rows)
+      p <- p + ggplot2::geom_text(
+        data = d_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]], color = ggplot2::I(.data[["color"]]), hjust = .data[["hjust"]]),
+        size = 2.3, fontface = "bold"
+      )
+    }
+  }
+
+  p <- p +
     ggplot2::guides(
       color     = ggplot2::guide_legend(title.position = "left", title.vjust = 0.5, nrow = 1, order = 1),
       linewidth = if (is.null(link_width)) {

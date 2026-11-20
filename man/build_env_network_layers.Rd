@@ -25,6 +25,7 @@ build_env_network_layers(
   module_label_pos = "radial",
   show_module_legend = TRUE,
   legend_position = "top",
+  show_domain_labels = FALSE,
   env_label_size = 1.8,
   env_label_color = "grey20",
   env_label_face = "plain",

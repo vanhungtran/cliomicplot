@@ -27,6 +27,7 @@ type_env_network(
   module_label_pos = c("radial", "centroid"),
   show_module_legend = TRUE,
   legend_position = "top",
+  show_domain_labels = FALSE,
   env_label_size = 1.8,
   env_label_color = "grey20",
   env_label_face = "plain",
@@ -112,6 +113,8 @@ outward toward the circle boundary to avoid overlapping dense core nodes) or \co
 \item{show_module_legend}{Logical. If TRUE, shows the module color legend. Default TRUE.}
 
 \item{legend_position}{Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.}
+
+\item{show_domain_labels}{Logical. If TRUE, displays domain headers for the corner heatmaps. Default FALSE.}
 
 \item{env_label_size}{Font size for environmental variable labels outside corner heatmaps (default 1.8).}
 
