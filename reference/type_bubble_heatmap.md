@@ -8,16 +8,20 @@ significance).
 
 ``` r
 type_bubble_heatmap(
-  label_threshold = 2,
-  max_size = 15,
+  label_threshold = 1.5,
+  max_size = 9,
+  label_size = 2.4,
   band_alpha = 0.6,
   band_fill = "#F2F5FA",
   cell_border = "#E2E6EF",
-  size_name = "Fold change",
+  size_name = "|log₂FC|",
   fill_name = expression(-log[10] ~ "adjusted P"),
   fill_low = "#D6E4F0",
   fill_mid = "#59B8A8",
-  fill_high = "#A83D62"
+  fill_high = "#A83D62",
+  axis_text_size = NULL,
+  axis_text_angle = 45,
+  transpose = FALSE
 )
 ```
 
@@ -25,11 +29,15 @@ type_bubble_heatmap(
 
 - label_threshold:
 
-  Size threshold above which cell labels are drawn.
+  Size threshold above which cell labels are drawn (default 1.5).
 
 - max_size:
 
-  Maximum point size (default 15).
+  Maximum point size (default 9).
+
+- label_size:
+
+  Font size for cell text labels (default 2.4).
 
 - band_alpha:
 
@@ -54,6 +62,18 @@ type_bubble_heatmap(
 - fill_low, fill_mid, fill_high:
 
   Colour stops for the fill gradient.
+
+- axis_text_size:
+
+  Size of axis text. If NULL (default), adaptively scaled.
+
+- axis_text_angle:
+
+  Angle for x-axis labels (default 45).
+
+- transpose:
+
+  If TRUE, swaps rows and columns (default FALSE).
 
 ## Value
 

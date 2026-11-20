@@ -632,15 +632,16 @@ bh_rows$PValue = sapply(1:nrow(bh_rows), function(i) {
 
 bh_rows = bh_rows[!is.na(bh_rows$logFC), ]
 bh_rows$absFC = abs(bh_rows$logFC)
+bh_rows$Gene  = sub("_.*", "", bh_rows$Protein)
 ```
 
 ``` r
 
-cliplot(Protein ~ Comparison, data = bh_rows,
+cliplot(Gene ~ Comparison, data = bh_rows,
         by = bh_rows$absFC,
         type = type_bubble_heatmap(
-          label_threshold = 0.5,
-          max_size        = 14,
+          label_threshold = 1.5,
+          max_size        = 8.5,
           size_name       = "|log₂FC|",
           fill_name       = expression(-log[10]~"P"),
           fill_low        = "#4575B4",
