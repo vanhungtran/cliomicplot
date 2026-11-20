@@ -220,6 +220,25 @@ cliplot(
 
 ![](microbiome-mgwas_files/figure-html/module-comparison-1.png)
 
+### Interpretation and Visual Grammar
+
+- **Hypothesis**: Evaluates whether discrete microbial co-occurrence
+  modules identified in a discovery cohort remain preserved or undergo
+  rewiring in an independent validation cohort.
+- **Tile Color**: Shaded by hypergeometric
+  $`-\log_{10}(P\text{-value})`$ against the total background taxon
+  universe. Deep red indicates overlap enrichment significantly higher
+  than expected by chance.
+- **Cell Annotations**: Reports the count of shared overlapping taxa
+  paired with significance asterisks ($`*P < 0.05`$, $`**P < 0.01`$,
+  $`***P < 0.001`$).
+- **Marginals**: Displays marginal row and column totals ($`N`$)
+  representing the size of each discovery and replication module.
+- **Biological Interpretation**: Strong diagonal concentration indicates
+  stable core community preservation. Off-diagonal dispersion indicates
+  modular reorganization or community fragmentation associated with
+  disease state or treatment.
+
 ------------------------------------------------------------------------
 
 ## 6. Correlation Analysis Between Modules and Environmental Factors
@@ -272,6 +291,26 @@ cliplot(
 
 ![](microbiome-mgwas_files/figure-html/module-trait-correlation-1.png)
 
+### Interpretation and Visual Grammar
+
+- **Hypothesis**: Tests whether biological modules (represented by
+  module eigengenes or composite abundance) covary with external
+  clinical severity scores or physical environmental metrics.
+- **Tile Color**: Diverging blue-white-red gradient mapping correlation
+  coefficients ($`r \in [-1, 1]`$). Blue indicates inverse correlation;
+  red indicates positive correlation.
+- **Cell Numbers**: Reports correlation coefficients paired with
+  significance asterisks ($`*P < 0.05`$, $`**P < 0.01`$,
+  $`***P < 0.001`$).
+- **Two-Way Dendrograms**: Hierarchical clustering groups co-varying
+  environmental factors along the columns and functionally correlated
+  modules along the rows.
+- **Biological Interpretation**: Clearly isolates pathogenic clusters
+  (e.g., `M4_PathogenCluster` correlating positively with SCORAD
+  $`r = 0.81`$ and TEWL $`r = 0.64`$) from barrier-maintaining commensal
+  communities (`M1_StaphCommensal` correlating inversely with
+  inflammation).
+
 ------------------------------------------------------------------------
 
 ## 7. Multi-Group Network Comparison Graphs and Multi-Season Environmental Coupling
@@ -303,14 +342,50 @@ p_node <- cliplot_cross_network_graph(
   edges = demo_net$edges,
   cross_edges = demo_net$cross_edges,
   level = "node",
-  title = "Multi-Group Cross-Network Microbial Architecture"
+  preset = "nature",
+  scifig = TRUE,
+  title = "Multi-Group Cross-Network Microbial Architecture (Node Level)"
 )
 p_node
 ```
 
 ![](microbiome-mgwas_files/figure-html/cross-network-graphs-1.png)
 
-### 7.2 Central Network Coupled with Multi-Season Environmental Heatmaps
+``` r
+
+# Module-level ring topology with member halos and conserved links
+p_mod <- cliplot_cross_network_graph(
+  nodes = demo_net$nodes,
+  edges = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level = "module",
+  preset = "nature",
+  scifig = TRUE,
+  title = "Cross-Network Module Preservation Rings (Module Level)"
+)
+p_mod
+```
+
+![](microbiome-mgwas_files/figure-html/cross-network-module-1.png)
+
+### Interpretation and Visual Grammar
+
+- **Spatial Grouping**: Networks are partitioned around 3 condition
+  centroids (KO at top, WT at bottom-left, OE at bottom-right).
+- **Node Size**: Sized by node degree ($`k`$) in the node-level plot,
+  highlighting hub taxa. In module-level mode, sized by total module
+  abundance/count ($`N`$).
+- **Intra-Group Edges**: Grey segments ($`w = 0.25`$ pt) represent
+  intra-condition co-occurrence relationships.
+- **Module Shading**: Semi-transparent hulls group nodes into functional
+  communities.
+- **Conserved Cross-Group Links**: Colored arcs connecting identical or
+  orthologous features conserved across conditions:
+  - Magenta: Conserved interactions between KO and WT
+  - Blue: Conserved interactions between KO and OE
+  - Green: Conserved interactions between WT and OE
+
+### 7.2 Standalone Central Network Coupled with Multi-Domain Environmental Heatmaps
 
 [`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
 couples a central circular modular network with peripheral triangular
@@ -318,17 +393,59 @@ correlation heatmaps and significance-weighted curved links:
 
 ``` r
 
-# Central modular network coupled with 4 corner seasonal environmental heatmaps
+# Central modular network coupled with 4 corner environmental heatmaps
 p_env <- cliplot_env_network(
-  title = "Central Microbial Network Coupled with Multi-Season Environmental Drivers",
+  title = "Central Microbial Network Coupled with Multi-Domain Environmental Drivers",
   show_values = TRUE,
+  show_domain_labels = TRUE,
   value_digits = 2,
-  compact = TRUE
+  compact = TRUE,
+  preset = "nature",
+  scifig = TRUE
 )
 p_env
 ```
 
 ![](microbiome-mgwas_files/figure-html/env-network-coupling-1.png)
+
+### Interpretation and Visual Grammar
+
+This standalone architecture integrates three analytical layers on a
+unified coordinate plane:
+
+1.  **Central Circular Network ($`r = 2.45`$ boundary)**:
+    - Displays the biological co-occurrence network partitioned into
+      functional modules ($`M_1\text{--}M_7`$).
+    - Features compact two-line opaque badges (`M1\nCore`, `M5\nAMP`,
+      etc.) that avoid label collision.
+    - Grey intra-module edges connect co-occurring taxa.
+2.  **Four Corner Triangular Heatmaps**:
+    - Evaluate pairwise correlations *within* each external domain
+      (Biophysical Barrier, Clinical Severity, Host Biomarkers,
+      Environmental Exposome).
+    - Display lower-triangle correlation tiles with off-diagonal
+      significance asterisks ($`*P < 0.05`$, $`**P < 0.01`$,
+      $`***P < 0.001`$).
+    - Diagonal self-correlations ($`r = 1.0`$) are unstarred to
+      eliminate redundancy.
+    - Pink diagonal dots mark individual environmental variables.
+    - Anchored domain headers sit above and below rotated labels without
+      text collisions.
+3.  **Inter-Domain Curved Links (The Coupling)**:
+    - Arcs bridge diagonal environmental variables to central module
+      centroids.
+    - Color encodes direction (red for positive correlation, cyan for
+      negative correlation).
+    - Linewidth encodes significance ($`-\log_{10}(P\text{-value})`$).
+    - Opaque numeric badges display exact correlation values (e.g.,
+      `.72`, `-.64`).
+    - Badges are anchored at $`t = 0.38`$ along the arc, positioning
+      them in the clear annular space between the circle boundary and
+      the corner heatmaps.
+4.  **Compact Legend**:
+    - Formatted horizontally with `title.position = "left"` and minimal
+      vertical spacing (`legend.spacing.y = unit(1.0, "pt")`),
+      eliminating dead vertical space.
 
 ------------------------------------------------------------------------
 
@@ -368,6 +485,21 @@ cliplot_module_preservation(
 
 ![](microbiome-mgwas_files/figure-html/module-preservation-1.png)
 
+#### Interpretation and Preservation Thresholds
+
+- **Preservation Metric ($`Z_{\text{summary}}`$)**: Combines 4 density
+  statistics (mean connectivity, clustering coefficient, maximum
+  adjacency) and 3 connectivity statistics (intramodular hub rank
+  preservation).
+- **Threshold Lines**:
+  - $`Z < 2`$ (dashed red line): No statistical evidence of module
+    preservation. The community structure is rewired in the test
+    condition.
+  - $`2 \le Z \le 10`$ (dashed orange line): Moderate module
+    preservation.
+  - $`Z > 10`$ (dashed green line): Strong, statistically significant
+    module preservation.
+
 ### 8.2 Network Robustness and Targeted Attack Simulation
 
 [`cli_network_robustness()`](https://vanhungtran.github.io/cliomicplot/reference/cli_network_robustness.md)
@@ -394,6 +526,17 @@ cliplot_network_robustness(
 ```
 
 ![](microbiome-mgwas_files/figure-html/network-robustness-1.png)
+
+#### Interpretation of Attack Curves
+
+- **Natural Connectivity ($`\bar{\lambda}`$)**: Measures overall
+  topological integrity and alternate path redundancy across nodes.
+- **Random Attack Curve**: Assesses resilience against stochastic taxon
+  extinction or biological fluctuations. Robust networks maintain high
+  connectivity across progressive random removal.
+- **Targeted Degree Attack Curve**: Evaluates vulnerability when
+  keystone hub species are removed. Rapid connectivity decline indicates
+  heavy dependence on a few dominant hub taxa.
 
 ### 8.3 Mantel & Partial Mantel Tests for Omics-Environment Coupling
 
@@ -427,3 +570,137 @@ knitr::kable(mantel_out, digits = 3, caption = "Mantel Association Statistics")
 | All_Variables |    -0.007 |  0.910 | Mantel | 0.91 |        |
 
 Mantel Association Statistics {.table}
+
+#### Interpretation of Mantel Matrix Correlation
+
+- **Mantel Statistic ($`r_M`$)**: Measures matrix correlation between
+  community dissimilarity (e.g. Bray-Curtis) and external environmental
+  distance (Euclidean).
+- **Partial Mantel**: Evaluates the unique contribution of an
+  environmental variable after conditioning on confounders (e.g.,
+  patient age, geographic site, sequencing depth).
+
+------------------------------------------------------------------------
+
+## 9. Multi-Panel Publication Composite & AI4SciFig Compliance
+
+In peer-reviewed publications, individual network analyses are assembled
+into unified, multi-panel composite figures. Here, Panel (a) node-level
+cross-network topology, Panel (b) module ring preservation, and Panel
+(c) coupled multi-domain environmental network are integrated into a
+Nature double-column layout ($`183.0`$ mm width).
+
+### 9.1 Assembling the 3-Panel Composite
+
+Using `patchwork`, the left column stacks Panel (a) and Panel (b), while
+the right column showcases the coupled network (Panel c):
+
+``` r
+
+library(patchwork)
+
+# Build panels with Nature publication preset and SciFig quality gates
+p_a <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "nature",
+  scifig      = TRUE
+)
+
+p_b <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "module",
+  preset      = "nature",
+  scifig      = TRUE
+)
+
+p_c <- cliplot_env_network(
+  preset             = "nature",
+  scifig             = TRUE,
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE
+)
+
+fig3_composite <- (p_a / p_b) | p_c
+fig3_composite <- fig3_composite +
+  plot_layout(widths = c(1, 1.35)) +
+  plot_annotation(tag_levels = "a") &
+  theme(
+    plot.tag = element_text(size = 8, face = "bold", family = "sans"),
+    plot.tag.position = c(0.02, 0.98),
+    plot.margin = margin(1.5, 1.5, 1.5, 1.5, "mm")
+  )
+
+fig3_composite
+```
+
+![](microbiome-mgwas_files/figure-html/publication-composite-1.png)
+
+### 9.2 AI4SciFig Quality Assurance Audit
+
+[`cli_scifig_qa()`](https://vanhungtran.github.io/cliomicplot/reference/cli_scifig_qa.md)
+verifies that the figure satisfies all journal submission criteria:
+
+``` r
+
+qa_report <- cli_scifig_qa(
+  plot      = fig3_composite,
+  journal   = "nature",
+  column    = "double",
+  width_mm  = 183.0,
+  height_mm = 170.0
+)
+print(qa_report)
+```
+
+    #> 
+    #> === SciFig QA Journal Compliance Report ===
+    #> Journal: NATURE | Column: double
+    #> --------------------------------------------------------------------------------
+    #> [PASS]   Physical Width         : 183.0 mm (Target: 183.0 mm)        
+    #>          Rule: NATURE double-column specification
+    #> [PASS]   Physical Height        : 170.0 mm (Max: 170.0 mm)           
+    #>          Rule: NATURE printable page boundary
+    #> [PASS]   Font Size Floor        : Min text size: 5.0 pt (Floor: 5.0 pt)
+    #>          Rule: NATURE font-floor specification
+    #> [PASS]   Stroke Width Floor     : Min stroke: 0.71 pt (Floor: 0.25 pt)
+    #>          Rule: NATURE hairline-floor specification
+    #> [PASS]   Zero Sign Suppression  : Zero sign suppression verified (no negative zeros)
+    #>          Rule: SciFig reporting gate: zero sign suppression
+    #> [PASS]   Color Accessibility    : High-contrast anchored palettes with neutral midpoint
+    #>          Rule: Nature Publishing Group / Wong (2011) CVD standard
+    #> --------------------------------------------------------------------------------
+    #> Verdict: PASSED - All gates comply with publisher standards.
+
+### 9.3 Exporting Submission-Ready Artifacts
+
+Figures can be saved using
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+with automatic format compliance and print DPI:
+
+``` r
+
+# Save vector PDF for manuscript submission
+cli_save(
+  plot    = fig3_composite,
+  file    = "fig3_publication_composite.pdf",
+  journal = "nature",
+  column  = "double"
+)
+
+# Save high-resolution PNG preview with QA check
+cli_save(
+  plot    = fig3_composite,
+  file    = "fig3_publication_composite.png",
+  journal = "nature",
+  column  = "double",
+  dpi     = 300,
+  qa      = TRUE
+)
+```
