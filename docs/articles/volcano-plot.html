@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Volcano Plots — from Quick to Publication-Ready • cliomicplot</title>
+<title>Differential Expression Volcano Plots with GEO Datasets • cliomicplot</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Volcano Plots — from Quick to Publication-Ready">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Differential Expression Volcano Plots with GEO Datasets">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -56,11 +56,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Volcano Plots — from Quick to Publication-Ready</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Differential Expression Volcano Plots with GEO Datasets</h1>
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-10-31</h4>
+            <h4 data-toc-skip class="date">2026-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/volcano-plot.Rmd" class="external-link"><code>vignettes/volcano-plot.Rmd</code></a></small>
       <div class="d-none name"><code>volcano-plot.Rmd</code></div>
@@ -69,255 +69,294 @@ Tran</h4>
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/vanhungtran/cliomicplot" class="external-link">cliomicplot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The volcano plot is the canonical visualisation for
-differential-expression analysis. This vignette shows you the
-<strong>one-liner</strong> with <code><a href="../reference/cliplot.html">cliplot()</a></code> and then dives
-into customisation — adjusted p-values, flexible fold-change thresholds,
-gene labelling, and rich annotation call-outs — all with the
-<code><a href="../reference/type_volcano.html">type_volcano()</a></code> constructor.</p>
+<p>The volcano plot is the standard visualisation for genome-wide
+differential expression experiments, plotting statistical significance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><msub><mi>P</mi><mtext mathvariant="normal">adj</mtext></msub></mrow><annotation encoding="application/x-tex">-\log_{10} P_{\text{adj}}</annotation></semantics></math>)
+against effect size
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext></mrow><annotation encoding="application/x-tex">\log_2\text{FC}</annotation></semantics></math>).</p>
+<p>This vignette demonstrates publication-ready volcano plotting using
+human skin RNA-seq data from NCBI GEO accession
+<strong>GSE121212</strong> (Atopic Dermatitis vs. Healthy Control skin
+biopsies). All figures use the <code><a href="../reference/type_volcano.html">type_volcano()</a></code> constructor
+within <code><a href="../reference/cliplot.html">cliplot()</a></code>, illustrating default cutoffs, curated
+gene signatures, and rich annotation call-outs.</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="simulated-data">1. Simulated data<a class="anchor" aria-label="anchor" href="#simulated-data"></a>
+<h2 id="real-geo-dataset-gse121212-atopic-dermatitis-vs--healthy-skin">1. Real GEO Dataset: GSE121212 (Atopic Dermatitis vs. Healthy
+Skin)<a class="anchor" aria-label="anchor" href="#real-geo-dataset-gse121212-atopic-dermatitis-vs--healthy-skin"></a>
 </h2>
-<p>Replace this section with your own DESeq2 / edgeR / limma output
-table.</p>
+<p>The dataset comes from NCBI GEO accession
+<strong>GSE121212</strong>:</p>
+<ul>
+<li>
+<strong>Cohort</strong>: Full-thickness skin biopsies from patients
+with active Atopic Dermatitis
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>27</mn></mrow><annotation encoding="application/x-tex">N = 27</annotation></semantics></math>)
+and healthy control individuals
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>28</mn></mrow><annotation encoding="application/x-tex">N = 28</annotation></semantics></math>).</li>
+<li>
+<strong>Platform</strong>: Illumina HiSeq 2500 high-throughput RNA
+sequencing.</li>
+<li>
+<strong>Differential Expression</strong>: DESeq2 negative binomial
+generalized linear model with Wald significance testing and
+Benjamini-Hochberg false discovery rate (<code>padj</code>)
+control.</li>
+<li>
+<strong>Gene Coverage</strong>: 20,140 tested genes with
+<code>baseMean</code>, <code>log2FC</code>, <code>lfcSE</code>,
+<code>stat</code>, <code>pvalue</code>, and <code>padj</code>.</li>
+</ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Helper to resolve bundled dataset</span></span>
+<span><span class="va">resolve_data</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">pkg_path</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="va">filename</span>, package <span class="op">=</span> <span class="st">"cliomicplot"</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">pkg_path</span> <span class="op">!=</span> <span class="st">""</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">pkg_path</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pkg_path</span><span class="op">)</span></span>
+<span>  <span class="va">fallback</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">".."</span>, <span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">fallback</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fallback</span><span class="op">)</span></span>
+<span>  <span class="va">fallback2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">fallback2</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fallback2</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"Cannot locate "</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">de_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  gene    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Gene_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span>,</span>
-<span>  log2FC  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>,</span>
-<span>  pvalue  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">0.00001</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  padj    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">0.00001</span>, <span class="fl">1</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>,</span>
-<span>  row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Gene_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">de_results</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu">resolve_data</span><span class="op">(</span><span class="st">"geo_gse121212_de.rds"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Inject a strongly significant hit</span></span>
-<span><span class="va">de_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
-<span>  <span class="va">de_results</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    gene    <span class="op">=</span> <span class="st">"CEACAM5"</span>,</span>
-<span>    log2FC  <span class="op">=</span> <span class="fl">2.79</span>,</span>
-<span>    pvalue  <span class="op">=</span> <span class="fl">0.0001</span>,</span>
-<span>    padj    <span class="op">=</span> <span class="fl">0.0027</span>,</span>
-<span>    row.names <span class="op">=</span> <span class="st">"CEACAM5"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">de_results</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene"</span>,<span class="st">"log2FC"</span>,<span class="st">"pvalue"</span>,<span class="st">"padj"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;          gene      log2FC      pvalue      padj</span></span>
-<span><span class="co">#&gt; Gene_1 Gene_1  0.36441235 0.961683824 0.9482873</span></span>
-<span><span class="co">#&gt; Gene_2 Gene_2 -0.75578353 0.250218781 0.9889257</span></span>
-<span><span class="co">#&gt; Gene_3 Gene_3  0.09746668 0.816042035 0.9482873</span></span>
-<span><span class="co">#&gt; Gene_4 Gene_4 -0.05932415 0.543788992 0.9482873</span></span>
-<span><span class="co">#&gt; Gene_5 Gene_5 -0.46664773 0.908309869 0.9482873</span></span>
-<span><span class="co">#&gt; Gene_6 Gene_6 -1.76126232 0.007981887 0.9713784</span></span></code></pre></div>
-<blockquote>
-<p><strong>Your data.</strong> Columns must include a log<sub>2</sub>
-fold-change, a (preferably adjusted) p-value, and optional gene
-identifiers as <code>row.names</code>.</p>
-</blockquote>
+<span><span class="co"># Inspect top differentially expressed genes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">de_results</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene"</span>, <span class="st">"baseMean"</span>, <span class="st">"log2FC"</span>, <span class="st">"lfcSE"</span>, <span class="st">"pvalue"</span>, <span class="st">"padj"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              gene baseMean log2FC  lfcSE       pvalue         padj</span></span>
+<span><span class="co">#&gt; LCE3A       LCE3A   379.15 7.2524 0.5304 1.456015e-42 2.932414e-38</span></span>
+<span><span class="co">#&gt; LCE3D       LCE3D  2310.00 5.0891 0.3866 1.448727e-39 1.458868e-35</span></span>
+<span><span class="co">#&gt; SPRR2G     SPRR2G  5974.80 4.4195 0.3371 2.921422e-39 1.961248e-35</span></span>
+<span><span class="co">#&gt; SERPINB4 SERPINB4 12719.18 6.4473 0.5031 1.360674e-37 6.850992e-34</span></span>
+<span><span class="co">#&gt; LCE3E       LCE3E   805.96 5.0317 0.3964 6.365667e-37 2.564091e-33</span></span>
+<span><span class="co">#&gt; ALOX15     ALOX15    94.50 3.2228 0.2562 2.771743e-36 9.303816e-33</span></span></code></pre></div>
+<p>Across the 20,140 tested genes, 1,189 meet stringent significance
+criteria
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mtext mathvariant="normal">adj</mtext></msub><mo>&lt;</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">P_{\text{adj}} &lt; 0.05</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">|</mo><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo stretchy="false" form="prefix">|</mo><mo>&gt;</mo><mn>1.5</mn></mrow><annotation encoding="application/x-tex">|\log_2\text{FC}| &gt; 1.5</annotation></semantics></math>),
+with 812 genes upregulated and 377 downregulated in atopic skin.</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="quick-volcano-one-call">2. Quick volcano — one call<a class="anchor" aria-label="anchor" href="#quick-volcano-one-call"></a>
+<h2 id="quick-volcano-plot-one-call">2. Quick Volcano Plot: One Call<a class="anchor" aria-label="anchor" href="#quick-volcano-plot-one-call"></a>
 </h2>
+<p><code><a href="../reference/cliplot.html">cliplot()</a></code> accepts the standard formula
+<code>y ~ x</code>, where the y-axis specifies significance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><msub><mi>P</mi><mtext mathvariant="normal">adj</mtext></msub></mrow><annotation encoding="application/x-tex">-\log_{10} P_{\text{adj}}</annotation></semantics></math>)
+and the x-axis specifies effect size
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext></mrow><annotation encoding="application/x-tex">\log_2\text{FC}</annotation></semantics></math>):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
 <span>        type  <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
-<span>          pval_cutoff  <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>          fc_cutoff    <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>          point_alpha  <span class="op">=</span> <span class="fl">0.65</span>,</span>
-<span>          label_genes  <span class="op">=</span> <span class="st">"significant"</span>,</span>
-<span>          max_overlaps <span class="op">=</span> <span class="fl">20</span></span>
+<span>          pval_cutoff  <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>          fc_cutoff    <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>          point_size   <span class="op">=</span> <span class="fl">1.8</span>,</span>
+<span>          point_alpha  <span class="op">=</span> <span class="fl">0.60</span>,</span>
+<span>          label_genes  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SERPINB4"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"LCE3A"</span>, <span class="st">"SPRR2G"</span>,</span>
+<span>                           <span class="st">"ALOX15"</span>, <span class="st">"GPLD1"</span>, <span class="st">"IL20RA"</span>, <span class="st">"SPTLC3"</span><span class="op">)</span>,</span>
+<span>          max_overlaps <span class="op">=</span> <span class="fl">25</span></span>
 <span>        <span class="op">)</span>,</span>
 <span>        palette <span class="op">=</span> <span class="st">"nature"</span>,</span>
 <span>        theme   <span class="op">=</span> <span class="st">"nature"</span>,</span>
-<span>        title   <span class="op">=</span> <span class="st">"Differential expression — quick volcano"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">*</span> <span class="st">", |"</span> <span class="op">*</span> <span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="st">"FC| &gt; 0.25"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="volcano-plot_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
-<p>That single call produces:</p>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 1** — NCBI GEO GSE121212: Atopic Dermatitis vs. Control"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Bulk RNA-seq | FDR &lt; 0.01, |log₂FC| &gt; 1.50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="volcano-plot_files/figure-html/fig1-quick-volcano-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<p>This single command coordinates: - Classification into
+<strong>Up</strong> (red), <strong>Down</strong> (blue), and
+<strong>NS</strong> (grey). - Threshold reference lines at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mtext mathvariant="normal">adj</mtext></msub><mo>=</mo><mn>0.01</mn></mrow><annotation encoding="application/x-tex">P_{\text{adj}} = 0.01</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>±</mi><mn>1.5</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = \pm 1.5</annotation></semantics></math>.
+- Automatic <code>ggrepel</code> label positioning with collision
+avoidance. - Nature-style open axes without top and right spines.</p>
+<div class="section level3">
+<h3 id="biological-findings-in-gse121212">Biological Findings in GSE121212<a class="anchor" aria-label="anchor" href="#biological-findings-in-gse121212"></a>
+</h3>
 <ul>
-<li>Points coloured by significance class (<strong>Up</strong> /
-<strong>Down</strong> / <strong>NS</strong>)</li>
-<li>Dashed threshold lines at the chosen p-value and fold-change
-cutoffs</li>
-<li>Automatic <code>ggrepel</code> labels for every gene passing both
-thresholds</li>
-<li>A journal-style theme with curated palette</li>
+<li>
+<strong>Epidermal Differentiation Complex (EDC)</strong>: Strongly
+upregulated genes include <em>LCE3A</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>7.25</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +7.25</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mtext mathvariant="normal">adj</mtext></msub><mo>=</mo><mn>2.93</mn><mo>×</mo><msup><mn>10</mn><mrow><mi>−</mi><mn>38</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P_{\text{adj}} = 2.93 \times 10^{-38}</annotation></semantics></math>),
+<em>LCE3D</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>5.09</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +5.09</annotation></semantics></math>),
+<em>SPRR2G</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>4.42</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +4.42</annotation></semantics></math>),
+and <em>S100A7</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>5.35</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +5.35</annotation></semantics></math>,
+psoriasin).</li>
+<li>
+<strong>Th2 Immune Activation</strong>: <em>SERPINB4</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>6.45</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +6.45</annotation></semantics></math>,
+squamous cell carcinoma antigen 2) and <em>CCL18</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>+</mi><mn>4.59</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = +4.59</annotation></semantics></math>,
+dendritic cell-derived chemokine).</li>
+<li>
+<strong>Downregulated Barrier Components</strong>: <em>SPTLC3</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>−</mi><mn>0.57</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = -0.57</annotation></semantics></math>,
+serine palmitoyltransferase required for ceramide synthesis) and
+<em>GPLD1</em>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext><mo>=</mo><mi>−</mi><mn>0.90</mn></mrow><annotation encoding="application/x-tex">\log_2\text{FC} = -0.90</annotation></semantics></math>,
+glycosylphosphatidylinositol-specific phospholipase D1).</li>
 </ul>
 <hr>
 </div>
+</div>
 <div class="section level2">
-<h2 id="customising-every-parameter">3. Customising every parameter<a class="anchor" aria-label="anchor" href="#customising-every-parameter"></a>
+<h2 id="customising-parameters-curated-disease-signatures">3. Customising Parameters &amp; Curated Disease Signatures<a class="anchor" aria-label="anchor" href="#customising-parameters-curated-disease-signatures"></a>
 </h2>
-<p>Every visual element is exposed. Below we tighten the thresholds,
-change the colour mapping, add a shaded significance region, and label
-only the top 15 hits by adjusted p-value.</p>
+<p><code><a href="../reference/type_volcano.html">type_volcano()</a></code> provides complete control over
+thresholds, colors, point transparency, and background shading:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Identify top-15 significant genes</span></span>
-<span><span class="va">sig_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">de_results</span><span class="op">$</span><span class="va">padj</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
-<span><span class="va">top_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">de_results</span><span class="op">)</span><span class="op">[</span><span class="va">sig_idx</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="co"># Curated Th2 inflammatory and barrier signature</span></span>
+<span><span class="va">signature_genes</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CCL18"</span>, <span class="st">"SERPINB4"</span>, <span class="st">"S100A7"</span>, <span class="st">"S100A8"</span>, <span class="st">"S100A9"</span>,</span>
+<span>                    <span class="st">"LCE3A"</span>, <span class="st">"LCE3D"</span>, <span class="st">"ALOX15"</span>, <span class="st">"IL20RA"</span>, <span class="st">"SPTLC3"</span>, <span class="st">"GPLD1"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
 <span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
-<span>          pval_cutoff    <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>          fc_cutoff      <span class="op">=</span> <span class="fl">0.50</span>,</span>
-<span>          up_color       <span class="op">=</span> <span class="st">"#C95C43"</span>,</span>
-<span>          down_color     <span class="op">=</span> <span class="st">"#4C8BA8"</span>,</span>
-<span>          ns_color       <span class="op">=</span> <span class="st">"#B8B8B8"</span>,</span>
-<span>          point_alpha    <span class="op">=</span> <span class="fl">0.62</span>,</span>
-<span>          label_genes    <span class="op">=</span> <span class="va">top_genes</span>,</span>
+<span>          pval_cutoff    <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>          fc_cutoff      <span class="op">=</span> <span class="fl">2.0</span>,</span>
+<span>          point_size     <span class="op">=</span> <span class="fl">1.7</span>,</span>
+<span>          point_alpha    <span class="op">=</span> <span class="fl">0.65</span>,</span>
+<span>          up_color       <span class="op">=</span> <span class="st">"#D73027"</span>,</span>
+<span>          down_color     <span class="op">=</span> <span class="st">"#2B6CB0"</span>,</span>
+<span>          ns_color       <span class="op">=</span> <span class="st">"#D0D4DC"</span>,</span>
+<span>          label_genes    <span class="op">=</span> <span class="va">signature_genes</span>,</span>
 <span>          max_overlaps   <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>          cutoff_region_alpha <span class="op">=</span> <span class="fl">0.04</span>,</span>
+<span>          cutoff_region_alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>          show_threshold_labels <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
-<span>        title   <span class="op">=</span> <span class="st">"Stringent thresholds — top 15 genes labelled"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.01</span> <span class="op">*</span> <span class="st">", |"</span> <span class="op">*</span> <span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="st">"FC| &gt; 0.50"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="volcano-plot_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<span>        theme   <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>        title   <span class="op">=</span> <span class="st">"**Figure 2** — High-Stringency Volcano with Curated Signature"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Cell Press Style | FDR &lt; 0.001, |log₂FC| &gt; 2.0"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_panel_label.html">cli_panel_label</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="volcano-plot_files/figure-html/fig2-custom-volcano-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<p>Setting <code>label_genes</code> to an explicit character vector
+restricts labeling to hypotheses of interest, avoiding overcrowded text
+in dense datasets.</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="gene-annotation-call-out">4. Gene annotation call-out<a class="anchor" aria-label="anchor" href="#gene-annotation-call-out"></a>
+<h2 id="biomarker-annotation-call-out-box">4. Biomarker Annotation Call-Out Box<a class="anchor" aria-label="anchor" href="#biomarker-annotation-call-out-box"></a>
 </h2>
-<p>For a publication figure you often want one or two genes highlighted
-with a <strong>detailed annotation box</strong> reporting the
-fold-change, confidence interval, and exact p-values.
-<code>type_volcano</code> works with plain
-<code>geom_label_repel</code>; you can layer a richer annotation on top
-using <code><a href="https://wilkelab.org/ggtext/reference/geom_richtext.html" class="external-link">ggtext::geom_richtext</a></code>.</p>
+<p>Manuscript figures frequently highlight one or two lead candidate
+biomarkers with an annotation card reporting exact effect sizes,
+confidence intervals, and multiple-testing adjusted statistics.</p>
+<p>Here, we annotate <em>CCL18</em>, a validated serum and tissue
+biomarker of atopic dermatitis severity:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Build annotation for CEACAM5</span></span>
-<span><span class="va">highlight</span> <span class="op">&lt;-</span> <span class="va">de_results</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">de_results</span><span class="op">)</span> <span class="op">==</span> <span class="st">"CEACAM5"</span>, <span class="op">]</span></span>
-<span><span class="va">highlight</span><span class="op">$</span><span class="va">ci_low</span>   <span class="op">&lt;-</span> <span class="fl">1.86</span></span>
-<span><span class="va">highlight</span><span class="op">$</span><span class="va">ci_high</span>  <span class="op">&lt;-</span> <span class="fl">3.73</span></span>
-<span><span class="va">highlight</span><span class="op">$</span><span class="va">annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
-<span>  <span class="st">"&lt;b&gt;&lt;i&gt;"</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">gene</span>, <span class="st">"&lt;/i&gt;&lt;/b&gt;"</span>,</span>
-<span>  <span class="st">"&lt;br&gt;&lt;br&gt;"</span>,</span>
-<span>  <span class="st">"&lt;b&gt;Fold change = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">highlight</span><span class="op">$</span><span class="va">log2FC</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"&lt;/b&gt;"</span>,</span>
-<span>  <span class="st">" (95% CI: "</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">ci_low</span>, <span class="st">", "</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">ci_high</span>, <span class="st">")"</span>,</span>
-<span>  <span class="st">"&lt;br&gt;"</span>,</span>
-<span>  <span class="st">"&lt;b&gt;Unadjusted P-value&lt;/b&gt; &amp;lt; 0.0001"</span>,</span>
-<span>  <span class="st">"&lt;br&gt;"</span>,</span>
-<span>  <span class="st">"&lt;b&gt;Adjusted P-value = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">highlight</span><span class="op">$</span><span class="va">padj</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="st">"&lt;/b&gt;"</span></span>
+<code class="sourceCode R"><span><span class="co"># Extract statistics for CCL18</span></span>
+<span><span class="va">highlight</span> <span class="op">=</span> <span class="va">de_results</span><span class="op">[</span><span class="st">"CCL18"</span>, <span class="op">]</span></span>
+<span><span class="va">highlight</span><span class="op">$</span><span class="va">ci_low</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">highlight</span><span class="op">$</span><span class="va">log2FC</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">highlight</span><span class="op">$</span><span class="va">lfcSE</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">highlight</span><span class="op">$</span><span class="va">ci_high</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">highlight</span><span class="op">$</span><span class="va">log2FC</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">highlight</span><span class="op">$</span><span class="va">lfcSE</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">highlight</span><span class="op">$</span><span class="va">fold_change</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">^</span><span class="va">highlight</span><span class="op">$</span><span class="va">log2FC</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">highlight</span><span class="op">$</span><span class="va">annot</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>  <span class="st">"&lt;b&gt;&lt;i&gt;"</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">gene</span>, <span class="st">"&lt;/i&gt;&lt;/b&gt;&lt;br&gt;"</span>,</span>
+<span>  <span class="st">"&lt;b&gt;log₂FC = +"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">highlight</span><span class="op">$</span><span class="va">log2FC</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"&lt;/b&gt; ("</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">fold_change</span>, <span class="st">"× fold increase)&lt;br&gt;"</span>,</span>
+<span>  <span class="st">"95% CI: ["</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">ci_low</span>, <span class="st">", "</span>, <span class="va">highlight</span><span class="op">$</span><span class="va">ci_high</span>, <span class="st">"]&lt;br&gt;"</span>,</span>
+<span>  <span class="st">"&lt;b&gt;FDR = 4.04 × 10&lt;sup&gt;-32&lt;/sup&gt;&lt;/b&gt;&lt;br&gt;"</span>,</span>
+<span>  <span class="st">"&lt;span style='font-size:8pt;color:#555;'&gt;Th2 Chemokine / CCR8+ T-cell recruiter&lt;/span&gt;"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Base volcano from cliplot, then layer annotation</span></span>
-<span><span class="va">p_base</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
+<span><span class="co"># Base volcano plot</span></span>
+<span><span class="va">p_base</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
-<span>    pval_cutoff  <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>    fc_cutoff    <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>    label_genes  <span class="op">=</span> <span class="st">"significant"</span>,</span>
-<span>    max_overlaps <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>    point_alpha  <span class="op">=</span> <span class="fl">0.60</span></span>
+<span>    pval_cutoff  <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>    fc_cutoff    <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>    point_size   <span class="op">=</span> <span class="fl">1.8</span>,</span>
+<span>    point_alpha  <span class="op">=</span> <span class="fl">0.55</span>,</span>
+<span>    label_genes  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SERPINB4"</span>, <span class="st">"S100A7"</span>, <span class="st">"LCE3A"</span>, <span class="st">"ALOX15"</span>, <span class="st">"GPLD1"</span>, <span class="st">"SPTLC3"</span><span class="op">)</span>,</span>
+<span>    max_overlaps <span class="op">=</span> <span class="fl">20</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  palette <span class="op">=</span> <span class="st">"nature"</span>, theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
-<span>  title   <span class="op">=</span> <span class="st">"Volcano plot with gene annotation call-out"</span>,</span>
-<span>  subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">*</span> <span class="st">", |"</span> <span class="op">*</span> <span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="st">"FC| &gt; 0.25"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  title   <span class="op">=</span> <span class="st">"**Figure 3** — Volcano Plot with *CCL18* Biomarker Call-Out"</span>,</span>
+<span>  subtitle <span class="op">=</span> <span class="st">"NCBI GEO GSE121212 | Human Skin Biopsies"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Layer highlight + annotation on top of the returned ggplot</span></span>
-<span><span class="va">p_annot</span> <span class="op">&lt;-</span> <span class="va">p_base</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
+<span><span class="co"># Layer call-out box and leader segment</span></span>
+<span><span class="va">p_annot</span> <span class="op">=</span> <span class="va">p_base</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">highlight</span>,</span>
-<span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, stroke <span class="op">=</span> <span class="fl">1.4</span>,</span>
-<span>    fill  <span class="op">=</span> <span class="st">"#C95C43"</span>, colour <span class="op">=</span> <span class="st">"black"</span></span>
+<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4.5</span>, stroke <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>    fill <span class="op">=</span> <span class="st">"#C95C43"</span>, colour <span class="op">=</span> <span class="st">"black"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/geom_richtext.html" class="external-link">geom_richtext</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://wilkelab.org/ggtext/reference/geom_richtext.html" class="external-link">geom_richtext</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">highlight</span>,</span>
-<span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span> <span class="op">-</span> <span class="fl">1.8</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1.8</span>,</span>
-<span>                 label <span class="op">=</span> <span class="va">annot</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span> <span class="op">-</span> <span class="fl">4.2</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">+</span> <span class="fl">5</span>, label <span class="op">=</span> <span class="va">annot</span><span class="op">)</span>,</span>
 <span>    inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    hjust <span class="op">=</span> <span class="fl">0</span>, vjust <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>    size <span class="op">=</span> <span class="fl">3.5</span>, fill <span class="op">=</span> <span class="st">"#F9E5D5"</span>, colour <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>    label.colour <span class="op">=</span> <span class="cn">NA</span>, label.padding <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">10</span>, <span class="fl">8</span>, <span class="fl">10</span><span class="op">)</span>, <span class="st">"pt"</span><span class="op">)</span></span>
+<span>    size <span class="op">=</span> <span class="fl">3.2</span>, fill <span class="op">=</span> <span class="st">"#FDF2E9"</span>, colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    label.colour <span class="op">=</span> <span class="st">"#C95C43"</span>, label.padding <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>, <span class="st">"pt"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">highlight</span>,</span>
-<span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span>,</span>
-<span>                 xend <span class="op">=</span> <span class="va">log2FC</span> <span class="op">-</span> <span class="fl">0.3</span>, yend <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.55</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">log2FC</span>, y <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span>,</span>
+<span>        xend <span class="op">=</span> <span class="va">log2FC</span> <span class="op">-</span> <span class="fl">1.2</span>, yend <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">+</span> <span class="fl">3</span><span class="op">)</span>,</span>
 <span>    inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    linewidth <span class="op">=</span> <span class="fl">0.5</span>, colour <span class="op">=</span> <span class="st">"#555555"</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_annot</span></span></code></pre></div>
-<p><img src="volcano-plot_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="volcano-plot_files/figure-html/fig3-callout-volcano-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="using-your-own-data">5. Using your own data<a class="anchor" aria-label="anchor" href="#using-your-own-data"></a>
+<h2 id="using-external-geo-and-deseq2-results">5. Using External GEO and DESeq2 Results<a class="anchor" aria-label="anchor" href="#using-external-geo-and-deseq2-results"></a>
 </h2>
-<p>Your differential-expression pipeline (DESeq2, edgeR, limma, …)
-produces a table with at least these columns:</p>
-<table class="table">
-<thead><tr class="header">
-<th>Column</th>
-<th>Description</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>log2FC</code></td>
-<td>log<sub>2</sub> fold-change</td>
-</tr>
-<tr class="even">
-<td><code>pvalue</code></td>
-<td>raw p-value</td>
-</tr>
-<tr class="odd">
-<td><code>padj</code></td>
-<td>multiple-testing adjusted p-value (FDR)</td>
-</tr>
-</tbody>
-</table>
-<p>Row names should hold gene / probe identifiers.</p>
+<p>To apply <code><a href="../reference/type_volcano.html">type_volcano()</a></code> to other NCBI GEO datasets or
+custom differential expression pipelines (DESeq2, edgeR, limma):</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Required Columns</strong>: Ensure your data frame contains a
+log2 fold change column (<code>log2FC</code>) and an adjusted
+significance column (<code>padj</code>).</li>
+<li>
+<strong>Gene Symbols</strong>: Assign gene symbols to
+<code>rownames(df)</code> or a <code>gene</code> column.</li>
+<li>
+<strong>P-Value Floor</strong>: Cap extreme floating-point zeros to
+prevent infinite values on the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub></mrow><annotation encoding="application/x-tex">-\log_{10}</annotation></semantics></math>
+scale:</li>
+</ol>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example: loading DESeq2 output</span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"differential_expression_results.csv"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">$</span><span class="va">gene_symbol</span></span>
+<code class="sourceCode R"><span><span class="co"># Typical loading script for external GEO data</span></span>
+<span><span class="co"># res = read.csv("GSEXXXXX_differential_expression.csv", row.names = 1)</span></span>
+<span><span class="co"># res$padj = pmax(res$padj, 1e-300)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">res</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
-<span>          pval_cutoff  <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>          fc_cutoff    <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>          label_genes  <span class="op">=</span> <span class="st">"significant"</span>,</span>
-<span>          max_overlaps <span class="op">=</span> <span class="fl">20</span></span>
-<span>        <span class="op">)</span>,</span>
-<span>        title <span class="op">=</span> <span class="st">"Differential expression results"</span><span class="op">)</span></span></code></pre></div>
-<blockquote>
-<p><strong>Tip.</strong> If your adjusted p-value column contains exact
-zeros (common with DESeq2 for highly significant genes), cap them before
-calling <code>cliplot</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">padj</span>, <span class="fl">1e-300</span><span class="op">)</span></span></code></pre></div>
-</blockquote>
+<span><span class="co"># cliplot(-log10(padj) ~ log2FC, data = res,</span></span>
+<span><span class="co">#         type = type_volcano(pval_cutoff = 0.05, fc_cutoff = 1.0),</span></span>
+<span><span class="co">#         theme = "nature")</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="export-for-publication-nature-cell-science-standards">6. Export for Publication (Nature / Cell / Science Standards)<a class="anchor" aria-label="anchor" href="#export-for-publication-nature-cell-science-standards"></a>
+<h2 id="journal-export-physical-trim-dimensions">6. Journal Export &amp; Physical Trim Dimensions<a class="anchor" aria-label="anchor" href="#journal-export-physical-trim-dimensions"></a>
 </h2>
-<p>Premier journals expect figures sized to exact column widths with
-vector paths (PDF or SVG). <code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> provides
-exact specifications for Nature, Cell, and Science:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p><code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> returns publisher print dimensions in
+millimeters. Figures can be exported directly to target column widths
+using <code><a href="../reference/cli_save.html">cli_save()</a></code>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check Nature single-column width (89 mm)</span></span>
 <span><span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"single"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Save directly as vector PDF conforming to Nature column width</span></span>
-<span><span class="va">p_volcano</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">padj</span><span class="op">)</span> <span class="op">~</span> <span class="va">log2FC</span>, data <span class="op">=</span> <span class="va">de_results</span>,</span>
-<span>                     type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span>label_genes <span class="op">=</span> <span class="st">"significant"</span><span class="op">)</span>,</span>
-<span>                     theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span><span class="op">)</span></span>
+<span><span class="co"># Save as vector PDF conforming to Nature single-column width</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_annot</span>, <span class="st">"Figure_3_GSE121212.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_volcano</span>, <span class="st">"Figure_Volcano_Nature.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Export as high-resolution TIFF (600 DPI) for production printing</span></span>
-<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_volcano</span>, <span class="st">"Figure_Volcano_Lancet.tiff"</span>, journal <span class="op">=</span> <span class="st">"lancet"</span>, column <span class="op">=</span> <span class="st">"single"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Save double-column layout for multi-panel assembly</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">p_annot</span>, <span class="st">"Figure_3_GSE121212_double.svg"</span>, journal <span class="op">=</span> <span class="st">"cell"</span>, column <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -325,46 +364,59 @@ exact specifications for Nature, Cell, and Science:</p>
 </h2>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="33%">
+<col width="33%">
+<col width="33%">
 </colgroup>
 <thead><tr class="header">
-<th>What you want</th>
-<th>How to do it</th>
+<th>Parameter / Feature</th>
+<th>Description</th>
+<th>Default</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><strong>Quick volcano</strong></td>
-<td><code>cliplot(-log10(padj) ~ log2FC, data, type = "volcano")</code></td>
+<td><code>pval_cutoff</code></td>
+<td>Significance cutoff on adjusted p-value</td>
+<td><code>0.05</code></td>
 </tr>
 <tr class="even">
-<td><strong>Custom thresholds</strong></td>
-<td><code>type_volcano(pval_cutoff = 0.01, fc_cutoff = 0.5)</code></td>
-</tr>
-<tr class="odd">
-<td><strong>Label all significant genes</strong></td>
-<td><code>type_volcano(label_genes = "significant")</code></td>
-</tr>
-<tr class="even">
-<td><strong>Label specific genes</strong></td>
-<td><code>type_volcano(label_genes = c("TP53","EGFR","BRCA1"))</code></td>
-</tr>
-<tr class="odd">
-<td><strong>Change colours</strong></td>
-<td><code>type_volcano(up_color = "#FF0000", down_color = "#0000FF")</code></td>
-</tr>
-<tr class="even">
-<td><strong>Annotation call-out</strong></td>
-<td>Returned <code>ggplot</code> object +
-<code><a href="https://wilkelab.org/ggtext/reference/geom_richtext.html" class="external-link">ggtext::geom_richtext()</a></code>
-</td>
-</tr>
-<tr class="odd">
-<td><strong>Export</strong></td>
+<td><code>fc_cutoff</code></td>
+<td>Absolute
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext></mrow><annotation encoding="application/x-tex">\log_2\text{FC}</annotation></semantics></math>
+threshold</td>
 <td>
-<code>file = "fig.pdf"</code>, <code>width = 9</code>,
-<code>height = 7</code>
+<code>1.0</code> (2-fold)</td>
+</tr>
+<tr class="odd">
+<td><code>label_genes</code></td>
+<td>Vector of gene symbols, <code>"significant"</code>, or
+<code>NULL</code>
 </td>
+<td><code>NULL</code></td>
+</tr>
+<tr class="even">
+<td><code>max_overlaps</code></td>
+<td>Maximum overlapping labels before hiding (<code>ggrepel</code>)</td>
+<td><code>25</code></td>
+</tr>
+<tr class="odd">
+<td><code>cutoff_region_alpha</code></td>
+<td>Transparency of shaded significance quadrant rectangles</td>
+<td><code>0.045</code></td>
+</tr>
+<tr class="even">
+<td>
+<code>up_color</code> / <code>down_color</code>
+</td>
+<td>Hex codes for directional significance classes</td>
+<td>
+<code>#D73027</code> / <code>#2B6CB0</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>ns_color</code></td>
+<td>Color for non-significant genes</td>
+<td><code>#A8B0BA</code></td>
 </tr>
 </tbody>
 </table>
