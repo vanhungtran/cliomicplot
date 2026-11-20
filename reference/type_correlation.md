@@ -1,7 +1,8 @@
 # Correlation Matrix Plot Type
 
 Creates publication-ready correlation matrix plots with customizable
-color scales, significance indicators, and clustering.
+color scales, significance indicators, clustering, and adaptive text and
+border scaling.
 
 ## Usage
 
@@ -16,7 +17,15 @@ type_correlation(
   color_high = "#D73027",
   cluster = FALSE,
   show_diag = FALSE,
-  sig_level = 0.05
+  sig_level = 0.05,
+  axis_text_size = NULL,
+  axis_text_angle = 45,
+  show_axis_text = TRUE,
+  tile_border_color = "white",
+  tile_border_width = NULL,
+  legend_title = "Correlation",
+  legend_barheight = 55,
+  legend_barwidth = 8
 )
 ```
 
@@ -61,6 +70,42 @@ type_correlation(
 - sig_level:
 
   Significance level for stars (default 0.05)
+
+- axis_text_size:
+
+  Size of axis labels. If NULL (default), adaptively scaled based on
+  number of variables (e.g. 9pt for \<=8 vars down to 4.5pt for 50
+  vars).
+
+- axis_text_angle:
+
+  Angle for x-axis labels (default 45).
+
+- show_axis_text:
+
+  Logical indicating whether to display axis labels (default TRUE).
+
+- tile_border_color:
+
+  Color of tile borders (default "white"). Set to NA or NULL for no
+  border.
+
+- tile_border_width:
+
+  Linewidth of tile borders. If NULL (default), adaptively scaled from
+  0.8 for \<=15 variables down to 0.18 for 50 variables.
+
+- legend_title:
+
+  Legend title for colorbar (default "Correlation").
+
+- legend_barheight:
+
+  Height of colorbar (default 55, or a grid unit).
+
+- legend_barwidth:
+
+  Width of colorbar (default 8, or a grid unit).
 
 ## Value
 

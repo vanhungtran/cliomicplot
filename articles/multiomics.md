@@ -171,10 +171,11 @@ proteins, with hierarchical clustering and significance stars:
 
 ``` r
 
-# Select top 50 most variable proteins
+# Select top 50 most variable proteins and format concise gene symbols
 variances = apply(adpd$wide_clean, 1, var, na.rm = TRUE)
 top50 = names(sort(variances, decreasing = TRUE)[1:50])
 cor_mat = t(adpd$wide_clean[top50, ])
+colnames(cor_mat) = sub("_.*", "", colnames(cor_mat))
 
 clitheme("cli_minimal")
 ```
@@ -185,11 +186,13 @@ clitheme("cli_minimal")
 
 cliplot(as.data.frame(cor_mat),
         type = type_correlation(
-          method    = "pearson",
-          type      = "lower",
-          add_coef  = FALSE,
-          cluster   = TRUE,
-          sig_level = 0.001
+          method          = "pearson",
+          type            = "lower",
+          add_coef        = FALSE,
+          cluster         = TRUE,
+          sig_level       = 0.001,
+          axis_text_size  = 5.5,
+          axis_text_angle = 45
         ),
         stat.test = NULL,
         title = "**Figure 2** — Protein Correlation Matrix (Top 50 Variable)",
