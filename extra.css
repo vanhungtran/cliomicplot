@@ -1,0 +1,159 @@
+/* ==========================================================================
+   cliomicplot: Zoom & Lightbox Styles
+   Applies to all .html pages on the documentation site.
+   ========================================================================== */
+
+/* Zoomable image affordance */
+img.cli-zoomable {
+  cursor: zoom-in !important;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+img.cli-zoomable:hover {
+  opacity: 0.96;
+  filter: brightness(1.02);
+}
+
+/* Body lock when lightbox is active */
+body.cli-lb-open {
+  overflow: hidden !important;
+}
+
+/* Fullscreen Lightbox Backdrop */
+.cli-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(10, 18, 30, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cli-lightbox.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+}
+
+/* Lightbox Stage */
+.cli-lb-stage {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: default;
+}
+
+/* Zoomed Image */
+.cli-lb-img {
+  max-width: none;
+  max-height: none;
+  transform-origin: center center;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+}
+
+/* Control Buttons */
+.cli-lb-btn {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.cli-lb-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.cli-lb-btn:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Close button (top right) */
+.cli-lb-close {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 100001;
+  font-size: 26px;
+  font-weight: 300;
+}
+
+/* Bottom Controls Toolbar */
+.cli-lb-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(14, 23, 38, 0.75);
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cli-lb-controls .cli-lb-btn {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+.cli-lb-controls .cli-lb-reset {
+  width: auto;
+  min-width: 54px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Optional Caption at Bottom */
+.cli-lb-caption {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  max-width: 80vw;
+  background: rgba(10, 18, 30, 0.85);
+  color: #e2e8f0;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: none;
+  pointer-events: none;
+}
