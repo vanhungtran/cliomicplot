@@ -411,41 +411,40 @@ p_env
 ### Interpretation and Visual Grammar
 
 This standalone architecture integrates three analytical layers on a
-unified coordinate plane:
+unified coordinate plane conforming to Fig4papers publication standards:
 
-1.  **Central Circular Network ($`r = 2.45`$ boundary)**:
+1.  **Central Circular Network ($`r = 2.80`$ boundary)**:
     - Displays the biological co-occurrence network partitioned into
       functional modules ($`M_1\text{--}M_7`$).
-    - Features compact two-line opaque badges (`M1\nCore`, `M5\nAMP`,
-      etc.) that avoid label collision.
-    - Grey intra-module edges connect co-occurring taxa.
+    - Features bold opaque badges (`M1: Core`, `M2: Barrier`, etc.)
+      positioned radially with edge-exclusion boundaries to eliminate
+      text-stroke overlap.
+    - Network nodes use fill-only vector geometry (`shape = 16`) to
+      guarantee zero stroke collisions.
 2.  **Four Corner Triangular Heatmaps**:
-    - Evaluate pairwise correlations *within* each external domain
-      (Biophysical Barrier, Clinical Severity, Host Biomarkers,
+    - Evaluate pairwise correlations *within* each external clinical
+      domain (Biophysical Barrier, Clinical Severity, Host Biomarkers,
       Environmental Exposome).
     - Display lower-triangle correlation tiles with off-diagonal
       significance asterisks ($`*P < 0.05`$, $`**P < 0.01`$,
       $`***P < 0.001`$).
     - Diagonal self-correlations ($`r = 1.0`$) are unstarred to
       eliminate redundancy.
-    - Pink diagonal dots mark individual environmental variables.
-    - Anchored domain headers sit above and below rotated labels without
-      text collisions.
-3.  **Inter-Domain Curved Links (The Coupling)**:
-    - Arcs bridge diagonal environmental variables to central module
-      centroids.
+    - Variable labels are rotated at 78° along outer margins to prevent
+      label overlap.
+3.  **Inter-Domain Connecting Links**:
+    - Environmental indicator dots are positioned in the clear annular
+      corridor ($`r \approx 3.38`$) facing each quadrant.
+    - Links connect directly to the central network perimeter
+      ($`r \approx 2.74`$), remaining entirely within open space and
+      never intersecting heatmap tiles or central badges.
     - Color encodes direction (red for positive correlation, cyan for
-      negative correlation).
-    - Linewidth encodes significance ($`-\log_{10}(P\text{-value})`$).
-    - Opaque numeric badges display exact correlation values (e.g.,
-      `.72`, `-.64`).
-    - Badges are anchored at $`t = 0.38`$ along the arc, positioning
-      them in the clear annular space between the circle boundary and
-      the corner heatmaps.
-4.  **Compact Legend**:
-    - Formatted horizontally with `title.position = "left"` and minimal
-      vertical spacing (`legend.spacing.y = unit(1.0, "pt")`),
-      eliminating dead vertical space.
+      negative correlation) and linewidth encodes
+      $`-\log_{10}(P\text{-value})`$.
+4.  **Compact Publication Legend**:
+    - Horizontal multi-tier legend formatted with
+      `title.position = "left"` and strict font floor compliance
+      ($`\ge 5.0`$ pt).
 
 ------------------------------------------------------------------------
 
@@ -667,7 +666,7 @@ print(qa_report)
     #>          Rule: NATURE double-column specification
     #> [PASS]   Physical Height        : 170.0 mm (Max: 170.0 mm)           
     #>          Rule: NATURE printable page boundary
-    #> [PASS]   Font Size Floor        : Min text size: 5.1 pt (Floor: 5.0 pt)
+    #> [PASS]   Font Size Floor        : Min text size: 5.5 pt (Floor: 5.0 pt)
     #>          Rule: NATURE font-floor specification
     #> [PASS]   Stroke Width Floor     : Min stroke: 0.71 pt (Floor: 0.25 pt)
     #>          Rule: NATURE hairline-floor specification
