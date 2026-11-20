@@ -33,8 +33,8 @@ microbial networks.
 
 - [Multi-Omics Exploratory Analysis with
   cliomicplot](https://vanhungtran.github.io/cliomicplot/articles/multiomics.md):
-- [Volcano Plots — from Quick to
-  Publication-Ready](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md):
+- [Differential Expression Volcano Plots with GEO
+  Datasets](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md):
 - [Microbial Metagenomics and mGWAS in Clinical
   Cohorts](https://vanhungtran.github.io/cliomicplot/articles/microbiome-mgwas.md):
 

@@ -1,190 +1,228 @@
-# Volcano Plots — from Quick to Publication-Ready
+# Differential Expression Volcano Plots with GEO Datasets
 
 ``` r
 
 library(cliomicplot)
+library(ggplot2)
+library(ggtext)
 ```
 
 ## Overview
 
-The volcano plot is the canonical visualisation for
-differential-expression analysis. This vignette shows you the
-**one-liner** with
-[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
-and then dives into customisation — adjusted p-values, flexible
-fold-change thresholds, gene labelling, and rich annotation call-outs —
-all with the
+The volcano plot is the standard visualisation for genome-wide
+differential expression experiments, plotting statistical significance
+($`-\log_{10} P_{\text{adj}}`$) against effect size
+($`\log_2\text{FC}`$).
+
+This vignette demonstrates publication-ready volcano plotting using
+human skin RNA-seq data from NCBI GEO accession **GSE121212** (Atopic
+Dermatitis vs. Healthy Control skin biopsies). All figures use the
 [`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
-constructor.
+constructor within
+[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md),
+illustrating default cutoffs, curated gene signatures, and rich
+annotation call-outs.
 
 ------------------------------------------------------------------------
 
-## 1. Simulated data
+## 1. Real GEO Dataset: GSE121212 (Atopic Dermatitis vs. Healthy Skin)
 
-Replace this section with your own DESeq2 / edgeR / limma output table.
+The dataset comes from NCBI GEO accession **GSE121212**:
+
+- **Cohort**: Full-thickness skin biopsies from patients with active
+  Atopic Dermatitis ($`N = 27`$) and healthy control individuals
+  ($`N = 28`$).
+- **Platform**: Illumina HiSeq 2500 high-throughput RNA sequencing.
+- **Differential Expression**: DESeq2 negative binomial generalized
+  linear model with Wald significance testing and Benjamini-Hochberg
+  false discovery rate (`padj`) control.
+- **Gene Coverage**: 20,140 tested genes with `baseMean`, `log2FC`,
+  `lfcSE`, `stat`, `pvalue`, and `padj`.
 
 ``` r
 
-set.seed(2026)
+# Helper to resolve bundled dataset
+resolve_data = function(filename) {
+  pkg_path = system.file("extdata", filename, package = "cliomicplot")
+  if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
+  fallback = file.path("..", "inst", "extdata", filename)
+  if (file.exists(fallback)) return(fallback)
+  fallback2 = file.path("inst", "extdata", filename)
+  if (file.exists(fallback2)) return(fallback2)
+  stop("Cannot locate ", filename)
+}
 
-de_results <- data.frame(
-  gene    = paste0("Gene_", 1:1000),
-  log2FC  = rnorm(1000, mean = 0, sd = 0.7),
-  pvalue  = runif(1000, 0.00001, 1),
-  padj    = p.adjust(runif(1000, 0.00001, 1), method = "BH"),
-  row.names = paste0("Gene_", 1:1000)
-)
+de_results = readRDS(resolve_data("geo_gse121212_de.rds"))
 
-# Inject a strongly significant hit
-de_results <- rbind(
-  de_results,
-  data.frame(
-    gene    = "CEACAM5",
-    log2FC  = 2.79,
-    pvalue  = 0.0001,
-    padj    = 0.0027,
-    row.names = "CEACAM5"
-  )
-)
-
-head(de_results[, c("gene","log2FC","pvalue","padj")])
-#>          gene      log2FC      pvalue      padj
-#> Gene_1 Gene_1  0.36441235 0.961683824 0.9482873
-#> Gene_2 Gene_2 -0.75578353 0.250218781 0.9889257
-#> Gene_3 Gene_3  0.09746668 0.816042035 0.9482873
-#> Gene_4 Gene_4 -0.05932415 0.543788992 0.9482873
-#> Gene_5 Gene_5 -0.46664773 0.908309869 0.9482873
-#> Gene_6 Gene_6 -1.76126232 0.007981887 0.9713784
+# Inspect top differentially expressed genes
+head(de_results[, c("gene", "baseMean", "log2FC", "lfcSE", "pvalue", "padj")])
+#>              gene baseMean log2FC  lfcSE       pvalue         padj
+#> LCE3A       LCE3A   379.15 7.2524 0.5304 1.456015e-42 2.932414e-38
+#> LCE3D       LCE3D  2310.00 5.0891 0.3866 1.448727e-39 1.458868e-35
+#> SPRR2G     SPRR2G  5974.80 4.4195 0.3371 2.921422e-39 1.961248e-35
+#> SERPINB4 SERPINB4 12719.18 6.4473 0.5031 1.360674e-37 6.850992e-34
+#> LCE3E       LCE3E   805.96 5.0317 0.3964 6.365667e-37 2.564091e-33
+#> ALOX15     ALOX15    94.50 3.2228 0.2562 2.771743e-36 9.303816e-33
 ```
 
-> **Your data.** Columns must include a log₂ fold-change, a (preferably
-> adjusted) p-value, and optional gene identifiers as `row.names`.
+Across the 20,140 tested genes, 1,189 meet stringent significance
+criteria ($`P_{\text{adj}} < 0.05`$ and $`|\log_2\text{FC}| > 1.5`$),
+with 812 genes upregulated and 377 downregulated in atopic skin.
 
 ------------------------------------------------------------------------
 
-## 2. Quick volcano — one call
+## 2. Quick Volcano Plot: One Call
+
+[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
+accepts the standard formula `y ~ x`, where the y-axis specifies
+significance ($`-\log_{10} P_{\text{adj}}`$) and the x-axis specifies
+effect size ($`\log_2\text{FC}`$):
 
 ``` r
 
 cliplot(-log10(padj) ~ log2FC, data = de_results,
         type  = type_volcano(
-          pval_cutoff  = 0.05,
-          fc_cutoff    = 0.25,
-          point_alpha  = 0.65,
-          label_genes  = "significant",
-          max_overlaps = 20
+          pval_cutoff  = 0.01,
+          fc_cutoff    = 1.5,
+          point_size   = 1.8,
+          point_alpha  = 0.60,
+          label_genes  = c("SERPINB4", "CCL18", "S100A7", "LCE3A", "SPRR2G",
+                           "ALOX15", "GPLD1", "IL20RA", "SPTLC3"),
+          max_overlaps = 25
         ),
         palette = "nature",
         theme   = "nature",
-        title   = "Differential expression — quick volcano",
-        subtitle = expression(FDR < 0.05 * ", |" * log[2] * "FC| > 0.25"))
+        title   = "**Figure 1** — NCBI GEO GSE121212: Atopic Dermatitis vs. Control",
+        subtitle = "Bulk RNA-seq | FDR < 0.01, |log₂FC| > 1.50") +
+  cli_markdown()
 ```
 
-![](volcano-plot_files/figure-html/unnamed-chunk-3-1.png)
+![](volcano-plot_files/figure-html/fig1-quick-volcano-1.png)
 
-That single call produces:
+This single command coordinates: - Classification into **Up** (red),
+**Down** (blue), and **NS** (grey). - Threshold reference lines at
+$`P_{\text{adj}} = 0.01`$ and $`\log_2\text{FC} = \pm 1.5`$. - Automatic
+`ggrepel` label positioning with collision avoidance. - Nature-style
+open axes without top and right spines.
 
-- Points coloured by significance class (**Up** / **Down** / **NS**)
-- Dashed threshold lines at the chosen p-value and fold-change cutoffs
-- Automatic `ggrepel` labels for every gene passing both thresholds
-- A journal-style theme with curated palette
+### Biological Findings in GSE121212
+
+- **Epidermal Differentiation Complex (EDC)**: Strongly upregulated
+  genes include *LCE3A* ($`\log_2\text{FC} = +7.25`$,
+  $`P_{\text{adj}} = 2.93 \times 10^{-38}`$), *LCE3D*
+  ($`\log_2\text{FC} = +5.09`$), *SPRR2G* ($`\log_2\text{FC} = +4.42`$),
+  and *S100A7* ($`\log_2\text{FC} = +5.35`$, psoriasin).
+- **Th2 Immune Activation**: *SERPINB4* ($`\log_2\text{FC} = +6.45`$,
+  squamous cell carcinoma antigen 2) and *CCL18*
+  ($`\log_2\text{FC} = +4.59`$, dendritic cell-derived chemokine).
+- **Downregulated Barrier Components**: *SPTLC3*
+  ($`\log_2\text{FC} = -0.57`$, serine palmitoyltransferase required for
+  ceramide synthesis) and *GPLD1* ($`\log_2\text{FC} = -0.90`$,
+  glycosylphosphatidylinositol-specific phospholipase D1).
 
 ------------------------------------------------------------------------
 
-## 3. Customising every parameter
+## 3. Customising Parameters & Curated Disease Signatures
 
-Every visual element is exposed. Below we tighten the thresholds, change
-the colour mapping, add a shaded significance region, and label only the
-top 15 hits by adjusted p-value.
+[`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
+provides complete control over thresholds, colors, point transparency,
+and background shading:
 
 ``` r
 
-# Identify top-15 significant genes
-sig_idx <- order(de_results$padj)[1:15]
-top_genes <- rownames(de_results)[sig_idx]
+# Curated Th2 inflammatory and barrier signature
+signature_genes = c("CCL18", "SERPINB4", "S100A7", "S100A8", "S100A9",
+                    "LCE3A", "LCE3D", "ALOX15", "IL20RA", "SPTLC3", "GPLD1")
 
 cliplot(-log10(padj) ~ log2FC, data = de_results,
         type = type_volcano(
-          pval_cutoff    = 0.01,
-          fc_cutoff      = 0.50,
-          up_color       = "#C95C43",
-          down_color     = "#4C8BA8",
-          ns_color       = "#B8B8B8",
-          point_alpha    = 0.62,
-          label_genes    = top_genes,
+          pval_cutoff    = 0.001,
+          fc_cutoff      = 2.0,
+          point_size     = 1.7,
+          point_alpha    = 0.65,
+          up_color       = "#D73027",
+          down_color     = "#2B6CB0",
+          ns_color       = "#D0D4DC",
+          label_genes    = signature_genes,
           max_overlaps   = 30,
-          cutoff_region_alpha = 0.04,
+          cutoff_region_alpha = 0.05,
           show_threshold_labels = TRUE
         ),
-        palette = "jco",
-        title   = "Stringent thresholds — top 15 genes labelled",
-        subtitle = expression(FDR < 0.01 * ", |" * log[2] * "FC| > 0.50"))
+        theme   = "cell",
+        title   = "**Figure 2** — High-Stringency Volcano with Curated Signature",
+        subtitle = "Cell Press Style | FDR < 0.001, |log₂FC| > 2.0") +
+  cli_markdown() +
+  cli_panel_label("a")
 ```
 
-![](volcano-plot_files/figure-html/unnamed-chunk-4-1.png)
+![](volcano-plot_files/figure-html/fig2-custom-volcano-1.png)
+
+Setting `label_genes` to an explicit character vector restricts labeling
+to hypotheses of interest, avoiding overcrowded text in dense datasets.
 
 ------------------------------------------------------------------------
 
-## 4. Gene annotation call-out
+## 4. Biomarker Annotation Call-Out Box
 
-For a publication figure you often want one or two genes highlighted
-with a **detailed annotation box** reporting the fold-change, confidence
-interval, and exact p-values. `type_volcano` works with plain
-`geom_label_repel`; you can layer a richer annotation on top using
-[`ggtext::geom_richtext`](https://wilkelab.org/ggtext/reference/geom_richtext.html).
+Manuscript figures frequently highlight one or two lead candidate
+biomarkers with an annotation card reporting exact effect sizes,
+confidence intervals, and multiple-testing adjusted statistics.
+
+Here, we annotate *CCL18*, a validated serum and tissue biomarker of
+atopic dermatitis severity:
 
 ``` r
 
-# Build annotation for CEACAM5
-highlight <- de_results[rownames(de_results) == "CEACAM5", ]
-highlight$ci_low   <- 1.86
-highlight$ci_high  <- 3.73
-highlight$annot <- paste0(
-  "<b><i>", highlight$gene, "</i></b>",
-  "<br><br>",
-  "<b>Fold change = ", round(highlight$log2FC, 2), "</b>",
-  " (95% CI: ", highlight$ci_low, ", ", highlight$ci_high, ")",
-  "<br>",
-  "<b>Unadjusted P-value</b> &lt; 0.0001",
-  "<br>",
-  "<b>Adjusted P-value = ", format(highlight$padj, digits = 2), "</b>"
+# Extract statistics for CCL18
+highlight = de_results["CCL18", ]
+highlight$ci_low  = round(highlight$log2FC - 1.96 * highlight$lfcSE, 2)
+highlight$ci_high = round(highlight$log2FC + 1.96 * highlight$lfcSE, 2)
+highlight$fold_change = round(2^highlight$log2FC, 1)
+
+highlight$annot = paste0(
+  "<b><i>", highlight$gene, "</i></b><br>",
+  "<b>log₂FC = +", round(highlight$log2FC, 2), "</b> (", highlight$fold_change, "× fold increase)<br>",
+  "95% CI: [", highlight$ci_low, ", ", highlight$ci_high, "]<br>",
+  "<b>FDR = 4.04 × 10<sup>-32</sup></b><br>",
+  "<span style='font-size:8pt;color:#555;'>Th2 Chemokine / CCR8+ T-cell recruiter</span>"
 )
 
-# Base volcano from cliplot, then layer annotation
-p_base <- cliplot(-log10(padj) ~ log2FC, data = de_results,
+# Base volcano plot
+p_base = cliplot(-log10(padj) ~ log2FC, data = de_results,
   type = type_volcano(
-    pval_cutoff  = 0.05,
-    fc_cutoff    = 0.25,
-    label_genes  = "significant",
-    max_overlaps = 15,
-    point_alpha  = 0.60
+    pval_cutoff  = 0.01,
+    fc_cutoff    = 1.5,
+    point_size   = 1.8,
+    point_alpha  = 0.55,
+    label_genes  = c("SERPINB4", "S100A7", "LCE3A", "ALOX15", "GPLD1", "SPTLC3"),
+    max_overlaps = 20
   ),
   palette = "nature", theme = "nature",
-  title   = "Volcano plot with gene annotation call-out",
-  subtitle = expression(FDR < 0.05 * ", |" * log[2] * "FC| > 0.25"))
+  title   = "**Figure 3** — Volcano Plot with *CCL18* Biomarker Call-Out",
+  subtitle = "NCBI GEO GSE121212 | Human Skin Biopsies") +
+  cli_markdown()
 
-# Layer highlight + annotation on top of the returned ggplot
-p_annot <- p_base +
-  ggplot2::geom_point(
+# Layer call-out box and leader segment
+p_annot = p_base +
+  geom_point(
     data = highlight,
-    ggplot2::aes(x = log2FC, y = -log10(padj)),
+    aes(x = log2FC, y = -log10(padj)),
     inherit.aes = FALSE,
-    shape = 21, size = 5, stroke = 1.4,
-    fill  = "#C95C43", colour = "black"
+    shape = 21, size = 4.5, stroke = 1.3,
+    fill = "#C95C43", colour = "black"
   ) +
-  ggtext::geom_richtext(
+  geom_richtext(
     data = highlight,
-    ggplot2::aes(x = log2FC - 1.8, y = -log10(padj) + 1.8,
-                 label = annot),
+    aes(x = log2FC - 4.2, y = -log10(padj) + 5, label = annot),
     inherit.aes = FALSE,
     hjust = 0, vjust = 0.5,
-    size = 3.5, fill = "#F9E5D5", colour = "black",
-    label.colour = NA, label.padding = grid::unit(c(8, 10, 8, 10), "pt")
+    size = 3.2, fill = "#FDF2E9", colour = "black",
+    label.colour = "#C95C43", label.padding = grid::unit(c(6, 8, 6, 8), "pt")
   ) +
-  ggplot2::geom_segment(
+  geom_segment(
     data = highlight,
-    ggplot2::aes(x = log2FC, y = -log10(padj),
-                 xend = log2FC - 0.3, yend = -log10(padj) + 0.55),
+    aes(x = log2FC, y = -log10(padj),
+        xend = log2FC - 1.2, yend = -log10(padj) + 3),
     inherit.aes = FALSE,
     linewidth = 0.5, colour = "#555555"
   )
@@ -192,83 +230,67 @@ p_annot <- p_base +
 p_annot
 ```
 
-![](volcano-plot_files/figure-html/unnamed-chunk-5-1.png)
+![](volcano-plot_files/figure-html/fig3-callout-volcano-1.png)
 
 ------------------------------------------------------------------------
 
-## 5. Using your own data
+## 5. Using External GEO and DESeq2 Results
 
-Your differential-expression pipeline (DESeq2, edgeR, limma, …) produces
-a table with at least these columns:
+To apply
+[`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
+to other NCBI GEO datasets or custom differential expression pipelines
+(DESeq2, edgeR, limma):
 
-| Column   | Description                             |
-|----------|-----------------------------------------|
-| `log2FC` | log₂ fold-change                        |
-| `pvalue` | raw p-value                             |
-| `padj`   | multiple-testing adjusted p-value (FDR) |
-
-Row names should hold gene / probe identifiers.
+1.  **Required Columns**: Ensure your data frame contains a log2 fold
+    change column (`log2FC`) and an adjusted significance column
+    (`padj`).
+2.  **Gene Symbols**: Assign gene symbols to `rownames(df)` or a `gene`
+    column.
+3.  **P-Value Floor**: Cap extreme floating-point zeros to prevent
+    infinite values on the $`-\log_{10}`$ scale:
 
 ``` r
 
-# Example: loading DESeq2 output
-res <- read.csv("differential_expression_results.csv")
-rownames(res) <- res$gene_symbol
+# Typical loading script for external GEO data
+# res = read.csv("GSEXXXXX_differential_expression.csv", row.names = 1)
+# res$padj = pmax(res$padj, 1e-300)
 
-cliplot(-log10(padj) ~ log2FC, data = res,
-        type = type_volcano(
-          pval_cutoff  = 0.05,
-          fc_cutoff    = 0.25,
-          label_genes  = "significant",
-          max_overlaps = 20
-        ),
-        title = "Differential expression results")
+# cliplot(-log10(padj) ~ log2FC, data = res,
+#         type = type_volcano(pval_cutoff = 0.05, fc_cutoff = 1.0),
+#         theme = "nature")
 ```
-
-> **Tip.** If your adjusted p-value column contains exact zeros (common
-> with DESeq2 for highly significant genes), cap them before calling
-> `cliplot`:
->
-> ``` r
->
-> res$padj <- pmax(res$padj, 1e-300)
-> ```
 
 ------------------------------------------------------------------------
 
-## 6. Export for Publication (Nature / Cell / Science Standards)
+## 6. Journal Export & Physical Trim Dimensions
 
-Premier journals expect figures sized to exact column widths with vector
-paths (PDF or SVG).
 [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
-provides exact specifications for Nature, Cell, and Science:
+returns publisher print dimensions in millimeters. Figures can be
+exported directly to target column widths using
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md):
 
 ``` r
 
 # Check Nature single-column width (89 mm)
 cli_journal_size("nature", "single")
 
-# Save directly as vector PDF conforming to Nature column width
-p_volcano <- cliplot(-log10(padj) ~ log2FC, data = de_results,
-                     type = type_volcano(label_genes = "significant"),
-                     theme = "nature", palette = "npg")
+# Save as vector PDF conforming to Nature single-column width
+cli_save(p_annot, "Figure_3_GSE121212.pdf", journal = "nature", column = "single")
 
-cli_save(p_volcano, "Figure_Volcano_Nature.pdf", journal = "nature", column = "single")
-
-# Export as high-resolution TIFF (600 DPI) for production printing
-cli_save(p_volcano, "Figure_Volcano_Lancet.tiff", journal = "lancet", column = "single", dpi = 600)
+# Save double-column layout for multi-panel assembly
+cli_save(p_annot, "Figure_3_GSE121212_double.svg", journal = "cell", column = "double")
 ```
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-| What you want | How to do it |
-|----|----|
-| **Quick volcano** | `cliplot(-log10(padj) ~ log2FC, data, type = "volcano")` |
-| **Custom thresholds** | `type_volcano(pval_cutoff = 0.01, fc_cutoff = 0.5)` |
-| **Label all significant genes** | `type_volcano(label_genes = "significant")` |
-| **Label specific genes** | `type_volcano(label_genes = c("TP53","EGFR","BRCA1"))` |
-| **Change colours** | `type_volcano(up_color = "#FF0000", down_color = "#0000FF")` |
-| **Annotation call-out** | Returned `ggplot` object + [`ggtext::geom_richtext()`](https://wilkelab.org/ggtext/reference/geom_richtext.html) |
-| **Export** | `file = "fig.pdf"`, `width = 9`, `height = 7` |
+| Parameter / Feature | Description | Default |
+|----|----|----|
+| `pval_cutoff` | Significance cutoff on adjusted p-value | `0.05` |
+| `fc_cutoff` | Absolute $`\log_2\text{FC}`$ threshold | `1.0` (2-fold) |
+| `label_genes` | Vector of gene symbols, `"significant"`, or `NULL` | `NULL` |
+| `max_overlaps` | Maximum overlapping labels before hiding (`ggrepel`) | `25` |
+| `cutoff_region_alpha` | Transparency of shaded significance quadrant rectangles | `0.045` |
+| `up_color` / `down_color` | Hex codes for directional significance classes | `#D73027` / `#2B6CB0` |
+| `ns_color` | Color for non-significant genes | `#A8B0BA` |
