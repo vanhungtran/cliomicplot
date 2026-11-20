@@ -36,7 +36,6 @@ package.
 
 library(cliomicplot)
 library(ggplot2)
-library(survival)
 library(patchwork)
 
 clipar(stat.test = NULL) # Disable auto statistical overlays for clean journal look
@@ -122,193 +121,7 @@ cliplot(roc_df,
 
 ------------------------------------------------------------------------
 
-## 3. Figure 2 — Minimal Clinically Important Difference (MCID) Dumbbell (Cell Style)
-
-Large observational cohorts or clinical trials frequently yield
-$`P < 0.001`$ for effect sizes that are clinically trivial. The **MCID
-Dumbbell Plot** (Clinical Archetype 1) anchors observed effect estimates
-$`|\hat{\theta}|`$ against the validated minimal clinically important
-difference threshold (e.g. DLQI, EASI, SCORAD).
-
-Glyphs are dynamically sized by sample size ($`N_{\text{treated}}`$),
-and endpoints are ordered by their effect-to-MCID ratio:
-
-``` r
-
-mcid_data = data.frame(
-  Endpoint = c("EASI-75 (Biologic A)", "DLQI 0/1 (Biologic A)",
-               "SCORAD-50 (Standard TCS)", "POEM (Oral Antihistamine)",
-               "Pruritus NRS (Emollient)"),
-  Estimate = c(9.4, 6.2, 4.3, 1.8, 0.9),
-  MCID     = c(6.6, 4.0, 8.7, 3.4, 2.0),
-  N        = c(480, 450, 310, 220, 160),
-  Category = c("Biologic Exceeding MCID", "Biologic Exceeding MCID",
-               "Standard-of-Care Below MCID", "Concomitant Below MCID",
-               "Concomitant Below MCID")
-)
-
-cliplot(Estimate ~ Endpoint, data = mcid_data,
-        type = type_mcid(mcid = "MCID", n_treated = "N"),
-        theme = "cell") +
-  cli_panel_label("b")
-```
-
-![](journal-plots_files/figure-html/fig2-mcid-1.png)
-
-------------------------------------------------------------------------
-
-## 4. Figure 3 — Longitudinal Trajectory with Clinical Severity Bands (Science Style)
-
-Individual patient trajectories contain high biological noise. Plotting
-only group means hides clinical heterogeneity, whereas raw spaghetti
-plots create an illegible hairball.
-
-The **Longitudinal Trajectory Plot** (Clinical Archetype 4) resolves
-this by overlaying semi-transparent individual paths onto shaded
-clinical severity bands (Mild, Moderate, Severe), anchored by a bold
-group mean ribbon and visit sample sizes ($`n = \dots`$):
-
-``` r
-
-set.seed(42)
-n_patients = 24
-visits = c("Baseline", "Week 4", "Week 12", "Week 24")
-traj_df = expand.grid(Patient = paste0("PT-", sprintf("%02d", 1:n_patients)), Visit = visits)
-
-# Simulate clinical response trajectories
-baseline_scores = rep(runif(n_patients, 50, 85), each = length(visits))
-time_drop = rep(c(0, 12, 28, 42), times = n_patients)
-noise = rnorm(nrow(traj_df), mean = 0, sd = 6)
-traj_df$Severity = pmax(2, pmin(95, baseline_scores - time_drop + noise))
-
-cliplot(Severity ~ Visit | Patient, data = traj_df,
-        type = type_trajectory(
-          severity_bands  = list(Mild = c(0, 25), Moderate = c(25, 50), Severe = c(50, 100)),
-          severity_colors = c(Mild = "#D9EEF7", Moderate = "#FDE8D7", Severe = "#FADBD8"),
-          show_mean = TRUE, show_ci = TRUE, show_n = TRUE
-        ),
-        theme = "science",
-        ylab = "Disease Severity Score (0-100)") +
-  cli_panel_label("c")
-```
-
-![](journal-plots_files/figure-html/fig3-trajectory-1.png)
-
-------------------------------------------------------------------------
-
-## 5. Figure 4 — Kaplan-Meier Cumulative Incidence with Landmark Milestones (Nature Style)
-
-In oncology and longitudinal disease cohorts, communicating exact
-landmark risks (e.g., 6-month, 1-year, and 2-year cumulative incidence)
-is essential.
-
-Using the zero-dependency native survival engine in
-[`type_km()`](https://vanhungtran.github.io/cliomicplot/reference/type_km.md),
-we compute cumulative incidence $`[1 - S(t)] \times 100\%`$ with exact
-landmark milestone dots, annotations, and aligned numbers-at-risk:
-
-``` r
-
-lung_data = survival::lung
-
-cliplot(Surv(time, status) ~ sex, data = lung_data,
-        type = type_km(
-          cumulative_incidence = TRUE,
-          milestones  = c(180, 365, 730),
-          risk_table  = TRUE,
-          pval        = TRUE,
-          conf_int    = TRUE,
-          xlab        = "Days from Randomization"
-        ),
-        theme = "nature", palette = "jama")
-```
-
-![](journal-plots_files/figure-html/fig4-km-1.png)
-
-------------------------------------------------------------------------
-
-## 6. Figure 5 — Clinical Oncology Swimmer Plot with Ongoing Indicators (Cell Style)
-
-Swimmer plots display individual patient treatment durations, clinical
-response categories, and distinct adverse events.
-
-Following Clinical Archetype 13 standards, patients actively continuing
-therapy at database lock are distinguished by arrowheads at their
-timeline bar tips:
-
-``` r
-
-set.seed(101)
-n_pts = 10
-pt_timeline = data.frame(
-  Patient  = paste0("Pt-", sprintf("%02d", 1:n_pts)),
-  Duration = c(4.5, 7.8, 10.2, 12.0, 15.6, 18.2, 22.4, 25.0, 28.5, 31.0),
-  Response = c("PD", "SD", "PR", "SD", "PR", "CR", "PR", "CR", "CR", "CR"),
-  Ongoing  = c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
-  stringsAsFactors = FALSE
-)
-
-# Patient adverse events and surgery milestones
-event_markers = data.frame(
-  ID    = c("Pt-02", "Pt-04", "Pt-05", "Pt-07", "Pt-08", "Pt-09", "Pt-10"),
-  Time  = c(3.0, 6.5, 8.0, 14.2, 12.0, 20.1, 16.5),
-  Event = c("AE", "Dose Reduction", "Response", "AE", "Surgery", "Response", "AE"),
-  stringsAsFactors = FALSE
-)
-
-cliplot(Duration ~ Patient, data = pt_timeline,
-        type = type_swimmer(
-          bar_fill      = "Response",
-          ongoing       = "Ongoing",
-          event_times   = event_markers,
-          show_duration = TRUE
-        ),
-        theme = "cell", bar_palette = "jama") +
-  cli_panel_label("d")
-```
-
-![](journal-plots_files/figure-html/fig5-swimmer-1.png)
-
-------------------------------------------------------------------------
-
-## 7. Figure 6 — Multivariable Forest Plot with Row Stripes & Meta-Analysis Diamond (Science Style)
-
-Forest plots summarize hazard ratios, odds ratios, and meta-analytic
-evidence. In Science and Lancet style: - Alternating subtle background
-row stripes (`stripe = TRUE`) prevent horizontal eye drift across wide
-canvases. - Pooled summary estimates are rendered as high-contrast
-diamond glyphs (`shape = 23`). - Confidence interval annotations are
-formatted cleanly without negative zero signs (`-0.00`).
-
-``` r
-
-cox_meta = data.frame(
-  Variable = c("Subgroup: Age >60", "Subgroup: Male Sex", "Subgroup: Stage III/IV",
-               "Trial 1 (EUR Cohort)", "Trial 2 (Asian Cohort)", "Pooled Meta-Analysis Diamond"),
-  HR       = c(1.42, 1.15, 2.35, 1.62, 1.54, 1.58),
-  CI_low   = c(1.08, 0.89, 1.74, 1.25, 1.18, 1.32),
-  CI_high  = c(1.88, 1.48, 3.18, 2.10, 2.01, 1.89),
-  P        = c(0.012, 0.28, 0.0001, 0.0004, 0.0015, 0.00001),
-  is_summary = c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)
-)
-
-cliplot(HR ~ Variable, data = cox_meta,
-        type = type_forest(
-          stripe      = TRUE,
-          diamond     = TRUE,
-          show_values = TRUE,
-          ref_val     = 1,
-          log_scale   = TRUE
-        ),
-        theme = "science") +
-  cli_panel_label("e")
-```
-
-![](journal-plots_files/figure-html/fig6-forest-1.png)
-
-------------------------------------------------------------------------
-
-## 8. Figure 7 — GSEA-Style Pathway Enrichment Dot Plot (Nature Style)
+## 3. Figure 2 — GSEA-Style Pathway Enrichment Dot Plot (Nature Style)
 
 Enrichment dot plots order biological pathways or gene sets by
 Normalized Enrichment Score (NES), encoding statistical significance
@@ -328,14 +141,14 @@ top_pathways = data.frame(
 )
 
 cliplot(top_pathways, type = "gsea", top_term = 18, theme = "nature") +
-  cli_panel_label("f")
+  cli_panel_label("b")
 ```
 
-![](journal-plots_files/figure-html/fig7-gsea-1.png)
+![](journal-plots_files/figure-html/fig2-gsea-1.png)
 
 ------------------------------------------------------------------------
 
-## 9. Figure 8 — Multi-Set Intersection: UpSet Plot (Cell Style)
+## 4. Figure 3 — Multi-Set Intersection: UpSet Plot (Cell Style)
 
 UpSet plots supersede Venn diagrams when tracking differentially
 expressed gene or metabolite overlap across $`\ge 4`$ biological
@@ -351,14 +164,14 @@ names(deg_sets) = unique(adpd_res$test)
 deg_sets = deg_sets[vapply(deg_sets, length, integer(1)) > 0]
 
 cliplot(deg_sets, type = "upset", theme = "cell") +
-  cli_panel_label("g")
+  cli_panel_label("c")
 ```
 
-![](journal-plots_files/figure-html/fig8-upset-1.png)
+![](journal-plots_files/figure-html/fig3-upset-1.png)
 
 ------------------------------------------------------------------------
 
-## 10. Figure 9 — SCI / Elsevier Full-Box Style with `theme_cli_scifig()`
+## 5. Figure 4 — SCI / Elsevier Full-Box Style with `theme_cli_scifig()`
 
 For manuscripts submitted to Elsevier, IEEE, and SCI journals requiring
 full four-sided spines and outward tick marks,
@@ -378,14 +191,14 @@ cliplot(expr ~ timepoint | treatment, data = lxn_sub,
         palette = "npg",
         xlab = "Recovery Time-Point",
         ylab = "Normalized Abundance (LFQ Intensity)") +
-  cli_panel_label("h")
+  cli_panel_label("d")
 ```
 
-![](journal-plots_files/figure-html/fig9-scifig-1.png)
+![](journal-plots_files/figure-html/fig4-scifig-1.png)
 
 ------------------------------------------------------------------------
 
-## 11. Multi-Panel Composite Assembly & Journal-Sized Export
+## 6. Multi-Panel Composite Assembly & Journal-Sized Export
 
 A key requirement in CNS journals is assembling modular panels into a
 unified figure and exporting at exact physical millimeter trim width:
@@ -396,13 +209,11 @@ panel_a = cliplot(roc_df, type = type_roc(predictors = top_markers[1:2], respons
                   theme = "nature", palette = "npg") +
   cli_panel_label("a")
 
-panel_b = cliplot(Estimate ~ Endpoint, data = mcid_data[1:4, ],
-                  type = type_mcid(mcid = "MCID", n_treated = "N"),
-                  theme = "nature") +
+panel_b = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature") +
   cli_panel_label("b")
 
 # Combine side-by-side using patchwork
-composite_fig = panel_a + panel_b + plot_layout(widths = c(1, 1.4))
+composite_fig = panel_a + panel_b + plot_layout(widths = c(1, 1.25))
 composite_fig
 ```
 
@@ -456,6 +267,24 @@ cli_save(panel_a, file = "Figure_1a.svg", journal = "cell", column = "single")
 
 ------------------------------------------------------------------------
 
+## 7. Clinical Trials & Oncology Visual Grammar
+
+For clinical trial archetypes, including: - Kaplan-Meier survival curves
+with landmark milestone dots (`type_km`) - Cumulative incidence
+$`[1 - S(t)]`$ with numbers-at-risk - Multivariable Cox regression
+forest plots with row stripes (`type_forest`) - RECIST waterfall plots
+(`type_waterfall`) - Patient timeline swimmer plots with ongoing therapy
+arrowheads (`type_swimmer`) - Minimal Clinically Important Difference
+(MCID) dumbbells (`type_mcid`) - Longitudinal trajectory plots with
+clinical severity bands (`type_trajectory`) - Clinical trial phase
+pipeline stacked bars (`type_trials`)
+
+See the dedicated [Clinical Oncology & Trial
+Visualizations](https://vanhungtran.github.io/cliomicplot/articles/oncology.md)
+vignette.
+
+------------------------------------------------------------------------
+
 ## Summary
 
 By pairing the
@@ -465,7 +294,7 @@ clinical archetypes:
 
 1.  **Every figure adheres to strict publisher layout and typography
     rules**.
-2.  **Clinical and omics interpretations remain mathematically robust
-    and transparent**.
+2.  **Clinical and omics interpretations remain mathematically
+    transparent**.
 3.  **Multi-panel figures can be assembled and saved directly at journal
     trim specifications**.

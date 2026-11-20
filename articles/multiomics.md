@@ -257,6 +257,12 @@ cliplot(negLogP ~ logFC, data = adpd_de,
 
 ![](multiomics_files/figure-html/unnamed-chunk-6-1.png)
 
+> \[!TIP\] For advanced volcano styling (asymmetric fold-change
+> thresholds, gene-set callouts, and multi-comparison small multiples),
+> see the dedicated [Differential Expression Volcano
+> Plots](https://vanhungtran.github.io/cliomicplot/articles/volcano-plot.md)
+> vignette.
+
 ------------------------------------------------------------------------
 
 ## Figure 4: MA Plot — DE Quality Check
