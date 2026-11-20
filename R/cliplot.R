@@ -223,9 +223,10 @@ cliplot.default = function(
     p = p + ggplot2::theme(legend.position = settings$legend)
 
     # ---- Maintain angled x-axis text for matrix and heatmap types ----
-    if (settings$type_name %in% c("module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix")) {
-      sz = settings$axis_text_size %||% settings$cor_axis_size
-      ang = settings$axis_text_angle %||% settings$cor_axis_angle %||% 45
+    if (settings$type_name %in% c("module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix", "bubble_heatmap")) {
+      sz_x = settings$axis_text_size %||% settings$cor_axis_size %||% settings$bh_axis_x_size
+      sz_y = settings$axis_text_size %||% settings$cor_axis_size %||% settings$bh_axis_y_size
+      ang = settings$axis_text_angle %||% settings$cor_axis_angle %||% settings$bh_axis_angle %||% 45
       show_ax = if (!is.null(settings$cor_show_axis)) settings$cor_show_axis else TRUE
 
       if (!isTRUE(show_ax)) {
@@ -233,18 +234,18 @@ cliplot.default = function(
           axis.text.x = ggplot2::element_blank(),
           axis.text.y = ggplot2::element_blank()
         )
-      } else if (!is.null(sz)) {
+      } else if (!is.null(sz_x) || !is.null(sz_y)) {
         p = p + ggplot2::theme(
-          axis.text.x = ggplot2::element_text(angle = ang, hjust = 1, vjust = 1, size = sz),
-          axis.text.y = ggplot2::element_text(size = sz)
+          axis.text.x = ggplot2::element_text(angle = ang, hjust = 1, vjust = 1, size = sz_x),
+          axis.text.y = ggplot2::element_text(size = sz_y)
         )
       } else {
         p = p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = ang, hjust = 1, vjust = 1))
       }
     }
 
-    # ---- Maintain clean matrix borders and backgrounds for correlation matrices ----
-    if (settings$type_name == "correlation") {
+    # ---- Maintain clean matrix borders and backgrounds for correlation matrices and bubble heatmaps ----
+    if (settings$type_name %in% c("correlation", "bubble_heatmap")) {
       p = p + ggplot2::theme(
         panel.grid   = ggplot2::element_blank(),
         panel.border = ggplot2::element_blank()

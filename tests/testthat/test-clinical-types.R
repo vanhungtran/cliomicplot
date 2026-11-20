@@ -274,6 +274,20 @@ test_that("type_forest works with alternating stripes and summary diamond", {
   expect_s3_class(p, "ggplot")
 })
 
+test_that("type_bubble_heatmap works with proper axis orientation and sizing", {
+  test_df <- data.frame(
+    Gene = rep(c("TP53", "EGFR", "BRCA1"), each = 2),
+    Condition = rep(c("Treated", "Control"), 3),
+    FC = c(2.1, 0.4, 1.8, 0.9, 0.2, 3.0),
+    PVal = c(4.5, 1.2, 3.8, 2.1, 0.8, 5.2)
+  )
+  p <- cliplot(Gene ~ Condition, data = test_df, by = test_df$FC,
+               type = type_bubble_heatmap(label_threshold = 1.5, max_size = 9),
+               extra_data = list(fill = test_df$PVal))
+  expect_s3_class(p, "ggplot")
+  expect_equal(p$theme$axis.text.x$angle, 45)
+})
+
 # ---- Journal Themes & Presets ----
 
 test_that("theme_cli_scifig and clitheme('scifig') work", {
