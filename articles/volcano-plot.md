@@ -4,44 +4,51 @@
 
 library(cliomicplot)
 library(ggplot2)
+library(patchwork)
 library(ggtext)
 ```
 
 ## Overview
 
-The volcano plot is the standard visualisation for genome-wide
-differential expression experiments, plotting statistical significance
-($`-\log_{10} P_{\text{adj}}`$) against effect size
-($`\log_2\text{FC}`$).
+In dermatological transcriptomics and translational medicine,
+differential expression studies rarely evaluate a single comparison in
+isolation. Instead, clinical investigations rely on a **series of
+contrasts**:
 
-This vignette demonstrates publication-ready volcano plotting using
-human skin RNA-seq data from NCBI GEO accession **GSE121212** (Atopic
-Dermatitis vs. Healthy Control skin biopsies). All figures use the
+1.  **Disease Phenotyping Triad**: Contrasting Atopic Dermatitis (AD)
+    and Psoriasis (PSO) against Healthy Controls (HC), alongside direct
+    head-to-head AD vs. PSO comparisons to dissect Th2 versus Th17/Th22
+    immunophenotypic divergence.
+2.  **Therapeutic Resolution**: Evaluating longitudinal and cross-cohort
+    treatment response across targeted biologics (e.g., Dupilumab
+    anti-IL4R$`\alpha`$, tralokinumab anti-IL13, cerdulatinib dual
+    SYK/JAK, and SAR444727 RIPK1 inhibitor) to track the reversal of
+    disease-driving expression signatures.
+
+This vignette demonstrates the complete series of volcano plots using
+real clinical transcriptomics from NCBI GEO accession **GSE121212** and
+cross-cohort treatment meta-analyses. All figures are generated using
 [`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
-constructor within
-[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md),
-illustrating default cutoffs, curated gene signatures, and rich
-annotation call-outs.
+with
+[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md).
 
 ------------------------------------------------------------------------
 
-## 1. Real GEO Dataset: GSE121212 (Atopic Dermatitis vs. Healthy Skin)
+## 1. The Dermatology GEO Series Datasets
 
-The dataset comes from NCBI GEO accession **GSE121212**:
+The analysis integrates four curated differential expression contrasts
+bundled directly with **cliomicplot**:
 
-- **Cohort**: Full-thickness skin biopsies from patients with active
-  Atopic Dermatitis ($`N = 27`$) and healthy control individuals
-  ($`N = 28`$).
-- **Platform**: Illumina HiSeq 2500 high-throughput RNA sequencing.
-- **Differential Expression**: DESeq2 negative binomial generalized
-  linear model with Wald significance testing and Benjamini-Hochberg
-  false discovery rate (`padj`) control.
-- **Gene Coverage**: 20,140 tested genes with `baseMean`, `log2FC`,
-  `lfcSE`, `stat`, `pvalue`, and `padj`.
+| Contrast | Cohort / Technology | Primary Biological Question |
+|----|----|----|
+| **AD vs. Healthy** | NCBI GEO `GSE121212` (RNA-seq) | Th2 immune activation & epidermal barrier breakdown |
+| **Psoriasis vs. Healthy** | NCBI GEO `GSE121212` (RNA-seq) | Th17 / IL-23 axis & antimicrobial hyper-induction |
+| **AD vs. Psoriasis** | NCBI GEO `GSE121212` (RNA-seq) | Direct head-to-head Th2 vs. Th17 biomarker divergence |
+| **Treatment Meta-Analysis** | Cross-cohort meta-analysis (5 active arms) | Systematic therapeutic normalization of skin pathology |
 
 ``` r
 
-# Helper to resolve bundled dataset
+# Helper to resolve bundled datasets
 resolve_data = function(filename) {
   pkg_path = system.file("extdata", filename, package = "cliomicplot")
   if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
@@ -52,35 +59,29 @@ resolve_data = function(filename) {
   stop("Cannot locate ", filename)
 }
 
-de_results = readRDS(resolve_data("geo_gse121212_de.rds"))
+series = readRDS(resolve_data("geo_dermatology_series_de.rds"))
 
-# Inspect top differentially expressed genes
-head(de_results[, c("gene", "baseMean", "log2FC", "lfcSE", "pvalue", "padj")])
-#>              gene baseMean log2FC  lfcSE       pvalue         padj
-#> LCE3A       LCE3A   379.15 7.2524 0.5304 1.456015e-42 2.932414e-38
-#> LCE3D       LCE3D  2310.00 5.0891 0.3866 1.448727e-39 1.458868e-35
-#> SPRR2G     SPRR2G  5974.80 4.4195 0.3371 2.921422e-39 1.961248e-35
-#> SERPINB4 SERPINB4 12719.18 6.4473 0.5031 1.360674e-37 6.850992e-34
-#> LCE3E       LCE3E   805.96 5.0317 0.3964 6.365667e-37 2.564091e-33
-#> ALOX15     ALOX15    94.50 3.2228 0.2562 2.771743e-36 9.303816e-33
+# Inspect available contrasts
+names(series)
+#> [1] "ad_vs_hc"       "pso_vs_hc"      "ad_vs_pso"      "treatment_meta"
+#> [5] "series_tidy"
 ```
 
-Across the 20,140 tested genes, 1,189 meet stringent significance
-criteria ($`P_{\text{adj}} < 0.05`$ and $`|\log_2\text{FC}| > 1.5`$),
-with 812 genes upregulated and 377 downregulated in atopic skin.
+Each contrast table provides HGNC gene symbols with effect estimates
+($`\log_2\text{FC}`$), standard errors (`lfcSE`), raw p-values, and
+Benjamini-Hochberg false discovery rates (`padj`).
 
 ------------------------------------------------------------------------
 
-## 2. Quick Volcano Plot: One Call
+## 2. Contrast 1: Atopic Dermatitis vs. Control Skin (GSE121212)
 
-[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
-accepts the standard formula `y ~ x`, where the y-axis specifies
-significance ($`-\log_{10} P_{\text{adj}}`$) and the x-axis specifies
-effect size ($`\log_2\text{FC}`$):
+The formula `y ~ x` places significance ($`-\log_{10} P_{\text{adj}}`$)
+on the vertical axis and effect size ($`\log_2\text{FC}`$) on the
+horizontal axis:
 
 ``` r
 
-cliplot(-log10(padj) ~ log2FC, data = de_results,
+cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
         type  = type_volcano(
           pval_cutoff  = 0.01,
           fc_cutoff    = 1.5,
@@ -92,103 +93,232 @@ cliplot(-log10(padj) ~ log2FC, data = de_results,
         ),
         palette = "nature",
         theme   = "nature",
-        title   = "**Figure 1** — NCBI GEO GSE121212: Atopic Dermatitis vs. Control",
+        title   = "**Figure 1** — NCBI GEO GSE121212: Atopic Dermatitis vs. Healthy Skin",
         subtitle = "Bulk RNA-seq | FDR < 0.01, |log₂FC| > 1.50") +
-  cli_markdown()
-```
-
-![](volcano-plot_files/figure-html/fig1-quick-volcano-1.png)
-
-This single command coordinates: - Classification into **Up** (red),
-**Down** (blue), and **NS** (grey). - Threshold reference lines at
-$`P_{\text{adj}} = 0.01`$ and $`\log_2\text{FC} = \pm 1.5`$. - Automatic
-`ggrepel` label positioning with collision avoidance. - Nature-style
-open axes without top and right spines.
-
-### Biological Findings in GSE121212
-
-- **Epidermal Differentiation Complex (EDC)**: Strongly upregulated
-  genes include *LCE3A* ($`\log_2\text{FC} = +7.25`$,
-  $`P_{\text{adj}} = 2.93 \times 10^{-38}`$), *LCE3D*
-  ($`\log_2\text{FC} = +5.09`$), *SPRR2G* ($`\log_2\text{FC} = +4.42`$),
-  and *S100A7* ($`\log_2\text{FC} = +5.35`$, psoriasin).
-- **Th2 Immune Activation**: *SERPINB4* ($`\log_2\text{FC} = +6.45`$,
-  squamous cell carcinoma antigen 2) and *CCL18*
-  ($`\log_2\text{FC} = +4.59`$, dendritic cell-derived chemokine).
-- **Downregulated Barrier Components**: *SPTLC3*
-  ($`\log_2\text{FC} = -0.57`$, serine palmitoyltransferase required for
-  ceramide synthesis) and *GPLD1* ($`\log_2\text{FC} = -0.90`$,
-  glycosylphosphatidylinositol-specific phospholipase D1).
-
-------------------------------------------------------------------------
-
-## 3. Customising Parameters & Curated Disease Signatures
-
-[`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
-provides complete control over thresholds, colors, point transparency,
-and background shading:
-
-``` r
-
-# Curated Th2 inflammatory and barrier signature
-signature_genes = c("CCL18", "SERPINB4", "S100A7", "S100A8", "S100A9",
-                    "LCE3A", "LCE3D", "ALOX15", "IL20RA", "SPTLC3", "GPLD1")
-
-cliplot(-log10(padj) ~ log2FC, data = de_results,
-        type = type_volcano(
-          pval_cutoff    = 0.001,
-          fc_cutoff      = 2.0,
-          point_size     = 1.7,
-          point_alpha    = 0.65,
-          up_color       = "#D73027",
-          down_color     = "#2B6CB0",
-          ns_color       = "#D0D4DC",
-          label_genes    = signature_genes,
-          max_overlaps   = 30,
-          cutoff_region_alpha = 0.05,
-          show_threshold_labels = TRUE
-        ),
-        theme   = "cell",
-        title   = "**Figure 2** — High-Stringency Volcano with Curated Signature",
-        subtitle = "Cell Press Style | FDR < 0.001, |log₂FC| > 2.0") +
   cli_markdown() +
   cli_panel_label("a")
 ```
 
-![](volcano-plot_files/figure-html/fig2-custom-volcano-1.png)
+![](volcano-plot_files/figure-html/fig1-ad-vs-hc-1.png)
 
-Setting `label_genes` to an explicit character vector restricts labeling
-to hypotheses of interest, avoiding overcrowded text in dense datasets.
+### Biological Insights (AD vs. HC)
+
+- **Epidermal Differentiation Complex (EDC)**: Genes within the 1q21
+  locus undergo compensatory hyper-keratinization, with marked
+  upregulation of *LCE3A* ($`\log_2\text{FC} = +7.25`$), *LCE3D*
+  ($`\log_2\text{FC} = +5.09`$), and *SPRR2G*
+  ($`\log_2\text{FC} = +4.42`$).
+- **Th2 Chemokines & Serpins**: *SERPINB4* ($`\log_2\text{FC} = +6.45`$,
+  squamous cell carcinoma antigen 2) and *CCL18*
+  ($`\log_2\text{FC} = +4.59`$, dendritic cell-derived chemokine).
+- **Lipid Barrier Depletion**: Genes governing ceramide synthesis and
+  membrane integrity are selectively downregulated: *SPTLC3*
+  ($`\log_2\text{FC} = -0.57`$) and *GPLD1*
+  ($`\log_2\text{FC} = -0.90`$).
 
 ------------------------------------------------------------------------
 
-## 4. Biomarker Annotation Call-Out Box
+## 3. Contrast 2: Psoriasis vs. Control Skin (GSE121212)
 
-Manuscript figures frequently highlight one or two lead candidate
-biomarkers with an annotation card reporting exact effect sizes,
-confidence intervals, and multiple-testing adjusted statistics.
-
-Here, we annotate *CCL18*, a validated serum and tissue biomarker of
-atopic dermatitis severity:
+Psoriasis represents the canonical IL-23/Th17 cutaneous autoimmune
+disease. We examine the same GSE121212 cohort to capture the contrasting
+Th17 expression landscape:
 
 ``` r
 
-# Extract statistics for CCL18
-highlight = de_results["CCL18", ]
-highlight$ci_low  = round(highlight$log2FC - 1.96 * highlight$lfcSE, 2)
-highlight$ci_high = round(highlight$log2FC + 1.96 * highlight$lfcSE, 2)
-highlight$fold_change = round(2^highlight$log2FC, 1)
+pso_labels = c("DEFB4A", "DEFB4B", "PI3", "S100A8", "S100A9", "SPRR2A", "KRT16", "NOS2")
 
-highlight$annot = paste0(
-  "<b><i>", highlight$gene, "</i></b><br>",
-  "<b>log₂FC = +", round(highlight$log2FC, 2), "</b> (", highlight$fold_change, "× fold increase)<br>",
-  "95% CI: [", highlight$ci_low, ", ", highlight$ci_high, "]<br>",
+cliplot(-log10(padj) ~ log2FC, data = series$pso_vs_hc,
+        type  = type_volcano(
+          pval_cutoff  = 0.001,
+          fc_cutoff    = 2.0,
+          point_size   = 1.8,
+          point_alpha  = 0.60,
+          up_color     = "#D73027",
+          down_color   = "#2B6CB0",
+          ns_color     = "#C8CCD4",
+          label_genes  = pso_labels,
+          max_overlaps = 25,
+          cutoff_region_alpha = 0.04
+        ),
+        palette = "nature",
+        theme   = "nature",
+        title   = "**Figure 2** — NCBI GEO GSE121212: Psoriasis vs. Healthy Skin",
+        subtitle = "Bulk RNA-seq | FDR < 0.001, |log₂FC| > 2.00") +
+  cli_markdown() +
+  cli_panel_label("b")
+```
+
+![](volcano-plot_files/figure-html/fig2-pso-vs-hc-1.png)
+
+### Biological Insights (PSO vs. HC)
+
+- **Extreme Antimicrobial Peptide Induction**: Psoriasis lesions express
+  massive amounts of beta-defensins: *DEFB4A*
+  ($`\log_2\text{FC} = +10.00`$,
+  $`P_{\text{adj}} = 2.02 \times 10^{-75}`$) and *DEFB4B*
+  ($`\log_2\text{FC} = +9.49`$,
+  $`P_{\text{adj}} = 1.20 \times 10^{-67}`$).
+- **Neutrophil & Alarmins**: Calprotectin subunits *S100A8* and
+  *S100A9*, alongside *PI3* (elafin, $`\log_2\text{FC} = +7.21`$).
+
+------------------------------------------------------------------------
+
+## 4. Contrast 3: Direct Head-to-Head (AD vs. Psoriasis)
+
+In clinical differential diagnosis and basket trials, distinguishing AD
+from Psoriasis on a molecular level is critical. Directly contrasting AD
+vs. PSO in GSE121212 isolates the specific Th2 vs. Th17 divergence:
+
+``` r
+
+head_to_head_labels = c("ALOX15", "CCL18", "COL6A6", "COL4A4", "NOS2", "DEFB4A", "DEFB4B")
+
+cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_pso,
+        type  = type_volcano(
+          pval_cutoff  = 0.001,
+          fc_cutoff    = 1.5,
+          point_size   = 1.8,
+          point_alpha  = 0.60,
+          up_color     = "#E64B35",
+          down_color   = "#3C5488",
+          ns_color     = "#C8CCD4",
+          label_genes  = head_to_head_labels,
+          max_overlaps = 25,
+          cutoff_region_alpha = 0.04
+        ),
+        theme   = "cell",
+        title   = "**Figure 3** — Head-to-Head Divergence: AD vs. Psoriasis",
+        subtitle = "GSE121212 | Up = AD Enriched, Down = Psoriasis Enriched") +
+  cli_markdown() +
+  cli_panel_label("c")
+```
+
+![](volcano-plot_files/figure-html/fig3-ad-vs-pso-1.png)
+
+### Molecular Discrimination
+
+- **Positive log2FC (AD Enriched)**: *ALOX15*
+  ($`\log_2\text{FC} = +2.72`$,
+  $`P_{\text{adj}} = 7.11 \times 10^{-29}`$) and *CCL18* show strong
+  preference for atopic dermatitis over psoriasis.
+- **Negative log2FC (Psoriasis Enriched)**: *NOS2* (inducible nitric
+  oxide synthase, $`\log_2\text{FC} = -6.60`$,
+  $`P_{\text{adj}} = 3.18 \times 10^{-56}`$) and *DEFB4A* are
+  selectively enriched in psoriasis.
+
+------------------------------------------------------------------------
+
+## 5. Contrast 4: Cross-Cohort Treatment Meta-Analysis
+
+Effective therapy reverses the baseline disease signature. Here we
+evaluate the cross-cohort random-effects meta-analysis across active
+treatment arms (dupilumab, cerdulatinib, SAR444727, SB414):
+
+``` r
+
+treat_labels = c("TK1", "AQP3", "TOP2A", "NUSAP1", "ECT2", "DIAPH3")
+
+cliplot(-log10(padj) ~ log2FC, data = series$treatment_meta,
+        type  = type_volcano(
+          pval_cutoff  = 0.01,
+          fc_cutoff    = 0.5,
+          point_size   = 1.7,
+          point_alpha  = 0.60,
+          up_color     = "#E64B35",
+          down_color   = "#00A087",
+          ns_color     = "#C8CCD4",
+          label_genes  = treat_labels,
+          max_overlaps = 25,
+          cutoff_region_alpha = 0.04
+        ),
+        theme   = "nature",
+        title   = "**Figure 4** — Active Treatment Meta-Analysis: Therapeutic Normalization",
+        subtitle = "Cross-Study Meta-Analysis | Negative logFC = Disease Reversal") +
+  cli_markdown() +
+  cli_panel_label("d")
+```
+
+![](volcano-plot_files/figure-html/fig4-treatment-meta-1.png)
+
+Under effective treatment, hyper-proliferative keratinocyte and mitotic
+machinery genes are systematically suppressed: *TK1*
+($`\text{meta-LFC} = -0.80`$,
+$`P_{\text{adj}} = 2.59 \times 10^{-11}`$), *AQP3*
+($`\text{meta-LFC} = -0.96`$), and *TOP2A*
+($`\text{meta-LFC} = -0.67`$).
+
+------------------------------------------------------------------------
+
+## 6. The Aligned Multi-Panel Volcano Series
+
+In journal articles, presenting these four contrasts as a coordinated
+$`2 \times 2`$ grid provides a comprehensive overview of disease
+etiology, diagnostic divergence, and therapeutic response:
+
+``` r
+
+p_a = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
+              type = type_volcano(pval_cutoff = 0.01, fc_cutoff = 1.5, point_size = 1.5,
+                                  label_genes = c("SERPINB4", "CCL18", "LCE3A", "SPTLC3"),
+                                  max_overlaps = 15),
+              palette = "nature", theme = "nature",
+              title = "Atopic Dermatitis vs. Healthy", subtitle = "GSE121212 | Th2 & Barrier") +
+  cli_panel_label("a")
+
+p_b = cliplot(-log10(padj) ~ log2FC, data = series$pso_vs_hc,
+              type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 2.0, point_size = 1.5,
+                                  label_genes = c("DEFB4A", "DEFB4B", "PI3", "S100A8"),
+                                  max_overlaps = 15),
+              palette = "nature", theme = "nature",
+              title = "Psoriasis vs. Healthy", subtitle = "GSE121212 | Th17 & Defensins") +
+  cli_panel_label("b")
+
+p_c = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_pso,
+              type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 1.5, point_size = 1.5,
+                                  label_genes = c("ALOX15", "CCL18", "NOS2", "DEFB4A"),
+                                  max_overlaps = 15),
+              palette = "nature", theme = "nature",
+              title = "AD vs. Psoriasis", subtitle = "GSE121212 | Head-to-Head") +
+  cli_panel_label("c")
+
+p_d = cliplot(-log10(padj) ~ log2FC, data = series$treatment_meta,
+              type = type_volcano(pval_cutoff = 0.01, fc_cutoff = 0.5, point_size = 1.5,
+                                  label_genes = c("TK1", "AQP3", "TOP2A", "ECT2"),
+                                  max_overlaps = 15),
+              palette = "nature", theme = "nature",
+              title = "Treatment Meta-Analysis", subtitle = "Active Therapies | Normalization") +
+  cli_panel_label("d")
+
+# Assemble 2x2 grid
+(p_a | p_b) / (p_c | p_d)
+```
+
+![](volcano-plot_files/figure-html/fig5-series-composite-1.png)
+
+------------------------------------------------------------------------
+
+## 7. Dual Biomarker Call-Out (*CCL18* vs. *NOS2*)
+
+To highlight opposing immunological trajectories, we place rich
+annotation cards onto lead candidate biomarkers:
+
+``` r
+
+# Prepare annotation card for CCL18
+hl_ccl18 = series$ad_vs_hc["CCL18", ]
+hl_ccl18$ci_low  = round(hl_ccl18$log2FC - 1.96 * hl_ccl18$lfcSE, 2)
+hl_ccl18$ci_high = round(hl_ccl18$log2FC + 1.96 * hl_ccl18$lfcSE, 2)
+
+hl_ccl18$annot = paste0(
+  "<b><i>CCL18</i></b> (AD Biomarker)<br>",
+  "<b>log₂FC = +", round(hl_ccl18$log2FC, 2), "</b> (", round(2^hl_ccl18$log2FC, 1), "× fold increase)<br>",
+  "95% CI: [", hl_ccl18$ci_low, ", ", hl_ccl18$ci_high, "]<br>",
   "<b>FDR = 4.04 × 10<sup>-32</sup></b><br>",
-  "<span style='font-size:8pt;color:#555;'>Th2 Chemokine / CCR8+ T-cell recruiter</span>"
+  "<span style='font-size:8pt;color:#555;'>Th2 Chemokine / Severity marker</span>"
 )
 
-# Base volcano plot
-p_base = cliplot(-log10(padj) ~ log2FC, data = de_results,
+p_base = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
   type = type_volcano(
     pval_cutoff  = 0.01,
     fc_cutoff    = 1.5,
@@ -198,21 +328,20 @@ p_base = cliplot(-log10(padj) ~ log2FC, data = de_results,
     max_overlaps = 20
   ),
   palette = "nature", theme = "nature",
-  title   = "**Figure 3** — Volcano Plot with *CCL18* Biomarker Call-Out",
+  title   = "**Figure 6** — Volcano Plot with *CCL18* Lead Biomarker Call-Out",
   subtitle = "NCBI GEO GSE121212 | Human Skin Biopsies") +
   cli_markdown()
 
-# Layer call-out box and leader segment
 p_annot = p_base +
   geom_point(
-    data = highlight,
+    data = hl_ccl18,
     aes(x = log2FC, y = -log10(padj)),
     inherit.aes = FALSE,
     shape = 21, size = 4.5, stroke = 1.3,
     fill = "#C95C43", colour = "black"
   ) +
   geom_richtext(
-    data = highlight,
+    data = hl_ccl18,
     aes(x = log2FC - 4.2, y = -log10(padj) + 5, label = annot),
     inherit.aes = FALSE,
     hjust = 0, vjust = 0.5,
@@ -220,7 +349,7 @@ p_annot = p_base +
     label.colour = "#C95C43", label.padding = grid::unit(c(6, 8, 6, 8), "pt")
   ) +
   geom_segment(
-    data = highlight,
+    data = hl_ccl18,
     aes(x = log2FC, y = -log10(padj),
         xend = log2FC - 1.2, yend = -log10(padj) + 3),
     inherit.aes = FALSE,
@@ -230,67 +359,34 @@ p_annot = p_base +
 p_annot
 ```
 
-![](volcano-plot_files/figure-html/fig3-callout-volcano-1.png)
+![](volcano-plot_files/figure-html/fig6-biomarker-callout-1.png)
 
 ------------------------------------------------------------------------
 
-## 5. Using External GEO and DESeq2 Results
-
-To apply
-[`type_volcano()`](https://vanhungtran.github.io/cliomicplot/reference/type_volcano.md)
-to other NCBI GEO datasets or custom differential expression pipelines
-(DESeq2, edgeR, limma):
-
-1.  **Required Columns**: Ensure your data frame contains a log2 fold
-    change column (`log2FC`) and an adjusted significance column
-    (`padj`).
-2.  **Gene Symbols**: Assign gene symbols to `rownames(df)` or a `gene`
-    column.
-3.  **P-Value Floor**: Cap extreme floating-point zeros to prevent
-    infinite values on the $`-\log_{10}`$ scale:
-
-``` r
-
-# Typical loading script for external GEO data
-# res = read.csv("GSEXXXXX_differential_expression.csv", row.names = 1)
-# res$padj = pmax(res$padj, 1e-300)
-
-# cliplot(-log10(padj) ~ log2FC, data = res,
-#         type = type_volcano(pval_cutoff = 0.05, fc_cutoff = 1.0),
-#         theme = "nature")
-```
-
-------------------------------------------------------------------------
-
-## 6. Journal Export & Physical Trim Dimensions
+## 8. Publication Dimensions & Vector Export
 
 [`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
-returns publisher print dimensions in millimeters. Figures can be
-exported directly to target column widths using
-[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md):
+provides column specifications for target publishers:
 
 ``` r
 
-# Check Nature single-column width (89 mm)
+# Single-column Nature layout (89 mm)
 cli_journal_size("nature", "single")
 
-# Save as vector PDF conforming to Nature single-column width
-cli_save(p_annot, "Figure_3_GSE121212.pdf", journal = "nature", column = "single")
+# Export high-resolution vector PDF
+cli_save(p_annot, "Figure_Volcano_CCL18.pdf", journal = "nature", column = "single")
 
-# Save double-column layout for multi-panel assembly
-cli_save(p_annot, "Figure_3_GSE121212_double.svg", journal = "cell", column = "double")
+# Export multi-panel 2x2 grid for Cell Press double-column layout (174 mm)
+cli_save((p_a | p_b) / (p_c | p_d), "Figure_Volcano_Series.svg", journal = "cell", column = "double")
 ```
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-| Parameter / Feature | Description | Default |
-|----|----|----|
-| `pval_cutoff` | Significance cutoff on adjusted p-value | `0.05` |
-| `fc_cutoff` | Absolute $`\log_2\text{FC}`$ threshold | `1.0` (2-fold) |
-| `label_genes` | Vector of gene symbols, `"significant"`, or `NULL` | `NULL` |
-| `max_overlaps` | Maximum overlapping labels before hiding (`ggrepel`) | `25` |
-| `cutoff_region_alpha` | Transparency of shaded significance quadrant rectangles | `0.045` |
-| `up_color` / `down_color` | Hex codes for directional significance classes | `#D73027` / `#2B6CB0` |
-| `ns_color` | Color for non-significant genes | `#A8B0BA` |
+| Contrast | Hallmark Up-Regulated | Hallmark Down-Regulated | Immunological Driver |
+|----|----|----|----|
+| **AD vs. Healthy** | *SERPINB4*, *CCL18*, *LCE3A*, *SPRR2G*, *S100A7* | *SPTLC3*, *GPLD1*, *IL20RA* | IL-4 / IL-13 (Th2) & barrier defect |
+| **PSO vs. Healthy** | *DEFB4A*, *DEFB4B*, *PI3*, *S100A8*, *S100A9*, *NOS2* | *DIPK2A*, *PRELID2* | IL-17A / IL-23 / TNF (Th17) |
+| **AD vs. PSO** | *ALOX15*, *CCL18*, *COL6A6* | *NOS2*, *DEFB4A*, *DEFB4B* | Th2 vs. Th17 phenotypic divergence |
+| **Treatment Meta** | Normalization of physiological baselines | *TK1*, *AQP3*, *TOP2A*, *NUSAP1*, *ECT2* | Anti-inflammatory resolution |
