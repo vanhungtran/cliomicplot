@@ -34,6 +34,7 @@ design standards from **Nature**, **Cell**, and **Science**:
 library(cliomicplot)
 library(survival)
 library(patchwork)
+library(ggplot2)
 
 # Set global defaults for publication styling
 clipar(
@@ -241,7 +242,8 @@ cliplot(Duration ~ Patient, data = imtrial,
           ongoing       = "Ongoing",
           event_times   = events_df,
           show_duration = TRUE,
-          bar_alpha     = 0.85
+          bar_alpha     = 0.85,
+          bar_linewidth = 4.2
         ),
         bar_palette = "jama",
         title   = "**Figure 3B** — Patient Treatment Trajectories (Swimmer)",
@@ -249,6 +251,7 @@ cliplot(Duration ~ Patient, data = imtrial,
         xlab    = "",
         ylab    = "Time on Study (months)",
         legend  = "bottom") +
+  theme(axis.text.y = element_text(size = 7)) +
   cli_markdown()
 ```
 
@@ -507,26 +510,28 @@ typography:
 ``` r
 
 p_waterfall <- cliplot(BestChange ~ Patient, data = imtrial,
-                       type = type_waterfall(show_labels = FALSE, bar_width = 0.7),
+                       type = type_waterfall(show_labels = FALSE, bar_width = 0.65),
                        theme = "cell",
                        title = "Best Tumor Response") +
   cli_panel_label("a")
 
 p_swimmer <- cliplot(Duration ~ Patient, data = imtrial,
                      type = type_swimmer(
-                       bar_fill    = "BestResp",
-                       ongoing     = "Ongoing",
-                       event_times = events_df
+                       bar_fill      = "BestResp",
+                       ongoing       = "Ongoing",
+                       event_times   = events_df,
+                       bar_linewidth = 3.6
                      ),
                      theme = "cell", bar_palette = "jama",
                      title = "Treatment Duration & Events") +
+  theme(axis.text.y = element_text(size = 6.5)) +
   cli_panel_label("b")
 
 p_waterfall + p_swimmer +
-  plot_layout(widths = c(1, 1.2)) +
+  plot_layout(widths = c(1, 1.25)) +
   plot_annotation(
     title   = "**Figure 8** — RECIST Response Assessment in Phase II Immunotherapy",
-    caption = "Simulated trial data: 30 evaluable patients",
+    caption = "Simulated trial data: 30 evaluable patients | Arrows indicate ongoing therapy at data lock",
     theme   = ggplot2::theme(plot.title = ggtext::element_markdown(face = "bold", size = 13))
   )
 ```
