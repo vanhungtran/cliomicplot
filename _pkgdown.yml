@@ -91,20 +91,24 @@ reference:
       - starts_with("type_")
 
 articles:
-  - title: Getting Started
+  - title: 1. Foundations & Publication Design
+    desc: Core grammar, journal typography, trim sizing, and multi-panel composite assembly.
     contents:
       - cliomicplot
       - themes-palettes
-  - title: Nature / Cell / Science Figure Styles
-    contents:
       - journal-plots
+  - title: 2. Clinical Trials & Oncology
+    desc: Time-to-event milestones, RECIST tumor response, swimmer timelines, and MCID effect sizes.
+    contents:
       - oncology
-  - title: Multi-Omics & Genomics Workflows
+  - title: 3. Multi-Omics & Systems Biology
+    desc: Proteomics, metabolomics, differential expression, mGWAS, and coupled microbial networks.
     contents:
       - multiomics
       - volcano-plot
       - microbiome-mgwas
-  - title: Published Paper Re-creations
+  - title: 4. Published Paper Re-creations
+    desc: Complete end-to-end figure reproductions from published journal datasets.
     contents:
       - recreate-paper
       - recreate-spamtp

@@ -234,6 +234,9 @@ cliplot(negLogP ~ logFC, data = adpd_de,
   cli_markdown()
 ```
 
+> [!TIP]
+> For advanced volcano styling (asymmetric fold-change thresholds, gene-set callouts, and multi-comparison small multiples), see the dedicated [Differential Expression Volcano Plots](volcano-plot.html) vignette.
+
 ---
 
 ## Figure 4: MA Plot — DE Quality Check
