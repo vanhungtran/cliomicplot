@@ -255,13 +255,13 @@ clustering across modules and environmental parameters:
 
 cor_env_df <- expand.grid(
   Module = c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"),
-  Factor = c("Skin_pH", "Transepidermal_Water_Loss", "PM25_Exposure", "Ambient_Temp", "Relative_Humidity", "SCORAD_Severity"),
+  Factor = c("Skin pH", "Transepidermal Water Loss", "PM25 Exposure", "Ambient Temp", "Relative Humidity", "SCORAD Severity"),
   stringsAsFactors = FALSE
 )
 
 # Assigned biological associations
 cor_env_df$cor <- c(
-  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72, # Skin_pH
+  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72, # Skin pH
   -0.28,  0.38,  0.15, -0.08,  0.45,  0.64, # TEWL
    0.45, -0.22, -0.35,  0.18, -0.15,  0.41, # PM25
   -0.12,  0.08,  0.15,  0.52,  0.44, -0.19, # Temp
@@ -606,8 +606,9 @@ p_a <- cliplot_cross_network_graph(
   cross_edges = demo_net$cross_edges,
   level       = "node",
   preset      = "nature",
-  scifig      = TRUE
-)
+  scifig      = TRUE,
+  show_meta   = FALSE
+) + theme(legend.position = "none")
 
 p_b <- cliplot_cross_network_graph(
   nodes       = demo_net$nodes,
@@ -615,26 +616,25 @@ p_b <- cliplot_cross_network_graph(
   cross_edges = demo_net$cross_edges,
   level       = "module",
   preset      = "nature",
-  scifig      = TRUE
-)
+  scifig      = TRUE,
+  show_meta   = FALSE
+) + theme(legend.position = "none")
 
 p_c <- cliplot_env_network(
   preset             = "nature",
   scifig             = TRUE,
-  show_values        = TRUE,
+  show_values        = FALSE,
   show_domain_labels = TRUE,
-  value_digits       = 2,
   compact            = TRUE
 )
 
 fig3_composite <- (p_a / p_b) | p_c
 fig3_composite <- fig3_composite +
-  plot_layout(widths = c(1, 1.35)) +
+  plot_layout(widths = c(1, 1.4)) +
   plot_annotation(tag_levels = "a") &
   theme(
-    plot.tag = element_text(size = 8, face = "bold", family = "sans"),
-    plot.tag.position = c(0.02, 0.98),
-    plot.margin = margin(1.5, 1.5, 1.5, 1.5, "mm")
+    plot.tag = element_text(size = 9, face = "bold", family = "sans"),
+    plot.margin = margin(2, 2, 2, 2, "mm")
   )
 
 fig3_composite
@@ -667,7 +667,7 @@ print(qa_report)
     #>          Rule: NATURE double-column specification
     #> [PASS]   Physical Height        : 170.0 mm (Max: 170.0 mm)           
     #>          Rule: NATURE printable page boundary
-    #> [PASS]   Font Size Floor        : Min text size: 5.0 pt (Floor: 5.0 pt)
+    #> [PASS]   Font Size Floor        : Min text size: 5.1 pt (Floor: 5.0 pt)
     #>          Rule: NATURE font-floor specification
     #> [PASS]   Stroke Width Floor     : Min stroke: 0.71 pt (Floor: 0.25 pt)
     #>          Rule: NATURE hairline-floor specification

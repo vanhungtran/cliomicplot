@@ -96,7 +96,8 @@ cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
         title   = "**Figure 1** — NCBI GEO GSE121212: Atopic Dermatitis vs. Healthy Skin",
         subtitle = "Bulk RNA-seq | FDR < 0.01, |log₂FC| > 1.50") +
   cli_markdown() +
-  cli_panel_label("a")
+  labs(tag = "a") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](volcano-plot_files/figure-html/fig1-ad-vs-hc-1.png)
@@ -146,7 +147,8 @@ cliplot(-log10(padj) ~ log2FC, data = series$pso_vs_hc,
         title   = "**Figure 2** — NCBI GEO GSE121212: Psoriasis vs. Healthy Skin",
         subtitle = "Bulk RNA-seq | FDR < 0.001, |log₂FC| > 2.00") +
   cli_markdown() +
-  cli_panel_label("b")
+  labs(tag = "b") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](volcano-plot_files/figure-html/fig2-pso-vs-hc-1.png)
@@ -191,7 +193,8 @@ cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_pso,
         title   = "**Figure 3** — Head-to-Head Divergence: AD vs. Psoriasis",
         subtitle = "GSE121212 | Up = AD Enriched, Down = Psoriasis Enriched") +
   cli_markdown() +
-  cli_panel_label("c")
+  labs(tag = "c") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](volcano-plot_files/figure-html/fig3-ad-vs-pso-1.png)
@@ -236,7 +239,8 @@ cliplot(-log10(padj) ~ log2FC, data = series$treatment_meta,
         title   = "**Figure 4** — Active Treatment Meta-Analysis: Therapeutic Normalization",
         subtitle = "Cross-Study Meta-Analysis | Negative logFC = Disease Reversal") +
   cli_markdown() +
-  cli_panel_label("d")
+  labs(tag = "d") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](volcano-plot_files/figure-html/fig4-treatment-meta-1.png)
@@ -263,35 +267,34 @@ p_a = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
                                   label_genes = c("SERPINB4", "CCL18", "LCE3A", "SPTLC3"),
                                   max_overlaps = 15),
               palette = "nature", theme = "nature",
-              title = "Atopic Dermatitis vs. Healthy", subtitle = "GSE121212 | Th2 & Barrier") +
-  cli_panel_label("a")
+              title = "Atopic Dermatitis vs. Healthy", subtitle = "GSE121212 | Th2 & Barrier")
 
 p_b = cliplot(-log10(padj) ~ log2FC, data = series$pso_vs_hc,
               type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 2.0, point_size = 1.5,
                                   label_genes = c("DEFB4A", "DEFB4B", "PI3", "S100A8"),
                                   max_overlaps = 15),
               palette = "nature", theme = "nature",
-              title = "Psoriasis vs. Healthy", subtitle = "GSE121212 | Th17 & Defensins") +
-  cli_panel_label("b")
+              title = "Psoriasis vs. Healthy", subtitle = "GSE121212 | Th17 & Defensins")
 
 p_c = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_pso,
               type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 1.5, point_size = 1.5,
                                   label_genes = c("ALOX15", "CCL18", "NOS2", "DEFB4A"),
                                   max_overlaps = 15),
               palette = "nature", theme = "nature",
-              title = "AD vs. Psoriasis", subtitle = "GSE121212 | Head-to-Head") +
-  cli_panel_label("c")
+              title = "AD vs. Psoriasis", subtitle = "GSE121212 | Head-to-Head")
 
 p_d = cliplot(-log10(padj) ~ log2FC, data = series$treatment_meta,
               type = type_volcano(pval_cutoff = 0.01, fc_cutoff = 0.5, point_size = 1.5,
                                   label_genes = c("TK1", "AQP3", "TOP2A", "ECT2"),
                                   max_overlaps = 15),
               palette = "nature", theme = "nature",
-              title = "Treatment Meta-Analysis", subtitle = "Active Therapies | Normalization") +
-  cli_panel_label("d")
+              title = "Treatment Meta-Analysis", subtitle = "Active Therapies | Normalization")
 
-# Assemble 2x2 grid
-(p_a | p_b) / (p_c | p_d)
+# Assemble 2x2 grid with unified legend and panel tags
+((p_a | p_b) / (p_c | p_d)) +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](volcano-plot_files/figure-html/fig5-series-composite-1.png)
@@ -324,7 +327,7 @@ p_base = cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
     fc_cutoff    = 1.5,
     point_size   = 1.8,
     point_alpha  = 0.55,
-    label_genes  = c("SERPINB4", "S100A7", "LCE3A", "ALOX15", "GPLD1", "SPTLC3"),
+    label_genes  = c("SERPINB4", "S100A7", "LCE3A", "GPLD1", "SPTLC3"),
     max_overlaps = 20
   ),
   palette = "nature", theme = "nature",
@@ -342,16 +345,16 @@ p_annot = p_base +
   ) +
   geom_richtext(
     data = hl_ccl18,
-    aes(x = log2FC - 4.2, y = -log10(padj) + 5, label = annot),
+    aes(x = log2FC - 4.8, y = -log10(padj) + 2.5, label = annot),
     inherit.aes = FALSE,
     hjust = 0, vjust = 0.5,
-    size = 3.2, fill = "#FDF2E9", colour = "black",
-    label.colour = "#C95C43", label.padding = grid::unit(c(6, 8, 6, 8), "pt")
+    size = 3.1, fill = "#FDF2E9", colour = "black",
+    label.colour = "#C95C43", label.padding = grid::unit(c(5, 7, 5, 7), "pt")
   ) +
   geom_segment(
     data = hl_ccl18,
     aes(x = log2FC, y = -log10(padj),
-        xend = log2FC - 1.2, yend = -log10(padj) + 3),
+        xend = log2FC - 1.4, yend = -log10(padj) + 1.8),
     inherit.aes = FALSE,
     linewidth = 0.5, colour = "#555555"
   )

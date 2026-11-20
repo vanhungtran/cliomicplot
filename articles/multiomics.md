@@ -555,7 +555,7 @@ names(deg2_clean)[names(deg2_clean) == "logFC"] = "logFC_comp2"
 
 # Label top concordant hits
 deg_merged$effect = abs(deg_merged$logFC_AD) + abs(deg_merged$logFC_PD)
-top_labels = head(deg_merged[order(-deg_merged$effect), ], 15)$UniqueID
+top_labels = head(deg_merged[order(-deg_merged$effect), ], 12)$UniqueID
 
 cat(sprintf("Merged proteins: %d\n", nrow(deg_merged)))
 ```
@@ -589,7 +589,9 @@ cliplot(logFC_AD ~ UniqueID, data = deg_merged,
         ),
         stat.test = NULL,
         title    = "**Figure 9** — Cross-Disease DEG Comparison",
-        subtitle = "log₂FC: AD vs. Control × PD vs. Control (cortex proteomics)") +
+        subtitle = "log₂FC: AD vs. Control × PD vs. Control (cortex proteomics)",
+        xlab     = "log₂FC (PD vs. Control)",
+        ylab     = "log₂FC (AD vs. Control)") +
   cli_markdown()
 ```
 
@@ -657,7 +659,7 @@ cliplot(Gene ~ Comparison, data = bh_rows,
         extra_data = list(fill = bh_rows$PValue),
         stat.test  = NULL,
         title      = "**Figure 10** — Diamond Bubble Heatmap",
-        subtitle   = "Top DE Proteins × AD/PD Comparisons | size = |log₂FC|, colour = significance") +
+        subtitle   = "Top DE Proteins × AD/PD Comparisons (size = |log₂FC|, colour = significance)") +
   cli_markdown()
 ```
 

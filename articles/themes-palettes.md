@@ -65,9 +65,10 @@ p_theme <- function(thm, title_txt) {
           title = title_txt)
 }
 
-(p_theme("nature", "Nature (Open Spines)") + p_theme("science", "Science (Clean Open)")) /
-(p_theme("cell", "Cell Press (Structured)") + p_theme("scifig", "SCI Full-Box (4 Spines)")) /
-(p_theme("nejm", "NEJM (Subtle Grid)") + p_theme("lancet", "The Lancet (Clinical)")) +
+((p_theme("nature", "Nature (Open Spines)") + p_theme("science", "Science (Clean Open)")) /
+ (p_theme("cell", "Cell Press (Structured)") + p_theme("scifig", "SCI Full-Box (4 Spines)")) /
+ (p_theme("nejm", "NEJM (Subtle Grid)") + p_theme("lancet", "The Lancet (Clinical)"))) +
+  plot_layout(guides = "collect") +
   plot_annotation(title = "Theme Comparison Across Premier Scientific Journals")
 ```
 

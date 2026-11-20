@@ -196,15 +196,16 @@ clitheme("broadsheet")
 
 cliplot(BestChange ~ Patient, data = imtrial,
         type = type_waterfall(
-          show_labels = TRUE,
-          label_size  = 2.4,
-          bar_width   = 0.75,
+          show_labels = FALSE,
+          n_skip_label = 1,
+          bar_width   = 0.72,
           response_thresholds = c("PD" = 20, "PR" = -30)
         ),
         title    = "**Figure 3A** — Best Tumor Response from Baseline (Waterfall)",
         subtitle = "RECIST v1.1 Thresholds: PD (+20%) and PR (-30%)",
         ylab     = "Best % Change in Target Lesions",
         legend   = "bottom") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.5)) +
   cli_markdown()
 ```
 
@@ -224,15 +225,15 @@ RECIST glyphs:
 
 set.seed(123)
 n_events_per_pt <- sample(1:3, n_pts, replace = TRUE)
-n_total_events  <- sum(n_events_per_pt)
-
-events_df <- data.frame(
-  ID    = rep(imtrial$Patient, times = n_events_per_pt),
-  Time  = round(runif(n_total_events, 1, 26), 1),
-  Event = sample(c("Progression", "AE", "Dose Reduction", "Response", "Surgery"),
-                 n_total_events,
-                 replace = TRUE, prob = c(0.25, 0.25, 0.20, 0.20, 0.10))
-)
+events_list <- lapply(seq_len(n_pts), function(i) {
+  n_ev <- n_events_per_pt[i]
+  dur  <- imtrial$Duration[i]
+  times <- sort(round(runif(n_ev, min = 0.5, max = pmax(1.0, dur - 0.8)), 1))
+  ev_types <- sample(c("Progression", "AE", "Dose Reduction", "Response", "Surgery"),
+                     n_ev, replace = TRUE, prob = c(0.25, 0.25, 0.20, 0.20, 0.10))
+  data.frame(ID = imtrial$Patient[i], Time = times, Event = ev_types)
+})
+events_df <- do.call(rbind, events_list)
 
 clitheme("cell")
 
@@ -243,7 +244,7 @@ cliplot(Duration ~ Patient, data = imtrial,
           event_times   = events_df,
           show_duration = TRUE,
           bar_alpha     = 0.85,
-          bar_linewidth = 4.2
+          bar_linewidth = 4.0
         ),
         bar_palette = "jama",
         title   = "**Figure 3B** — Patient Treatment Trajectories (Swimmer)",
@@ -339,6 +340,7 @@ cliplot(Marker ~ Visit | Patient, data = traj_df,
         title    = "**Figure 5** — Longitudinal Biomarker Response Trajectories",
         subtitle = "Circulating Tumor Protein Dynamics with Severity Stratification",
         ylab     = "Tumor Biomarker Concentration (ng/mL)") +
+  theme(plot.margin = margin(5.5, 22, 5.5, 5.5, "pt")) +
   cli_markdown()
 ```
 
@@ -444,17 +446,21 @@ met_data$Group = factor(met_data$group,
 
 clitheme("scifig")
 
-cliplot(expr ~ Group | UniqueID, data = met_data,
+cliplot(expr ~ Group | Group, data = met_data,
+        facet = ~ UniqueID,
         type = type_boxplot(
           add_jitter   = TRUE,
-          jitter_width = 0.22
+          jitter_width = 0.20
         ),
         stat.test = "anova",
         stat.label = "p.signif",
         palette = "jco",
         title   = "**Figure 6C** — Metabolite Levels by Age × Diet Group",
         subtitle = "Top 4 DE metabolites | One-way ANOVA with significance stars",
-        ylab    = "Metabolite Abundance (log2)") +
+        xlab    = "Experimental Group",
+        ylab    = "Metabolite Abundance (log2)",
+        legend  = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7.5)) +
   cli_markdown()
 ```
 
@@ -485,12 +491,18 @@ phase_colors <- c(
   "II/III" = "#B76348", "III"    = "#123F2A"
 )
 
+phase_text_colors <- c(
+  "I"      = "#333333", "I/II"   = "#FFFFFF", "II"     = "#333333",
+  "II/III" = "#FFFFFF", "III"    = "#FFFFFF"
+)
+
 clitheme("cli_bw")
 
 cliplot(n ~ company | phase, data = pipeline,
         type = type_trials(
-          segment_colors  = phase_colors,
-          label_threshold = 3
+          segment_colors      = phase_colors,
+          segment_text_colors = phase_text_colors,
+          label_threshold     = 3
         ),
         title    = "**Figure 7** — Oncology Pipeline Activity by Development Phase",
         subtitle = "Global Pharmaceutical Portfolios with ≥ 25 Active Clinical Trials",
@@ -510,9 +522,14 @@ typography:
 ``` r
 
 p_waterfall <- cliplot(BestChange ~ Patient, data = imtrial,
-                       type = type_waterfall(show_labels = FALSE, bar_width = 0.65),
+                       type = type_waterfall(
+                         show_labels  = FALSE,
+                         n_skip_label = 1,
+                         bar_width    = 0.65
+                       ),
                        theme = "cell",
                        title = "Best Tumor Response") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.0)) +
   cli_panel_label("a")
 
 p_swimmer <- cliplot(Duration ~ Patient, data = imtrial,

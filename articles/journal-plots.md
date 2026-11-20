@@ -114,7 +114,8 @@ roc_df = data.frame(
 cliplot(roc_df,
         type = type_roc(predictors = top_markers, response = "disease"),
         theme = "nature", palette = "npg") +
-  cli_panel_label("a")
+  labs(tag = "a") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](journal-plots_files/figure-html/fig1-roc-1.png)
@@ -141,7 +142,8 @@ top_pathways = data.frame(
 )
 
 cliplot(top_pathways, type = "gsea", top_term = 18, theme = "nature") +
-  cli_panel_label("b")
+  labs(tag = "b") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](journal-plots_files/figure-html/fig2-gsea-1.png)
@@ -164,7 +166,8 @@ names(deg_sets) = unique(adpd_res$test)
 deg_sets = deg_sets[vapply(deg_sets, length, integer(1)) > 0]
 
 cliplot(deg_sets, type = "upset", theme = "cell") +
-  cli_panel_label("c")
+  labs(tag = "c") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](journal-plots_files/figure-html/fig3-upset-1.png)
@@ -191,7 +194,8 @@ cliplot(expr ~ timepoint | treatment, data = lxn_sub,
         palette = "npg",
         xlab = "Recovery Time-Point",
         ylab = "Normalized Abundance (LFQ Intensity)") +
-  cli_panel_label("d")
+  labs(tag = "d") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](journal-plots_files/figure-html/fig4-scifig-1.png)
@@ -206,14 +210,15 @@ unified figure and exporting at exact physical millimeter trim width:
 ``` r
 
 panel_a = cliplot(roc_df, type = type_roc(predictors = top_markers[1:2], response = "disease"),
-                  theme = "nature", palette = "npg") +
-  cli_panel_label("a")
+                  theme = "nature", palette = "npg")
 
-panel_b = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature") +
-  cli_panel_label("b")
+panel_b = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature")
 
 # Combine side-by-side using patchwork
-composite_fig = panel_a + panel_b + plot_layout(widths = c(1, 1.25))
+composite_fig = (panel_a + panel_b) +
+  plot_layout(widths = c(1, 1.25)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 composite_fig
 ```
 

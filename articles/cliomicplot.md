@@ -182,15 +182,18 @@ conforming to Nature (**a**, **b**) and Cell (**A**, **B**) standards:
 ``` r
 
 p1 <- cliplot(Sepal.Length ~ Petal.Length | Species, data = iris,
-              palette = "npg", theme = "nature", title = "Scatter Distribution") +
-  cli_panel_label("a")
+              palette = "npg", theme = "nature", title = "Scatter Distribution")
 
 p2 <- cliplot(Sepal.Length ~ Species, data = iris,
-              type = "boxplot", palette = "npg", theme = "nature", title = "Species Boxplot") +
-  cli_panel_label("b")
+              type = "boxplot", palette = "npg", theme = "nature", title = "Species Boxplot")
 
-p1 + p2 +
-  plot_annotation(title = "Composite Biomarker Panel (Nature Design Language)")
+(p1 + p2) +
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    tag_levels = "a",
+    title = "Composite Biomarker Panel (Nature Design Language)"
+  ) &
+  theme(plot.tag = element_text(size = 11, face = "bold"))
 ```
 
 ![](cliomicplot_files/figure-html/unnamed-chunk-8-1.png)
