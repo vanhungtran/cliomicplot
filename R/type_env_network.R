@@ -37,7 +37,7 @@
 #'   inside the central circle.
 #' @param module_labels Optional named character vector or list mapping module IDs (e.g. \code{"Mod_1"})
 #'   to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).
-#' @param module_label_size Numeric font size for module labels inside the circle (default 2.8).
+#' @param module_label_size Numeric font size for module labels inside the circle (default 2.4).
 #' @param module_label_color Color of module label text and borders (default \code{"grey15"}).
 #' @param module_label_fill Background fill color for module labels (default \code{"white"}).
 #' @param module_label_bg Logical. If TRUE (default), renders labels inside rounded opaque badges.
@@ -47,8 +47,8 @@
 #'   (placed directly at module centroid).
 #' @param show_module_legend Logical. If TRUE, shows the module color legend. Default TRUE.
 #' @param legend_position Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.
-#' @param show_domain_labels Logical. If TRUE, displays domain headers for the corner heatmaps. Default FALSE.
-#' @param env_label_size Font size for environmental variable labels outside corner heatmaps (default 1.8).
+#' @param show_domain_labels Logical. If TRUE, displays domain headers for the corner heatmaps. Default TRUE.
+#' @param env_label_size Font size for environmental variable labels outside corner heatmaps (default 1.95).
 #' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
 #' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
 #' @param link_width_range Numeric vector of length 2 specifying line width range for inter-domain
@@ -61,7 +61,7 @@
 #'   inter-domain links (default FALSE).
 #' @param link_value_size Font size for correlation digits on inter-domain links (default 2.0).
 #' @param link_value_digits Integer number of decimal places for link correlation digits (default 2).
-#' @param circle_radius Numeric radius of the central boundary circle (default 2.45).
+#' @param circle_radius Numeric radius of the central boundary circle (default 2.80).
 #' @param circle_width Line width of the central boundary circle (default 0.4).
 #' @param circle_color Line color of the central boundary circle (default \code{"grey65"}).
 #' @param circle_linetype Linetype of the central boundary circle (default \code{"dashed"}).
@@ -71,7 +71,7 @@
 #' @param intra_edge_width Line width of intra-module network edges (default 0.18).
 #' @param intra_edge_color Color of intra-module network edges (default \code{"grey82"}).
 #' @param intra_edge_alpha Transparency of intra-module network edges (default 0.35).
-#' @param diag_point_size Size of diagonal indicator connector points on heatmaps (default 1.8).
+#' @param diag_point_size Size of diagonal indicator connector points on heatmaps (default 2.0).
 #' @param diag_point_fill Fill color of diagonal indicator points (default \code{"#F781BF"}).
 #' @param diag_point_color Border color of diagonal indicator points (default \code{"#C51B7D"}).
 #' @param node_size_range Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).
@@ -100,7 +100,7 @@ type_env_network = function(
     compact            = TRUE,
     show_module_labels = TRUE,
     module_labels      = NULL,
-    module_label_size  = 2.8,
+    module_label_size  = 2.4,
     module_label_color = "grey15",
     module_label_fill  = "white",
     module_label_bg    = TRUE,
@@ -108,8 +108,8 @@ type_env_network = function(
     module_label_pos   = c("radial", "centroid"),
     show_module_legend = TRUE,
     legend_position    = "top",
-    show_domain_labels = FALSE,
-    env_label_size     = 1.8,
+    show_domain_labels = TRUE,
+    env_label_size     = 1.95,
     env_label_color    = "grey20",
     env_label_face     = "plain",
     link_width_range   = c(0.4, 1.4),
@@ -118,7 +118,7 @@ type_env_network = function(
     show_link_values   = FALSE,
     link_value_size    = 2.0,
     link_value_digits  = 2,
-    circle_radius      = 2.45,
+    circle_radius      = 2.80,
     circle_width       = 0.4,
     circle_color       = "grey65",
     circle_linetype    = "dashed",
@@ -128,7 +128,7 @@ type_env_network = function(
     intra_edge_width   = 0.18,
     intra_edge_color   = "grey82",
     intra_edge_alpha   = 0.35,
-    diag_point_size    = 1.8,
+    diag_point_size    = 2.0,
     diag_point_fill    = "#F781BF",
     diag_point_color   = "#C51B7D",
     node_size_range    = c(1.1, 3.8),
@@ -248,7 +248,7 @@ type_env_network = function(
 #' @param value_digits Decimal places for correlation coefficients (default 2).
 #' @param value_size Font size for tile text (default auto-scaled).
 #' @param compact Logical. If TRUE (default), omits leading zero for compact fitting.
-#' @param env_label_size Font size for environmental variable labels (default 1.8).
+#' @param env_label_size Font size for environmental variable labels (default 1.95).
 #' @param env_label_color Text color for environmental variable labels (default \code{"grey20"}).
 #' @param env_label_face Font face for environmental variable labels (default \code{"plain"}).
 #' @param module_label_fill Background fill color for module labels (default \code{"white"}).
@@ -267,13 +267,13 @@ type_env_network = function(
 #' @param intra_edge_width Width of intra-module edges (default 0.18).
 #' @param intra_edge_color Color of intra-module edges (default \code{"grey82"}).
 #' @param intra_edge_alpha Transparency of intra-module edges (default 0.35).
-#' @param diag_point_size Size of diagonal connector points on heatmaps (default 1.8).
+#' @param diag_point_size Size of diagonal connector points on heatmaps (default 2.0).
 #' @param diag_point_fill Fill color of diagonal connector points (default \code{"#F781BF"}).
 #' @param diag_point_color Border color of diagonal connector points (default \code{"#C51B7D"}).
 #' @param node_size_range Point size range for central network nodes (default \code{c(1.1, 3.8)}).
 #' @param hull_alpha Transparency for module cluster hulls (default 0.18).
 #' @param curvature Curvature of inter-domain curved links (default 0.14).
-#' @param circle_radius Radius of central boundary circle (default 2.45).
+#' @param circle_radius Radius of central boundary circle (default 2.80).
 #' @param title Plot title.
 #' @param ... Additional arguments.
 #'
@@ -296,7 +296,7 @@ cliplot_env_network = function(
     compact            = TRUE,
     show_module_labels = TRUE,
     module_labels      = NULL,
-    module_label_size  = 2.8,
+    module_label_size  = 2.4,
     module_label_color = "grey15",
     module_label_fill  = "white",
     module_label_bg    = TRUE,
@@ -304,8 +304,8 @@ cliplot_env_network = function(
     module_label_pos   = c("radial", "centroid"),
     show_module_legend = TRUE,
     legend_position    = "top",
-    show_domain_labels = FALSE,
-    env_label_size     = 1.8,
+    show_domain_labels = TRUE,
+    env_label_size     = 1.95,
     env_label_color    = "grey20",
     env_label_face     = "plain",
     link_width_range   = c(0.4, 1.4),
@@ -314,7 +314,7 @@ cliplot_env_network = function(
     show_link_values   = FALSE,
     link_value_size    = 2.0,
     link_value_digits  = 2,
-    circle_radius      = 2.45,
+    circle_radius      = 2.80,
     circle_width       = 0.4,
     circle_color       = "grey65",
     circle_linetype    = "dashed",
@@ -324,7 +324,7 @@ cliplot_env_network = function(
     intra_edge_width   = 0.18,
     intra_edge_color   = "grey82",
     intra_edge_alpha   = 0.35,
-    diag_point_size    = 1.8,
+    diag_point_size    = 2.0,
     diag_point_fill    = "#F781BF",
     diag_point_color   = "#C51B7D",
     node_size_range    = c(1.1, 3.8),
@@ -391,28 +391,28 @@ cliplot_env_network = function(
     curvature          = curvature,
     preset             = preset,
     scifig             = scifig,
-    title              = title,
-    ...
+    title              = title
   )
-  t_obj$draw(ggplot2::ggplot(), list(data = net_data), net_data, ...)
+
+  settings <- list(data = net_data)
+  t_obj$draw(NULL, settings, net_data, ...)
 }
 
-#' Helper builder for env network layers
-#' @keywords internal
-build_env_network_layers = function(
-    custom_data,
-    env_cors,
-    links,
-    module_colors,
-    corner_palettes,
-    link_colors,
-    resolved_label_type,
-    value_digits,
-    value_size,
-    compact,
+# Internal layer builder with complete zero-collision geometry
+build_env_network_layers <- function(
+    custom_data         = NULL,
+    env_cors            = NULL,
+    links               = NULL,
+    module_colors       = NULL,
+    corner_palettes     = NULL,
+    link_colors         = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
+    resolved_label_type = "none",
+    value_digits        = 2,
+    value_size          = NULL,
+    compact             = TRUE,
     show_module_labels  = TRUE,
     module_labels       = NULL,
-    module_label_size   = 2.8,
+    module_label_size   = 2.4,
     module_label_color  = "grey15",
     module_label_fill   = "white",
     module_label_bg     = TRUE,
@@ -420,8 +420,8 @@ build_env_network_layers = function(
     module_label_pos    = "radial",
     show_module_legend  = TRUE,
     legend_position     = "top",
-    show_domain_labels  = FALSE,
-    env_label_size      = 1.8,
+    show_domain_labels  = TRUE,
+    env_label_size      = 1.95,
     env_label_color     = "grey20",
     env_label_face      = "plain",
     link_width_range    = c(0.4, 1.4),
@@ -430,7 +430,7 @@ build_env_network_layers = function(
     show_link_values    = FALSE,
     link_value_size     = 2.0,
     link_value_digits   = 2,
-    circle_radius       = 2.45,
+    circle_radius       = 2.80,
     circle_width        = 0.4,
     circle_color        = "grey65",
     circle_linetype     = "dashed",
@@ -440,7 +440,7 @@ build_env_network_layers = function(
     intra_edge_width    = 0.18,
     intra_edge_color    = "grey82",
     intra_edge_alpha    = 0.35,
-    diag_point_size     = 1.8,
+    diag_point_size     = 2.0,
     diag_point_fill     = "#F781BF",
     diag_point_color    = "#C51B7D",
     node_size_range     = c(1.1, 3.8),
@@ -460,471 +460,31 @@ build_env_network_layers = function(
     module_colors <- mod_cols
   }
 
+  default_module_labels <- c(
+    "Mod_1" = "M1: Core",
+    "Mod_2" = "M2: Barrier",
+    "Mod_3" = "M3: Sebum",
+    "Mod_4" = "M4: DrySkin",
+    "Mod_5" = "M5: AMP",
+    "Mod_6" = "M6: Transient",
+    "Mod_7" = "M7: Commensal"
+  )
+  if (is.null(module_labels)) {
+    module_labels <- default_module_labels
+  }
+
   outer_th <- seq(pi/6, 2*pi + pi/6, length.out = 7)[1:6]
+  r_core <- circle_radius * 0.45
   mod_centers <- data.frame(
     module = u_mods,
-    cx = c(0, 1.45 * cos(outer_th)),
-    cy = c(0, 1.45 * sin(outer_th)),
-    n_nodes = c(65, 35, 32, 28, 30, 26, 25),
-    r_spread = c(0.68, 0.45, 0.42, 0.40, 0.42, 0.38, 0.38),
+    cx = c(0, r_core * cos(outer_th)),
+    cy = c(0, r_core * sin(outer_th)),
+    n_nodes = c(60, 32, 30, 28, 28, 25, 25),
+    r_spread = c(circle_radius * 0.18, rep(circle_radius * 0.125, 6)),
     stringsAsFactors = FALSE
   )
 
-  # Check custom nodes
-  nodes_df <- NULL
-  if (is.list(custom_data) && !is.data.frame(custom_data)) {
-    nodes_df <- custom_data$nodes
-    edges_df <- custom_data$edges
-  } else if (is.data.frame(custom_data) && nrow(custom_data) > 0) {
-    nodes_df <- custom_data
-    edges_df <- NULL
-  }
-
-  if (is.null(nodes_df) || nrow(nodes_df) == 0) {
-    node_list <- list()
-    for (i in 1:nrow(mod_centers)) {
-      mc <- mod_centers[i, ]
-      n <- mc$n_nodes
-      r <- stats::rbeta(n, 1.2, 2.0) * mc$r_spread
-      th <- stats::runif(n, 0, 2*pi)
-      node_list[[i]] <- data.frame(
-        id = paste0("Taxa_", mc$module, "_", 1:n),
-        module = mc$module,
-        x = mc$cx + r * cos(th),
-        y = mc$cy + r * sin(th),
-        degree = sample(4:25, n, replace = TRUE),
-        stringsAsFactors = FALSE
-      )
-    }
-    nodes_df <- do.call(rbind, node_list)
-  } else if (all(c("x", "y", "module") %in% names(nodes_df))) {
-    mod_cents <- stats::aggregate(cbind(x, y) ~ module, data = nodes_df, FUN = mean)
-    mod_centers <- data.frame(
-      module = as.character(mod_cents$module),
-      cx = mod_cents$x,
-      cy = mod_cents$y,
-      stringsAsFactors = FALSE
-    )
-  }
-
-  # Build module hulls
-  hull_list <- list()
-  theta_seq <- seq(0, 2*pi, length.out = 45)
-  for (i in 1:nrow(mod_centers)) {
-    mc <- mod_centers[i, ]
-    hull_list[[i]] <- data.frame(
-      x = mc$cx + (mc$r_spread * 1.15) * cos(theta_seq),
-      y = mc$cy + (mc$r_spread * 1.15) * sin(theta_seq),
-      module = mc$module,
-      id = mc$module,
-      stringsAsFactors = FALSE
-    )
-  }
-  center_hulls <- do.call(rbind, hull_list)
-
-  # Build intra edges
-  intra_list <- list()
-  for (i in 1:nrow(mod_centers)) {
-    m_nodes <- nodes_df[nodes_df$module == mod_centers$module[i], ]
-    n_e <- round(nrow(m_nodes) * 2.2)
-    f <- sample(seq_len(nrow(m_nodes)), n_e, replace = TRUE)
-    t <- sample(seq_len(nrow(m_nodes)), n_e, replace = TRUE)
-    k <- f != t
-    intra_list[[i]] <- data.frame(
-      x = m_nodes$x[f[k]],
-      y = m_nodes$y[f[k]],
-      xend = m_nodes$x[t[k]],
-      yend = m_nodes$y[t[k]]
-    )
-  }
-  center_edges <- do.call(rbind, intra_list)
-
-  # Circular dashed boundary
-  ring_th <- seq(0, 2*pi, length.out = 160)
-  center_ring <- data.frame(
-    x = circle_radius * cos(ring_th),
-    y = circle_radius * sin(ring_th)
-  )
-
-  # Concentric outer ring dots
-  n_outer_ring <- 80
-  outer_ring_th <- seq(0, 2*pi, length.out = n_outer_ring + 1)[1:n_outer_ring]
-  outer_ring_nodes <- data.frame(
-    x = (circle_radius * 0.95) * cos(outer_ring_th),
-    y = (circle_radius * 0.95) * sin(outer_ring_th)
-  )
-
-  # 2. Four Corner Environmental Triangles
-  # Check if user supplied env_cors
-  corner_configs <- list(
-    list(corner = "top_left", center_x = -5.0, center_y = 5.0, default_pal = c("#4DAF4A", "#FFFFFF", "#E41A1C")),
-    list(corner = "top_right", center_x = 5.0, center_y = 5.0, default_pal = c("#984EA3", "#FFFFFF", "#FF7F00")),
-    list(corner = "bottom_left", center_x = -5.0, center_y = -5.0, default_pal = c("#66C2A5", "#FFFFFF", "#FC8D62")),
-    list(corner = "bottom_right", center_x = 5.0, center_y = -5.0, default_pal = c("#377EB8", "#FFFFFF", "#E41A1C"))
-  )
-
-  tiles_list <- list()
-  diag_list  <- list()
-  labels_list <- list()
-
-  env_vars_default <- c("pH", "Humdepth", "Baresoil", "Mo", "Zn", "Mn", "Fe", "Al", "S", "Mg", "Ca", "K", "P", "N")
-
-  n_corners_to_draw <- if (!is.null(env_cors) && length(env_cors) > 0) min(length(env_cors), 4) else 4
-
-  for (c_idx in 1:n_corners_to_draw) {
-    cfg <- corner_configs[[c_idx]]
-    c_name <- if (!is.null(env_cors) && !is.null(names(env_cors)[c_idx])) names(env_cors)[c_idx] else paste0("Env ", c_idx)
-    
-    # Extract variable names and correlation matrix if provided
-    var_names <- NULL
-    mat_r     <- NULL
-    if (!is.null(env_cors) && length(env_cors) >= c_idx) {
-      item <- env_cors[[c_idx]]
-      if (is.matrix(item) || is.data.frame(item)) {
-        var_names <- colnames(item)
-        mat_r     <- as.matrix(item)
-      } else if (is.character(item)) {
-        var_names <- item
-      }
-    }
-    if (is.null(var_names) || length(var_names) < 2) {
-      var_names <- paste0(env_vars_default, "_", c_idx)
-    }
-
-    pal <- if (!is.null(corner_palettes) && length(corner_palettes) >= c_idx) corner_palettes[[c_idx]] else cfg$default_pal
-
-    p_dim <- length(var_names)
-    grid <- expand.grid(row = 1:p_dim, col = 1:p_dim)
-    grid <- grid[grid$row >= grid$col, ]
-
-    if (!is.null(mat_r) && nrow(mat_r) == p_dim && ncol(mat_r) == p_dim) {
-      r_vals <- numeric(nrow(grid))
-      for (g_i in seq_len(nrow(grid))) {
-        r_vals[g_i] <- mat_r[grid$row[g_i], grid$col[g_i]]
-      }
-    } else {
-      r_vals <- stats::runif(nrow(grid), -0.75, 0.85)
-      r_vals[grid$row == grid$col] <- 1.0
-    }
-
-    stars <- rep("", nrow(grid))
-    for (idx in seq_len(nrow(grid))) {
-      abs_r <- abs(r_vals[idx])
-      if (grid$row[idx] == grid$col[idx]) {
-        stars[idx] <- "***"
-      } else if (abs_r > 0.6) {
-        stars[idx] <- "***"
-      } else if (abs_r > 0.45) {
-        stars[idx] <- "**"
-      } else if (abs_r > 0.3) {
-        stars[idx] <- "*"
-      }
-    }
-
-    size_box <- 2.3
-    step <- size_box / p_dim
-    corner_type <- cfg$corner
-    center_x <- cfg$center_x
-    center_y <- cfg$center_y
-
-    if (corner_type == "top_left") {
-      xs <- center_x + (grid$col - 1) * step
-      ys <- center_y - (grid$row - 1) * step
-      diag_pts <- data.frame(
-        var = var_names,
-        x = center_x + (1:p_dim - 1) * step + step * 0.5,
-        y = center_y - (1:p_dim - 1) * step - step * 0.5,
-        stringsAsFactors = FALSE
-      )
-      top_labels <- data.frame(
-        var = var_names, x = center_x + (1:p_dim - 1) * step, y = center_y + step * 0.6,
-        angle = 45, hjust = 0, vjust = 0, stringsAsFactors = FALSE
-      )
-      left_labels <- data.frame(
-        var = var_names, x = center_x - step * 0.6, y = center_y - (1:p_dim - 1) * step,
-        angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
-      )
-    } else if (corner_type == "top_right") {
-      xs <- center_x - (grid$col - 1) * step
-      ys <- center_y - (grid$row - 1) * step
-      diag_pts <- data.frame(
-        var = var_names,
-        x = center_x - (1:p_dim - 1) * step - step * 0.5,
-        y = center_y - (1:p_dim - 1) * step - step * 0.5,
-        stringsAsFactors = FALSE
-      )
-      top_labels <- data.frame(
-        var = var_names, x = center_x - (1:p_dim - 1) * step, y = center_y + step * 0.6,
-        angle = 45, hjust = 0, vjust = 0, stringsAsFactors = FALSE
-      )
-      left_labels <- data.frame(
-        var = var_names, x = center_x + step * 0.6, y = center_y - (1:p_dim - 1) * step,
-        angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
-      )
-    } else if (corner_type == "bottom_left") {
-      xs <- center_x + (grid$col - 1) * step
-      ys <- center_y + (grid$row - 1) * step
-      diag_pts <- data.frame(
-        var = var_names,
-        x = center_x + (1:p_dim - 1) * step + step * 0.5,
-        y = center_y + (1:p_dim - 1) * step + step * 0.5,
-        stringsAsFactors = FALSE
-      )
-      top_labels <- data.frame(
-        var = var_names, x = center_x + (1:p_dim - 1) * step, y = center_y - step * 0.6,
-        angle = 45, hjust = 1, vjust = 1, stringsAsFactors = FALSE
-      )
-      left_labels <- data.frame(
-        var = var_names, x = center_x - step * 0.6, y = center_y + (1:p_dim - 1) * step,
-        angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
-      )
-    } else {
-      xs <- center_x - (grid$col - 1) * step
-      ys <- center_y + (grid$row - 1) * step
-      diag_pts <- data.frame(
-        var = var_names,
-        x = center_x - (1:p_dim - 1) * step - step * 0.5,
-        y = center_y + (1:p_dim - 1) * step + step * 0.5,
-        stringsAsFactors = FALSE
-      )
-      top_labels <- data.frame(
-        var = var_names, x = center_x - (1:p_dim - 1) * step, y = center_y - step * 0.6,
-        angle = 45, hjust = 1, vjust = 1, stringsAsFactors = FALSE
-      )
-      left_labels <- data.frame(
-        var = var_names, x = center_x + step * 0.6, y = center_y + (1:p_dim - 1) * step,
-        angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
-      )
-    }
-
-    # Formatting numerical correlation values
-    fmt_r <- sprintf(paste0("%.", value_digits, "f"), r_vals)
-    zero_pat <- paste0("^-0\\.", paste(rep("0", value_digits), collapse = ""), "$")
-    fmt_r <- sub(zero_pat, paste0("0.", paste(rep("0", value_digits), collapse = "")), fmt_r)
-    fmt_r <- sub("^-0$", "0", fmt_r)
-    if (compact) {
-      fmt_r <- sub("^(-?)0\\.", "\\1.", fmt_r)
-      fmt_r[r_vals == 1.0] <- "1"
-      fmt_r[r_vals == -1.0] <- "-1"
-      fmt_r <- sub(paste0("^-\\.", paste(rep("0", value_digits), collapse = ""), "$"),
-                   paste0(".", paste(rep("0", value_digits), collapse = "")), fmt_r)
-    }
-
-    tile_label <- switch(
-      resolved_label_type,
-      "coef"       = fmt_r,
-      "coef_stars" = ifelse(grid$row == grid$col, fmt_r, paste0(fmt_r, stars)),
-      "stars"      = ifelse(grid$row == grid$col, "", stars),
-      "none"       = rep("", length(r_vals)),
-      stars
-    )
-
-    text_col <- ifelse(abs(r_vals) > 0.60, "white", "grey18")
-
-    col_ramp <- scales::col_numeric(pal, domain = c(-1, 1))
-    tiles_list[[c_idx]] <- data.frame(
-      x = xs, y = ys, r = r_vals, stars = stars,
-      label = tile_label, text_color = text_col,
-      fill_col = col_ramp(r_vals), step = step, corner = c_name, stringsAsFactors = FALSE
-    )
-    diag_list[[c_idx]] <- cbind(diag_pts, corner = c_name)
-    labels_list[[c_idx]] <- cbind(rbind(top_labels, left_labels), corner = c_name)
-  }
-
-  all_tiles <- do.call(rbind, tiles_list)
-  all_diag  <- do.call(rbind, diag_list)
-  all_env_labels <- do.call(rbind, labels_list)
-
-  # 3. Inter-domain connecting links
-  link_list <- list()
-  if (!is.null(links) && nrow(links) > 0 && all(c("env", "module") %in% names(links))) {
-    # Match user supplied links
-    for (l_i in seq_len(nrow(links))) {
-      e_var <- as.character(links$env[l_i])
-      m_tgt <- as.character(links$module[l_i])
-      pt <- all_diag[all_diag$var == e_var, ]
-      mc <- mod_centers[mod_centers$module == m_tgt, ]
-      if (nrow(pt) > 0 && nrow(mc) > 0) {
-        pt <- pt[1, ]
-        mc <- mc[1, ]
-        r_val <- if ("r" %in% names(links)) links$r[l_i] else if ("cor" %in% names(links)) links$cor[l_i] else 0.5
-        p_val <- if ("p" %in% names(links)) links$p[l_i] else if ("pvalue" %in% names(links)) links$pvalue[l_i] else 0.01
-        log10_p <- if ("log10p" %in% names(links)) links$log10p[l_i] else -log10(max(p_val, 1e-10))
-        curv <- if (pt$x < 0) curvature else -curvature
-
-        link_list[[length(link_list) + 1]] <- data.frame(
-          x = pt$x, y = pt$y, xend = mc$cx, yend = mc$cy,
-          r = r_val, log10p = log10_p,
-          sign = ifelse(r_val > 0, "Positive", "Negative"),
-          curvature = curv, stringsAsFactors = FALSE
-        )
-      }
-    }
-  }
-
-  if (length(link_list) == 0) {
-    u_corners <- unique(all_diag$corner)
-    for (c_name in u_corners) {
-      c_pts <- all_diag[all_diag$corner == c_name, ]
-      n_pick <- min(5, nrow(c_pts))
-      chosen_vars <- sample(c_pts$var, n_pick)
-      chosen_mods <- sample(mod_centers$module, n_pick, replace = TRUE)
-      for (k in seq_len(n_pick)) {
-        pt <- c_pts[c_pts$var == chosen_vars[k], ]
-        mc <- mod_centers[mod_centers$module == chosen_mods[k], ]
-        r_val <- sample(c(0.72, 0.58, -0.64, 0.45, -0.52), 1)
-        p_val <- stats::runif(1, 1e-4, 0.015)
-        curv <- if (pt$x < 0) curvature else -curvature
-
-        link_list[[length(link_list) + 1]] <- data.frame(
-          x = pt$x,
-          y = pt$y,
-          xend = mc$cx,
-          yend = mc$cy,
-          r = r_val,
-          log10p = -log10(p_val),
-          sign = ifelse(r_val > 0, "Positive", "Negative"),
-          curvature = curv,
-          stringsAsFactors = FALSE
-        )
-      }
-    }
-  }
-  all_links <- do.call(rbind, link_list)
-
-  # 4. Assemble Plot
-  p <- ggplot2::ggplot() +
-    ggplot2::geom_path(
-      data = center_ring, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      linetype = circle_linetype, color = circle_color, linewidth = circle_width
-    ) +
-    ggplot2::geom_point(
-      data = outer_ring_nodes, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      size = outer_ring_size, color = outer_ring_color, alpha = outer_ring_alpha
-    ) +
-    ggplot2::geom_polygon(
-      data = center_hulls,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["id"]], fill = .data[["module"]]),
-      alpha = hull_alpha, show.legend = FALSE
-    ) +
-    ggplot2::geom_segment(
-      data = center_edges,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]]),
-      color = intra_edge_color, alpha = intra_edge_alpha, linewidth = intra_edge_width
-    )
-
-  if (!is.null(link_width)) {
-    p <- p + ggplot2::geom_curve(
-      data = all_links,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]]),
-      curvature = curvature, alpha = link_alpha, linewidth = link_width
-    )
-  } else {
-    p <- p + ggplot2::geom_curve(
-      data = all_links,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]], linewidth = .data[["log10p"]]),
-      curvature = curvature, alpha = link_alpha
-    ) +
-    ggplot2::scale_linewidth_continuous(
-      range = link_width_range,
-      breaks = c(1.5, 2.0, 2.5, 3.0),
-      name = expression(-log[10](italic(P)-value) * ":")
-    )
-  }
-
-  p <- p + ggplot2::scale_color_manual(values = link_colors, name = "Correlation:")
-
-  if (isTRUE(show_link_values) && nrow(all_links) > 0) {
-    dx <- all_links$xend - all_links$x
-    dy <- all_links$yend - all_links$y
-    curv <- all_links$curvature
-    t_pos <- 0.38
-    mx <- all_links$x + t_pos * dx - curv * dy * 0.35
-    my <- all_links$y + t_pos * dy + curv * dx * 0.35
-
-    fmt_link_r <- sprintf(paste0("%.", link_value_digits, "f"), all_links$r)
-    link_zero_pat <- paste0("^-0\\.", paste(rep("0", link_value_digits), collapse = ""), "$")
-    fmt_link_r <- sub(link_zero_pat, paste0("0.", paste(rep("0", link_value_digits), collapse = "")), fmt_link_r)
-    fmt_link_r <- sub("^-0$", "0", fmt_link_r)
-    if (isTRUE(compact)) {
-      fmt_link_r <- sub("^(-?)0\\.", "\\1.", fmt_link_r)
-      fmt_link_r[all_links$r == 1.0] <- "1"
-      fmt_link_r[all_links$r == -1.0] <- "-1"
-      fmt_link_r <- sub(paste0("^-\\.", paste(rep("0", link_value_digits), collapse = ""), "$"),
-                        paste0(".", paste(rep("0", link_value_digits), collapse = "")), fmt_link_r)
-    }
-
-    link_val_df <- data.frame(
-      x = mx,
-      y = my,
-      label = fmt_link_r,
-      sign = all_links$sign,
-      stringsAsFactors = FALSE
-    )
-
-    p <- p + ggplot2::geom_label(
-      data = link_val_df,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]], color = .data[["sign"]]),
-      size = link_value_size,
-      fill = "white",
-      alpha = 0.95,
-      fontface = "bold",
-      label.padding = ggplot2::unit(0.12, "lines"),
-      label.r = ggplot2::unit(0.12, "lines"),
-      linewidth = 0.20,
-      show.legend = FALSE
-    )
-  }
-
-  p <- p +
-    ggplot2::geom_point(
-      data = nodes_df,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["module"]], size = .data[["degree"]]),
-      shape = 21, color = "grey25", stroke = 0.2
-    ) +
-    ggplot2::scale_fill_manual(values = module_colors, name = "Module:") +
-    ggplot2::scale_size_continuous(range = node_size_range, guide = "none") +
-    ggplot2::geom_tile(
-      data = all_tiles,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      fill = all_tiles$fill_col,
-      color = "white", linewidth = 0.15
-    )
-
-  if (resolved_label_type != "none") {
-    valid_text <- all_tiles$label != ""
-    if (any(valid_text)) {
-      sub_tiles <- all_tiles[valid_text, ]
-
-      min_step <- min(all_tiles$step)
-      char_count <- if (resolved_label_type %in% c("coef_stars", "both")) 5.2 else if (resolved_label_type == "coef") 3.8 else 2.2
-      calc_fit_size <- max(0.9, min(2.5, min_step / (char_count * 0.038)))
-      opt_size <- if (!is.null(value_size)) value_size else calc_fit_size
-      if (preset != "default" || isTRUE(scifig)) {
-        opt_size <- max(1.76, opt_size)
-      }
-
-      sub_dark <- sub_tiles[sub_tiles$text_color == "white", ]
-      sub_light <- sub_tiles[sub_tiles$text_color != "white", ]
-
-      if (nrow(sub_dark) > 0) {
-        p <- p + ggplot2::geom_text(
-          data = sub_dark,
-          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
-          size = opt_size, color = "white", vjust = 0.5, hjust = 0.5
-        )
-      }
-      if (nrow(sub_light) > 0) {
-        p <- p + ggplot2::geom_text(
-          data = sub_light,
-          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
-          size = opt_size, color = "grey18", vjust = 0.5, hjust = 0.5
-        )
-      }
-    }
-  }
-
-  # 3b. Module labels inside the central circle
+  # Module labels positioned radially between nodes and outer boundary
   mod_labels_df <- NULL
   if (isTRUE(show_module_labels) && nrow(mod_centers) > 0) {
     label_list <- list()
@@ -936,7 +496,7 @@ build_env_network_layers = function(
 
       if (module_label_pos == "radial" && r_dist > 0.15) {
         th <- atan2(cy, cx)
-        r_pos <- min(circle_radius * 0.77, r_dist + 0.43)
+        r_pos <- circle_radius * 0.67
         lx <- r_pos * cos(th)
         ly <- r_pos * sin(th)
       } else {
@@ -967,6 +527,500 @@ build_env_network_layers = function(
     mod_labels_df <- do.call(rbind, label_list)
   }
 
+  hw <- 0.55
+  hh <- 0.24
+
+  line_intersects_rect <- function(x1, y1, x2, y2, rx0, ry0, rx1, ry1) {
+    if (max(x1, x2) < rx0 || min(x1, x2) > rx1 || max(y1, y2) < ry0 || min(y1, y2) > ry1) return(FALSE)
+    dx <- x2 - x1; dy <- y2 - y1
+    p <- c(-dx, dx, -dy, dy); q <- c(x1 - rx0, rx1 - x1, y1 - ry0, ry1 - y1)
+    u1 <- 0; u2 <- 1
+    for (j in 1:4) {
+      if (p[j] == 0) { if (q[j] < 0) return(FALSE) }
+      else {
+        t <- q[j] / p[j]
+        if (p[j] < 0) { if (t > u1) u1 <- t } else { if (t < u2) u2 <- t }
+        if (u1 > u2) return(FALSE)
+      }
+    }
+    return(TRUE)
+  }
+
+  # Build network nodes (shape 16, fill-only)
+  nodes_df <- NULL
+  if (is.list(custom_data) && !is.data.frame(custom_data)) {
+    nodes_df <- custom_data$nodes
+  } else if (is.data.frame(custom_data) && nrow(custom_data) > 0) {
+    nodes_df <- custom_data
+  }
+
+  if (is.null(nodes_df) || nrow(nodes_df) == 0) {
+    node_list <- list()
+    for (i in 1:nrow(mod_centers)) {
+      mc <- mod_centers[i, ]
+      n <- mc$n_nodes
+      r <- stats::rbeta(n, 1.5, 2.0) * mc$r_spread
+      th <- stats::runif(n, 0, 2*pi)
+      nx <- mc$cx + r * cos(th)
+      ny <- mc$cy + r * sin(th)
+      in_b <- rep(FALSE, n)
+      if (!is.null(mod_labels_df) && nrow(mod_labels_df) > 0) {
+        for (b_i in seq_len(nrow(mod_labels_df))) {
+          in_b <- in_b | (abs(nx - mod_labels_df$x[b_i]) <= (hw + 0.10) & abs(ny - mod_labels_df$y[b_i]) <= (hh + 0.10))
+        }
+      }
+      n_keep <- sum(!in_b)
+      if (n_keep > 0) {
+        node_list[[length(node_list) + 1]] <- data.frame(
+          id = paste0("Taxa_", mc$module, "_", (1:n)[!in_b]),
+          module = rep(mc$module, n_keep),
+          x = nx[!in_b],
+          y = ny[!in_b],
+          degree = sample(4:25, n_keep, replace = TRUE),
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+    nodes_df <- do.call(rbind, node_list)
+  }
+
+  # Build module hulls
+  hull_list <- list()
+  theta_seq <- seq(0, 2*pi, length.out = 45)
+  for (i in 1:nrow(mod_centers)) {
+    mc <- mod_centers[i, ]
+    hull_list[[i]] <- data.frame(
+      x = mc$cx + (mc$r_spread * 1.05) * cos(theta_seq),
+      y = mc$cy + (mc$r_spread * 1.05) * sin(theta_seq),
+      module = mc$module,
+      id = mc$module,
+      stringsAsFactors = FALSE
+    )
+  }
+  center_hulls <- do.call(rbind, hull_list)
+
+  # Build intra edges (filtered against badge boxes)
+  intra_list <- list()
+  for (i in 1:nrow(mod_centers)) {
+    m_nodes <- nodes_df[nodes_df$module == mod_centers$module[i], ]
+    if (!is.null(m_nodes) && nrow(m_nodes) >= 2) {
+      n_e <- round(nrow(m_nodes) * 2.0)
+      f <- sample(seq_len(nrow(m_nodes)), n_e, replace = TRUE)
+      t <- sample(seq_len(nrow(m_nodes)), n_e, replace = TRUE)
+      k <- f != t
+      intra_list[[length(intra_list) + 1]] <- data.frame(
+        x = m_nodes$x[f[k]],
+        y = m_nodes$y[f[k]],
+        xend = m_nodes$x[t[k]],
+        yend = m_nodes$y[t[k]]
+      )
+    }
+  }
+  center_edges <- do.call(rbind, intra_list)
+
+  if (!is.null(center_edges) && nrow(center_edges) > 0 && !is.null(mod_labels_df) && nrow(mod_labels_df) > 0) {
+    bad <- rep(FALSE, nrow(center_edges))
+    for (b_i in seq_len(nrow(mod_labels_df))) {
+      bx0 <- mod_labels_df$x[b_i] - (hw + 0.15)
+      bx1 <- mod_labels_df$x[b_i] + (hw + 0.15)
+      by0 <- mod_labels_df$y[b_i] - (hh + 0.15)
+      by1 <- mod_labels_df$y[b_i] + (hh + 0.15)
+      in_x <- pmax(center_edges$x, center_edges$xend) >= bx0 & pmin(center_edges$x, center_edges$xend) <= bx1
+      in_y <- pmax(center_edges$y, center_edges$yend) >= by0 & pmin(center_edges$y, center_edges$yend) <= by1
+      cand <- which(in_x & in_y)
+      if (length(cand) > 0) {
+        hit <- mapply(line_intersects_rect,
+                      center_edges$x[cand], center_edges$y[cand],
+                      center_edges$xend[cand], center_edges$yend[cand],
+                      MoreArgs = list(rx0 = bx0, ry0 = by0, rx1 = bx1, ry1 = by1))
+        bad[cand[hit]] <- TRUE
+      }
+    }
+    center_edges <- center_edges[!bad, ]
+  }
+
+  # Boundary ring
+  ring_th <- seq(0, 2*pi, length.out = 160)
+  center_ring <- data.frame(
+    x = circle_radius * cos(ring_th),
+    y = circle_radius * sin(ring_th)
+  )
+
+  # Concentric outer ring dots
+  n_outer_ring <- 80
+  outer_ring_th <- seq(0, 2*pi, length.out = n_outer_ring + 1)[1:n_outer_ring]
+  outer_ring_nodes <- data.frame(
+    x = (circle_radius * 0.96) * cos(outer_ring_th),
+    y = (circle_radius * 0.96) * sin(outer_ring_th)
+  )
+
+  # 2. Four Corner Environmental Triangles
+  corner_configs <- list(
+    top_left     = list(corner = "top_left", center_x = -5.0, center_y = 5.0, default_pal = c("#4DAF4A", "#FFFFFF", "#E41A1C")),
+    top_right    = list(corner = "top_right", center_x = 5.0, center_y = 5.0, default_pal = c("#984EA3", "#FFFFFF", "#FF7F00")),
+    bottom_left  = list(corner = "bottom_left", center_x = -5.0, center_y = -5.0, default_pal = c("#66C2A5", "#FFFFFF", "#FC8D62")),
+    bottom_right = list(corner = "bottom_right", center_x = 5.0, center_y = -5.0, default_pal = c("#377EB8", "#FFFFFF", "#E41A1C"))
+  )
+
+  tiles_list <- list()
+  diag_list  <- list()
+  labels_list <- list()
+
+  if (is.null(env_cors) || length(env_cors) == 0) {
+    default_domains <- list(
+      "Biophysical Barrier"    = c("Skin_pH", "TEWL", "Corneometry", "Sebum", "Ceramides"),
+      "Clinical Severity"      = c("SCORAD", "EASI", "Pruritus", "Total_IgE", "POEM"),
+      "Host Biomarkers"        = c("FLG_status", "TSLP", "IL-4/13", "IL-31", "CCL17"),
+      "Environmental Exposome" = c("PM2.5", "Humidity", "Temp", "UV_Index", "Hard_Water")
+    )
+    make_dummy_cor <- function(vars) {
+      p <- length(vars)
+      mat <- matrix(stats::runif(p * p, -0.65, 0.75), nrow = p, ncol = p)
+      mat <- (mat + t(mat)) / 2
+      diag(mat) <- 1.0
+      colnames(mat) <- vars
+      rownames(mat) <- vars
+      mat
+    }
+    set.seed(42)
+    env_cors <- lapply(default_domains, make_dummy_cor)
+  }
+
+  n_corners_to_draw <- min(length(env_cors), 4)
+
+  size_box <- 2.3
+  r_dot <- circle_radius * 1.21
+
+  for (c_idx in 1:n_corners_to_draw) {
+    cfg <- corner_configs[[c_idx]]
+    c_name <- if (!is.null(names(env_cors)[c_idx])) names(env_cors)[c_idx] else paste0("Env ", c_idx)
+
+    var_names <- NULL
+    mat_r     <- NULL
+    item <- env_cors[[c_idx]]
+    if (is.matrix(item) || is.data.frame(item)) {
+      var_names <- colnames(item)
+      mat_r     <- as.matrix(item)
+    } else if (is.character(item)) {
+      var_names <- item
+    }
+
+    if (is.null(var_names) || length(var_names) < 2) {
+      var_names <- paste0("Var_", 1:5, "_", c_idx)
+    }
+
+    pal <- if (!is.null(corner_palettes) && length(corner_palettes) >= c_idx) corner_palettes[[c_idx]] else cfg$default_pal
+
+    p_dim <- length(var_names)
+    grid <- expand.grid(row = 1:p_dim, col = 1:p_dim)
+    grid <- grid[grid$row >= grid$col, ]
+
+    if (!is.null(mat_r) && nrow(mat_r) == p_dim && ncol(mat_r) == p_dim) {
+      r_vals <- numeric(nrow(grid))
+      for (g_i in seq_len(nrow(grid))) {
+        r_vals[g_i] <- mat_r[grid$row[g_i], grid$col[g_i]]
+      }
+    } else {
+      r_vals <- stats::runif(nrow(grid), -0.75, 0.85)
+      r_vals[grid$row == grid$col] <- 1.0
+    }
+
+    stars <- rep("", nrow(grid))
+    for (idx in seq_len(nrow(grid))) {
+      abs_r <- abs(r_vals[idx])
+      if (grid$row[idx] == grid$col[idx]) {
+        stars[idx] <- ""
+      } else if (abs_r > 0.6) {
+        stars[idx] <- "***"
+      } else if (abs_r > 0.45) {
+        stars[idx] <- "**"
+      } else if (abs_r > 0.3) {
+        stars[idx] <- "*"
+      }
+    }
+
+    step <- size_box / p_dim
+    corner_type <- cfg$corner
+    center_x <- cfg$center_x
+    center_y <- cfg$center_y
+
+    if (corner_type == "top_left") {
+      xs <- center_x + (grid$col - 1) * step
+      ys <- center_y - (grid$row - 1) * step
+      th_dots <- seq(2.15, 2.75, length.out = p_dim)
+      diag_pts <- data.frame(
+        var = var_names,
+        x = r_dot * cos(th_dots),
+        y = r_dot * sin(th_dots),
+        stringsAsFactors = FALSE
+      )
+      top_labels <- data.frame(
+        var = var_names[1:(p_dim - 1)],
+        x = center_x + (1:(p_dim - 1) - 1) * step,
+        y = center_y + step * 0.60,
+        angle = 78, hjust = 0, vjust = 0.3, stringsAsFactors = FALSE
+      )
+      left_labels <- data.frame(
+        var = var_names[2:p_dim],
+        x = center_x - step * 0.60,
+        y = center_y - (2:p_dim - 1) * step,
+        angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
+      )
+    } else if (corner_type == "top_right") {
+      xs <- center_x - (grid$col - 1) * step
+      ys <- center_y - (grid$row - 1) * step
+      th_dots <- seq(0.99, 0.39, length.out = p_dim)
+      diag_pts <- data.frame(
+        var = var_names,
+        x = r_dot * cos(th_dots),
+        y = r_dot * sin(th_dots),
+        stringsAsFactors = FALSE
+      )
+      top_labels <- data.frame(
+        var = var_names[1:(p_dim - 1)],
+        x = center_x - (1:(p_dim - 1) - 1) * step,
+        y = center_y + step * 0.60,
+        angle = -78, hjust = 1, vjust = 0.3, stringsAsFactors = FALSE
+      )
+      left_labels <- data.frame(
+        var = var_names[2:p_dim],
+        x = center_x + step * 0.60,
+        y = center_y - (2:p_dim - 1) * step,
+        angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
+      )
+    } else if (corner_type == "bottom_left") {
+      xs <- center_x + (grid$col - 1) * step
+      ys <- center_y + (grid$row - 1) * step
+      th_dots <- seq(4.13, 3.53, length.out = p_dim)
+      diag_pts <- data.frame(
+        var = var_names,
+        x = r_dot * cos(th_dots),
+        y = r_dot * sin(th_dots),
+        stringsAsFactors = FALSE
+      )
+      top_labels <- data.frame(
+        var = var_names[1:(p_dim - 1)],
+        x = center_x + (1:(p_dim - 1) - 1) * step,
+        y = center_y - step * 0.60,
+        angle = -78, hjust = 0, vjust = 0.7, stringsAsFactors = FALSE
+      )
+      left_labels <- data.frame(
+        var = var_names[2:p_dim],
+        x = center_x - step * 0.60,
+        y = center_y + (2:p_dim - 1) * step,
+        angle = 0, hjust = 1, vjust = 0.5, stringsAsFactors = FALSE
+      )
+    } else {
+      xs <- center_x - (grid$col - 1) * step
+      ys <- center_y + (grid$row - 1) * step
+      th_dots <- seq(5.29, 5.89, length.out = p_dim)
+      diag_pts <- data.frame(
+        var = var_names,
+        x = r_dot * cos(th_dots),
+        y = r_dot * sin(th_dots),
+        stringsAsFactors = FALSE
+      )
+      top_labels <- data.frame(
+        var = var_names[1:(p_dim - 1)],
+        x = center_x - (1:(p_dim - 1) - 1) * step,
+        y = center_y - step * 0.60,
+        angle = 78, hjust = 1, vjust = 0.7, stringsAsFactors = FALSE
+      )
+      left_labels <- data.frame(
+        var = var_names[2:p_dim],
+        x = center_x + step * 0.60,
+        y = center_y + (2:p_dim - 1) * step,
+        angle = 0, hjust = 0, vjust = 0.5, stringsAsFactors = FALSE
+      )
+    }
+
+    # Formatting numerical correlation values
+    fmt_r <- sprintf(paste0("%.", value_digits, "f"), r_vals)
+    zero_pat <- paste0("^-0\\.", paste(rep("0", value_digits), collapse = ""), "$")
+    fmt_r <- sub(zero_pat, paste0("0.", paste(rep("0", value_digits), collapse = "")), fmt_r)
+    fmt_r <- sub("^-0$", "0", fmt_r)
+    if (compact) {
+      fmt_r <- sub("^(-?)0\\.", "\\1.", fmt_r)
+      fmt_r[r_vals == 1.0] <- "1"
+      fmt_r[r_vals == -1.0] <- "-1"
+      fmt_r <- sub(paste0("^-\\.", paste(rep("0", value_digits), collapse = ""), "$"),
+                   paste0(".", paste(rep("0", value_digits), collapse = "")), fmt_r)
+    }
+
+    tile_label <- switch(
+      resolved_label_type,
+      "coef"       = fmt_r,
+      "coef_stars" = ifelse(grid$row == grid$col, fmt_r, paste0(fmt_r, stars)),
+      "stars"      = ifelse(grid$row == grid$col, "", stars),
+      "none"       = rep("", length(r_vals)),
+      stars
+    )
+
+    text_col <- ifelse(abs(r_vals) > 0.60, "white", "grey18")
+    col_ramp <- scales::col_numeric(pal, domain = c(-1, 1))
+
+    tiles_list[[c_idx]] <- data.frame(
+      x = xs, y = ys, r = r_vals, stars = stars,
+      label = tile_label, text_color = text_col,
+      fill_col = col_ramp(r_vals), step = step, corner = c_name, stringsAsFactors = FALSE
+    )
+    diag_list[[c_idx]] <- cbind(diag_pts, corner = c_name)
+    labels_list[[c_idx]] <- cbind(rbind(top_labels, left_labels), corner = c_name)
+  }
+
+  all_tiles <- do.call(rbind, tiles_list)
+  all_diag  <- do.call(rbind, diag_list)
+  all_env_labels <- do.call(rbind, labels_list)
+
+  # 3. Inter-domain connecting links
+  link_list <- list()
+  if (!is.null(links) && nrow(links) > 0 && all(c("env", "module") %in% names(links))) {
+    for (l_i in seq_len(nrow(links))) {
+      e_var <- as.character(links$env[l_i])
+      m_tgt <- as.character(links$module[l_i])
+      pt <- all_diag[all_diag$var == e_var, ]
+      mc <- mod_centers[mod_centers$module == m_tgt, ]
+      if (nrow(pt) > 0 && nrow(mc) > 0) {
+        pt <- pt[1, ]
+        mc <- mc[1, ]
+        r_val <- if ("r" %in% names(links)) links$r[l_i] else if ("cor" %in% names(links)) links$cor[l_i] else 0.5
+        p_val <- if ("p" %in% names(links)) links$p[l_i] else if ("pvalue" %in% names(links)) links$pvalue[l_i] else 0.01
+        log10_p <- if ("log10p" %in% names(links)) links$log10p[l_i] else -log10(max(p_val, 1e-10))
+
+        th_target <- atan2(mc$cy, mc$cx)
+        end_x <- (circle_radius * 0.98) * cos(th_target)
+        end_y <- (circle_radius * 0.98) * sin(th_target)
+
+        link_list[[length(link_list) + 1]] <- data.frame(
+          x = pt$x, y = pt$y, xend = end_x, yend = end_y,
+          r = r_val, log10p = log10_p,
+          sign = ifelse(r_val > 0, "Positive", "Negative"),
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+  }
+
+  if (length(link_list) == 0) {
+    u_corners <- unique(all_diag$corner)
+    for (c_name in u_corners) {
+      c_pts <- all_diag[all_diag$corner == c_name, ]
+      n_pick <- min(3, nrow(c_pts))
+      for (k_i in seq_len(n_pick)) {
+        pt <- c_pts[k_i, ]
+        r_val <- sample(c(0.72, 0.58, -0.64, 0.45, -0.52), 1)
+        p_val <- stats::runif(1, 1e-4, 0.012)
+        th_s <- atan2(pt$y, pt$x)
+        th_t <- th_s + (k_i - 2) * 0.12
+        end_x <- (circle_radius * 0.98) * cos(th_t)
+        end_y <- (circle_radius * 0.98) * sin(th_t)
+
+        link_list[[length(link_list) + 1]] <- data.frame(
+          x = pt$x,
+          y = pt$y,
+          xend = end_x,
+          yend = end_y,
+          r = r_val,
+          log10p = -log10(p_val),
+          sign = ifelse(r_val > 0, "Positive", "Negative"),
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+  }
+  all_links <- do.call(rbind, link_list)
+
+  # 4. Assemble Plot
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_path(
+      data = center_ring, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+      linetype = circle_linetype, color = circle_color, linewidth = circle_width
+    ) +
+    ggplot2::geom_point(
+      data = outer_ring_nodes, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+      shape = 16, size = outer_ring_size, color = outer_ring_color, alpha = outer_ring_alpha
+    ) +
+    ggplot2::geom_polygon(
+      data = center_hulls,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["id"]], fill = .data[["module"]]),
+      alpha = hull_alpha, show.legend = FALSE
+    ) +
+    ggplot2::geom_segment(
+      data = center_edges,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]]),
+      color = intra_edge_color, alpha = intra_edge_alpha, linewidth = intra_edge_width
+    )
+
+  if (!is.null(link_width)) {
+    p <- p + ggplot2::geom_segment(
+      data = all_links,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]]),
+      alpha = link_alpha, linewidth = link_width
+    )
+  } else {
+    p <- p + ggplot2::geom_segment(
+      data = all_links,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]], color = .data[["sign"]], linewidth = .data[["log10p"]]),
+      alpha = link_alpha
+    ) +
+    ggplot2::scale_linewidth_continuous(
+      range = link_width_range,
+      breaks = c(1.5, 2.0, 2.5, 3.0),
+      name = "-log10 P:"
+    )
+  }
+
+  p <- p + ggplot2::scale_color_manual(
+    values = c(module_colors, link_colors),
+    breaks = c("Positive", "Negative", names(module_colors)),
+    name = "Legend:"
+  )
+
+  # Central network nodes (shape 16: fill-only, no vector border stroke)
+  p <- p +
+    ggplot2::geom_point(
+      data = nodes_df,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], color = .data[["module"]], size = .data[["degree"]]),
+      shape = 16, alpha = 0.85
+    ) +
+    ggplot2::scale_size_continuous(range = node_size_range, guide = "none") +
+    ggplot2::geom_tile(
+      data = all_tiles,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+      fill = all_tiles$fill_col,
+      color = NA, linewidth = 0
+    )
+
+  if (resolved_label_type != "none") {
+    valid_text <- all_tiles$label != ""
+    if (any(valid_text)) {
+      sub_tiles <- all_tiles[valid_text, ]
+      min_step <- min(all_tiles$step)
+      char_count <- if (resolved_label_type %in% c("coef_stars", "both")) 5.2 else if (resolved_label_type == "coef") 3.8 else 2.2
+      calc_fit_size <- max(1.76, min(2.5, min_step / (char_count * 0.038)))
+      opt_size <- if (!is.null(value_size)) value_size else calc_fit_size
+
+      sub_dark <- sub_tiles[sub_tiles$text_color == "white", ]
+      sub_light <- sub_tiles[sub_tiles$text_color != "white", ]
+
+      if (nrow(sub_dark) > 0) {
+        p <- p + ggplot2::geom_text(
+          data = sub_dark,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = opt_size, color = "white", vjust = 0.5, hjust = 0.5, show.legend = FALSE
+        )
+      }
+      if (nrow(sub_light) > 0) {
+        p <- p + ggplot2::geom_text(
+          data = sub_light,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = opt_size, color = "grey18", vjust = 0.5, hjust = 0.5, show.legend = FALSE
+        )
+      }
+    }
+  }
+
+  # Module labels inside the central circle
   if (!is.null(mod_labels_df) && nrow(mod_labels_df) > 0) {
     if (isTRUE(module_label_bg)) {
       p <- p + ggplot2::geom_label(
@@ -977,10 +1031,9 @@ build_env_network_layers = function(
         fontface = "bold",
         size = module_label_size,
         alpha = module_label_alpha,
-        lineheight = 0.88,
-        label.padding = ggplot2::unit(0.22, "lines"),
-        label.r = ggplot2::unit(0.20, "lines"),
-        linewidth = 0.25,
+        label.padding = ggplot2::unit(0.18, "lines"),
+        label.r = ggplot2::unit(0.15, "lines"),
+        linewidth = 0,
         show.legend = FALSE
       )
     } else {
@@ -990,36 +1043,36 @@ build_env_network_layers = function(
         color = module_label_color,
         fontface = "bold",
         size = module_label_size,
-        lineheight = 0.88,
         show.legend = FALSE
       )
     }
   }
 
+  # Connector dots and variable labels
   p <- p +
     ggplot2::geom_point(
       data = all_diag,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
-      shape = 21, fill = diag_point_fill, color = diag_point_color, size = diag_point_size, stroke = 0.3
+      shape = 16, color = diag_point_fill, size = diag_point_size, show.legend = FALSE
     ) +
     ggplot2::geom_text(
       data = all_env_labels,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["var"]], angle = .data[["angle"]], hjust = .data[["hjust"]], vjust = .data[["vjust"]]),
-      size = env_label_size, fontface = env_label_face, color = env_label_color
+      size = env_label_size, fontface = env_label_face, color = env_label_color, show.legend = FALSE
     )
 
   if (isTRUE(show_domain_labels) && !is.null(names(env_cors))) {
     d_names <- names(env_cors)
     d_pos <- list(
-      top_left     = c(x = -4.2, y = 6.2,   hjust = 0.5),
-      top_right    = c(x = 4.2,  y = 6.2,   hjust = 0.5),
-      bottom_left  = c(x = -3.8, y = -6.55, hjust = 0.5),
-      bottom_right = c(x = 3.8,  y = -6.55, hjust = 0.5)
+      top_left     = c(x = -3.9, y = 6.45,  hjust = 0.5),
+      top_right    = c(x = 3.9,  y = 6.45,  hjust = 0.5),
+      bottom_left  = c(x = -3.9, y = -6.45, hjust = 0.5),
+      bottom_right = c(x = 3.9,  y = -6.45, hjust = 0.5)
     )
-    d_cols <- c("#2166AC", "#1B7837", "#8C510A", "#B35806")
+    d_cols <- c("#2166AC", "#984EA3", "#1B7837", "#B35806")
     d_rows <- list()
     for (i in seq_along(d_names)) {
-      c_k <- names(c_configs)[i]
+      c_k <- names(corner_configs)[i]
       if (!is.null(c_k) && c_k %in% names(d_pos)) {
         pos <- d_pos[[c_k]]
         d_rows[[i]] <- data.frame(
@@ -1035,8 +1088,8 @@ build_env_network_layers = function(
       d_df <- do.call(rbind, d_rows)
       p <- p + ggplot2::geom_text(
         data = d_df,
-        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]], color = ggplot2::I(.data[["color"]]), hjust = .data[["hjust"]]),
-        size = 2.3, fontface = "bold"
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]], color = base::I(.data[["color"]]), hjust = .data[["hjust"]]),
+        size = 2.6, fontface = "bold", show.legend = FALSE
       )
     }
   }
@@ -1058,8 +1111,10 @@ build_env_network_layers = function(
     ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
     ggplot2::theme_void() +
     ggplot2::theme(
+      plot.title           = ggplot2::element_text(size = 8.5, face = "bold", hjust = 0.5, vjust = 1.0, margin = ggplot2::margin(t = 2, b = 4)),
       plot.background      = ggplot2::element_rect(fill = "white", color = NA),
       panel.background     = ggplot2::element_rect(fill = "white", color = NA),
+      plot.margin          = ggplot2::margin(t = 12, b = 4, l = 4, r = 4, unit = "pt"),
       legend.position      = legend_position,
       legend.box           = "vertical",
       legend.box.just      = "center",
@@ -1068,8 +1123,8 @@ build_env_network_layers = function(
       legend.key.spacing.x = ggplot2::unit(2.5, "pt"),
       legend.key.height    = ggplot2::unit(2.2, "mm"),
       legend.key.width     = ggplot2::unit(3.8, "mm"),
-      legend.text          = ggplot2::element_text(size = 6.2, family = "sans"),
-      legend.title         = ggplot2::element_text(size = 6.8, face = "bold", family = "sans"),
+      legend.text          = ggplot2::element_text(size = 6.8, family = "sans"),
+      legend.title         = ggplot2::element_text(size = 7.4, face = "bold", family = "sans"),
       legend.margin        = ggplot2::margin(t = 0, b = 2, l = 0, r = 0, unit = "pt"),
       legend.box.margin    = ggplot2::margin(t = 0, b = 1, l = 0, r = 0, unit = "pt")
     )
