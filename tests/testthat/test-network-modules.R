@@ -349,3 +349,47 @@ test_that("cliplot_env_network legend options and row formatting work", {
   g2 <- ggplot2::ggplot_build(p2)
   expect_true(!is.null(g2))
 })
+
+test_that("cliplot_cross_network_graph style presets and zero-arg fallback work", {
+  # Zero-argument invocation
+  p0 <- cliplot_cross_network_graph()
+  expect_s3_class(p0, "ggplot")
+
+  # Nature preset
+  p_nat <- cliplot_cross_network_graph(preset = "nature")
+  expect_s3_class(p_nat, "ggplot")
+
+  # Module-level ring preservation
+  p_ring <- cliplot_cross_network_graph(level = "module", preset = "nature")
+  expect_s3_class(p_ring, "ggplot")
+
+  # Horizontal flow progression
+  p_flow <- cliplot_cross_network_graph(preset = "horizontal_flow")
+  expect_s3_class(p_flow, "ggplot")
+
+  # Dark mode
+  p_dark <- cliplot_cross_network_graph(preset = "dark")
+  expect_s3_class(p_dark, "ggplot")
+
+  # Lancet minimal
+  p_lan <- cliplot_cross_network_graph(preset = "lancet")
+  expect_s3_class(p_lan, "ggplot")
+})
+
+test_that("cliplot_env_network style presets work out of the box", {
+  # Clinical / nature style
+  p_clin <- cliplot_env_network(preset = "clinical", show_values = TRUE)
+  expect_s3_class(p_clin, "ggplot")
+
+  # Seasonal style
+  p_seas <- cliplot_env_network(preset = "seasonal", show_values = TRUE)
+  expect_s3_class(p_seas, "ggplot")
+
+  # Dark style
+  p_dark <- cliplot_env_network(preset = "dark", show_values = TRUE)
+  expect_s3_class(p_dark, "ggplot")
+
+  # Lancet style
+  p_lan <- cliplot_env_network(preset = "lancet", show_values = TRUE)
+  expect_s3_class(p_lan, "ggplot")
+})

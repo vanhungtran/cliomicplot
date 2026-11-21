@@ -48,7 +48,9 @@
 #' @param module_size_range Numeric vector of length 2 specifying point size range for module circles (default \code{c(3.5, 8.5)}).
 #' @param circle_radius Radius for module circle ring layout when \code{level = "module"} (default 1.05).
 #' @param preset Character string specifying publisher style preset: \code{"default"},
-#'   \code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.
+#'   \code{"nature"}, \code{"cell"}, \code{"science"}, \code{"lancet"}, \code{"dark"},
+#'   \code{"horizontal_flow"}, or \code{"minimal"}.
+#' @param style Character string alias for \code{preset}. If supplied, overrides \code{preset}.
 #' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 #'   line floor >= 0.25 pt, and CVD compliant palettes).
 #'
@@ -80,11 +82,13 @@ type_cross_network_graph = function(
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
     circle_radius      = 1.05,
-    preset             = c("default", "nature", "cell", "science", "lancet"),
+    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "minimal"),
+    style              = NULL,
     scifig             = FALSE
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
+  if (!is.null(style)) preset <- style
   preset <- match.arg(preset)
 
   if (isTRUE(scifig) && preset == "default") preset <- "nature"
@@ -93,6 +97,48 @@ type_cross_network_graph = function(
     module_label_size  <- max(module_label_size %||% 2.2, 2.2)
     edge_width         <- max(edge_width %||% 0.25, 0.25)
     cross_width        <- max(cross_width %||% 0.45, 0.45)
+  }
+
+  if (preset == "horizontal_flow") {
+    layout <- "horizontal"
+    cross_width <- max(cross_width, 0.65)
+    cross_alpha <- max(cross_alpha, 0.80)
+  } else if (preset %in% c("dark", "cell")) {
+    if (identical(edge_color, "grey85")) edge_color <- "#2D3748"
+    edge_alpha <- 0.50
+    edge_width <- max(edge_width, 0.22)
+    cross_width <- max(cross_width, 0.70)
+    cross_alpha <- max(cross_alpha, 0.85)
+    hull_alpha <- 0.22
+    if (identical(meta_label_color, "grey15")) meta_label_color <- "#E2E8F0"
+    if (identical(module_label_fill, "white")) module_label_fill <- "#1E2638"
+    if (identical(module_label_color, "grey15")) module_label_color <- "#F8FAFC"
+    if (is.null(module_colors)) {
+      module_colors <- c(
+        "Mod_1" = "#00F2FE", "Mod_2" = "#FF007F", "Mod_3" = "#FFE600", "Mod_4" = "#7B2CBF",
+        "Mod_5" = "#00F5D4", "Mod_6" = "#FF5400", "Mod_7" = "#9D4EDD", "Mod_8" = "#E040FB"
+      )
+    }
+    if (is.null(cross_colors)) {
+      cross_colors <- c("#00F5D4", "#FF0054", "#9D4EDD", "#FFE600", "#00F2FE", "#FF007F")
+    }
+  } else if (preset %in% c("lancet", "minimal")) {
+    if (identical(edge_color, "grey85")) edge_color <- "grey82"
+    edge_alpha <- 0.40
+    edge_width <- min(edge_width, 0.22)
+    cross_width <- 0.60
+    cross_alpha <- 0.80
+    if (preset == "minimal") show_hulls <- FALSE
+    if (identical(meta_label_color, "grey15")) meta_label_color <- "#0F172A"
+    if (is.null(module_colors)) {
+      module_colors <- c(
+        "Mod_1" = "#1E3A8A", "Mod_2" = "#B45309", "Mod_3" = "#047857",
+        "Mod_4" = "#475569", "Mod_5" = "#7C3AED", "Mod_6" = "#DB2777"
+      )
+    }
+    if (is.null(cross_colors)) {
+      cross_colors <- c("#0284C7", "#DC2626", "#D97706", "#047857", "#7C3AED")
+    }
   }
 
   cliplot_type(
@@ -131,7 +177,8 @@ type_cross_network_graph = function(
         meta_label_size    = meta_label_size,
         meta_label_color   = meta_label_color,
         module_size_range  = module_size_range,
-        circle_radius      = circle_radius
+        circle_radius      = circle_radius,
+        preset             = preset
       )
 
       res$plot
@@ -186,13 +233,24 @@ cliplot_cross_network_graph = function(
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
     circle_radius      = 1.05,
-    preset             = c("default", "nature", "cell", "science", "lancet"),
+    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "minimal"),
+    style              = NULL,
+    show_hulls         = TRUE,
+    hull_alpha         = 0.18,
+    show_meta          = TRUE,
+    node_size_range    = c(1.2, 4.2),
+    edge_color         = "grey85",
+    edge_alpha         = 0.45,
+    edge_width         = 0.2,
+    cross_width        = 0.6,
+    cross_alpha        = 0.75,
     scifig             = FALSE,
     title              = NULL,
     ...
 ) {
   level <- match.arg(level)
   layout <- match.arg(layout)
+  if (!is.null(style)) preset <- style
   preset <- match.arg(preset)
 
   network_data <- list(
@@ -207,6 +265,15 @@ cliplot_cross_network_graph = function(
     layout             = layout,
     module_colors      = module_colors,
     cross_colors       = cross_colors,
+    show_hulls         = show_hulls,
+    hull_alpha         = hull_alpha,
+    show_meta          = show_meta,
+    node_size_range    = node_size_range,
+    edge_color         = edge_color,
+    edge_alpha         = edge_alpha,
+    edge_width         = edge_width,
+    cross_width        = cross_width,
+    cross_alpha        = cross_alpha,
     show_module_labels = show_module_labels,
     module_labels      = module_labels,
     module_label_size  = module_label_size,
@@ -254,10 +321,11 @@ build_cross_network_layers = function(
     meta_label_size    = 3.2,
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
-    circle_radius      = 1.05
+    circle_radius      = 1.05,
+    preset             = "default"
 ) {
   # Extract components
-  if (is.list(custom_data) && !is.data.frame(custom_data)) {
+  if (is.list(custom_data) && !is.data.frame(custom_data) && !is.null(custom_data$nodes) && nrow(custom_data$nodes) > 0) {
     nodes_df    <- custom_data$nodes
     edges_df    <- custom_data$edges
     cross_df    <- custom_data$cross_edges
@@ -449,10 +517,17 @@ build_cross_network_layers = function(
       c_xy <- grp_centers[[g]]
       n_n <- sum(nodes_df$group == g)
       n_e <- if (!is.null(edges_df)) sum(edges_df$group == g) else 0
+      y_pos <- if (layout == "horizontal") {
+        2.4
+      } else if (c_xy[2] > 0) {
+        c_xy[2] + 2.0
+      } else {
+        c_xy[2] - 1.7
+      }
       meta_list[[length(meta_list) + 1]] <- data.frame(
         group = g,
         x = c_xy[1],
-        y = if (c_xy[2] > 0) c_xy[2] + 2.0 else c_xy[2] - 1.7,
+        y = y_pos,
         label = paste0("Group = ", g, "\nNode = ", n_n, if (n_e > 0) paste0("\nEdge = ", n_e) else ""),
         stringsAsFactors = FALSE
       )
@@ -613,16 +688,33 @@ build_cross_network_layers = function(
     )
   }
 
-  p <- p +
-    ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = c(-3.8, 6.2)) +
-    ggplot2::theme_void() +
-    ggplot2::theme(
-      plot.background  = ggplot2::element_rect(fill = "white", color = NA),
-      panel.background = ggplot2::element_rect(fill = "white", color = NA),
-      legend.position = "right",
-      legend.title = ggplot2::element_text(size = 9, face = "bold"),
-      legend.text  = ggplot2::element_text(size = 8)
-    )
+  y_lims <- if (layout == "horizontal") c(-3.2, 4.2) else c(-3.8, 6.2)
+  p <- p + ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = y_lims)
+
+  if (preset %in% c("dark", "cell")) {
+    p <- p +
+      ggplot2::theme_void() +
+      ggplot2::theme(
+        plot.background   = ggplot2::element_rect(fill = "#0F141C", color = NA),
+        panel.background  = ggplot2::element_rect(fill = "#0F141C", color = NA),
+        plot.title        = ggplot2::element_text(color = "#F8FAFC", face = "bold", size = 11, hjust = 0.5),
+        legend.position   = "right",
+        legend.background = ggplot2::element_rect(fill = "#0F141C", color = NA),
+        legend.title      = ggplot2::element_text(color = "#F1F5F9", face = "bold", size = 8.5),
+        legend.text       = ggplot2::element_text(color = "#CBD5E1", size = 7.5)
+      )
+  } else {
+    p <- p +
+      ggplot2::theme_void() +
+      ggplot2::theme(
+        plot.background  = ggplot2::element_rect(fill = "white", color = NA),
+        panel.background = ggplot2::element_rect(fill = "white", color = NA),
+        plot.title       = ggplot2::element_text(face = "bold", size = 11, hjust = 0.5),
+        legend.position  = "right",
+        legend.title     = ggplot2::element_text(size = 9, face = "bold"),
+        legend.text      = ggplot2::element_text(size = 8)
+      )
+  }
 
   list(plot = p, nodes = nodes_df, edges = intra_coords, cross = cross_coords)
 }

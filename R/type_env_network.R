@@ -77,7 +77,10 @@
 #' @param node_size_range Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).
 #' @param hull_alpha Shading transparency for module cluster hulls (default 0.18).
 #' @param preset Character string specifying publisher style preset: \code{"default"},
-#'   \code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.
+#' @param preset Character string specifying publisher style preset: \code{"default"},
+#'   \code{"nature"}, \code{"clinical"}, \code{"seasonal"}, \code{"cell"}, \code{"dark"},
+#'   \code{"lancet"}, or \code{"minimal"}.
+#' @param style Character string alias for \code{preset}. If supplied, overrides \code{preset}.
 #' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 #'   line floor >= 0.25 pt, zero sign suppression, and CVD compliant palettes).
 #' @param title Optional plot title.
@@ -134,11 +137,13 @@ type_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
-    preset             = c("default", "nature", "cell", "science", "lancet"),
+    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal"),
+    style              = NULL,
     scifig             = FALSE,
     title              = NULL
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
+  if (!is.null(style)) preset <- style
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
   preset <- match.arg(preset)
@@ -151,6 +156,27 @@ type_env_network = function(
     module_label_size  <- max(module_label_size %||% 2.2, 2.2)   # >= 6.2 pt
     circle_width       <- max(circle_width %||% 0.35, 0.35)
     intra_edge_width   <- max(intra_edge_width %||% 0.25, 0.25) # >= 0.25 pt hairline floor
+  }
+
+  if (preset %in% c("dark", "cell")) {
+    if (identical(circle_color, "grey65")) circle_color <- "#334155"
+    if (identical(outer_ring_color, "grey60")) outer_ring_color <- "#475569"
+    if (identical(intra_edge_color, "grey82")) intra_edge_color <- "#242F42"
+    intra_edge_alpha <- max(intra_edge_alpha, 0.45)
+    if (identical(module_label_fill, "white")) module_label_fill <- "#1E2638"
+    if (identical(module_label_color, "grey15")) module_label_color <- "#F8FAFC"
+    if (identical(env_label_color, "grey20")) env_label_color <- "#CBD5E1"
+    if (identical(diag_point_fill, "#F781BF")) diag_point_fill <- "#00F2FE"
+    if (identical(link_colors, c("Positive" = "#E64B35", "Negative" = "#4DBBD5"))) {
+      link_colors <- c("Positive" = "#00F2FE", "Negative" = "#FF007F")
+    }
+  } else if (preset %in% c("lancet", "minimal")) {
+    if (identical(circle_linetype, "dashed")) circle_linetype <- "solid"
+    if (identical(circle_color, "grey65")) circle_color <- "grey80"
+    if (identical(link_colors, c("Positive" = "#E64B35", "Negative" = "#4DBBD5"))) {
+      link_colors <- c("Positive" = "#B2182B", "Negative" = "#2166AC")
+    }
+    if (label_type == "auto" && isTRUE(show_values)) label_type <- "coef"
   }
 
   resolved_label_type <- if (label_type == "auto") {
@@ -330,12 +356,14 @@ cliplot_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
-    preset             = c("default", "nature", "cell", "science", "lancet"),
+    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal"),
+    style              = NULL,
     scifig             = FALSE,
     title              = NULL,
     ...
 ) {
   if (!is.null(show_cor)) show_values <- show_cor
+  if (!is.null(style)) preset <- style
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
   preset <- match.arg(preset)
@@ -390,6 +418,7 @@ cliplot_env_network = function(
     hull_alpha         = hull_alpha,
     curvature          = curvature,
     preset             = preset,
+    style              = style,
     scifig             = scifig,
     title              = title
   )
@@ -453,22 +482,41 @@ build_env_network_layers <- function(
   n_mods <- 7
   u_mods <- paste0("Mod_", 1:n_mods)
   if (is.null(module_colors)) {
-    mod_cols <- c(
-      "Mod_1" = "#4DBBD5", "Mod_2" = "#E64B35", "Mod_3" = "#00A087",
-      "Mod_4" = "#3C5488", "Mod_5" = "#F39B7F", "Mod_6" = "#8491B4", "Mod_7" = "#B09C85"
-    )
+    if (preset %in% c("dark", "cell")) {
+      mod_cols <- c(
+        "Mod_1" = "#00F2FE", "Mod_2" = "#FF007F", "Mod_3" = "#FFE600",
+        "Mod_4" = "#7B2CBF", "Mod_5" = "#00F5D4", "Mod_6" = "#FF5400", "Mod_7" = "#9D4EDD"
+      )
+    } else {
+      mod_cols <- c(
+        "Mod_1" = "#4DBBD5", "Mod_2" = "#E64B35", "Mod_3" = "#00A087",
+        "Mod_4" = "#3C5488", "Mod_5" = "#F39B7F", "Mod_6" = "#8491B4", "Mod_7" = "#B09C85"
+      )
+    }
     module_colors <- mod_cols
   }
 
-  default_module_labels <- c(
-    "Mod_1" = "M1: Core",
-    "Mod_2" = "M2: Barrier",
-    "Mod_3" = "M3: Sebum",
-    "Mod_4" = "M4: DrySkin",
-    "Mod_5" = "M5: AMP",
-    "Mod_6" = "M6: Transient",
-    "Mod_7" = "M7: Commensal"
-  )
+  default_module_labels <- if (preset == "seasonal") {
+    c(
+      "Mod_1" = "M1: Perennial Core",
+      "Mod_2" = "M2: Vernal Bloom",
+      "Mod_3" = "M3: Xerotolerant",
+      "Mod_4" = "M4: Cellulolytic",
+      "Mod_5" = "M5: Psychrophilic",
+      "Mod_6" = "M6: Spore-Forming",
+      "Mod_7" = "M7: Epiphytic"
+    )
+  } else {
+    c(
+      "Mod_1" = "M1: Core",
+      "Mod_2" = "M2: Barrier",
+      "Mod_3" = "M3: Sebum",
+      "Mod_4" = "M4: DrySkin",
+      "Mod_5" = "M5: AMP",
+      "Mod_6" = "M6: Transient",
+      "Mod_7" = "M7: Commensal"
+    )
+  }
   if (is.null(module_labels)) {
     module_labels <- default_module_labels
   }
@@ -655,11 +703,41 @@ build_env_network_layers <- function(
   )
 
   # 2. Four Corner Environmental Triangles
+  default_pals <- if (preset == "seasonal") {
+    list(
+      c("#238B45", "#FFFFFF", "#D73027"), # Spring: Flora Green to Blossom Red
+      c("#7A0177", "#FFFFFF", "#FF7F00"), # Summer: Solar Purple to Heatwave Orange
+      c("#016C59", "#FFFFFF", "#B35806"), # Autumn: Canopy Teal to Leaf Rust
+      c("#08519C", "#FFFFFF", "#EF3B2C")  # Winter: Cryo Blue to Frostbite Crimson
+    )
+  } else if (preset %in% c("dark", "cell")) {
+    list(
+      c("#00F5D4", "#1E2638", "#FF007F"),
+      c("#00F2FE", "#1E2638", "#FFE600"),
+      c("#7B2CBF", "#1E2638", "#00F5D4"),
+      c("#00F2FE", "#1E2638", "#FF5400")
+    )
+  } else if (preset %in% c("lancet", "minimal")) {
+    list(
+      c("#2166AC", "#F7F7F7", "#B2182B"),
+      c("#1B7837", "#F7F7F7", "#762A83"),
+      c("#35978F", "#F7F7F7", "#BF812D"),
+      c("#4393C3", "#F7F7F7", "#D6604D")
+    )
+  } else {
+    list(
+      c("#4DAF4A", "#FFFFFF", "#E41A1C"),
+      c("#984EA3", "#FFFFFF", "#FF7F00"),
+      c("#66C2A5", "#FFFFFF", "#FC8D62"),
+      c("#377EB8", "#FFFFFF", "#E41A1C")
+    )
+  }
+
   corner_configs <- list(
-    top_left     = list(corner = "top_left", center_x = -5.0, center_y = 5.0, default_pal = c("#4DAF4A", "#FFFFFF", "#E41A1C")),
-    top_right    = list(corner = "top_right", center_x = 5.0, center_y = 5.0, default_pal = c("#984EA3", "#FFFFFF", "#FF7F00")),
-    bottom_left  = list(corner = "bottom_left", center_x = -5.0, center_y = -5.0, default_pal = c("#66C2A5", "#FFFFFF", "#FC8D62")),
-    bottom_right = list(corner = "bottom_right", center_x = 5.0, center_y = -5.0, default_pal = c("#377EB8", "#FFFFFF", "#E41A1C"))
+    top_left     = list(corner = "top_left", center_x = -5.0, center_y = 5.0, default_pal = default_pals[[1]]),
+    top_right    = list(corner = "top_right", center_x = 5.0, center_y = 5.0, default_pal = default_pals[[2]]),
+    bottom_left  = list(corner = "bottom_left", center_x = -5.0, center_y = -5.0, default_pal = default_pals[[3]]),
+    bottom_right = list(corner = "bottom_right", center_x = 5.0, center_y = -5.0, default_pal = default_pals[[4]])
   )
 
   tiles_list <- list()
@@ -667,12 +745,21 @@ build_env_network_layers <- function(
   labels_list <- list()
 
   if (is.null(env_cors) || length(env_cors) == 0) {
-    default_domains <- list(
-      "Biophysical Barrier"    = c("Skin_pH", "TEWL", "Corneometry", "Sebum", "Ceramides"),
-      "Clinical Severity"      = c("SCORAD", "EASI", "Pruritus", "Total_IgE", "POEM"),
-      "Host Biomarkers"        = c("FLG_status", "TSLP", "IL-4/13", "IL-31", "CCL17"),
-      "Environmental Exposome" = c("PM2.5", "Humidity", "Temp", "UV_Index", "Hard_Water")
-    )
+    if (preset == "seasonal") {
+      default_domains <- list(
+        "Spring (Greening & Pollen)"     = c("Pollen_Count", "Soil_Moisture", "Temp_Fluct", "Fungal_Spores", "Solar_Flux"),
+        "Summer (Heat & UV Extremes)"    = c("UV_Index", "Peak_Heat", "Drought_Index", "Ozone_O3", "PM2.5"),
+        "Autumn (Senescence & Rainfall)" = c("Precipitation", "Rel_Humidity", "Soil_pH", "Leaf_Litter", "Wind_Speed"),
+        "Winter (Cold Shock & Freezing)" = c("Frost_Days", "Snow_Cover", "Min_Temp", "Inversion_Layer", "Barometric_Pres")
+      )
+    } else {
+      default_domains <- list(
+        "Biophysical Barrier"    = c("Skin_pH", "TEWL", "Corneometry", "Sebum", "Ceramides"),
+        "Clinical Severity"      = c("SCORAD", "EASI", "Pruritus", "Total_IgE", "POEM"),
+        "Host Biomarkers"        = c("FLG_status", "TSLP", "IL-4/13", "IL-31", "CCL17"),
+        "Environmental Exposome" = c("PM2.5", "Humidity", "Temp", "UV_Index", "Hard_Water")
+      )
+    }
     make_dummy_cor <- function(vars) {
       p <- length(vars)
       mat <- matrix(stats::runif(p * p, -0.65, 0.75), nrow = p, ncol = p)
@@ -1069,7 +1156,13 @@ build_env_network_layers <- function(
       bottom_left  = c(x = -3.9, y = -6.45, hjust = 0.5),
       bottom_right = c(x = 3.9,  y = -6.45, hjust = 0.5)
     )
-    d_cols <- c("#2166AC", "#984EA3", "#1B7837", "#B35806")
+    d_cols <- if (preset %in% c("dark", "cell")) {
+      c("#63B3ED", "#F687B3", "#68D391", "#F6AD55")
+    } else if (preset == "seasonal") {
+      c("#238B45", "#7A0177", "#016C59", "#08519C")
+    } else {
+      c("#2166AC", "#984EA3", "#1B7837", "#B35806")
+    }
     d_rows <- list()
     for (i in seq_along(d_names)) {
       c_k <- names(corner_configs)[i]
@@ -1109,8 +1202,30 @@ build_env_network_layers <- function(
       }
     ) +
     ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
-    ggplot2::theme_void() +
-    ggplot2::theme(
+    ggplot2::theme_void()
+
+  if (preset %in% c("dark", "cell")) {
+    p <- p + ggplot2::theme(
+      plot.title           = ggplot2::element_text(size = 8.5, face = "bold", hjust = 0.5, vjust = 1.0, color = "#F8FAFC", margin = ggplot2::margin(t = 2, b = 4)),
+      plot.background      = ggplot2::element_rect(fill = "#0F141C", color = NA),
+      panel.background     = ggplot2::element_rect(fill = "#0F141C", color = NA),
+      plot.margin          = ggplot2::margin(t = 12, b = 4, l = 4, r = 4, unit = "pt"),
+      legend.position      = legend_position,
+      legend.background    = ggplot2::element_rect(fill = "#0F141C", color = NA),
+      legend.box           = "vertical",
+      legend.box.just      = "center",
+      legend.spacing.y     = ggplot2::unit(1.0, "pt"),
+      legend.key.spacing.y = ggplot2::unit(0.5, "pt"),
+      legend.key.spacing.x = ggplot2::unit(2.5, "pt"),
+      legend.key.height    = ggplot2::unit(2.2, "mm"),
+      legend.key.width     = ggplot2::unit(3.8, "mm"),
+      legend.text          = ggplot2::element_text(size = 6.8, family = "sans", color = "#CBD5E1"),
+      legend.title         = ggplot2::element_text(size = 7.4, face = "bold", family = "sans", color = "#F1F5F9"),
+      legend.margin        = ggplot2::margin(t = 0, b = 2, l = 0, r = 0, unit = "pt"),
+      legend.box.margin    = ggplot2::margin(t = 0, b = 1, l = 0, r = 0, unit = "pt")
+    )
+  } else {
+    p <- p + ggplot2::theme(
       plot.title           = ggplot2::element_text(size = 8.5, face = "bold", hjust = 0.5, vjust = 1.0, margin = ggplot2::margin(t = 2, b = 4)),
       plot.background      = ggplot2::element_rect(fill = "white", color = NA),
       panel.background     = ggplot2::element_rect(fill = "white", color = NA),
@@ -1128,6 +1243,7 @@ build_env_network_layers <- function(
       legend.margin        = ggplot2::margin(t = 0, b = 2, l = 0, r = 0, unit = "pt"),
       legend.box.margin    = ggplot2::margin(t = 0, b = 1, l = 0, r = 0, unit = "pt")
     )
+  }
 
   list(plot = p, nodes = nodes_df, tiles = all_tiles, links = all_links, module_labels = mod_labels_df)
 }
