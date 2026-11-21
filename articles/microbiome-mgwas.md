@@ -321,15 +321,19 @@ For graphical network topologies beyond 2D matrix heatmaps,
 and
 [`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
 implementing the multi-group and multi-indicator integration layouts
-from *ggClusterNet 2.0* (*iMeta* 2022).
+from *ggClusterNet 2.0* (*iMeta* 2022). Both functions support publisher
+style presets (`preset = "nature"`, `"seasonal"`, `"horizontal_flow"`,
+`"dark"`, and `"lancet"`).
 
 ### 7.1 Multi-Group Node Topology & Module Ring Preservation
 
 [`cliplot_cross_network_graph()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_cross_network_graph.md)
-displays co-occurrence networks across conditions (e.g. KO vs WT vs OE)
-with module background hulls, intra-group edges, and conserved
-cross-group links at either node level (`level = "node"`) or module
-level (`level = "module"`):
+displays co-occurrence networks across conditions (e.g. KO vs WT vs OE
+or Healthy vs Non-Lesional vs Lesional) with module background hulls,
+intra-group edges, and conserved cross-group links at either node level
+(`level = "node"`) or module level (`level = "module"`).
+
+#### Style 1: Classical Nature Topology (Node Level)
 
 ``` r
 
@@ -338,75 +342,208 @@ demo_net <- generate_demo_cross_network()
 
 # Node-level topology with module clustering and conserved links
 p_node <- cliplot_cross_network_graph(
-  nodes = demo_net$nodes,
-  edges = demo_net$edges,
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
   cross_edges = demo_net$cross_edges,
-  level = "node",
-  preset = "nature",
-  scifig = TRUE,
-  title = "Multi-Group Cross-Network Microbial Architecture (Node Level)"
+  level       = "node",
+  preset      = "nature",
+  scifig      = TRUE,
+  title       = "Multi-Group Cross-Network Microbial Architecture (Nature Style)"
 )
 p_node
 ```
 
 ![](microbiome-mgwas_files/figure-html/cross-network-graphs-1.png)
 
+#### Style 2: Module-Level Ring Preservation
+
 ``` r
 
 # Module-level ring topology with member halos and conserved links
 p_mod <- cliplot_cross_network_graph(
-  nodes = demo_net$nodes,
-  edges = demo_net$edges,
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
   cross_edges = demo_net$cross_edges,
-  level = "module",
-  preset = "nature",
-  scifig = TRUE,
-  title = "Cross-Network Module Preservation Rings (Module Level)"
+  level       = "module",
+  preset      = "nature",
+  scifig      = TRUE,
+  title       = "Cross-Network Module Preservation Rings (Module Ring Style)"
 )
 p_mod
 ```
 
 ![](microbiome-mgwas_files/figure-html/cross-network-module-1.png)
 
-### Interpretation and Visual Grammar
+#### Style 3: Longitudinal Cohort Progression Flow (Horizontal Trajectory)
 
-- **Spatial Grouping**: Networks are partitioned around 3 condition
-  centroids (KO at top, WT at bottom-left, OE at bottom-right).
-- **Node Size**: Sized by node degree ($`k`$) in the node-level plot,
-  highlighting hub taxa. In module-level mode, sized by total module
-  abundance/count ($`N`$).
-- **Intra-Group Edges**: Grey segments ($`w = 0.25`$ pt) represent
-  intra-condition co-occurrence relationships.
-- **Module Shading**: Semi-transparent hulls group nodes into functional
-  communities.
-- **Conserved Cross-Group Links**: Colored arcs connecting identical or
-  orthologous features conserved across conditions:
-  - Magenta: Conserved interactions between KO and WT
-  - Blue: Conserved interactions between KO and OE
-  - Green: Conserved interactions between WT and OE
+When comparing disease stages along a longitudinal progression (Healthy
+$`\rightarrow`$ Non-Lesional $`\rightarrow`$ Lesional),
+`preset = "horizontal_flow"` aligns condition centroids sequentially
+along a single axis:
+
+``` r
+
+# Rename groups to represent clinical stages
+nodes_h <- demo_net$nodes
+edges_h <- demo_net$edges
+cross_h <- demo_net$cross_edges
+grp_map <- c("KO" = "Healthy", "WT" = "Non-Lesional", "OE" = "Lesional")
+nodes_h$group <- unname(grp_map[nodes_h$group])
+edges_h$group <- unname(grp_map[edges_h$group])
+cross_h$group1 <- unname(grp_map[cross_h$group1])
+cross_h$group2 <- unname(grp_map[cross_h$group2])
+cross_h$type <- paste0(cross_h$group1, " - ", cross_h$group2)
+
+flow_colors <- c(
+  "Healthy - Non-Lesional"  = "#2B83BA",
+  "Healthy - Lesional"      = "#D7191C",
+  "Non-Lesional - Lesional" = "#FDAE61"
+)
+
+p_flow <- cliplot_cross_network_graph(
+  nodes        = nodes_h,
+  edges        = edges_h,
+  cross_edges  = cross_h,
+  groups       = c("Healthy", "Non-Lesional", "Lesional"),
+  level        = "node",
+  preset       = "horizontal_flow",
+  cross_colors = flow_colors,
+  title        = "Longitudinal Cohort Progression Flow (Horizontal Trajectory Style)"
+)
+p_flow
+```
+
+![](microbiome-mgwas_files/figure-html/cross-network-flow-1.png)
+
+#### Style 4: Luminescent Systems Biology (Cell Dark Mode)
+
+For digital presentations and multi-omics systems biology figures,
+`preset = "dark"` renders high-contrast fluorescent modules and
+conserved links over an obsidian background (`#0F141C`):
+
+``` r
+
+p_dark <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "dark",
+  title       = "Luminescent Cross-Network Architecture (Cell Dark Style)"
+)
+p_dark
+```
+
+![](microbiome-mgwas_files/figure-html/cross-network-dark-1.png)
+
+#### Style 5: Editorial Minimalist (Lancet Style)
+
+`preset = "lancet"` strips heavy hulls and renders hairline intra-group
+edges with a subdued palette:
+
+``` r
+
+p_lancet <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "lancet",
+  scifig      = TRUE,
+  title       = "Editorial Minimalist Topology (Lancet Minimal Style)"
+)
+p_lancet
+```
+
+![](microbiome-mgwas_files/figure-html/cross-network-lancet-1.png)
 
 ### 7.2 Standalone Central Network Coupled with Multi-Domain Environmental Heatmaps
 
 [`cliplot_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot_env_network.md)
 couples a central circular modular network with peripheral triangular
-correlation heatmaps and significance-weighted curved links:
+correlation heatmaps and significance-weighted curved links.
+
+#### Style 1: Clinical Phenotype Domains (Nature Style)
 
 ``` r
 
-# Central modular network coupled with 4 corner environmental heatmaps
-p_env <- cliplot_env_network(
-  title = "Central Microbial Network Coupled with Multi-Domain Environmental Drivers",
-  show_values = TRUE,
+p_env_clin <- cliplot_env_network(
+  title              = "Central Microbial Network Coupled with Multi-Domain Clinical Drivers",
+  show_values        = TRUE,
   show_domain_labels = TRUE,
-  value_digits = 2,
-  compact = TRUE,
-  preset = "nature",
-  scifig = TRUE
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "nature",
+  scifig             = TRUE
 )
-p_env
+p_env_clin
 ```
 
-![](microbiome-mgwas_files/figure-html/env-network-coupling-1.png)
+![](microbiome-mgwas_files/figure-html/env-network-clinical-1.png)
+
+#### Style 2: Four-Season Environmental Dynamics (Seasonal Style)
+
+In longitudinal microbiome studies, environmental factors vary across
+seasons. `preset = "seasonal"` configures four seasonal matrices (Spring
+greening and pollen, Summer heat and UV, Autumn rainfall and leaf
+litter, Winter frost and freezing) with season-specific gradients:
+
+``` r
+
+p_env_seas <- cliplot_env_network(
+  title              = "Seasonal Environmental Dynamics Driving Microbial Succession (Seasonal Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "seasonal",
+  scifig             = TRUE
+)
+p_env_seas
+```
+
+![](microbiome-mgwas_files/figure-html/env-network-seasonal-1.png)
+
+#### Style 3: Luminescent Cybernetic Multi-Omics (Cell Dark Style)
+
+`preset = "dark"` renders glowing neon matrices, luminous inter-domain
+links, and dark badges over an obsidian background:
+
+``` r
+
+p_env_dark <- cliplot_env_network(
+  title              = "Luminescent Microbial-Environmental Multi-Omics Coupling (Cell Dark Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "dark"
+)
+p_env_dark
+```
+
+![](microbiome-mgwas_files/figure-html/env-network-dark-1.png)
+
+#### Style 4: Editorial Clinical Exposome (Lancet Style)
+
+`preset = "lancet"` renders clean numerical coefficients without
+asterisk clutter, solid hairline borders, and subdued RdBu palettes:
+
+``` r
+
+p_env_lan <- cliplot_env_network(
+  title              = "Exposome-Microbiome Phenotypic Interplay in Clinical Cohorts (Lancet Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "lancet",
+  scifig             = TRUE
+)
+p_env_lan
+```
+
+![](microbiome-mgwas_files/figure-html/env-network-lancet-1.png)
 
 ### Interpretation and Visual Grammar
 
@@ -422,9 +559,10 @@ unified coordinate plane conforming to Fig4papers publication standards:
     - Network nodes use fill-only vector geometry (`shape = 16`) to
       guarantee zero stroke collisions.
 2.  **Four Corner Triangular Heatmaps**:
-    - Evaluate pairwise correlations *within* each external clinical
-      domain (Biophysical Barrier, Clinical Severity, Host Biomarkers,
-      Environmental Exposome).
+    - Evaluate pairwise correlations *within* each external domain
+      (Biophysical Barrier, Clinical Severity, Host Biomarkers,
+      Environmental Exposome in clinical mode; Spring, Summer, Autumn,
+      Winter in seasonal mode).
     - Display lower-triangle correlation tiles with off-diagonal
       significance asterisks ($`*P < 0.05`$, $`**P < 0.01`$,
       $`***P < 0.001`$).
