@@ -532,6 +532,70 @@ hairline intra-group edges with a subdued palette:</p>
 <span><span class="va">p_lancet</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/cross-network-lancet-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 </div>
+<div class="section level4">
+<h4 id="style-6-bipolar-case-control-divergence-bipolar-style">Style 6: Bipolar Case-Control Divergence (Bipolar Style)<a class="anchor" aria-label="anchor" href="#style-6-bipolar-case-control-divergence-bipolar-style"></a>
+</h4>
+<p>When contrasting dichotomous phenotypes (e.g. Case vs Control,
+Responders vs Non-Responders), <code>preset = "bipolar"</code> arranges
+condition clusters horizontally with high-contrast diverging palettes
+(<code>#1F77B4</code> Cobalt Blue vs <code>#D62728</code> Crimson Red)
+and highlighted cross-stratum links:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_bipolar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph</a></span><span class="op">(</span></span>
+<span>  nodes       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>  edges       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>  cross_edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">cross_edges</span>,</span>
+<span>  level       <span class="op">=</span> <span class="st">"node"</span>,</span>
+<span>  preset      <span class="op">=</span> <span class="st">"bipolar"</span>,</span>
+<span>  scifig      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  title       <span class="op">=</span> <span class="st">"Bipolar Case-Control Divergence Network (Bipolar Style)"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_bipolar</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/cross-network-bipolar-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="style-7-concentric-radial-ring-preservation-concentric-ring-style">Style 7: Concentric Radial Ring Preservation (Concentric Ring
+Style)<a class="anchor" aria-label="anchor" href="#style-7-concentric-radial-ring-preservation-concentric-ring-style"></a>
+</h4>
+<p>For evaluating modular conservation across successive strata,
+<code>preset = "concentric"</code> (or
+<code>layout = "concentric"</code>) arranges experimental groups as
+nested circular shells around the origin (<code>(0, 0)</code>), with
+radial bridges linking conserved modules across strata:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_concentric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph</a></span><span class="op">(</span></span>
+<span>  nodes       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>  edges       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>  cross_edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">cross_edges</span>,</span>
+<span>  preset      <span class="op">=</span> <span class="st">"concentric"</span>,</span>
+<span>  color_by    <span class="op">=</span> <span class="st">"group"</span>,</span>
+<span>  scifig      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  title       <span class="op">=</span> <span class="st">"Concentric Radial Ring Module Preservation (Concentric Style)"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_concentric</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/cross-network-concentric-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="style-8-science-magazine-jewel-toned-architecture-science-style">Style 8: Science Magazine Jewel-Toned Architecture (Science
+Style)<a class="anchor" aria-label="anchor" href="#style-8-science-magazine-jewel-toned-architecture-science-style"></a>
+</h4>
+<p><code>preset = "science"</code> formats multi-group network
+topologies with Science magazine’s jewel-toned palette
+(<code>#3B4992</code> Navy, <code>#EE0000</code> Crimson,
+<code>#008B45</code> Emerald, and <code>#631879</code> Purple):</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_science</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph</a></span><span class="op">(</span></span>
+<span>  nodes       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
+<span>  edges       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">edges</span>,</span>
+<span>  cross_edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">cross_edges</span>,</span>
+<span>  level       <span class="op">=</span> <span class="st">"node"</span>,</span>
+<span>  preset      <span class="op">=</span> <span class="st">"science"</span>,</span>
+<span>  scifig      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  title       <span class="op">=</span> <span class="st">"Jewel-Toned Comparative Network Architecture (Science Style)"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_science</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/cross-network-science-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="standalone-central-network-coupled-with-multi-domain-environmental-heatmaps">7.2 Standalone Central Network Coupled with Multi-Domain
@@ -543,7 +607,7 @@ significance-weighted curved links.</p>
 <div class="section level4">
 <h4 id="style-1-clinical-phenotype-domains-nature-style">Style 1: Clinical Phenotype Domains (Nature Style)<a class="anchor" aria-label="anchor" href="#style-1-clinical-phenotype-domains-nature-style"></a>
 </h4>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_env_clin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
 <span>  title              <span class="op">=</span> <span class="st">"Central Microbial Network Coupled with Multi-Domain Clinical Drivers"</span>,</span>
 <span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -564,7 +628,7 @@ seasons. <code>preset = "seasonal"</code> configures four seasonal
 matrices (Spring greening and pollen, Summer heat and UV, Autumn
 rainfall and leaf litter, Winter frost and freezing) with
 season-specific gradients:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_env_seas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
 <span>  title              <span class="op">=</span> <span class="st">"Seasonal Environmental Dynamics Driving Microbial Succession (Seasonal Style)"</span>,</span>
 <span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -582,7 +646,7 @@ season-specific gradients:</p>
 </h4>
 <p><code>preset = "dark"</code> renders glowing neon matrices, luminous
 inter-domain links, and dark badges over an obsidian background:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_env_dark</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
 <span>  title              <span class="op">=</span> <span class="st">"Luminescent Microbial-Environmental Multi-Omics Coupling (Cell Dark Style)"</span>,</span>
 <span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -600,7 +664,7 @@ inter-domain links, and dark badges over an obsidian background:</p>
 <p><code>preset = "lancet"</code> renders clean numerical coefficients
 without asterisk clutter, solid hairline borders, and subdued RdBu
 palettes:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_env_lan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
 <span>  title              <span class="op">=</span> <span class="st">"Exposome-Microbiome Phenotypic Interplay in Clinical Cohorts (Lancet Style)"</span>,</span>
 <span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -612,6 +676,73 @@ palettes:</p>
 <span><span class="op">)</span></span>
 <span><span class="va">p_env_lan</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/env-network-lancet-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="style-5-multi-tissue-pharmacometabolomic-cross-talk-multi-tissue-style">Style 5: Multi-Tissue Pharmacometabolomic Cross-Talk (Multi-Tissue
+Style)<a class="anchor" aria-label="anchor" href="#style-5-multi-tissue-pharmacometabolomic-cross-talk-multi-tissue-style"></a>
+</h4>
+<p><code>preset = "multi_tissue"</code> (alias
+<code>"pharmacology"</code>) couples central microbial barrier modules
+with four pharmacometabolomic domains: Microbial Secretome &amp; Toxins
+(top-left), Host Serum Metabolome (top-right), Systemic Immune Cytokines
+(bottom-left), and Skin Stratum Corneum Barrier (bottom-right):</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_env_mt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
+<span>  title              <span class="op">=</span> <span class="st">"Multi-Tissue Pharmacometabolomic Cross-Talk (Multi-Tissue Style)"</span>,</span>
+<span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_domain_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  value_digits       <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  compact            <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  preset             <span class="op">=</span> <span class="st">"multi_tissue"</span>,</span>
+<span>  scifig             <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_env_mt</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/env-network-multitissue-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="style-6-24-hour-diurnal-chronobiology-fluctuation-circadian-style">Style 6: 24-Hour Diurnal Chronobiology Fluctuation (Circadian
+Style)<a class="anchor" aria-label="anchor" href="#style-6-24-hour-diurnal-chronobiology-fluctuation-circadian-style"></a>
+</h4>
+<p>In chronobiology studies, microbial communities and barrier
+properties oscillate over 24-hour cycles.
+<code>preset = "circadian"</code> (alias <code>"diurnal"</code>) couples
+central oscillator modules with four diurnal quadrants: Dawn 06:00
+Awakening, Midday 12:00 Solar Peak, Dusk 18:00 Twilight Drop, and
+Midnight 00:00 Nocturnal Rest &amp; Scratch:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_env_circ</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
+<span>  title              <span class="op">=</span> <span class="st">"24-Hour Diurnal Chronobiology &amp; Barrier Fluctuation (Circadian Style)"</span>,</span>
+<span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_domain_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  value_digits       <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  compact            <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  preset             <span class="op">=</span> <span class="st">"circadian"</span>,</span>
+<span>  scifig             <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_env_circ</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/env-network-circadian-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="style-7-bipolar-clinical-response-stratification-bipolar-response-style">Style 7: Bipolar Clinical Response Stratification (Bipolar Response
+Style)<a class="anchor" aria-label="anchor" href="#style-7-bipolar-clinical-response-stratification-bipolar-response-style"></a>
+</h4>
+<p><code>preset = "bipolar"</code> (alias <code>"response"</code>)
+stratifies clinical trial mechanisms into Target Engagement Biomarkers,
+Favorable Clinical Response (EASI75+), Non-Response Signatures, and
+Safety &amp; Tolerability Markers, coupling them with central
+therapy-responsive modules:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_env_bip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
+<span>  title              <span class="op">=</span> <span class="st">"Bipolar Clinical Trial Response &amp; Safety Stratification (Bipolar Style)"</span>,</span>
+<span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_domain_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  value_digits       <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  compact            <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  preset             <span class="op">=</span> <span class="st">"bipolar"</span>,</span>
+<span>  scifig             <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_env_bip</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/env-network-bipolar-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level3">
@@ -703,7 +834,7 @@ Comput Biol</em> 2011). The results are plotted with
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">Z = 10</annotation></semantics></math>
 thresholds:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demo_omics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_demo_vitality_multiomics.html">cli_demo_vitality_multiomics</a></span><span class="op">(</span>n_samples <span class="op">=</span> <span class="fl">35</span>, n_features <span class="op">=</span> <span class="fl">60</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pres_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_module_preservation.html">cli_module_preservation</a></span><span class="op">(</span></span>
@@ -755,7 +886,7 @@ preservation.</li>
 degradation under random node loss versus targeted attacks on
 high-degree hub nodes. <code><a href="../reference/cliplot_network_robustness.html">cliplot_network_robustness()</a></code>
 displays natural connectivity decay curves across conditions:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rob_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_network_robustness.html">cli_network_robustness</a></span><span class="op">(</span></span>
 <span>  networks     <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">networks</span>,</span>
 <span>  attack       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"degree"</span><span class="op">)</span>,</span>
@@ -797,7 +928,7 @@ Coupling<a class="anchor" aria-label="anchor" href="#mantel-partial-mantel-tests
 <p><code><a href="../reference/cli_mantel.html">cli_mantel()</a></code> links omics community or module
 dissimilarity matrices to environmental variables, with optional
 covariate conditioning for partial Mantel tests:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Mantel test against environmental variables</span></span>
 <span><span class="va">mantel_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_mantel.html">cli_mantel</a></span><span class="op">(</span></span>
 <span>  comm_data   <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span>,</span>
@@ -911,7 +1042,7 @@ mm width).</p>
 <p>Using <code>patchwork</code>, the left column stacks Panel (a) and
 Panel (b), while the right column showcases the coupled network (Panel
 c):</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Build panels with Nature publication preset and SciFig quality gates</span></span>
@@ -960,7 +1091,7 @@ c):</p>
 </h3>
 <p><code><a href="../reference/cli_scifig_qa.html">cli_scifig_qa()</a></code> verifies that the figure satisfies all
 journal submission criteria:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qa_report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_scifig_qa.html">cli_scifig_qa</a></span><span class="op">(</span></span>
 <span>  plot      <span class="op">=</span> <span class="va">fig3_composite</span>,</span>
 <span>  journal   <span class="op">=</span> <span class="st">"nature"</span>,</span>
@@ -993,7 +1124,7 @@ journal submission criteria:</p>
 </h3>
 <p>Figures can be saved using <code><a href="../reference/cli_save.html">cli_save()</a></code> with automatic
 format compliance and print DPI:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save vector PDF for manuscript submission</span></span>
 <span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span></span>
 <span>  plot    <span class="op">=</span> <span class="va">fig3_composite</span>,</span>
