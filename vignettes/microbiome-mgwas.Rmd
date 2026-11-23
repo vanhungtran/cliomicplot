@@ -401,6 +401,57 @@ p_lancet <- cliplot_cross_network_graph(
 p_lancet
 ```
 
+#### Style 6: Bipolar Case-Control Divergence (Bipolar Style)
+
+When contrasting dichotomous phenotypes (e.g. Case vs Control, Responders vs Non-Responders), `preset = "bipolar"` arranges condition clusters horizontally with high-contrast diverging palettes (`#1F77B4` Cobalt Blue vs `#D62728` Crimson Red) and highlighted cross-stratum links:
+
+```{r cross-network-bipolar, fig.width=8.5, fig.height=5.2}
+p_bipolar <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "bipolar",
+  scifig      = TRUE,
+  title       = "Bipolar Case-Control Divergence Network (Bipolar Style)"
+)
+p_bipolar
+```
+
+#### Style 7: Concentric Radial Ring Preservation (Concentric Ring Style)
+
+For evaluating modular conservation across successive strata, `preset = "concentric"` (or `layout = "concentric"`) arranges experimental groups as nested circular shells around the origin (`(0, 0)`), with radial bridges linking conserved modules across strata:
+
+```{r cross-network-concentric, fig.width=8.5, fig.height=7.8}
+p_concentric <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  preset      = "concentric",
+  color_by    = "group",
+  scifig      = TRUE,
+  title       = "Concentric Radial Ring Module Preservation (Concentric Style)"
+)
+p_concentric
+```
+
+#### Style 8: Science Magazine Jewel-Toned Architecture (Science Style)
+
+`preset = "science"` formats multi-group network topologies with Science magazine's jewel-toned palette (`#3B4992` Navy, `#EE0000` Crimson, `#008B45` Emerald, and `#631879` Purple):
+
+```{r cross-network-science, fig.width=8.0, fig.height=7.2}
+p_science <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "science",
+  scifig      = TRUE,
+  title       = "Jewel-Toned Comparative Network Architecture (Science Style)"
+)
+p_science
+```
+
 ### 7.2 Standalone Central Network Coupled with Multi-Domain Environmental Heatmaps
 
 `cliplot_env_network()` couples a central circular modular network with peripheral triangular correlation heatmaps and significance-weighted curved links.
@@ -468,6 +519,57 @@ p_env_lan <- cliplot_env_network(
   scifig             = TRUE
 )
 p_env_lan
+```
+
+#### Style 5: Multi-Tissue Pharmacometabolomic Cross-Talk (Multi-Tissue Style)
+
+`preset = "multi_tissue"` (alias `"pharmacology"`) couples central microbial barrier modules with four pharmacometabolomic domains: Microbial Secretome & Toxins (top-left), Host Serum Metabolome (top-right), Systemic Immune Cytokines (bottom-left), and Skin Stratum Corneum Barrier (bottom-right):
+
+```{r env-network-multitissue, fig.width=8.5, fig.height=8.5}
+p_env_mt <- cliplot_env_network(
+  title              = "Multi-Tissue Pharmacometabolomic Cross-Talk (Multi-Tissue Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "multi_tissue",
+  scifig             = TRUE
+)
+p_env_mt
+```
+
+#### Style 6: 24-Hour Diurnal Chronobiology Fluctuation (Circadian Style)
+
+In chronobiology studies, microbial communities and barrier properties oscillate over 24-hour cycles. `preset = "circadian"` (alias `"diurnal"`) couples central oscillator modules with four diurnal quadrants: Dawn 06:00 Awakening, Midday 12:00 Solar Peak, Dusk 18:00 Twilight Drop, and Midnight 00:00 Nocturnal Rest & Scratch:
+
+```{r env-network-circadian, fig.width=8.5, fig.height=8.5}
+p_env_circ <- cliplot_env_network(
+  title              = "24-Hour Diurnal Chronobiology & Barrier Fluctuation (Circadian Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "circadian",
+  scifig             = TRUE
+)
+p_env_circ
+```
+
+#### Style 7: Bipolar Clinical Response Stratification (Bipolar Response Style)
+
+`preset = "bipolar"` (alias `"response"`) stratifies clinical trial mechanisms into Target Engagement Biomarkers, Favorable Clinical Response (EASI75+), Non-Response Signatures, and Safety & Tolerability Markers, coupling them with central therapy-responsive modules:
+
+```{r env-network-bipolar, fig.width=8.5, fig.height=8.5}
+p_env_bip <- cliplot_env_network(
+  title              = "Bipolar Clinical Trial Response & Safety Stratification (Bipolar Style)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "bipolar",
+  scifig             = TRUE
+)
+p_env_bip
 ```
 
 ### Interpretation and Visual Grammar

@@ -77,9 +77,9 @@
 #' @param node_size_range Numeric vector of length 2 specifying size range for network nodes (default \code{c(1.1, 3.8)}).
 #' @param hull_alpha Shading transparency for module cluster hulls (default 0.18).
 #' @param preset Character string specifying publisher style preset: \code{"default"},
-#' @param preset Character string specifying publisher style preset: \code{"default"},
 #'   \code{"nature"}, \code{"clinical"}, \code{"seasonal"}, \code{"cell"}, \code{"dark"},
-#'   \code{"lancet"}, or \code{"minimal"}.
+#'   \code{"lancet"}, \code{"minimal"}, \code{"multi_tissue"} (or \code{"pharmacology"}),
+#'   \code{"circadian"} (or \code{"diurnal"}), or \code{"bipolar"} (or \code{"response"}).
 #' @param style Character string alias for \code{preset}. If supplied, overrides \code{preset}.
 #' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 #'   line floor >= 0.25 pt, zero sign suppression, and CVD compliant palettes).
@@ -137,7 +137,8 @@ type_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
-    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal"),
+    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal",
+                           "multi_tissue", "pharmacology", "circadian", "diurnal", "bipolar", "response"),
     style              = NULL,
     scifig             = FALSE,
     title              = NULL
@@ -177,6 +178,24 @@ type_env_network = function(
       link_colors <- c("Positive" = "#B2182B", "Negative" = "#2166AC")
     }
     if (label_type == "auto" && isTRUE(show_values)) label_type <- "coef"
+  } else if (preset %in% c("multi_tissue", "pharmacology")) {
+    if (identical(link_colors, c("Positive" = "#E64B35", "Negative" = "#4DBBD5"))) {
+      link_colors <- c("Positive" = "#EE0000", "Negative" = "#3B4992")
+    }
+    if (identical(diag_point_fill, "#F781BF")) diag_point_fill <- "#008B45"
+    if (identical(diag_point_color, "#C51B7D")) diag_point_color <- "#006400"
+  } else if (preset %in% c("circadian", "diurnal")) {
+    if (identical(link_colors, c("Positive" = "#E64B35", "Negative" = "#4DBBD5"))) {
+      link_colors <- c("Positive" = "#D95F02", "Negative" = "#7570B3")
+    }
+    if (identical(diag_point_fill, "#F781BF")) diag_point_fill <- "#E6AB02"
+    if (identical(diag_point_color, "#C51B7D")) diag_point_color <- "#D95F02"
+  } else if (preset %in% c("bipolar", "response")) {
+    if (identical(link_colors, c("Positive" = "#E64B35", "Negative" = "#4DBBD5"))) {
+      link_colors <- c("Positive" = "#D62728", "Negative" = "#1F77B4")
+    }
+    if (identical(diag_point_fill, "#F781BF")) diag_point_fill <- "#1F77B4"
+    if (identical(diag_point_color, "#C51B7D")) diag_point_color <- "#08519C"
   }
 
   resolved_label_type <- if (label_type == "auto") {
@@ -356,7 +375,8 @@ cliplot_env_network = function(
     node_size_range    = c(1.1, 3.8),
     hull_alpha         = 0.18,
     curvature          = 0.14,
-    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal"),
+    preset             = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet", "minimal",
+                           "multi_tissue", "pharmacology", "circadian", "diurnal", "bipolar", "response"),
     style              = NULL,
     scifig             = FALSE,
     title              = NULL,
@@ -487,6 +507,21 @@ build_env_network_layers <- function(
         "Mod_1" = "#00F2FE", "Mod_2" = "#FF007F", "Mod_3" = "#FFE600",
         "Mod_4" = "#7B2CBF", "Mod_5" = "#00F5D4", "Mod_6" = "#FF5400", "Mod_7" = "#9D4EDD"
       )
+    } else if (preset %in% c("multi_tissue", "pharmacology")) {
+      mod_cols <- c(
+        "Mod_1" = "#EE0000", "Mod_2" = "#3B4992", "Mod_3" = "#008B45",
+        "Mod_4" = "#631879", "Mod_5" = "#5C88DA", "Mod_6" = "#FF7F0E", "Mod_7" = "#2CA02C"
+      )
+    } else if (preset %in% c("circadian", "diurnal")) {
+      mod_cols <- c(
+        "Mod_1" = "#E6AB02", "Mod_2" = "#D95F02", "Mod_3" = "#7570B3",
+        "Mod_4" = "#1B9E77", "Mod_5" = "#E7298A", "Mod_6" = "#66A61E", "Mod_7" = "#A6761D"
+      )
+    } else if (preset %in% c("bipolar", "response")) {
+      mod_cols <- c(
+        "Mod_1" = "#D62728", "Mod_2" = "#1F77B4", "Mod_3" = "#FF7F0E",
+        "Mod_4" = "#2CA02C", "Mod_5" = "#9467BD", "Mod_6" = "#8C564B", "Mod_7" = "#17BECF"
+      )
     } else {
       mod_cols <- c(
         "Mod_1" = "#4DBBD5", "Mod_2" = "#E64B35", "Mod_3" = "#00A087",
@@ -505,6 +540,36 @@ build_env_network_layers <- function(
       "Mod_5" = "M5: Psychrophilic",
       "Mod_6" = "M6: Spore-Forming",
       "Mod_7" = "M7: Epiphytic"
+    )
+  } else if (preset %in% c("multi_tissue", "pharmacology")) {
+    c(
+      "Mod_1" = "M1: Barrier Lipids",
+      "Mod_2" = "M2: Th2 Signaling",
+      "Mod_3" = "M3: Pruriceptors",
+      "Mod_4" = "M4: S. aureus Vir",
+      "Mod_5" = "M5: SCFA Secretome",
+      "Mod_6" = "M6: Xenobiotic Deg",
+      "Mod_7" = "M7: Tight Junctions"
+    )
+  } else if (preset %in% c("circadian", "diurnal")) {
+    c(
+      "Mod_1" = "M1: Dawn Awakening",
+      "Mod_2" = "M2: Solar Peak Flux",
+      "Mod_3" = "M3: Nocturnal Melatonin",
+      "Mod_4" = "M4: Evening Pruritus",
+      "Mod_5" = "M5: Cortisol Dipping",
+      "Mod_6" = "M6: Redox Oscillator",
+      "Mod_7" = "M7: Clock Autoreg"
+    )
+  } else if (preset %in% c("bipolar", "response")) {
+    c(
+      "Mod_1" = "M1: Responder Core",
+      "Mod_2" = "M2: Refractory Hub",
+      "Mod_3" = "M3: Immune Checkpoint",
+      "Mod_4" = "M4: Cytokine Storm",
+      "Mod_5" = "M5: Tissue Remodeling",
+      "Mod_6" = "M6: Metabolic Recovery",
+      "Mod_7" = "M7: Tolerogenic DC"
     )
   } else {
     c(
@@ -710,6 +775,27 @@ build_env_network_layers <- function(
       c("#016C59", "#FFFFFF", "#B35806"), # Autumn: Canopy Teal to Leaf Rust
       c("#08519C", "#FFFFFF", "#EF3B2C")  # Winter: Cryo Blue to Frostbite Crimson
     )
+  } else if (preset %in% c("multi_tissue", "pharmacology")) {
+    list(
+      c("#3B4992", "#FFFFFF", "#EE0000"), # Top-Left: Microbial Secretome (Navy to Crimson)
+      c("#008B45", "#FFFFFF", "#631879"), # Top-Right: Host Serum Metabolome (Emerald to Purple)
+      c("#1F77B4", "#FFFFFF", "#FF7F0E"), # Bottom-Left: Systemic Immune Cytokines (Blue to Amber)
+      c("#016C59", "#FFFFFF", "#B35806")  # Bottom-Right: Skin Stratum Corneum (Teal to Brown)
+    )
+  } else if (preset %in% c("circadian", "diurnal")) {
+    list(
+      c("#7570B3", "#FFFFFF", "#E6AB02"), # Top-Left: Dawn 06:00 (Indigo to Gold)
+      c("#1B9E77", "#FFFFFF", "#D95F02"), # Top-Right: Midday 12:00 (Teal to Solar Orange)
+      c("#2B83BA", "#FFFFFF", "#FDAE61"), # Bottom-Left: Dusk 18:00 (Sky to Sunset Peach)
+      c("#3F007D", "#FFFFFF", "#9E9AC8")  # Bottom-Right: Midnight 00:00 (Deep Violet to Moonlit Lavender)
+    )
+  } else if (preset %in% c("bipolar", "response")) {
+    list(
+      c("#1F77B4", "#FFFFFF", "#D62728"), # Top-Left: Target Engagement Biomarkers (Cobalt to Crimson)
+      c("#2CA02C", "#FFFFFF", "#9467BD"), # Top-Right: Favorable Response (Green to Violet)
+      c("#D62728", "#FFFFFF", "#1F77B4"), # Bottom-Left: Non-Response Signatures (Crimson to Cobalt)
+      c("#FF7F0E", "#FFFFFF", "#17BECF")  # Bottom-Right: Safety & Adverse Events (Orange to Cyan)
+    )
   } else if (preset %in% c("dark", "cell")) {
     list(
       c("#00F5D4", "#1E2638", "#FF007F"),
@@ -751,6 +837,27 @@ build_env_network_layers <- function(
         "Summer (Heat & UV Extremes)"    = c("UV_Index", "Peak_Heat", "Drought_Index", "Ozone_O3", "PM2.5"),
         "Autumn (Senescence & Rainfall)" = c("Precipitation", "Rel_Humidity", "Soil_pH", "Leaf_Litter", "Wind_Speed"),
         "Winter (Cold Shock & Freezing)" = c("Frost_Days", "Snow_Cover", "Min_Temp", "Inversion_Layer", "Barometric_Pres")
+      )
+    } else if (preset %in% c("multi_tissue", "pharmacology")) {
+      default_domains <- list(
+        "Microbial Secretome & Toxins"    = c("Delta_Toxin", "Enterotoxin_B", "Phenol_Soluble", "Aureolysin", "Protein_A"),
+        "Host Serum Metabolome"          = c("Kynurenine", "Tryptophan", "Sphingosine", "TMAO", "Butyrate"),
+        "Systemic Immune Cytokines"      = c("Serum_IL13", "Serum_IL4", "Serum_IL22", "Serum_IL31", "Serum_TSLP"),
+        "Skin Stratum Corneum Barrier"   = c("Ceramide_NP", "Free_FattyAcids", "Filaggrin_2", "Loricrin", "Involucrin")
+      )
+    } else if (preset %in% c("circadian", "diurnal")) {
+      default_domains <- list(
+        "Dawn (06:00 Awakening)"       = c("Peak_Cortisol", "TEWL_Awake", "Histamine_Rise", "Adrenaline", "Skin_Temp_Min"),
+        "Midday (12:00 Solar Peak)"     = c("UV_Defense", "Sebum_Peak", "Stratum_Hydration", "Blood_Flow_Max", "Antioxidant_Max"),
+        "Dusk (18:00 Twilight Drop)"    = c("Pruritus_Onset", "Mast_Cell_Activ", "IL31_Rise", "Cortisol_Trough", "Skin_pH_Shift"),
+        "Midnight (00:00 Nocturnal)"    = c("TEWL_Max", "Scratch_Events", "Melatonin_Peak", "Permeability_Max", "Cytokine_Surge")
+      )
+    } else if (preset %in% c("bipolar", "response")) {
+      default_domains <- list(
+        "Target Engagement Biomarkers"  = c("Drug_Trough_Conc", "IL4Ra_Occupancy", "pSTAT6_Inhibition", "Total_IgE_Clear", "Th2_Suppression"),
+        "Favorable Response (EASI75+)"  = c("Epidermal_Thick_Dec", "Barrier_Lipid_Rest", "Microbial_Diversity", "Pruritus_NRS_Drop", "POEM_Remission"),
+        "Non-Response Signatures"       = c("Persistent_Th17", "IL22_Elevation", "Staph_Dominance", "FLG_Loss_Variant", "Neurogenic_Pruritus"),
+        "Safety & Tolerability Markers" = c("Conjunctivitis_Risk", "Eosinophil_Spike", "Injection_Site_Rxn", "ALT_AST_Enzymes", "Serum_Creatinine")
       )
     } else {
       default_domains <- list(
@@ -1151,15 +1258,21 @@ build_env_network_layers <- function(
   if (isTRUE(show_domain_labels) && !is.null(names(env_cors))) {
     d_names <- names(env_cors)
     d_pos <- list(
-      top_left     = c(x = -3.9, y = 6.45,  hjust = 0.5),
-      top_right    = c(x = 3.9,  y = 6.45,  hjust = 0.5),
-      bottom_left  = c(x = -3.9, y = -6.45, hjust = 0.5),
-      bottom_right = c(x = 3.9,  y = -6.45, hjust = 0.5)
+      top_left     = c(x = -3.9, y = 7.15,  hjust = 0.5),
+      top_right    = c(x = 3.9,  y = 7.15,  hjust = 0.5),
+      bottom_left  = c(x = -3.9, y = -7.15, hjust = 0.5),
+      bottom_right = c(x = 3.9,  y = -7.15, hjust = 0.5)
     )
     d_cols <- if (preset %in% c("dark", "cell")) {
       c("#63B3ED", "#F687B3", "#68D391", "#F6AD55")
     } else if (preset == "seasonal") {
       c("#238B45", "#7A0177", "#016C59", "#08519C")
+    } else if (preset %in% c("multi_tissue", "pharmacology")) {
+      c("#EE0000", "#631879", "#1F77B4", "#016C59")
+    } else if (preset %in% c("circadian", "diurnal")) {
+      c("#D95F02", "#1B9E77", "#2B83BA", "#3F007D")
+    } else if (preset %in% c("bipolar", "response")) {
+      c("#D62728", "#2CA02C", "#1F77B4", "#FF7F0E")
     } else {
       c("#2166AC", "#984EA3", "#1B7837", "#B35806")
     }
@@ -1201,7 +1314,7 @@ build_env_network_layers <- function(
         "none"
       }
     ) +
-    ggplot2::coord_fixed(xlim = c(-6.8, 6.8), ylim = c(-6.8, 6.8)) +
+    ggplot2::coord_fixed(xlim = c(-7.4, 7.4), ylim = c(-7.4, 7.4)) +
     ggplot2::theme_void()
 
   if (preset %in% c("dark", "cell")) {

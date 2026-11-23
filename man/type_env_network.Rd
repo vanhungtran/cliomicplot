@@ -54,7 +54,8 @@ type_env_network(
   hull_alpha = 0.18,
   curvature = 0.14,
   preset = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet",
-    "minimal"),
+    "minimal", "multi_tissue", "pharmacology", "circadian", "diurnal", "bipolar",
+    "response"),
   style = NULL,
   scifig = FALSE,
   title = NULL
@@ -173,7 +174,8 @@ inter-domain links (default FALSE).}
 
 \item{preset}{Character string specifying publisher style preset: \code{"default"},
 \code{"nature"}, \code{"clinical"}, \code{"seasonal"}, \code{"cell"}, \code{"dark"},
-\code{"lancet"}, or \code{"minimal"}.}
+\code{"lancet"}, \code{"minimal"}, \code{"multi_tissue"} (or \code{"pharmacology"}),
+\code{"circadian"} (or \code{"diurnal"}), or \code{"bipolar"} (or \code{"response"}).}
 
 \item{style}{Character string alias for \code{preset}. If supplied, overrides \code{preset}.}
 

@@ -382,6 +382,14 @@ test_that("cliplot_cross_network_graph style presets and zero-arg fallback work"
   # Lancet minimal
   p_lan <- cliplot_cross_network_graph(preset = "lancet")
   expect_s3_class(p_lan, "ggplot")
+
+  # New styles: Concentric, Bipolar, Science
+  p_conc <- cliplot_cross_network_graph(preset = "concentric")
+  expect_s3_class(p_conc, "ggplot")
+  p_bip <- cliplot_cross_network_graph(preset = "bipolar")
+  expect_s3_class(p_bip, "ggplot")
+  p_sci <- cliplot_cross_network_graph(preset = "science")
+  expect_s3_class(p_sci, "ggplot")
 })
 
 test_that("cliplot_env_network style presets work out of the box", {
@@ -400,4 +408,12 @@ test_that("cliplot_env_network style presets work out of the box", {
   # Lancet style
   p_lan <- cliplot_env_network(preset = "lancet", show_values = TRUE)
   expect_s3_class(p_lan, "ggplot")
+
+  # New styles: Multi-Tissue, Circadian, Bipolar
+  p_mt <- cliplot_env_network(preset = "multi_tissue")
+  expect_s3_class(p_mt, "ggplot")
+  p_circ <- cliplot_env_network(preset = "circadian")
+  expect_s3_class(p_circ, "ggplot")
+  p_bip_env <- cliplot_env_network(preset = "bipolar")
+  expect_s3_class(p_bip_env, "ggplot")
 })

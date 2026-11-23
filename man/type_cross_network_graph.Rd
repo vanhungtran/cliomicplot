@@ -9,7 +9,7 @@ type_cross_network_graph(
   color_by = NULL,
   groups = NULL,
   group_colors = NULL,
-  layout = c("triangle", "horizontal", "vertical", "grid"),
+  layout = c("triangle", "horizontal", "vertical", "grid", "concentric"),
   module_colors = NULL,
   cross_colors = NULL,
   show_hulls = TRUE,
@@ -32,7 +32,7 @@ type_cross_network_graph(
   module_size_range = c(3.5, 8.5),
   circle_radius = 1.05,
   preset = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow",
-    "minimal"),
+    "bipolar", "concentric", "minimal"),
   style = NULL,
   scifig = FALSE
 )
@@ -49,7 +49,7 @@ Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when
 \item{group_colors}{Optional named vector of colors for experimental groups.}
 
 \item{layout}{Character string specifying group layout: \code{"triangle"} (default for 3 groups),
-\code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.}
+\code{"horizontal"}, \code{"vertical"}, \code{"grid"}, or \code{"concentric"}.}
 
 \item{module_colors}{Optional named vector of colors for modules.}
 
@@ -96,7 +96,7 @@ Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node
 
 \item{preset}{Character string specifying publisher style preset: \code{"default"},
 \code{"nature"}, \code{"cell"}, \code{"science"}, \code{"lancet"}, \code{"dark"},
-\code{"horizontal_flow"}, or \code{"minimal"}.}
+\code{"horizontal_flow"}, \code{"bipolar"}, \code{"concentric"}, or \code{"minimal"}.}
 
 \item{style}{Character string alias for \code{preset}. If supplied, overrides \code{preset}.}
 

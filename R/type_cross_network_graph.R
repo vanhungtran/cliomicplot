@@ -27,7 +27,7 @@
 #'   Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when \code{level = "node"}.
 #' @param group_colors Optional named vector of colors for experimental groups.
 #' @param layout Character string specifying group layout: \code{"triangle"} (default for 3 groups),
-#'   \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.
+#'   \code{"horizontal"}, \code{"vertical"}, \code{"grid"}, or \code{"concentric"}.
 #' @param module_colors Optional named vector of colors for modules.
 #' @param cross_colors Optional named vector of colors for inter-group cross links (e.g. \code{c("KO - WT" = "#E7298A")}).
 #' @param show_hulls Logical. If TRUE, draws semi-transparent shaded hulls around modules (node level). Default TRUE.
@@ -52,7 +52,7 @@
 #' @param circle_radius Radius for module circle ring layout when \code{level = "module"} (default 1.05).
 #' @param preset Character string specifying publisher style preset: \code{"default"},
 #'   \code{"nature"}, \code{"cell"}, \code{"science"}, \code{"lancet"}, \code{"dark"},
-#'   \code{"horizontal_flow"}, or \code{"minimal"}.
+#'   \code{"horizontal_flow"}, \code{"bipolar"}, \code{"concentric"}, or \code{"minimal"}.
 #' @param style Character string alias for \code{preset}. If supplied, overrides \code{preset}.
 #' @param scifig Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 #'   line floor >= 0.25 pt, and CVD compliant palettes).
@@ -65,7 +65,7 @@ type_cross_network_graph = function(
     color_by           = NULL,
     groups             = NULL,
     group_colors       = NULL,
-    layout             = c("triangle", "horizontal", "vertical", "grid"),
+    layout             = c("triangle", "horizontal", "vertical", "grid", "concentric"),
     module_colors      = NULL,
     cross_colors       = NULL,
     show_hulls         = TRUE,
@@ -87,14 +87,18 @@ type_cross_network_graph = function(
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
     circle_radius      = 1.05,
-    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "minimal"),
+    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "bipolar", "concentric", "minimal"),
     style              = NULL,
     scifig             = FALSE
 ) {
-  level <- match.arg(level)
-  layout <- match.arg(layout)
   if (!is.null(style)) preset <- style
   preset <- match.arg(preset)
+  layout <- match.arg(layout)
+  if (preset == "concentric" || layout == "concentric") {
+    layout <- "concentric"
+    if (missing(level) || is.null(level)) level <- "module"
+  }
+  level <- match.arg(level)
 
   if (is.null(color_by)) {
     color_by <- if (level == "module") "group" else "module"
@@ -114,6 +118,42 @@ type_cross_network_graph = function(
     layout <- "horizontal"
     cross_width <- max(cross_width, 0.65)
     cross_alpha <- max(cross_alpha, 0.80)
+  } else if (preset == "concentric") {
+    layout <- "concentric"
+    if (missing(level) || is.null(level)) level <- "module"
+    cross_width <- max(cross_width, 0.65)
+    cross_alpha <- max(cross_alpha, 0.80)
+  } else if (preset == "bipolar") {
+    layout <- "horizontal"
+    cross_width <- max(cross_width, 0.70)
+    cross_alpha <- max(cross_alpha, 0.85)
+    if (is.null(group_colors)) {
+      group_colors <- c("#1F77B4", "#D62728", "#2CA02C", "#FF7F0E")
+    }
+    if (is.null(cross_colors)) {
+      cross_colors <- c("#FF7F0E", "#9467BD", "#2CA02C", "#17BECF")
+    }
+    if (is.null(module_colors)) {
+      module_colors <- c(
+        "Mod_1" = "#1F77B4", "Mod_2" = "#D62728", "Mod_3" = "#FF7F0E", "Mod_4" = "#2CA02C",
+        "Mod_5" = "#9467BD", "Mod_6" = "#8C564B", "Mod_7" = "#E377C2", "Mod_8" = "#7F7F7F"
+      )
+    }
+  } else if (preset == "science") {
+    cross_width <- max(cross_width, 0.55)
+    cross_alpha <- max(cross_alpha, 0.75)
+    if (is.null(group_colors)) {
+      group_colors <- c("#3B4992", "#EE0000", "#008B45", "#631879")
+    }
+    if (is.null(cross_colors)) {
+      cross_colors <- c("#3B4992", "#EE0000", "#008B45")
+    }
+    if (is.null(module_colors)) {
+      module_colors <- c(
+        "Mod_1" = "#3B4992", "Mod_2" = "#EE0000", "Mod_3" = "#008B45", "Mod_4" = "#631879",
+        "Mod_5" = "#008280", "Mod_6" = "#BB0021", "Mod_7" = "#5F559B", "Mod_8" = "#A20056"
+      )
+    }
   } else if (preset %in% c("dark", "cell")) {
     if (identical(edge_color, "grey85")) edge_color <- "#2D3748"
     edge_alpha <- 0.50
@@ -238,7 +278,7 @@ cliplot_cross_network_graph = function(
     color_by           = NULL,
     groups             = NULL,
     group_colors       = NULL,
-    layout             = c("triangle", "horizontal", "vertical", "grid"),
+    layout             = c("triangle", "horizontal", "vertical", "grid", "concentric"),
     module_colors      = NULL,
     cross_colors       = NULL,
     show_module_labels = NULL,
@@ -251,7 +291,7 @@ cliplot_cross_network_graph = function(
     meta_label_color   = "grey15",
     module_size_range  = c(3.5, 8.5),
     circle_radius      = 1.05,
-    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "minimal"),
+    preset             = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow", "bipolar", "concentric", "minimal"),
     style              = NULL,
     show_hulls         = TRUE,
     hull_alpha         = 0.18,
@@ -266,10 +306,14 @@ cliplot_cross_network_graph = function(
     title              = NULL,
     ...
 ) {
-  level <- match.arg(level)
-  layout <- match.arg(layout)
   if (!is.null(style)) preset <- style
   preset <- match.arg(preset)
+  layout <- match.arg(layout)
+  if (preset == "concentric" || layout == "concentric") {
+    layout <- "concentric"
+    if (missing(level) || is.null(level)) level <- "module"
+  }
+  level <- match.arg(level)
 
   network_data <- list(
     nodes       = nodes,
@@ -391,6 +435,7 @@ build_cross_network_layers = function(
     circle_radius      = 1.05,
     preset             = "default"
 ) {
+  if (layout == "concentric") level <- "module"
   if (is.null(color_by)) {
     color_by <- if (level == "module") "group" else "module"
   } else {
@@ -435,6 +480,8 @@ build_cross_network_layers = function(
   } else if (layout == "vertical") {
     ys <- seq(3.5 * (n_grp - 1) / 2, -3.5 * (n_grp - 1) / 2, length.out = n_grp)
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 0, y = ys[i])
+  } else if (layout == "concentric") {
+    for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 0, y = 0)
   } else {
     angles <- seq(pi/2, 2*pi + pi/2, length.out = n_grp + 1)[1:n_grp]
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 3.2 * cos(angles[i]), y = 3.2 * sin(angles[i]))
@@ -448,6 +495,10 @@ build_cross_network_layers = function(
       g_pal <- c("#00468B", "#ED0000", "#42B540", "#0099B4", "#925E9F", "#FDAF91", "#AD002A", "#ADB6B6")
     } else if (preset == "horizontal_flow") {
       g_pal <- c("#2B5C8F", "#D97706", "#DC2626", "#047857", "#7C3AED")
+    } else if (preset == "bipolar") {
+      g_pal <- c("#1F77B4", "#D62728", "#2CA02C", "#FF7F0E", "#9467BD")
+    } else if (preset == "concentric") {
+      g_pal <- c("#3B4992", "#008B45", "#EE0000", "#631879", "#E69F00")
     } else {
       g_pal <- c("#3B4992", "#EE0000", "#008B45", "#E69F00", "#631879", "#008280", "#BB0021", "#5F559B")
     }
@@ -461,6 +512,8 @@ build_cross_network_layers = function(
       pal <- c("#00F2FE", "#FF007F", "#FFE600", "#7B2CBF", "#00F5D4", "#FF5400", "#9D4EDD", "#E040FB")
     } else if (preset %in% c("lancet", "minimal")) {
       pal <- c("#1E3A8A", "#B45309", "#047857", "#475569", "#7C3AED", "#DB2777")
+    } else if (preset == "bipolar") {
+      pal <- c("#1F77B4", "#D62728", "#FF7F0E", "#2CA02C", "#9467BD", "#8C564B", "#E377C2", "#7F7F7F")
     } else {
       pal <- c("#3B4992", "#EE0000", "#008B45", "#E69F00", "#631879", "#008280", "#BB0021", "#5F559B")
     }
@@ -474,6 +527,100 @@ build_cross_network_layers = function(
     circle_radius <- circle_radius %||% 1.15
     if (identical(module_size_range, c(3.5, 8.5))) module_size_range <- c(6.0, 13.0)
 
+    if (layout == "concentric") {
+      base_r <- circle_radius %||% 1.35
+      r_step <- 1.10
+      grp_radii <- stats::setNames(base_r + (seq_along(grp_names) - 1) * r_step, grp_names)
+
+      mod_rows <- list()
+      for (i in seq_along(grp_names)) {
+        g <- grp_names[i]
+        r_g <- grp_radii[[g]]
+        g_nodes <- nodes_df[nodes_df$group == g, ]
+        g_mods <- sort(unique(as.character(g_nodes$module)))
+        k <- length(g_mods)
+        th_seq <- seq(0, 2 * pi, length.out = k + 1)[1:k]
+
+        for (m_i in seq_along(g_mods)) {
+          m <- g_mods[m_i]
+          m_sub <- g_nodes[g_nodes$module == m, ]
+          n_count <- if (nrow(m_sub) == 1 && "degree" %in% names(m_sub) && m_sub$degree[1] > 1) {
+            m_sub$degree[1]
+          } else {
+            nrow(m_sub)
+          }
+          tot_deg <- sum(m_sub$degree, na.rm = TRUE)
+
+          nx <- r_g * cos(th_seq[m_i])
+          ny <- r_g * sin(th_seq[m_i])
+
+          r_outer <- max(unlist(grp_radii))
+          r_lbl <- r_outer + 0.45
+          lx <- r_lbl * cos(th_seq[m_i])
+          ly <- r_lbl * sin(th_seq[m_i])
+
+          m_short <- if (!is.null(module_labels) && m %in% names(module_labels)) {
+            as.character(module_labels[m])
+          } else {
+            sub("^Mod_", "M", m)
+          }
+
+          # Only label the outermost ring once per ray to prevent overlapping duplicates
+          lbl_text <- if (i == length(grp_names)) m_short else ""
+
+          mod_rows[[length(mod_rows) + 1]] <- data.frame(
+            group = g,
+            module = m,
+            module_short = m_short,
+            n_taxa = n_count,
+            tot_deg = tot_deg,
+            x = nx,
+            y = ny,
+            lx = lx,
+            ly = ly,
+            label = lbl_text,
+            stringsAsFactors = FALSE
+          )
+        }
+      }
+      mod_nodes_df <- do.call(rbind, mod_rows)
+
+      # Ring Guide Paths
+      ring_paths <- list()
+      theta_ring <- seq(0, 2 * pi, length.out = 120)
+      for (i in seq_along(grp_names)) {
+        g <- grp_names[i]
+        r_g <- grp_radii[[g]]
+        ring_paths[[length(ring_paths) + 1]] <- data.frame(
+          group = g,
+          x = r_g * cos(theta_ring),
+          y = r_g * sin(theta_ring),
+          stringsAsFactors = FALSE
+        )
+      }
+      ring_paths_df <- do.call(rbind, ring_paths)
+
+      # Group Metadata badges placed along the empty 45-degree ray
+      meta_df <- NULL
+      if (isTRUE(show_meta)) {
+        meta_list <- list()
+        th_badge <- pi / 4
+        for (i in seq_along(grp_names)) {
+          g <- grp_names[i]
+          r_g <- grp_radii[[g]]
+          n_n <- sum(nodes_df$group == g)
+          n_e <- if (!is.null(edges_df)) sum(edges_df$group == g) else 0
+          meta_list[[length(meta_list) + 1]] <- data.frame(
+            group = g,
+            x = r_g * cos(th_badge),
+            y = r_g * sin(th_badge),
+            label = paste0(g, " (", n_n, "N | ", n_e, "E)"),
+            stringsAsFactors = FALSE
+          )
+        }
+        meta_df <- do.call(rbind, meta_list)
+      }
+    } else {
     mod_rows <- list()
     for (g in grp_names) {
       c_xy <- grp_centers[[g]]
@@ -566,6 +713,7 @@ build_cross_network_layers = function(
         )
       }
       meta_df <- do.call(rbind, meta_list)
+    }
     }
 
     # Inter-group module preservation links with standoff trimming
@@ -669,11 +817,19 @@ build_cross_network_layers = function(
     # Assemble Plot
     p <- ggplot2::ggplot()
 
-    p <- p + ggplot2::geom_path(
-      data = ring_paths_df,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["group"]]),
-      color = ring_color, linetype = "dotted", linewidth = 0.35
-    )
+    if (layout == "concentric") {
+      p <- p + ggplot2::geom_path(
+        data = ring_paths_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["group"]]),
+        color = ring_color, linetype = "dashed", linewidth = 0.40, alpha = 0.65
+      )
+    } else {
+      p <- p + ggplot2::geom_path(
+        data = ring_paths_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["group"]]),
+        color = ring_color, linetype = "dotted", linewidth = 0.35
+      )
+    }
 
     if (!is.null(intra_mod_df) && nrow(intra_mod_df) > 0) {
       p <- p + ggplot2::geom_segment(
@@ -688,18 +844,29 @@ build_cross_network_layers = function(
         data = cross_mod_df,
         ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]],
                      color = .data[["type"]], linewidth = .data[["weight"]]),
-        alpha = cross_alpha
+        alpha = cross_alpha, lineend = "round"
       ) +
       ggplot2::scale_color_manual(values = cross_colors, name = "Preserved Cross Links") +
-      ggplot2::scale_linewidth_continuous(range = c(0.45, 1.35), name = "Conserved Taxa")
+      ggplot2::scale_linewidth_continuous(range = c(0.55, 1.55), name = "Conserved Taxa")
     }
 
     if (!is.null(meta_df)) {
-      p <- p + ggplot2::geom_text(
-        data = meta_df,
-        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
-        size = meta_label_size, color = meta_label_color, fontface = "bold", lineheight = 0.95
-      )
+      if (layout == "concentric") {
+        p <- p + ggplot2::geom_label(
+          data = meta_df,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = 2.4, color = "grey20", fill = "white", fontface = "bold",
+          label.padding = ggplot2::unit(0.18, "lines"),
+          label.r = ggplot2::unit(0.14, "lines"),
+          linewidth = 0.35, alpha = 0.95
+        )
+      } else {
+        p <- p + ggplot2::geom_text(
+          data = meta_df,
+          ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+          size = meta_label_size, color = meta_label_color, fontface = "bold", lineheight = 0.95
+        )
+      }
     }
 
     mod_nodes_df$group <- factor(mod_nodes_df$group, levels = grp_names)
@@ -760,8 +927,15 @@ build_cross_network_layers = function(
       }
     }
 
-    y_lims <- if (layout == "horizontal") c(-3.2, 4.2) else c(-3.8, 6.2)
-    p <- p + ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = y_lims)
+    x_lims <- if (layout == "concentric") c(-4.8, 4.8) else c(-5.5, 5.5)
+    y_lims <- if (layout == "horizontal") {
+      c(-3.2, 4.2)
+    } else if (layout == "concentric") {
+      c(-4.8, 4.8)
+    } else {
+      c(-3.8, 6.2)
+    }
+    p <- p + ggplot2::coord_fixed(xlim = x_lims, ylim = y_lims)
 
     if (preset %in% c("dark", "cell")) {
       p <- p +
