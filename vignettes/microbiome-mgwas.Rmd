@@ -109,7 +109,13 @@ da_df$qval <- c(
 cliplot(
   Species ~ Comparison,
   data = da_df,
-  type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", min_size = 2.0, max_size = 7.0),
+  type = type_bubble_matrix(
+    size_col = "qval",
+    fill_col = "log2FC",
+    min_size = 2.0,
+    max_size = 7.0,
+    palette  = "nature"
+  ),
   title = "Metagenomic Differential Abundance Across Anatomical Sites"
 )
 ```

@@ -56,6 +56,27 @@ test_that("type_bubble_matrix works for differential abundance", {
     type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", min_size = 2, max_size = 8)
   )
   expect_s3_class(p_custom, "ggplot")
+
+  p_nat <- cliplot(
+    Species ~ Comparison,
+    data = da_df,
+    type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", palette = "nature")
+  )
+  expect_s3_class(p_nat, "ggplot")
+
+  p_rdbu <- cliplot(
+    Species ~ Comparison,
+    data = da_df,
+    type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", palette = "rdbu")
+  )
+  expect_s3_class(p_rdbu, "ggplot")
+
+  p_dark <- cliplot(
+    Species ~ Comparison,
+    data = da_df,
+    type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", palette = "dark")
+  )
+  expect_s3_class(p_dark, "ggplot")
 })
 
 test_that("type_sharing_heatmap works for dyad transmission matrices", {

@@ -10,12 +10,15 @@ type_bubble_matrix(
   min_size = 1.5,
   max_size = 6.5,
   midpoint = 0,
-  colors = c("#4575B4", "grey92", "#D73027"),
+  palette = "nature",
+  colors = NULL,
   limits = c(-2, 2),
+  border_color = "grey30",
+  stroke = 0.35,
   size_name = expression(-log[10] ~ italic(q)),
   fill_name = expression(log[2] ~ "Fold Change"),
   reorder_by = NULL,
-  grid_color = "#EBEBEB",
+  grid_color = "#EEEEEE",
   xlab = NULL,
   ylab = NULL
 )
@@ -33,11 +36,20 @@ type_bubble_matrix(
 
 \item{midpoint}{Value representing no directional change (default 0).}
 
+\item{palette}{Character string specifying publication diverging palette:
+\code{"nature"} (default: Navy to Crimson), \code{"rdbu"}, \code{"bipolar"},
+\code{"lancet"}, \code{"dark"}, \code{"spectral"}, \code{"piyg"}, or \code{"prgn"}.}
+
 \item{colors}{Diverging color gradient vector of length 3 (low, mid, high).
-Default \code{c("#4575B4", "grey92", "#D73027")}.}
+If supplied, overrides \code{palette}. Default uses \code{palette = "nature"}
+(\code{c("#3B4992", "#F7F7F7", "#EE0000")}).}
 
 \item{limits}{Numeric vector of length 2 specifying color scale limits.
-Default \code{c(-2, 2)}.}
+Default \code{c(-2, 2)}, automatically expanded symmetrically if effect sizes exceed 2.}
+
+\item{border_color}{Border stroke color for points (default \code{"grey30"}).}
+
+\item{stroke}{Border stroke width for points (default 0.35).}
 
 \item{size_name}{Legend title for point size (default \code{expression(-log[10]~italic(q))}).}
 
@@ -45,7 +57,7 @@ Default \code{c(-2, 2)}.}
 
 \item{reorder_by}{Optional column or vector to reorder features along the y-axis.}
 
-\item{grid_color}{Color for background grid lines (default \code{"#EBEBEB"}).}
+\item{grid_color}{Color for background grid lines (default \code{"#EEEEEE"}).}
 
 \item{xlab, ylab}{Axis labels.}
 }
@@ -71,7 +83,7 @@ da_df$log2FC <- rnorm(nrow(da_df), mean = 0, sd = 1.2)
 da_df$qval <- runif(nrow(da_df), 0.001, 0.2)
 
 cliplot(Species ~ Comparison, data = da_df,
-        type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC"))
+        type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", palette = "nature"))
 }
 
 }

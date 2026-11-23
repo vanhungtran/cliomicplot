@@ -6,7 +6,9 @@
 \usage{
 type_cross_network_graph(
   level = c("node", "module"),
+  color_by = NULL,
   groups = NULL,
+  group_colors = NULL,
   layout = c("triangle", "horizontal", "vertical", "grid"),
   module_colors = NULL,
   cross_colors = NULL,
@@ -29,7 +31,9 @@ type_cross_network_graph(
   meta_label_color = "grey15",
   module_size_range = c(3.5, 8.5),
   circle_radius = 1.05,
-  preset = c("default", "nature", "cell", "science", "lancet"),
+  preset = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow",
+    "minimal"),
+  style = NULL,
   scifig = FALSE
 )
 }
@@ -37,7 +41,12 @@ type_cross_network_graph(
 \item{level}{Character string specifying visualization level: \code{"node"} (default)
 for full node-edge topology, or \code{"module"} for circular module ring preservation.}
 
+\item{color_by}{Character string specifying node color mapping: \code{"group"} or \code{"module"}.
+Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when \code{level = "node"}.}
+
 \item{groups}{Character vector specifying group names in desired layout order.}
+
+\item{group_colors}{Optional named vector of colors for experimental groups.}
 
 \item{layout}{Character string specifying group layout: \code{"triangle"} (default for 3 groups),
 \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.}
@@ -86,7 +95,10 @@ Defaults to TRUE when \code{level = "module"} and FALSE when \code{level = "node
 \item{circle_radius}{Radius for module circle ring layout when \code{level = "module"} (default 1.05).}
 
 \item{preset}{Character string specifying publisher style preset: \code{"default"},
-\code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.}
+\code{"nature"}, \code{"cell"}, \code{"science"}, \code{"lancet"}, \code{"dark"},
+\code{"horizontal_flow"}, or \code{"minimal"}.}
+
+\item{style}{Character string alias for \code{preset}. If supplied, overrides \code{preset}.}
 
 \item{scifig}{Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 line floor >= 0.25 pt, and CVD compliant palettes).}

@@ -19,14 +19,20 @@
 #' @param min_size Minimum point radius in mm (default 1.5).
 #' @param max_size Maximum point radius in mm (default 6.5).
 #' @param midpoint Value representing no directional change (default 0).
+#' @param palette Character string specifying publication diverging palette:
+#'   \code{"nature"} (default: Navy to Crimson), \code{"rdbu"}, \code{"bipolar"},
+#'   \code{"lancet"}, \code{"dark"}, \code{"spectral"}, \code{"piyg"}, or \code{"prgn"}.
 #' @param colors Diverging color gradient vector of length 3 (low, mid, high).
-#'   Default \code{c("#4575B4", "grey92", "#D73027")}.
+#'   If supplied, overrides \code{palette}. Default uses \code{palette = "nature"}
+#'   (\code{c("#3B4992", "#F7F7F7", "#EE0000")}).
 #' @param limits Numeric vector of length 2 specifying color scale limits.
-#'   Default \code{c(-2, 2)}.
+#'   Default \code{c(-2, 2)}, automatically expanded symmetrically if effect sizes exceed 2.
+#' @param border_color Border stroke color for points (default \code{"grey30"}).
+#' @param stroke Border stroke width for points (default 0.35).
 #' @param size_name Legend title for point size (default \code{expression(-log[10]~italic(q))}).
 #' @param fill_name Legend title for color gradient (default \code{expression(log[2]~"Fold Change")}).
 #' @param reorder_by Optional column or vector to reorder features along the y-axis.
-#' @param grid_color Color for background grid lines (default \code{"#EBEBEB"}).
+#' @param grid_color Color for background grid lines (default \code{"#EEEEEE"}).
 #' @param xlab,ylab Axis labels.
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
@@ -43,7 +49,7 @@
 #' da_df$qval <- runif(nrow(da_df), 0.001, 0.2)
 #'
 #' cliplot(Species ~ Comparison, data = da_df,
-#'         type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC"))
+#'         type = type_bubble_matrix(size_col = "qval", fill_col = "log2FC", palette = "nature"))
 #' }
 #'
 #' @export
@@ -53,15 +59,34 @@ type_bubble_matrix = function(
     min_size     = 1.5,
     max_size     = 6.5,
     midpoint     = 0,
-    colors       = c("#4575B4", "grey92", "#D73027"),
+    palette      = "nature",
+    colors       = NULL,
     limits       = c(-2, 2),
+    border_color = "grey30",
+    stroke       = 0.35,
     size_name    = expression(-log[10]~italic(q)),
     fill_name    = expression(log[2]~"Fold Change"),
     reorder_by   = NULL,
-    grid_color   = "#EBEBEB",
+    grid_color   = "#EEEEEE",
     xlab         = NULL,
     ylab         = NULL
 ) {
+  pal_map <- list(
+    nature   = c("#3B4992", "#F7F7F7", "#EE0000"),
+    rdbu     = c("#2166AC", "#F7F7F7", "#B2182B"),
+    bipolar  = c("#1F77B4", "#F0F0F0", "#D62728"),
+    lancet   = c("#00468B", "#F5F5F5", "#ED0000"),
+    dark     = c("#00F2FE", "#1E2638", "#FF007F"),
+    cell     = c("#00F2FE", "#1E2638", "#FF007F"),
+    spectral = c("#2B83BA", "#FFFFBF", "#D7191C"),
+    piyg     = c("#C51B7D", "#F7F7F7", "#4D9221"),
+    prgn     = c("#762A83", "#F7F7F7", "#1B7837")
+  )
+
+  if (is.null(colors)) {
+    pal_key <- if (!is.null(palette)) tolower(sub("[-_]", "", palette)) else "nature"
+    colors <- pal_map[[pal_key]] %||% pal_map$nature
+  }
   cliplot_type(
     data = function(settings, ...) {
       df <- settings$data
@@ -145,17 +170,40 @@ type_bubble_matrix = function(
       df <- settings$bubble_df
       if (is.null(df)) return(ggplot2::ggplot())
 
+      # Dynamic symmetric limits if fold changes exceed limits
+      act_limits <- limits
+      max_obs <- if (nrow(df) > 0) max(abs(df$.fill), na.rm = TRUE) else 2
+      if (is.null(act_limits)) {
+        max_ceil <- ceiling(max_obs * 10) / 10
+        act_limits <- c(-max_ceil, max_ceil)
+      } else if (identical(act_limits, c(-2, 2)) && max_obs > 2) {
+        max_ceil <- ceiling(max_obs * 10) / 10
+        act_limits <- c(-max_ceil, max_ceil)
+      }
+
+      is_dark <- (is.character(palette) && palette %in% c("dark", "cell")) ||
+                 identical(colors, pal_map$dark) ||
+                 identical(colors, pal_map$cell)
+
+      bg_col     <- if (is_dark) "#0F141C" else "white"
+      border_box <- if (is_dark) "#334155" else "grey75"
+      grid_col   <- if (is_dark) "#1E293B" else grid_color
+      pt_border  <- if (is_dark) "#0F141C" else (border_color %||% "grey30")
+      txt_col    <- if (is_dark) "#F1F5F9" else "grey20"
+
       p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[".x"]], y = .data[[".y"]])) +
         ggplot2::geom_point(
-          ggplot2::aes(size = .data[[".size"]], color = .data[[".fill"]]),
-          stroke = 0.3
+          ggplot2::aes(size = .data[[".size"]], fill = .data[[".fill"]]),
+          shape = 21,
+          color = pt_border,
+          stroke = stroke
         ) +
-        ggplot2::scale_color_gradient2(
+        ggplot2::scale_fill_gradient2(
           low = colors[1],
           mid = colors[2],
           high = colors[3],
           midpoint = midpoint,
-          limits = limits,
+          limits = act_limits,
           oob = scales::squish,
           name = fill_name
         ) +
@@ -163,15 +211,30 @@ type_bubble_matrix = function(
           range = c(min_size, max_size),
           name = size_name
         ) +
+        ggplot2::guides(
+          size = ggplot2::guide_legend(
+            override.aes = list(fill = "grey65", color = "grey20", shape = 21, stroke = stroke)
+          ),
+          fill = ggplot2::guide_colorbar(
+            barwidth = ggplot2::unit(4, "mm"),
+            barheight = ggplot2::unit(28, "mm"),
+            frame.colour = if (is_dark) "#475569" else "grey40",
+            frame.linewidth = 0.3,
+            ticks.colour = if (is_dark) "#475569" else "grey40"
+          )
+        ) +
         ggplot2::labs(
           x = xlab %||% "",
           y = ylab %||% ""
         ) +
         ggplot2::theme(
-          panel.grid.major = ggplot2::element_line(color = grid_color, linewidth = 0.3),
+          plot.background  = ggplot2::element_rect(fill = bg_col, color = NA),
+          panel.background = ggplot2::element_rect(fill = bg_col, color = NA),
+          panel.border     = ggplot2::element_rect(color = border_box, fill = NA, linewidth = 0.5),
+          panel.grid.major = ggplot2::element_line(color = grid_col, linewidth = 0.35),
           panel.grid.minor = ggplot2::element_blank(),
-          axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1),
-          axis.text.y = ggplot2::element_text(face = "italic")
+          axis.text.x      = ggplot2::element_text(angle = 45, hjust = 1, vjust = 1, color = txt_col),
+          axis.text.y      = ggplot2::element_text(face = "italic", color = txt_col)
         )
 
       p

@@ -19,7 +19,7 @@ type_env_network(
   compact = TRUE,
   show_module_labels = TRUE,
   module_labels = NULL,
-  module_label_size = 2.8,
+  module_label_size = 2.4,
   module_label_color = "grey15",
   module_label_fill = "white",
   module_label_bg = TRUE,
@@ -27,8 +27,8 @@ type_env_network(
   module_label_pos = c("radial", "centroid"),
   show_module_legend = TRUE,
   legend_position = "top",
-  show_domain_labels = FALSE,
-  env_label_size = 1.8,
+  show_domain_labels = TRUE,
+  env_label_size = 1.95,
   env_label_color = "grey20",
   env_label_face = "plain",
   link_width_range = c(0.4, 1.4),
@@ -37,7 +37,7 @@ type_env_network(
   show_link_values = FALSE,
   link_value_size = 2,
   link_value_digits = 2,
-  circle_radius = 2.45,
+  circle_radius = 2.8,
   circle_width = 0.4,
   circle_color = "grey65",
   circle_linetype = "dashed",
@@ -47,13 +47,15 @@ type_env_network(
   intra_edge_width = 0.18,
   intra_edge_color = "grey82",
   intra_edge_alpha = 0.35,
-  diag_point_size = 1.8,
+  diag_point_size = 2,
   diag_point_fill = "#F781BF",
   diag_point_color = "#C51B7D",
   node_size_range = c(1.1, 3.8),
   hull_alpha = 0.18,
   curvature = 0.14,
-  preset = c("default", "nature", "cell", "science", "lancet"),
+  preset = c("default", "nature", "clinical", "seasonal", "cell", "dark", "lancet",
+    "minimal"),
+  style = NULL,
   scifig = FALSE,
   title = NULL
 )
@@ -96,7 +98,7 @@ inside the central circle.}
 \item{module_labels}{Optional named character vector or list mapping module IDs (e.g. \code{"Mod_1"})
 to custom display labels (e.g. \code{c("Mod_1" = "M1: S. aureus core")}).}
 
-\item{module_label_size}{Numeric font size for module labels inside the circle (default 2.8).}
+\item{module_label_size}{Numeric font size for module labels inside the circle (default 2.4).}
 
 \item{module_label_color}{Color of module label text and borders (default \code{"grey15"}).}
 
@@ -114,9 +116,9 @@ outward toward the circle boundary to avoid overlapping dense core nodes) or \co
 
 \item{legend_position}{Position of the legend: \code{"top"} (default), \code{"bottom"}, \code{"right"}, \code{"left"}, or \code{"none"}.}
 
-\item{show_domain_labels}{Logical. If TRUE, displays domain headers for the corner heatmaps. Default FALSE.}
+\item{show_domain_labels}{Logical. If TRUE, displays domain headers for the corner heatmaps. Default TRUE.}
 
-\item{env_label_size}{Font size for environmental variable labels outside corner heatmaps (default 1.8).}
+\item{env_label_size}{Font size for environmental variable labels outside corner heatmaps (default 1.95).}
 
 \item{env_label_color}{Text color for environmental variable labels (default \code{"grey20"}).}
 
@@ -137,7 +139,7 @@ inter-domain links (default FALSE).}
 
 \item{link_value_digits}{Integer number of decimal places for link correlation digits (default 2).}
 
-\item{circle_radius}{Numeric radius of the central boundary circle (default 2.45).}
+\item{circle_radius}{Numeric radius of the central boundary circle (default 2.80).}
 
 \item{circle_width}{Line width of the central boundary circle (default 0.4).}
 
@@ -157,7 +159,7 @@ inter-domain links (default FALSE).}
 
 \item{intra_edge_alpha}{Transparency of intra-module network edges (default 0.35).}
 
-\item{diag_point_size}{Size of diagonal indicator connector points on heatmaps (default 1.8).}
+\item{diag_point_size}{Size of diagonal indicator connector points on heatmaps (default 2.0).}
 
 \item{diag_point_fill}{Fill color of diagonal indicator points (default \code{"#F781BF"}).}
 
@@ -170,7 +172,10 @@ inter-domain links (default FALSE).}
 \item{curvature}{Numeric curvature of inter-domain connecting lines (default 0.14).}
 
 \item{preset}{Character string specifying publisher style preset: \code{"default"},
-\code{"nature"}, \code{"cell"}, \code{"science"}, or \code{"lancet"}.}
+\code{"nature"}, \code{"clinical"}, \code{"seasonal"}, \code{"cell"}, \code{"dark"},
+\code{"lancet"}, or \code{"minimal"}.}
+
+\item{style}{Character string alias for \code{preset}. If supplied, overrides \code{preset}.}
 
 \item{scifig}{Logical. If TRUE, enforces AI4SciFig publication gates (font floor >= 5 pt,
 line floor >= 0.25 pt, zero sign suppression, and CVD compliant palettes).}

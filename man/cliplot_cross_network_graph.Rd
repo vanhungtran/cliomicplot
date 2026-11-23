@@ -9,7 +9,9 @@ cliplot_cross_network_graph(
   edges = NULL,
   cross_edges = NULL,
   level = c("node", "module"),
+  color_by = NULL,
   groups = NULL,
+  group_colors = NULL,
   layout = c("triangle", "horizontal", "vertical", "grid"),
   module_colors = NULL,
   cross_colors = NULL,
@@ -23,7 +25,18 @@ cliplot_cross_network_graph(
   meta_label_color = "grey15",
   module_size_range = c(3.5, 8.5),
   circle_radius = 1.05,
-  preset = c("default", "nature", "cell", "science", "lancet"),
+  preset = c("default", "nature", "cell", "science", "lancet", "dark", "horizontal_flow",
+    "minimal"),
+  style = NULL,
+  show_hulls = TRUE,
+  hull_alpha = 0.18,
+  show_meta = TRUE,
+  node_size_range = c(1.2, 4.2),
+  edge_color = "grey85",
+  edge_alpha = 0.45,
+  edge_width = 0.2,
+  cross_width = 0.6,
+  cross_alpha = 0.75,
   scifig = FALSE,
   title = NULL,
   ...
@@ -40,7 +53,12 @@ If NULL, conserved features with identical \code{id} across groups are linked au
 
 \item{level}{Visualization level: \code{"node"} (default) or \code{"module"}.}
 
+\item{color_by}{Character string specifying node color mapping: \code{"group"} or \code{"module"}.
+Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when \code{level = "node"}.}
+
 \item{groups}{Group order vector.}
+
+\item{group_colors}{Optional named vector of colors for experimental groups.}
 
 \item{layout}{Group placement: \code{"triangle"}, \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.}
 
