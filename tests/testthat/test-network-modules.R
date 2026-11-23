@@ -363,6 +363,14 @@ test_that("cliplot_cross_network_graph style presets and zero-arg fallback work"
   p_ring <- cliplot_cross_network_graph(level = "module", preset = "nature")
   expect_s3_class(p_ring, "ggplot")
 
+  # Color by group support
+  p_by_grp <- cliplot_cross_network_graph(level = "module", color_by = "group", preset = "nature")
+  expect_s3_class(p_by_grp, "ggplot")
+  p_by_mod <- cliplot_cross_network_graph(level = "module", color_by = "module", preset = "nature")
+  expect_s3_class(p_by_mod, "ggplot")
+  p_node_grp <- cliplot_cross_network_graph(level = "node", color_by = "group", group_colors = c(KO = "blue", WT = "red", OE = "green"))
+  expect_s3_class(p_node_grp, "ggplot")
+
   # Horizontal flow progression
   p_flow <- cliplot_cross_network_graph(preset = "horizontal_flow")
   expect_s3_class(p_flow, "ggplot")

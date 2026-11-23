@@ -23,6 +23,9 @@
 #' @param level Character string specifying visualization level: \code{"node"} (default)
 #'   for full node-edge topology, or \code{"module"} for circular module ring preservation.
 #' @param groups Character vector specifying group names in desired layout order.
+#' @param color_by Character string specifying node color mapping: \code{"group"} or \code{"module"}.
+#'   Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when \code{level = "node"}.
+#' @param group_colors Optional named vector of colors for experimental groups.
 #' @param layout Character string specifying group layout: \code{"triangle"} (default for 3 groups),
 #'   \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.
 #' @param module_colors Optional named vector of colors for modules.
@@ -59,7 +62,9 @@
 #' @export
 type_cross_network_graph = function(
     level              = c("node", "module"),
+    color_by           = NULL,
     groups             = NULL,
+    group_colors       = NULL,
     layout             = c("triangle", "horizontal", "vertical", "grid"),
     module_colors      = NULL,
     cross_colors       = NULL,
@@ -90,6 +95,12 @@ type_cross_network_graph = function(
   layout <- match.arg(layout)
   if (!is.null(style)) preset <- style
   preset <- match.arg(preset)
+
+  if (is.null(color_by)) {
+    color_by <- if (level == "module") "group" else "module"
+  } else {
+    color_by <- match.arg(color_by, c("group", "module"))
+  }
 
   if (isTRUE(scifig) && preset == "default") preset <- "nature"
   if (preset != "default") {
@@ -155,7 +166,9 @@ type_cross_network_graph = function(
       res <- build_cross_network_layers(
         custom_data        = custom_data,
         level              = level,
+        color_by           = color_by,
         groups             = groups,
+        group_colors       = group_colors,
         layout             = layout,
         module_colors      = module_colors,
         cross_colors       = cross_colors,
@@ -194,7 +207,10 @@ type_cross_network_graph = function(
 #' @param cross_edges Data frame of cross-group edges containing columns: \code{from}, \code{to}, \code{group1}, \code{group2}.
 #'   If NULL, conserved features with identical \code{id} across groups are linked automatically.
 #' @param level Visualization level: \code{"node"} (default) or \code{"module"}.
+#' @param color_by Character string specifying node color mapping: \code{"group"} or \code{"module"}.
+#'   Defaults to \code{"group"} when \code{level = "module"} and \code{"module"} when \code{level = "node"}.
 #' @param groups Group order vector.
+#' @param group_colors Optional named vector of colors for experimental groups.
 #' @param layout Group placement: \code{"triangle"}, \code{"horizontal"}, \code{"vertical"}, or \code{"grid"}.
 #' @param module_colors Named color vector for modules.
 #' @param cross_colors Named color vector for cross-group links.
@@ -219,7 +235,9 @@ cliplot_cross_network_graph = function(
     edges              = NULL,
     cross_edges        = NULL,
     level              = c("node", "module"),
+    color_by           = NULL,
     groups             = NULL,
+    group_colors       = NULL,
     layout             = c("triangle", "horizontal", "vertical", "grid"),
     module_colors      = NULL,
     cross_colors       = NULL,
@@ -261,7 +279,9 @@ cliplot_cross_network_graph = function(
 
   t_obj <- type_cross_network_graph(
     level              = level,
+    color_by           = color_by,
     groups             = groups,
+    group_colors       = group_colors,
     layout             = layout,
     module_colors      = module_colors,
     cross_colors       = cross_colors,
@@ -344,19 +364,21 @@ filter_edges_against_boxes <- function(edges_df, boxes, hw = 0.40, hh = 0.28) {
 build_cross_network_layers = function(
     custom_data,
     level,
-    groups,
-    layout,
-    module_colors,
-    cross_colors,
-    show_hulls,
-    hull_alpha,
-    show_meta,
-    node_size_range,
-    edge_color,
-    edge_alpha,
-    edge_width,
-    cross_width,
-    cross_alpha,
+    color_by           = NULL,
+    groups             = NULL,
+    group_colors       = NULL,
+    layout             = "triangle",
+    module_colors      = NULL,
+    cross_colors       = NULL,
+    show_hulls         = TRUE,
+    hull_alpha         = 0.18,
+    show_meta          = TRUE,
+    node_size_range    = c(1.2, 4.2),
+    edge_color         = "grey85",
+    edge_alpha         = 0.45,
+    edge_width         = 0.2,
+    cross_width        = 0.6,
+    cross_alpha        = 0.75,
     show_module_labels = NULL,
     module_labels      = NULL,
     module_label_size  = 2.6,
@@ -369,6 +391,12 @@ build_cross_network_layers = function(
     circle_radius      = 1.05,
     preset             = "default"
 ) {
+  if (is.null(color_by)) {
+    color_by <- if (level == "module") "group" else "module"
+  } else {
+    color_by <- match.arg(color_by, c("group", "module"))
+  }
+
   # Extract components safely
   if (is.list(custom_data) && !is.data.frame(custom_data) && is.data.frame(custom_data$nodes) && nrow(custom_data$nodes) > 0) {
     nodes_df    <- custom_data$nodes
@@ -410,6 +438,20 @@ build_cross_network_layers = function(
   } else {
     angles <- seq(pi/2, 2*pi + pi/2, length.out = n_grp + 1)[1:n_grp]
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 3.2 * cos(angles[i]), y = 3.2 * sin(angles[i]))
+  }
+
+  # Group Palette
+  if (is.null(group_colors)) {
+    if (preset %in% c("dark", "cell")) {
+      g_pal <- c("#00F2FE", "#FF007F", "#FFE600", "#7B2CBF", "#00F5D4", "#FF5400", "#9D4EDD", "#E040FB")
+    } else if (preset %in% c("lancet", "minimal")) {
+      g_pal <- c("#00468B", "#ED0000", "#42B540", "#0099B4", "#925E9F", "#FDAF91", "#AD002A", "#ADB6B6")
+    } else if (preset == "horizontal_flow") {
+      g_pal <- c("#2B5C8F", "#D97706", "#DC2626", "#047857", "#7C3AED")
+    } else {
+      g_pal <- c("#3B4992", "#EE0000", "#008B45", "#E69F00", "#631879", "#008280", "#BB0021", "#5F559B")
+    }
+    group_colors <- stats::setNames(g_pal[((seq_along(grp_names) - 1) %% length(g_pal)) + 1], grp_names)
   }
 
   # Module Palette
@@ -660,22 +702,35 @@ build_cross_network_layers = function(
       )
     }
 
-    p <- p + ggplot2::geom_point(
-      data = mod_nodes_df,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["n_taxa"]], fill = .data[["module"]]),
-      shape = 21, color = node_border_color, stroke = 0.8
-    ) +
-    ggplot2::scale_fill_manual(values = module_colors, name = "Network Module") +
-    ggplot2::scale_size_continuous(
-      range = module_size_range,
-      name = "Module Size (Taxa)"
-    ) +
-    ggplot2::guides(
-      size = ggplot2::guide_legend(
-        override.aes = list(fill = "grey50", color = "grey20", shape = 21, stroke = 0.5)
-      ),
-      fill = ggplot2::guide_legend(override.aes = list(size = 3.8))
-    )
+    mod_nodes_df$group <- factor(mod_nodes_df$group, levels = grp_names)
+
+    if (color_by == "group") {
+      p <- p + ggplot2::geom_point(
+        data = mod_nodes_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["n_taxa"]], fill = .data[["group"]]),
+        shape = 21, color = node_border_color, stroke = 0.8
+      ) +
+      ggplot2::scale_fill_manual(values = group_colors, name = "Group")
+    } else {
+      p <- p + ggplot2::geom_point(
+        data = mod_nodes_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["n_taxa"]], fill = .data[["module"]]),
+        shape = 21, color = node_border_color, stroke = 0.8
+      ) +
+      ggplot2::scale_fill_manual(values = module_colors, name = "Network Module")
+    }
+
+    p <- p +
+      ggplot2::scale_size_continuous(
+        range = module_size_range,
+        name = "Module Size (Taxa)"
+      ) +
+      ggplot2::guides(
+        size = ggplot2::guide_legend(
+          override.aes = list(fill = "grey50", color = "grey20", shape = 21, stroke = 0.5)
+        ),
+        fill = ggplot2::guide_legend(override.aes = list(size = 3.8, shape = 21, color = "white", stroke = 0.6))
+      )
 
     resolved_show_labels <- if (!is.null(show_module_labels)) isTRUE(show_module_labels) else TRUE
     if (resolved_show_labels) {
@@ -934,24 +989,23 @@ build_cross_network_layers = function(
     ggplot2::scale_color_manual(values = cross_colors, name = "Conserved Cross Links")
   }
 
-  if (level == "module") {
-    # Module circle layout
+  if (color_by == "group") {
+    nodes_df$group <- factor(nodes_df$group, levels = grp_names)
     p <- p + ggplot2::geom_point(
       data = nodes_df,
-      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["degree"]], fill = .data[["module"]]),
-      shape = 21, color = "white", stroke = 0.5
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["group"]], size = .data[["degree"]]),
+      shape = 21, color = "grey25", stroke = 0.25
     ) +
-    ggplot2::scale_size_continuous(range = module_size_range, name = "Module Size")
+    ggplot2::scale_fill_manual(values = group_colors, name = "Group")
   } else {
     p <- p + ggplot2::geom_point(
       data = nodes_df,
       ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["module"]], size = .data[["degree"]]),
       shape = 21, color = "grey25", stroke = 0.25
     ) +
-    ggplot2::scale_size_continuous(range = node_size_range, guide = "none")
+    ggplot2::scale_fill_manual(values = module_colors, name = "Network Module")
   }
-
-  p <- p + ggplot2::scale_fill_manual(values = module_colors, name = "Network Module")
+  p <- p + ggplot2::scale_size_continuous(range = node_size_range, guide = "none")
 
   resolved_show_labels <- if (!is.null(show_module_labels)) {
     isTRUE(show_module_labels)
