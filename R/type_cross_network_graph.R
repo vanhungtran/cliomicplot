@@ -294,6 +294,51 @@ cliplot_cross_network_graph = function(
   p
 }
 
+# Helper: Line-rectangle intersection test (Cohen-Sutherland variant)
+line_intersects_rect <- function(x1, y1, x2, y2, rx0, ry0, rx1, ry1) {
+  if (max(x1, x2) < rx0 || min(x1, x2) > rx1 || max(y1, y2) < ry0 || min(y1, y2) > ry1) return(FALSE)
+  dx <- x2 - x1; dy <- y2 - y1
+  p <- c(-dx, dx, -dy, dy); q <- c(x1 - rx0, rx1 - x1, y1 - ry0, ry1 - y1)
+  u1 <- 0; u2 <- 1
+  for (j in 1:4) {
+    if (p[j] == 0) {
+      if (q[j] < 0) return(FALSE)
+    } else {
+      t <- q[j] / p[j]
+      if (p[j] < 0) {
+        if (t > u1) u1 <- t
+      } else {
+        if (t < u2) u2 <- t
+      }
+      if (u1 > u2) return(FALSE)
+    }
+  }
+  return(TRUE)
+}
+
+# Helper: Filter edge data frames whose segments intersect bounding boxes
+filter_edges_against_boxes <- function(edges_df, boxes, hw = 0.40, hh = 0.28) {
+  if (is.null(edges_df) || nrow(edges_df) == 0 || is.null(boxes) || nrow(boxes) == 0) return(edges_df)
+  bad <- rep(FALSE, nrow(edges_df))
+  for (b_i in seq_len(nrow(boxes))) {
+    bx0 <- boxes$x[b_i] - hw
+    bx1 <- boxes$x[b_i] + hw
+    by0 <- boxes$y[b_i] - hh
+    by1 <- boxes$y[b_i] + hh
+    in_x <- pmax(edges_df$x, edges_df$xend) >= bx0 & pmin(edges_df$x, edges_df$xend) <= bx1
+    in_y <- pmax(edges_df$y, edges_df$yend) >= by0 & pmin(edges_df$y, edges_df$yend) <= by1
+    cand <- which(in_x & in_y)
+    if (length(cand) > 0) {
+      hit <- mapply(line_intersects_rect,
+                    edges_df$x[cand], edges_df$y[cand],
+                    edges_df$xend[cand], edges_df$yend[cand],
+                    MoreArgs = list(rx0 = bx0, ry0 = by0, rx1 = bx1, ry1 = by1))
+      bad[cand[hit]] <- TRUE
+    }
+  }
+  edges_df[!bad, , drop = FALSE]
+}
+
 #' Helper builder for cross-network layers
 #' @keywords internal
 build_cross_network_layers = function(
@@ -324,8 +369,8 @@ build_cross_network_layers = function(
     circle_radius      = 1.05,
     preset             = "default"
 ) {
-  # Extract components
-  if (is.list(custom_data) && !is.data.frame(custom_data) && !is.null(custom_data$nodes) && nrow(custom_data$nodes) > 0) {
+  # Extract components safely
+  if (is.list(custom_data) && !is.data.frame(custom_data) && is.data.frame(custom_data$nodes) && nrow(custom_data$nodes) > 0) {
     nodes_df    <- custom_data$nodes
     edges_df    <- custom_data$edges
     cross_df    <- custom_data$cross_edges
@@ -347,9 +392,15 @@ build_cross_network_layers = function(
   # Group coordinates
   grp_centers <- list()
   if (layout == "triangle" && n_grp == 3) {
-    grp_centers[[grp_names[1]]] <- c(x = 0, y = 3.6)
-    grp_centers[[grp_names[2]]] <- c(x = -3.5, y = -1.6)
-    grp_centers[[grp_names[3]]] <- c(x = 3.5, y = -1.6)
+    if (level == "module") {
+      grp_centers[[grp_names[1]]] <- c(x = 0, y = 3.3)
+      grp_centers[[grp_names[2]]] <- c(x = -3.4, y = -1.6)
+      grp_centers[[grp_names[3]]] <- c(x = 3.4, y = -1.6)
+    } else {
+      grp_centers[[grp_names[1]]] <- c(x = 0, y = 3.6)
+      grp_centers[[grp_names[2]]] <- c(x = -3.5, y = -1.6)
+      grp_centers[[grp_names[3]]] <- c(x = 3.5, y = -1.6)
+    }
   } else if (layout == "horizontal") {
     xs <- seq(-3.5 * (n_grp - 1) / 2, 3.5 * (n_grp - 1) / 2, length.out = n_grp)
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = xs[i], y = 0)
@@ -357,11 +408,337 @@ build_cross_network_layers = function(
     ys <- seq(3.5 * (n_grp - 1) / 2, -3.5 * (n_grp - 1) / 2, length.out = n_grp)
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 0, y = ys[i])
   } else {
-    # Default circle/polygon layout
     angles <- seq(pi/2, 2*pi + pi/2, length.out = n_grp + 1)[1:n_grp]
     for (i in seq_along(grp_names)) grp_centers[[grp_names[i]]] <- c(x = 3.2 * cos(angles[i]), y = 3.2 * sin(angles[i]))
   }
 
+  # Module Palette
+  u_mods <- sort(unique(as.character(nodes_df$module)))
+  if (is.null(module_colors)) {
+    if (preset %in% c("dark", "cell")) {
+      pal <- c("#00F2FE", "#FF007F", "#FFE600", "#7B2CBF", "#00F5D4", "#FF5400", "#9D4EDD", "#E040FB")
+    } else if (preset %in% c("lancet", "minimal")) {
+      pal <- c("#1E3A8A", "#B45309", "#047857", "#475569", "#7C3AED", "#DB2777")
+    } else {
+      pal <- c("#3B4992", "#EE0000", "#008B45", "#E69F00", "#631879", "#008280", "#BB0021", "#5F559B")
+    }
+    module_colors <- stats::setNames(pal[((seq_along(u_mods) - 1) %% length(pal)) + 1], u_mods)
+  }
+
+  # =========================================================================
+  # BRANCH: MODULE-LEVEL RING PRESERVATION (Zero-Collision Publication Style)
+  # =========================================================================
+  if (level == "module") {
+    circle_radius <- circle_radius %||% 1.15
+    if (identical(module_size_range, c(3.5, 8.5))) module_size_range <- c(6.0, 13.0)
+
+    mod_rows <- list()
+    for (g in grp_names) {
+      c_xy <- grp_centers[[g]]
+      g_nodes <- nodes_df[nodes_df$group == g, ]
+      g_mods <- sort(unique(as.character(g_nodes$module)))
+      k <- length(g_mods)
+
+      start_th <- if (layout == "triangle" && n_grp == 3) {
+        if (g == grp_names[1]) -pi/2 else if (g == grp_names[2]) pi/6 else 5*pi/6
+      } else {
+        0
+      }
+      th_seq <- seq(start_th, start_th + 2*pi, length.out = k + 1)[1:k]
+
+      for (m_i in seq_along(g_mods)) {
+        m <- g_mods[m_i]
+        m_sub <- g_nodes[g_nodes$module == m, ]
+        if (nrow(m_sub) == 1 && "degree" %in% names(m_sub) && m_sub$degree[1] > 1) {
+          n_count <- m_sub$degree[1]
+        } else {
+          n_count <- nrow(m_sub)
+        }
+        tot_deg <- sum(m_sub$degree, na.rm = TRUE)
+
+        nx <- c_xy[1] + circle_radius * cos(th_seq[m_i])
+        ny <- c_xy[2] + circle_radius * sin(th_seq[m_i])
+
+        r_lbl <- circle_radius + 0.55
+        lx <- c_xy[1] + r_lbl * cos(th_seq[m_i])
+        ly <- c_xy[2] + r_lbl * sin(th_seq[m_i])
+
+        m_short <- if (!is.null(module_labels) && m %in% names(module_labels)) {
+          as.character(module_labels[m])
+        } else {
+          sub("^Mod_", "M", m)
+        }
+
+        mod_rows[[length(mod_rows) + 1]] <- data.frame(
+          group = g,
+          module = m,
+          module_short = m_short,
+          n_taxa = n_count,
+          tot_deg = tot_deg,
+          x = nx,
+          y = ny,
+          lx = lx,
+          ly = ly,
+          label = m_short,
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+    mod_nodes_df <- do.call(rbind, mod_rows)
+
+    # Ring Guide Paths
+    ring_paths <- list()
+    theta_ring <- seq(0, 2*pi, length.out = 80)
+    for (g in grp_names) {
+      c_xy <- grp_centers[[g]]
+      ring_paths[[length(ring_paths) + 1]] <- data.frame(
+        group = g,
+        x = c_xy[1] + circle_radius * cos(theta_ring),
+        y = c_xy[2] + circle_radius * sin(theta_ring),
+        stringsAsFactors = FALSE
+      )
+    }
+    ring_paths_df <- do.call(rbind, ring_paths)
+
+    # Group Metadata placed outside the ring
+    meta_df <- NULL
+    if (isTRUE(show_meta)) {
+      meta_list <- list()
+      for (g in grp_names) {
+        c_xy <- grp_centers[[g]]
+        n_n <- sum(nodes_df$group == g)
+        n_e <- if (!is.null(edges_df)) sum(edges_df$group == g) else 0
+        y_pos <- if (layout == "horizontal") {
+          c_xy[2] + 2.4
+        } else if (c_xy[2] > 0) {
+          c_xy[2] + 2.05
+        } else {
+          c_xy[2] - 1.95
+        }
+        meta_list[[length(meta_list) + 1]] <- data.frame(
+          group = g,
+          x = c_xy[1],
+          y = y_pos,
+          label = paste0("Group: ", g, "\n", n_n, " nodes | ", n_e, " edges"),
+          stringsAsFactors = FALSE
+        )
+      }
+      meta_df <- do.call(rbind, meta_list)
+    }
+
+    # Inter-group module preservation links with standoff trimming
+    node_r_standoff <- 0.42
+    cross_mod_links <- list()
+    for (i in 1:(n_grp - 1)) {
+      for (j in (i + 1):n_grp) {
+        g1 <- grp_names[i]; g2 <- grp_names[j]
+        sub1 <- mod_nodes_df[mod_nodes_df$group == g1, ]
+        sub2 <- mod_nodes_df[mod_nodes_df$group == g2, ]
+        common_mods <- intersect(sub1$module, sub2$module)
+
+        for (cm in common_mods) {
+          t1 <- nodes_df$id[nodes_df$group == g1 & nodes_df$module == cm]
+          t2 <- nodes_df$id[nodes_df$group == g2 & nodes_df$module == cm]
+          shared_t <- length(intersect(t1, t2))
+          if (shared_t == 0) shared_t <- 1
+
+          row1 <- sub1[sub1$module == cm, ]
+          row2 <- sub2[sub2$module == cm, ]
+
+          dx <- row2$x[1] - row1$x[1]
+          dy <- row2$y[1] - row1$y[1]
+          dist <- sqrt(dx^2 + dy^2)
+          if (dist > 2 * node_r_standoff) {
+            x_start <- row1$x[1] + node_r_standoff * (dx / dist)
+            y_start <- row1$y[1] + node_r_standoff * (dy / dist)
+            x_end   <- row2$x[1] - node_r_standoff * (dx / dist)
+            y_end   <- row2$y[1] - node_r_standoff * (dy / dist)
+
+            cross_mod_links[[length(cross_mod_links) + 1]] <- data.frame(
+              group1 = g1, group2 = g2,
+              module = cm,
+              type = paste0(g1, " - ", g2),
+              x = x_start, y = y_start, xend = x_end, yend = y_end,
+              weight = shared_t,
+              stringsAsFactors = FALSE
+            )
+          }
+        }
+      }
+    }
+    cross_mod_df <- if (length(cross_mod_links) > 0) do.call(rbind, cross_mod_links) else NULL
+
+    if (is.null(cross_colors) && !is.null(cross_mod_df)) {
+      u_types <- unique(cross_mod_df$type)
+      c_pal <- c("#E7298A", "#1F78B4", "#33A02C", "#FF7F00", "#6A3D9A")
+      cross_colors <- stats::setNames(c_pal[((seq_along(u_types) - 1) %% length(c_pal)) + 1], u_types)
+    }
+
+    # Intra-group chord edges around ring perimeter
+    intra_mod_links <- list()
+    if (!is.null(edges_df) && nrow(edges_df) > 0 && all(c("from", "to", "group") %in% names(edges_df))) {
+      node_mod_map <- stats::setNames(nodes_df$module, paste(nodes_df$group, nodes_df$id))
+      m_from <- node_mod_map[paste(edges_df$group, edges_df$from)]
+      m_to   <- node_mod_map[paste(edges_df$group, edges_df$to)]
+
+      for (g in grp_names) {
+        g_sub <- mod_nodes_df[mod_nodes_df$group == g, ]
+        k_sub <- nrow(g_sub)
+        if (k_sub >= 2) {
+          for (a in 1:k_sub) {
+            b <- if (a == k_sub) 1 else a + 1
+            m1 <- g_sub$module[a]; m2 <- g_sub$module[b]
+            cnt <- sum(edges_df$group == g & ((m_from == m1 & m_to == m2) | (m_from == m2 & m_to == m1)), na.rm = TRUE)
+            if (cnt > 0) {
+              dx <- g_sub$x[b] - g_sub$x[a]
+              dy <- g_sub$y[b] - g_sub$y[a]
+              d <- sqrt(dx^2 + dy^2)
+              if (d > 2 * node_r_standoff) {
+                intra_mod_links[[length(intra_mod_links) + 1]] <- data.frame(
+                  group = g,
+                  x = g_sub$x[a] + node_r_standoff * (dx / d),
+                  y = g_sub$y[a] + node_r_standoff * (dy / d),
+                  xend = g_sub$x[b] - node_r_standoff * (dx / d),
+                  yend = g_sub$y[b] - node_r_standoff * (dy / d),
+                  weight = cnt,
+                  stringsAsFactors = FALSE
+                )
+              }
+            }
+          }
+        }
+      }
+    }
+    intra_mod_df <- if (length(intra_mod_links) > 0) do.call(rbind, intra_mod_links) else NULL
+
+    # Filter any segment that intersects module labels or metadata
+    label_boxes <- data.frame(x = mod_nodes_df$lx, y = mod_nodes_df$ly)
+    meta_boxes  <- if (!is.null(meta_df)) data.frame(x = meta_df$x, y = meta_df$y) else NULL
+    all_boxes   <- rbind(label_boxes, meta_boxes)
+
+    cross_mod_df <- filter_edges_against_boxes(cross_mod_df, all_boxes, hw = 0.40, hh = 0.28)
+    intra_mod_df <- filter_edges_against_boxes(intra_mod_df, all_boxes, hw = 0.40, hh = 0.28)
+
+    # Styling colors based on preset
+    ring_color        <- if (preset %in% c("dark", "cell")) "#334155" else "grey82"
+    intra_edge_color  <- if (preset %in% c("dark", "cell")) "#1E293B" else "grey85"
+    node_border_color <- if (preset %in% c("dark", "cell")) "#0F141C" else "white"
+
+    # Assemble Plot
+    p <- ggplot2::ggplot()
+
+    p <- p + ggplot2::geom_path(
+      data = ring_paths_df,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["group"]]),
+      color = ring_color, linetype = "dotted", linewidth = 0.35
+    )
+
+    if (!is.null(intra_mod_df) && nrow(intra_mod_df) > 0) {
+      p <- p + ggplot2::geom_segment(
+        data = intra_mod_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]]),
+        color = intra_edge_color, linewidth = 0.25, alpha = 0.70
+      )
+    }
+
+    if (!is.null(cross_mod_df) && nrow(cross_mod_df) > 0) {
+      p <- p + ggplot2::geom_segment(
+        data = cross_mod_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], xend = .data[["xend"]], yend = .data[["yend"]],
+                     color = .data[["type"]], linewidth = .data[["weight"]]),
+        alpha = cross_alpha
+      ) +
+      ggplot2::scale_color_manual(values = cross_colors, name = "Preserved Cross Links") +
+      ggplot2::scale_linewidth_continuous(range = c(0.45, 1.35), name = "Conserved Taxa")
+    }
+
+    if (!is.null(meta_df)) {
+      p <- p + ggplot2::geom_text(
+        data = meta_df,
+        ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+        size = meta_label_size, color = meta_label_color, fontface = "bold", lineheight = 0.95
+      )
+    }
+
+    p <- p + ggplot2::geom_point(
+      data = mod_nodes_df,
+      ggplot2::aes(x = .data[["x"]], y = .data[["y"]], size = .data[["n_taxa"]], fill = .data[["module"]]),
+      shape = 21, color = node_border_color, stroke = 0.8
+    ) +
+    ggplot2::scale_fill_manual(values = module_colors, name = "Network Module") +
+    ggplot2::scale_size_continuous(
+      range = module_size_range,
+      name = "Module Size (Taxa)"
+    ) +
+    ggplot2::guides(
+      size = ggplot2::guide_legend(
+        override.aes = list(fill = "grey50", color = "grey20", shape = 21, stroke = 0.5)
+      ),
+      fill = ggplot2::guide_legend(override.aes = list(size = 3.8))
+    )
+
+    resolved_show_labels <- if (!is.null(show_module_labels)) isTRUE(show_module_labels) else TRUE
+    if (resolved_show_labels) {
+      if (isTRUE(module_label_bg)) {
+        p <- p + ggplot2::geom_label(
+          data = mod_nodes_df,
+          ggplot2::aes(x = .data[["lx"]], y = .data[["ly"]], label = .data[["label"]]),
+          size = module_label_size,
+          fill = module_label_fill,
+          color = module_label_color,
+          fontface = "bold",
+          alpha = 0.95,
+          label.padding = ggplot2::unit(0.16, "lines"),
+          label.r = ggplot2::unit(0.14, "lines"),
+          linewidth = 0,
+          show.legend = FALSE
+        )
+      } else {
+        p <- p + ggplot2::geom_text(
+          data = mod_nodes_df,
+          ggplot2::aes(x = .data[["lx"]], y = .data[["ly"]], label = .data[["label"]]),
+          size = module_label_size,
+          color = module_label_color,
+          fontface = "bold",
+          show.legend = FALSE
+        )
+      }
+    }
+
+    y_lims <- if (layout == "horizontal") c(-3.2, 4.2) else c(-3.8, 6.2)
+    p <- p + ggplot2::coord_fixed(xlim = c(-5.5, 5.5), ylim = y_lims)
+
+    if (preset %in% c("dark", "cell")) {
+      p <- p +
+        ggplot2::theme_void() +
+        ggplot2::theme(
+          plot.background   = ggplot2::element_rect(fill = "#0F141C", color = NA),
+          panel.background  = ggplot2::element_rect(fill = "#0F141C", color = NA),
+          plot.title        = ggplot2::element_text(color = "#F8FAFC", face = "bold", size = 11, hjust = 0.5),
+          legend.position   = "right",
+          legend.background = ggplot2::element_rect(fill = "#0F141C", color = NA),
+          legend.title      = ggplot2::element_text(color = "#F1F5F9", face = "bold", size = 8.5),
+          legend.text       = ggplot2::element_text(color = "#CBD5E1", size = 7.5)
+        )
+    } else {
+      p <- p +
+        ggplot2::theme_void() +
+        ggplot2::theme(
+          plot.background  = ggplot2::element_rect(fill = "white", color = NA),
+          panel.background = ggplot2::element_rect(fill = "white", color = NA),
+          plot.title       = ggplot2::element_text(face = "bold", size = 11, hjust = 0.5),
+          legend.position  = "right",
+          legend.title     = ggplot2::element_text(size = 9, face = "bold"),
+          legend.text      = ggplot2::element_text(size = 8)
+        )
+    }
+
+    return(list(plot = p, nodes = mod_nodes_df, edges = intra_mod_df, cross = cross_mod_df))
+  }
+
+  # =========================================================================
+  # BRANCH: NODE-LEVEL TOPOLOGY
+  # =========================================================================
   # Build layout coordinates if x, y missing
   if (!all(c("x", "y") %in% names(nodes_df))) {
     nodes_df$x <- 0
@@ -371,24 +748,18 @@ build_cross_network_layers = function(
       n_g <- length(idx)
       if (n_g == 0) next
       c_xy <- grp_centers[[g]]
-      if (level == "module") {
-        angles <- seq(0, 2*pi, length.out = n_g + 1)[1:n_g]
-        nodes_df$x[idx] <- c_xy[1] + circle_radius * cos(angles)
-        nodes_df$y[idx] <- c_xy[2] + circle_radius * sin(angles)
-      } else {
-        mods <- unique(nodes_df$module[idx])
-        n_m <- length(mods)
-        m_ang <- seq(0, 2*pi, length.out = n_m + 1)[1:n_m]
-        for (m_i in seq_along(mods)) {
-          m_idx <- idx[nodes_df$module[idx] == mods[m_i]]
-          n_sub <- length(m_idx)
-          sub_cx <- c_xy[1] + 0.45 * cos(m_ang[m_i])
-          sub_cy <- c_xy[2] + 0.45 * sin(m_ang[m_i])
-          sub_r <- stats::rbeta(n_sub, 1.2, 2.5) * 0.50
-          sub_th <- stats::runif(n_sub, 0, 2*pi)
-          nodes_df$x[m_idx] <- sub_cx + sub_r * cos(sub_th)
-          nodes_df$y[m_idx] <- sub_cy + sub_r * sin(sub_th)
-        }
+      mods <- unique(nodes_df$module[idx])
+      n_m <- length(mods)
+      m_ang <- seq(0, 2*pi, length.out = n_m + 1)[1:n_m]
+      for (m_i in seq_along(mods)) {
+        m_idx <- idx[nodes_df$module[idx] == mods[m_i]]
+        n_sub <- length(m_idx)
+        sub_cx <- c_xy[1] + 0.45 * cos(m_ang[m_i])
+        sub_cy <- c_xy[2] + 0.45 * sin(m_ang[m_i])
+        sub_r <- stats::rbeta(n_sub, 1.2, 2.5) * 0.50
+        sub_th <- stats::runif(n_sub, 0, 2*pi)
+        nodes_df$x[m_idx] <- sub_cx + sub_r * cos(sub_th)
+        nodes_df$y[m_idx] <- sub_cy + sub_r * sin(sub_th)
       }
     }
   }

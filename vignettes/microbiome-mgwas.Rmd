@@ -310,7 +310,7 @@ p_node
 
 #### Style 2: Module-Level Ring Preservation
 
-```{r cross-network-module, fig.width=8, fig.height=5.5}
+```{r cross-network-module, fig.width=8.5, fig.height=6.2}
 # Module-level ring topology with member halos and conserved links
 p_mod <- cliplot_cross_network_graph(
   nodes       = demo_net$nodes,
