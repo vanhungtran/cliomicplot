@@ -428,18 +428,19 @@ edges, and conserved cross-group links at either node level
 <p><img src="microbiome-mgwas_files/figure-html/cross-network-graphs-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
-<h4 id="style-2-module-level-ring-preservation">Style 2: Module-Level Ring Preservation<a class="anchor" aria-label="anchor" href="#style-2-module-level-ring-preservation"></a>
+<h4 id="style-2-module-level-ring-preservation-colored-by-group">Style 2: Module-Level Ring Preservation (Colored by Group)<a class="anchor" aria-label="anchor" href="#style-2-module-level-ring-preservation-colored-by-group"></a>
 </h4>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Module-level ring topology with member halos and conserved links</span></span>
+<code class="sourceCode R"><span><span class="co"># Module-level ring topology colored by experimental groups with conserved links</span></span>
 <span><span class="va">p_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_cross_network_graph.html">cliplot_cross_network_graph</a></span><span class="op">(</span></span>
 <span>  nodes       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">nodes</span>,</span>
 <span>  edges       <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">edges</span>,</span>
 <span>  cross_edges <span class="op">=</span> <span class="va">demo_net</span><span class="op">$</span><span class="va">cross_edges</span>,</span>
 <span>  level       <span class="op">=</span> <span class="st">"module"</span>,</span>
+<span>  color_by    <span class="op">=</span> <span class="st">"group"</span>,</span>
 <span>  preset      <span class="op">=</span> <span class="st">"nature"</span>,</span>
 <span>  scifig      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  title       <span class="op">=</span> <span class="st">"Cross-Network Module Preservation Rings (Module Ring Style)"</span></span>
+<span>  title       <span class="op">=</span> <span class="st">"Cross-Network Module Preservation Rings (Colored by Group)"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">p_mod</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/cross-network-module-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
