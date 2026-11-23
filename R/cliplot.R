@@ -170,6 +170,22 @@ cliplot.default = function(
   settings$type_name = if (inherits(type, "cliplot_type")) type$name else type
   settings$type = resolve_type(type)
 
+  # Resolve by from data if passed as a column name string
+  if (is.character(by) && length(by) == 1L && !is.null(data) && is.data.frame(data) && by %in% names(data)) {
+    by = data[[by]]
+  }
+
+  # If by is not supplied, but x is categorical and a discrete palette or grouping type
+  # is requested, default by to x so boxes/points color by categories and stat.test works
+  if (is.null(by) && !is.null(x) && (is.character(x) || is.factor(x)) &&
+      (settings$type_name %in% c("boxplot", "violin", "beeswarm", "raincloud") || !is.null(palette))) {
+    by = x
+    if (is.null(legend)) {
+      settings$legend = "none"
+    }
+  }
+  settings$by = by
+
   # ---- Let plot types normalize their data-specific settings ----
   if (is.function(settings$type$data)) {
     settings$type$data(settings, ...)
@@ -684,6 +700,9 @@ add_stat_annotations = function(p, settings, data) {
             call. = FALSE)
     return(p)
   }
+  if (!"package:ggpubr" %in% search()) {
+    suppressPackageStartupMessages(require("ggpubr", quietly = TRUE, character.only = TRUE))
+  }
 
   comparisons = utils::combn(as.character(groups), 2, simplify = FALSE)
 
@@ -708,12 +727,24 @@ add_stat_annotations = function(p, settings, data) {
 
   method = method_map[[settings$stat.test]] %||% "wilcox.test"
 
+  # Ensure ggpubr helper create_p_label is available in plot environment
+  if (requireNamespace("ggpubr", quietly = TRUE) &&
+      exists("create_p_label", envir = asNamespace("ggpubr")) &&
+      !is.null(p$plot_env) &&
+      !exists("create_p_label", envir = p$plot_env, inherits = FALSE)) {
+    assign("create_p_label", get("create_p_label", envir = asNamespace("ggpubr")), envir = p$plot_env)
+  }
+
   # For >2 groups, use global test, else pairwise
   if (length(groups) > 2 && settings$stat.test %in% c("kruskal.test", "anova")) {
-    p = p + ggpubr::stat_compare_means(
-      method = method,
-      label  = settings$stat.label %||% "p.format"
-    )
+    if (is.null(settings$stat.label)) {
+      p = p + ggpubr::stat_compare_means(method = method)
+    } else {
+      p = p + ggpubr::stat_compare_means(
+        method = method,
+        label  = settings$stat.label
+      )
+    }
   } else {
     p = p + ggpubr::stat_compare_means(
       comparisons = comparisons,

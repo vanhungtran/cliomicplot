@@ -13,6 +13,18 @@ test_that("type_boxplot works without grouping", {
 test_that("type_boxplot works with grouping", {
   p <- cliplot(Sepal.Length ~ Species, data = iris, type = "boxplot")
   expect_s3_class(p, "ggplot")
+
+  # Verify by string name lookup
+  p_str <- cliplot(Sepal.Length ~ Species, data = iris, by = "Species", type = "boxplot", palette = "nature")
+  expect_s3_class(p_str, "ggplot")
+  d_str <- ggplot2::layer_data(p_str, 1)
+  expect_equal(length(unique(d_str$fill)), 3)
+
+  # Verify auto-grouping by categorical x when by is omitted
+  p_auto <- cliplot(Sepal.Length ~ Species, data = iris, type = "boxplot", palette = "nature")
+  expect_s3_class(p_auto, "ggplot")
+  d_auto <- ggplot2::layer_data(p_auto, 1)
+  expect_equal(length(unique(d_auto$fill)), 3)
 })
 
 # ---- violin ----

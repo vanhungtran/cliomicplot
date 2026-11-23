@@ -61,9 +61,10 @@ type_boxplot = function(
     draw = function(data, mapping, settings, ...) {
       p = ggplot2::ggplot(data, mapping)
 
-      # Build position dodge if grouping is present
+      # Build position dodge if grouping is present and distinct from x
+      is_grouped_dodge <- !is.null(settings$by) && !identical(as.character(data[["x"]]), as.character(data[["..by.."]]))
       dodge_width <- position_dodge %||% 0.9
-      pos <- ggplot2::position_dodge(width = dodge_width)
+      pos <- if (is_grouped_dodge) ggplot2::position_dodge(width = dodge_width) else ggplot2::position_identity()
 
       # Add violin if requested
       if (add_violin) {
@@ -112,15 +113,23 @@ type_boxplot = function(
       # Add jittered points (publication style)
       if (add_jitter) {
         if (!is.null(settings$by)) {
+          jit_pos <- if (is_grouped_dodge) {
+            ggplot2::position_jitterdodge(
+              jitter.width  = jitter_width,
+              dodge.width   = dodge_width,
+              jitter.height = 0
+            )
+          } else {
+            ggplot2::position_jitter(
+              width  = jitter_width,
+              height = 0
+            )
+          }
           p = p + ggplot2::geom_jitter(
             ggplot2::aes(color = .data[["..by.."]]),
             alpha    = jitter_alpha,
             size     = jitter_size,
-            position = ggplot2::position_jitterdodge(
-              jitter.width = jitter_width,
-              dodge.width  = dodge_width,
-              jitter.height = 0
-            )
+            position = jit_pos
           )
         } else {
           p = p + ggplot2::geom_jitter(

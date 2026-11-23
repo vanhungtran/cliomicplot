@@ -72,8 +72,10 @@ cohort_df <- data.frame(
 cliplot(
   SCORAD ~ Subgroup,
   data = cohort_df,
+  by = "Subgroup",
   type = "boxplot",
   palette = "nature",
+  legend = "none",
   stat.test = "kruskal.test",
   title = "SCORAD Severity by Host FLG Genotype",
   ylab = "Clinical SCORAD Index"
