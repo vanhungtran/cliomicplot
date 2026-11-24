@@ -103,24 +103,30 @@ reference:
       - starts_with("type_")
 
 articles:
-  - title: 1. Foundations & Publication Design
-    desc: Core grammar, journal typography, trim sizing, and multi-panel composite assembly.
+  - title: "Part I — Graphic Grammar and Design System"
+    desc: "Core grammar, layer composition, journal typography, trim sizing, and SciFig quality assurance."
     contents:
       - cliomicplot
       - themes-palettes
       - journal-plots
-  - title: 2. Clinical Trials & Oncology
-    desc: Time-to-event milestones, RECIST tumor response, swimmer timelines, and MCID effect sizes.
+  - title: "Part II — Clinical Trials and Survival Analysis"
+    desc: "Time-to-event milestones, multivariable forest plots, RECIST tumor waterfall, swimmer timelines, and MCID effect sizes."
     contents:
       - oncology
-  - title: 3. Multi-Omics & Systems Biology
-    desc: Proteomics, metabolomics, differential expression, mGWAS, and coupled microbial networks.
+  - title: "Part III — High-Dimensional Omics Visualizations"
+    desc: "Differential expression, multi-contrast volcano plots, translational proteomics, pathway enrichment, microbial GWAS, and dyad strain sharing."
     contents:
-      - multiomics
       - volcano-plot
+      - multiomics
       - microbiome-mgwas
-  - title: 4. Published Paper Re-creations
-    desc: Complete end-to-end figure reproductions from published journal datasets.
+  - title: "Part IV — Systems Biology and Coupled Multi-Network Architectures"
+    desc: "Cross-condition network modularity, topological layout styles, coupled environmental heatmaps, module preservation, and permutation testing."
     contents:
+      - coupled-networks
+  - title: "Part V — Publication Composites and Applied Case Studies"
+    desc: "Complete translational case studies in atopic dermatitis and immuno-oncology, and published paper reproductions."
+    contents:
+      - case-study-atopic-dermatitis
+      - case-study-cancer-immunotherapy
       - recreate-paper
       - recreate-spamtp

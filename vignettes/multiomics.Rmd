@@ -1,5 +1,5 @@
 ---
-title: "Multi-Omics Exploratory Analysis with cliomicplot"
+title: "Translational Proteomics and Functional Pathway Enrichment"
 author: "Lucas VHH Tran"
 date: "`r Sys.Date()`"
 output:
@@ -12,7 +12,7 @@ output:
       in_header: header.html
       after_body: reportdown.js
 vignette: >
-  %\VignetteIndexEntry{Multi-Omics Exploratory Analysis with cliomicplot}
+  %\VignetteIndexEntry{Translational Proteomics and Functional Pathway Enrichment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

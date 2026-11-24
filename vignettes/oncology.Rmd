@@ -1,5 +1,5 @@
 ---
-title: "End-to-End Oncology Analysis with cliomicplot"
+title: "Clinical Trials, Survival Analysis, and Oncology Trajectories"
 author: "Lucas VHH Tran"
 date: "`r Sys.Date()`"
 output:
@@ -12,7 +12,7 @@ output:
       in_header: header.html
       after_body: reportdown.js
 vignette: >
-  %\VignetteIndexEntry{End-to-End Oncology Analysis with cliomicplot}
+  %\VignetteIndexEntry{Clinical Trials, Survival Analysis, and Oncology Trajectories}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
