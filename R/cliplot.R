@@ -312,7 +312,9 @@ cliplot.formula = function(
 ) {
 
   formula = x
-  parsed = parse_cli_formula(formula, data)
+  form_env = environment(formula)
+  if (is.null(form_env)) form_env = parent.frame()
+  parsed = parse_cli_formula(formula, data, env = form_env)
 
   # Detect Surv() on LHS and extract time/event column names for KM plots.
   # Also: for Surv() formulas, the RHS is the grouping variable, so
