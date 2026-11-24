@@ -215,6 +215,7 @@ cli_network_permutation = function(
 #' Print Method for Network Permutation Test
 #' @param x Object of class \code{cli_network_permutation}.
 #' @param ... Additional arguments.
+#' @keywords internal
 #' @export
 print.cli_network_permutation = function(x, ...) {
   ref_g  <- attr(x, "ref_group")  %||% "Reference"

@@ -1232,6 +1232,7 @@ plot.cli_env_network_data = function(x, ...) {
 #' Print Method for Environmental Network Data Objects
 #' @param x Object of class \code{cli_env_network_data}.
 #' @param ... Additional arguments.
+#' @keywords internal
 #' @method print cli_env_network_data
 #' @export
 print.cli_env_network_data = function(x, ...) {

@@ -72,6 +72,8 @@ reference:
       - type_cross_network_graph
       - cliplot_env_network
       - type_env_network
+      - cli_calc_env_links
+      - cli_network_permutation
       - type_module_compare
       - type_module_trait
       - cli_module_preservation
@@ -86,6 +88,16 @@ reference:
       - cli_network_rewiring
       - generate_demo_cross_network
       - cli_demo_vitality_multiomics
+  - title: Coupled Environmental Network Grammar Layers
+    contents:
+      - cli_env_network_data
+      - geom_env_boundary
+      - geom_env_central_network
+      - geom_env_corner_heatmaps
+      - geom_env_links
+      - coord_env_network
+      - theme_env_network
+      - plot.cli_env_network_data
   - title: General plot types
     contents:
       - starts_with("type_")

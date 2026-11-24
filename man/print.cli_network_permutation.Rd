@@ -14,3 +14,4 @@
 \description{
 Print Method for Network Permutation Test
 }
+\keyword{internal}
