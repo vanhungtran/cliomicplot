@@ -116,9 +116,9 @@ Waterfall plots rank individual patients by the maximum percentage change in tar
 
 ```{r io-waterfall, fig.width=8.5, fig.height=5.0}
 set.seed(42)
-n_eval <- 30
-pat_ids <- paste0("PT-", sprintf("%03d", 1:n_eval))
-changes <- sort(rnorm(n_eval, mean = -22, sd = 38), decreasing = TRUE)
+n_eval <- 24
+pat_ids <- paste0("PT-", sprintf("%02d", 1:n_eval))
+changes <- sort(rnorm(n_eval, mean = -22, sd = 36), decreasing = TRUE)
 
 wf_io <- data.frame(
   Patient = factor(pat_ids, levels = pat_ids),
@@ -166,14 +166,14 @@ p_swim <- cliplot(
   type = type_swimmer(
     bar_fill      = "BestResp",
     ongoing       = "Ongoing",
-    bar_linewidth = 3.5
+    bar_linewidth = 2.8
   ),
   bar_palette = "jama",
   title       = "Treatment Duration and Ongoing Response Kinetics",
   subtitle    = "Arrows denote active treatment at database lock",
   ylab        = "Months from Enrollment"
 ) +
-  theme(axis.text.y = element_text(size = 6.0))
+  theme(axis.text.y = element_text(size = 5.5))
 
 p_swim
 ```
@@ -184,13 +184,119 @@ p_swim
 
 We assemble all four endpoint figures into a publication composite using `patchwork`:
 
-```{r io-composite, fig.width=8.5, fig.height=7.5}
-p_composite <- (p_km | p_forest) / (p_wf | p_swim) +
-  plot_layout(heights = c(1.0, 1.1)) +
+```{r io-composite, fig.width=8.5, fig.height=7.5, warning=FALSE, message=FALSE}
+# Fine-tune panel components for multi-panel publication grid
+p_km_plot <- p_km[[1]] +
+  labs(
+    title    = "Overall Survival",
+    subtitle = "Landmark Milestones at 6 & 12 Months",
+    x        = NULL
+  ) +
+  theme(
+    plot.title        = element_text(size = 8.5, face = "bold"),
+    plot.subtitle     = element_text(size = 7.0, color = "grey30"),
+    axis.title        = element_text(size = 7.5),
+    axis.text         = element_text(size = 6.5),
+    legend.position   = c(0.85, 0.82),
+    legend.background = element_blank(),
+    legend.title      = element_blank(),
+    legend.text       = element_text(size = 6.5),
+    axis.text.x       = element_blank(),
+    plot.margin       = margin(t = 2, r = 12, b = 0, l = 5, "pt")
+  )
+
+p_km_table <- p_km[[2]] +
+  labs(title = NULL, subtitle = NULL, x = "Time on Study (days)", y = NULL) +
+  theme(
+    plot.title    = element_blank(),
+    plot.subtitle = element_blank(),
+    axis.title.y  = element_blank(),
+    axis.text.y   = element_text(size = 6.5, face = "bold"),
+    axis.text.x   = element_text(size = 6.5),
+    axis.title.x  = element_text(size = 7.0),
+    plot.margin   = margin(t = -2, r = 12, b = 4, l = 5, "pt")
+  )
+
+p_forest_comp <- p_forest +
+  scale_x_log10(expand = expansion(mult = c(0.05, 0.35))) +
+  coord_cartesian(clip = "off") +
+  labs(
+    title    = "Subgroup Consistency",
+    subtitle = "Hazard Ratios (95% CI) Across PD-L1 Strata",
+    x        = "Hazard Ratio (95% CI)",
+    y        = NULL
+  ) +
+  theme(
+    plot.title      = element_text(size = 8.5, face = "bold"),
+    plot.subtitle   = element_text(size = 7.0, color = "grey30"),
+    axis.title.y    = element_blank(),
+    axis.text.y     = element_text(size = 7.0, face = "bold"),
+    axis.text.x     = element_text(size = 6.5),
+    axis.title.x    = element_text(size = 7.5),
+    legend.position = "none",
+    plot.margin     = margin(t = 2, r = 35, b = 4, l = 10, "pt")
+  )
+
+p_wf_comp <- p_wf +
+  labs(
+    title    = "Tumor Burden Response",
+    subtitle = "RECIST 1.1 Criteria (PD: +20%, PR: -30%)",
+    x        = "Individual Patients (n = 24, ranked by change)",
+    y        = "Best % Change in Target Lesions"
+  ) +
+  theme(
+    plot.title      = element_text(size = 8.5, face = "bold"),
+    plot.subtitle   = element_text(size = 7.0, color = "grey30"),
+    axis.text.x     = element_blank(),
+    axis.ticks.x    = element_blank(),
+    axis.text.y     = element_text(size = 6.5),
+    axis.title      = element_text(size = 7.5),
+    legend.position = "bottom",
+    legend.title    = element_text(size = 6.5, face = "bold"),
+    legend.text     = element_text(size = 6.0),
+    legend.key.size = unit(3, "mm"),
+    plot.margin     = margin(t = 6, r = 12, b = 5, l = 5, "pt")
+  )
+
+p_swim_comp <- p_swim +
+  labs(
+    title    = "Treatment Duration",
+    subtitle = "Ongoing Response at Database Cutoff",
+    x        = "Time on Study (months)",
+    y        = "Patients (n = 24)"
+  ) +
+  theme(
+    plot.title      = element_text(size = 8.5, face = "bold"),
+    plot.subtitle   = element_text(size = 7.0, color = "grey30"),
+    axis.text.y     = element_text(size = 5.2),
+    axis.text.x     = element_text(size = 6.5),
+    axis.title      = element_text(size = 7.5),
+    legend.position = "bottom",
+    legend.title    = element_text(size = 6.5, face = "bold"),
+    legend.text     = element_text(size = 6.0),
+    legend.key.size = unit(3, "mm"),
+    plot.margin     = margin(t = 6, r = 12, b = 5, l = 5, "pt")
+  )
+
+# 5-slot grid: (a) KM curve, (b) Forest plot, untagged Risk Table, (c) Waterfall, (d) Swimmer
+design <- "
+11112222
+11112222
+11112222
+33332222
+44445555
+44445555
+44445555
+44445555
+"
+
+p_composite <- p_km_plot + p_forest_comp + p_km_table + p_wf_comp + p_swim_comp +
+  plot_layout(design = design) +
   plot_annotation(
-    tag_levels = "a",
-    tag_prefix = "(",
-    tag_suffix = ")"
+    tag_levels = list(c("(a)", "(b)", "", "(c)", "(d)")),
+    theme = theme(
+      plot.tag = element_text(size = 9.5, face = "bold")
+    )
   )
 
 p_composite
