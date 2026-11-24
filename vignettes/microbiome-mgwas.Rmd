@@ -236,6 +236,18 @@ cliplot(
 - **Marginals**: Displays marginal row and column totals ($N$) representing the size of each discovery and replication module.
 - **Biological Interpretation**: Strong diagonal concentration indicates stable core community preservation. Off-diagonal dispersion indicates modular reorganization or community fragmentation associated with disease state or treatment.
 
+### Mathematical Formulation of Module Overlap
+
+For discovery module $m_1$ containing $m$ features and replication module $m_2$ containing $n$ features drawn from a background universe of size $N$, the probability of observing an overlap count $X \ge k$ by random sampling is calculated via the cumulative hypergeometric distribution:
+
+$$P(X \ge k) = \sum_{i=k}^{\min(m, n)} \frac{\binom{m}{i} \binom{N - m}{n - i}}{\binom{N}{n}}$$
+
+The Representation Factor ($RF$) quantifies enrichment relative to random expectation:
+
+$$RF = \frac{k}{(m \times n) / N}$$
+
+An $RF > 1.0$ indicates enriched overlap; $RF < 1.0$ indicates depleted overlap.
+
 ---
 
 ## 6. Correlation Analysis Between Modules and Environmental Factors
@@ -619,10 +631,21 @@ cliplot_module_preservation(
 )
 ```
 
-#### Interpretation and Preservation Thresholds
+#### Mathematical Definition of Module Preservation
 
-- **Preservation Metric ($Z_{\text{summary}}$)**: Combines 4 density statistics (mean connectivity, clustering coefficient, maximum adjacency) and 3 connectivity statistics (intramodular hub rank preservation).
-- **Threshold Lines**:
+The composite preservation statistic $Z_{\text{summary}}$ aggregates density and connectivity preservation metrics over $B$ permutations (Langfelder et al., *PLoS Comput Biol* 2011):
+
+$$Z_{\text{summary}} = \frac{Z_{\text{density}} + Z_{\text{connectivity}}}{2}$$
+
+where $Z_{\text{density}}$ evaluates whether features within module $q$ maintain elevated mutual correlation and clustering in the test condition:
+
+$$Z_{\text{density}} = \frac{Z_{\text{mean\_adj}} + Z_{\text{mean\_k}} + Z_{\text{cluster\_coef}} + Z_{\text{density\_raw}}}{4}$$
+
+and $Z_{\text{connectivity}}$ evaluates whether intramodular hub feature rankings are conserved between reference and test networks:
+
+$$Z_{\text{connectivity}} = \frac{Z_{\text{kIM}} + Z_{\text{kME}}}{2}, \quad Z = \frac{\text{obs} - \mu_{\text{perm}}}{\sigma_{\text{perm}}}$$
+
+- **Preservation Thresholds**:
   - $Z < 2$ (dashed red line): No statistical evidence of module preservation. The community structure is rewired in the test condition.
   - $2 \le Z \le 10$ (dashed orange line): Moderate module preservation.
   - $Z > 10$ (dashed green line): Strong, statistically significant module preservation.
@@ -647,9 +670,20 @@ cliplot_network_robustness(
 )
 ```
 
-#### Interpretation of Attack Curves
+#### Mathematical Definition of Natural Connectivity
 
-- **Natural Connectivity ($\bar{\lambda}$)**: Measures overall topological integrity and alternate path redundancy across nodes.
+Natural connectivity $\bar{\lambda}$ derives from the spectrum of the network adjacency matrix $A$ and reflects the redundancy of alternative paths between all node pairs (Wu et al., *IEEE Trans Reliab* 2012):
+
+$$\bar{\lambda} = \ln \left( \frac{1}{N} \sum_{i=1}^N e^{\lambda_i} \right)$$
+
+where $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_N$ are the eigenvalues of $A$. Natural connectivity strictly decreases monotonically as edges and nodes are removed, quantifying alternate path redundancy and topological stability.
+
+The competitive-to-cooperative edge balance is evaluated as:
+
+$$R_{\pm} = \frac{E_{-}}{E_{+}}$$
+
+where $E_{-}$ is the count of negative correlation edges and $E_{+}$ is the count of positive correlation edges.
+
 - **Random Attack Curve**: Assesses resilience against stochastic taxon extinction or biological fluctuations. Robust networks maintain high connectivity across progressive random removal.
 - **Targeted Degree Attack Curve**: Evaluates vulnerability when keystone hub species are removed. Rapid connectivity decline indicates heavy dependence on a few dominant hub taxa.
 
@@ -767,5 +801,35 @@ cli_save(
   qa      = TRUE
 )
 ```
+
+---
+
+## 10. Comparative Benchmark: cliomicplot vs Existing Network & Indicator Packages
+
+`cliomicplot` introduces an integrated single-canvas architecture for clinical and multi-omics figures. The table below benchmarks `cliomicplot` against current state-of-the-art tools including `ggClusterNet 2` (*iMeta* 2025, doi:[10.1002/imt2.70041](https://doi.org/10.1002/imt2.70041)), `linkET`, `microeco`, and `ComplexHeatmap`:
+
+| Benchmark Dimension | `ggClusterNet 2` | `linkET` | `microeco` | `ComplexHeatmap` | `cliomicplot` |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Output Object Type** | `ggplot` / `igraph` | `ggplot` | Custom R6 class | `Heatmap` grob | Pure `ggplot2` |
+| **Primary Syntax** | Function wrappers | Custom pipes | R6 methods | S4 methods | Standard formula (`y ~ x \| group`) |
+| **Clinical Trial Endpoints** | None | None | None | None | Complete (KM, MCID, Swimmer, Waterfall, RECIST) |
+| **Multi-Group Network Topologies** | Facets / bipartite | None | None | None | 8 styles (`concentric`, `bipolar`, `science`, `flow`, `nature`, `cell`, `lancet`) |
+| **Indicator Heatmap Coupling** | 1-sided linear | 1-sided lower triangle | Rectangular matrix | Heatmap annotations | Symmetrical 4-corner multi-domain canvas |
+| **External Domains Supported** | 1 domain | 1 domain | 1 domain | Column/row annotations | 1 to 4 independent corner matrices |
+| **Collision-Free Text Exclusion** | Manual tuning | Manual tuning | Manual tuning | Manual tuning | Automated (`line_intersects_rect` geometric pruning) |
+| **Publication Typography Gates** | None | None | None | None | AI4SciFig enforced ($\ge 5.0$ pt font floor, hairline floors) |
+| **Journal Submission Exporter** | None | None | None | None | `cli_save()` with journal dimension presets |
+
+### Architectural Distinctions
+
+1. **Native Single-Canvas Coordinates**:
+   - `ggClusterNet 2` and `linkET` generate asymmetric layouts (triangular heatmap on the lower-left, rays extending outward to the upper-right).
+   - `cliplot_env_network()` maps all elements onto a unified continuous Cartesian plane ($[-7.4, 7.4] \times [-7.4, 7.4]$), positioning a central circular network ($r = 2.80$) surrounded by four independent corner correlation matrices.
+2. **Deterministic Label Placement**:
+   - High-density multi-domain plots frequently suffer from text-stroke collisions.
+   - `cliomicplot` implements an internal ray-casting algorithm (`line_intersects_rect()`) that evaluates every intra-module edge and inter-domain link against module label bounding boxes, pruning colliding segments prior to rendering.
+3. **Clinical and Multi-Omics Harmonization**:
+   - Rather than requiring separate packages for clinical survival analysis, differential abundance, and network ecology, `cliomicplot` unifies all 55+ plot types under a consistent formula API and theme system.
+
 
 

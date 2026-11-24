@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-11-23</h4>
+            <h4 data-toc-skip class="date">2026-11-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/microbiome-mgwas.Rmd" class="external-link"><code>vignettes/microbiome-mgwas.Rmd</code></a></small>
       <div class="d-none name"><code>microbiome-mgwas.Rmd</code></div>
@@ -305,6 +305,34 @@ concentration indicates stable core community preservation. Off-diagonal
 dispersion indicates modular reorganization or community fragmentation
 associated with disease state or treatment.</li>
 </ul>
+</div>
+<div class="section level3">
+<h3 id="mathematical-formulation-of-module-overlap">Mathematical Formulation of Module Overlap<a class="anchor" aria-label="anchor" href="#mathematical-formulation-of-module-overlap"></a>
+</h3>
+<p>For discovery module
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mn>1</mn></msub><annotation encoding="application/x-tex">m_1</annotation></semantics></math>
+containing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+features and replication module
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mn>2</mn></msub><annotation encoding="application/x-tex">m_2</annotation></semantics></math>
+containing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+features drawn from a background universe of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
+the probability of observing an overlap count
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>≥</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">X \ge k</annotation></semantics></math>
+by random sampling is calculated via the cumulative hypergeometric
+distribution:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mo>≥</mo><mi>k</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mi>k</mi></mrow><mrow><mrow><mi mathvariant="normal">min</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>m</mi><mo>,</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo></mrow></munderover><mfrac><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>m</mi><mi>i</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mrow><mi>N</mi><mo>−</mo><mi>m</mi></mrow><mrow><mi>n</mi><mo>−</mo><mi>i</mi></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><mi>n</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(X \ge k) = \sum_{i=k}^{\min(m, n)} \frac{\binom{m}{i} \binom{N - m}{n - i}}{\binom{N}{n}}</annotation></semantics></math></p>
+<p>The Representation Factor
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>F</mi></mrow><annotation encoding="application/x-tex">RF</annotation></semantics></math>)
+quantifies enrichment relative to random expectation:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>F</mi><mo>=</mo><mfrac><mi>k</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>m</mi><mo>×</mo><mi>n</mi><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">RF = \frac{k}{(m \times n) / N}</annotation></semantics></math></p>
+<p>An
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>F</mi><mo>&gt;</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">RF &gt; 1.0</annotation></semantics></math>
+indicates enriched overlap;
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>F</mi><mo>&lt;</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">RF &lt; 1.0</annotation></semantics></math>
+indicates depleted overlap.</p>
 <hr>
 </div>
 </div>
@@ -851,17 +879,29 @@ thresholds:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/module-preservation-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <div class="section level4">
-<h4 id="interpretation-and-preservation-thresholds">Interpretation and Preservation Thresholds<a class="anchor" aria-label="anchor" href="#interpretation-and-preservation-thresholds"></a>
+<h4 id="mathematical-definition-of-module-preservation">Mathematical Definition of Module Preservation<a class="anchor" aria-label="anchor" href="#mathematical-definition-of-module-preservation"></a>
 </h4>
+<p>The composite preservation statistic
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mtext mathvariant="normal">summary</mtext></msub><annotation encoding="application/x-tex">Z_{\text{summary}}</annotation></semantics></math>
+aggregates density and connectivity preservation metrics over
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+permutations (Langfelder et al., <em>PLoS Comput Biol</em> 2011):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mtext mathvariant="normal">summary</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>Z</mi><mtext mathvariant="normal">density</mtext></msub><mo>+</mo><msub><mi>Z</mi><mtext mathvariant="normal">connectivity</mtext></msub></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">Z_{\text{summary}} = \frac{Z_{\text{density}} + Z_{\text{connectivity}}}{2}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mtext mathvariant="normal">density</mtext></msub><annotation encoding="application/x-tex">Z_{\text{density}}</annotation></semantics></math>
+evaluates whether features within module
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+maintain elevated mutual correlation and clustering in the test
+condition:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mtext mathvariant="normal">density</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>Z</mi><mtext mathvariant="normal">mean_adj</mtext></msub><mo>+</mo><msub><mi>Z</mi><mtext mathvariant="normal">mean_k</mtext></msub><mo>+</mo><msub><mi>Z</mi><mtext mathvariant="normal">cluster_coef</mtext></msub><mo>+</mo><msub><mi>Z</mi><mtext mathvariant="normal">density_raw</mtext></msub></mrow><mn>4</mn></mfrac></mrow><annotation encoding="application/x-tex">Z_{\text{density}} = \frac{Z_{\text{mean\_adj}} + Z_{\text{mean\_k}} + Z_{\text{cluster\_coef}} + Z_{\text{density\_raw}}}{4}</annotation></semantics></math></p>
+<p>and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mtext mathvariant="normal">connectivity</mtext></msub><annotation encoding="application/x-tex">Z_{\text{connectivity}}</annotation></semantics></math>
+evaluates whether intramodular hub feature rankings are conserved
+between reference and test networks:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mtext mathvariant="normal">connectivity</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>Z</mi><mtext mathvariant="normal">kIM</mtext></msub><mo>+</mo><msub><mi>Z</mi><mtext mathvariant="normal">kME</mtext></msub></mrow><mn>2</mn></mfrac><mo>,</mo><mspace width="1.0em"></mspace><mi>Z</mi><mo>=</mo><mfrac><mrow><mtext mathvariant="normal">obs</mtext><mo>−</mo><msub><mi>μ</mi><mtext mathvariant="normal">perm</mtext></msub></mrow><msub><mi>σ</mi><mtext mathvariant="normal">perm</mtext></msub></mfrac></mrow><annotation encoding="application/x-tex">Z_{\text{connectivity}} = \frac{Z_{\text{kIM}} + Z_{\text{kME}}}{2}, \quad Z = \frac{\text{obs} - \mu_{\text{perm}}}{\sigma_{\text{perm}}}</annotation></semantics></math></p>
 <ul>
 <li>
-<strong>Preservation Metric
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mtext mathvariant="normal">summary</mtext></msub><annotation encoding="application/x-tex">Z_{\text{summary}}</annotation></semantics></math>)</strong>:
-Combines 4 density statistics (mean connectivity, clustering
-coefficient, maximum adjacency) and 3 connectivity statistics
-(intramodular hub rank preservation).</li>
-<li>
-<strong>Threshold Lines</strong>:
+<strong>Preservation Thresholds</strong>:
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>&lt;</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">Z &lt; 2</annotation></semantics></math>
@@ -902,14 +942,30 @@ displays natural connectivity decay curves across conditions:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-mgwas_files/figure-html/network-robustness-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <div class="section level4">
-<h4 id="interpretation-of-attack-curves">Interpretation of Attack Curves<a class="anchor" aria-label="anchor" href="#interpretation-of-attack-curves"></a>
+<h4 id="mathematical-definition-of-natural-connectivity">Mathematical Definition of Natural Connectivity<a class="anchor" aria-label="anchor" href="#mathematical-definition-of-natural-connectivity"></a>
 </h4>
+<p>Natural connectivity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>λ</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{\lambda}</annotation></semantics></math>
+derives from the spectrum of the network adjacency matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+and reflects the redundancy of alternative paths between all node pairs
+(Wu et al., <em>IEEE Trans Reliab</em> 2012):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">‾</mo></mover><mo>=</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msup><mi>e</mi><msub><mi>λ</mi><mi>i</mi></msub></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\bar{\lambda} = \ln \left( \frac{1}{N} \sum_{i=1}^N e^{\lambda_i} \right)</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>≥</mo><msub><mi>λ</mi><mn>2</mn></msub><mo>≥</mo><mi>…</mi><mo>≥</mo><msub><mi>λ</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_N</annotation></semantics></math>
+are the eigenvalues of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>.
+Natural connectivity strictly decreases monotonically as edges and nodes
+are removed, quantifying alternate path redundancy and topological
+stability.</p>
+<p>The competitive-to-cooperative edge balance is evaluated as:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mo>±</mo></msub><mo>=</mo><mfrac><msub><mi>E</mi><mo>−</mo></msub><msub><mi>E</mi><mo>+</mo></msub></mfrac></mrow><annotation encoding="application/x-tex">R_{\pm} = \frac{E_{-}}{E_{+}}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mo>−</mo></msub><annotation encoding="application/x-tex">E_{-}</annotation></semantics></math>
+is the count of negative correlation edges and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mo>+</mo></msub><annotation encoding="application/x-tex">E_{+}</annotation></semantics></math>
+is the count of positive correlation edges.</p>
 <ul>
-<li>
-<strong>Natural Connectivity
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>λ</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{\lambda}</annotation></semantics></math>)</strong>:
-Measures overall topological integrity and alternate path redundancy
-across nodes.</li>
 <li>
 <strong>Random Attack Curve</strong>: Assesses resilience against
 stochastic taxon extinction or biological fluctuations. Robust networks
@@ -1142,6 +1198,164 @@ format compliance and print DPI:</p>
 <span>  dpi     <span class="op">=</span> <span class="fl">300</span>,</span>
 <span>  qa      <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="comparative-benchmark-cliomicplot-vs-existing-network-indicator-packages">10. Comparative Benchmark: cliomicplot vs Existing Network &amp;
+Indicator Packages<a class="anchor" aria-label="anchor" href="#comparative-benchmark-cliomicplot-vs-existing-network-indicator-packages"></a>
+</h2>
+<p><code>cliomicplot</code> introduces an integrated single-canvas
+architecture for clinical and multi-omics figures. The table below
+benchmarks <code>cliomicplot</code> against current state-of-the-art
+tools including <code>ggClusterNet 2</code> (<em>iMeta</em> 2025, <a href="doi:%5B10.1002/imt2.70041" class="uri">doi:[10.1002/imt2.70041</a>](<a href="https://doi.org/10.1002/imt2.70041" class="external-link uri">https://doi.org/10.1002/imt2.70041</a>)),
+<code>linkET</code>, <code>microeco</code>, and
+<code>ComplexHeatmap</code>:</p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Benchmark Dimension</th>
+<th align="left"><code>ggClusterNet 2</code></th>
+<th align="left"><code>linkET</code></th>
+<th align="left"><code>microeco</code></th>
+<th align="left"><code>ComplexHeatmap</code></th>
+<th align="left"><code>cliomicplot</code></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Output Object Type</strong></td>
+<td align="left">
+<code>ggplot</code> / <code>igraph</code>
+</td>
+<td align="left"><code>ggplot</code></td>
+<td align="left">Custom R6 class</td>
+<td align="left">
+<code>Heatmap</code> grob</td>
+<td align="left">Pure <code>ggplot2</code>
+</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Primary Syntax</strong></td>
+<td align="left">Function wrappers</td>
+<td align="left">Custom pipes</td>
+<td align="left">R6 methods</td>
+<td align="left">S4 methods</td>
+<td align="left">Standard formula (<code>y ~ x \| group</code>)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Clinical Trial Endpoints</strong></td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">Complete (KM, MCID, Swimmer, Waterfall, RECIST)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Multi-Group Network Topologies</strong></td>
+<td align="left">Facets / bipartite</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">8 styles (<code>concentric</code>,
+<code>bipolar</code>, <code>science</code>, <code>flow</code>,
+<code>nature</code>, <code>cell</code>, <code>lancet</code>)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Indicator Heatmap Coupling</strong></td>
+<td align="left">1-sided linear</td>
+<td align="left">1-sided lower triangle</td>
+<td align="left">Rectangular matrix</td>
+<td align="left">Heatmap annotations</td>
+<td align="left">Symmetrical 4-corner multi-domain canvas</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>External Domains Supported</strong></td>
+<td align="left">1 domain</td>
+<td align="left">1 domain</td>
+<td align="left">1 domain</td>
+<td align="left">Column/row annotations</td>
+<td align="left">1 to 4 independent corner matrices</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Collision-Free Text Exclusion</strong></td>
+<td align="left">Manual tuning</td>
+<td align="left">Manual tuning</td>
+<td align="left">Manual tuning</td>
+<td align="left">Manual tuning</td>
+<td align="left">Automated (<code>line_intersects_rect</code> geometric
+pruning)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Publication Typography Gates</strong></td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">AI4SciFig enforced
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>5.0</mn></mrow><annotation encoding="application/x-tex">\ge 5.0</annotation></semantics></math>
+pt font floor, hairline floors)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Journal Submission Exporter</strong></td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">None</td>
+<td align="left">
+<code><a href="../reference/cli_save.html">cli_save()</a></code> with journal dimension
+presets</td>
+</tr>
+</tbody>
+</table>
+<div class="section level3">
+<h3 id="architectural-distinctions">Architectural Distinctions<a class="anchor" aria-label="anchor" href="#architectural-distinctions"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Native Single-Canvas Coordinates</strong>:
+<ul>
+<li>
+<code>ggClusterNet 2</code> and <code>linkET</code> generate
+asymmetric layouts (triangular heatmap on the lower-left, rays extending
+outward to the upper-right).</li>
+<li>
+<code><a href="../reference/cliplot_env_network.html">cliplot_env_network()</a></code> maps all elements onto a unified
+continuous Cartesian plane
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>−</mi><mn>7.4</mn><mo>,</mo><mn>7.4</mn><mo stretchy="false" form="postfix">]</mo><mo>×</mo><mo stretchy="false" form="prefix">[</mo><mi>−</mi><mn>7.4</mn><mo>,</mo><mn>7.4</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-7.4, 7.4] \times [-7.4, 7.4]</annotation></semantics></math>),
+positioning a central circular network
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>2.80</mn></mrow><annotation encoding="application/x-tex">r = 2.80</annotation></semantics></math>)
+surrounded by four independent corner correlation matrices.</li>
+</ul>
+</li>
+<li>
+<strong>Deterministic Label Placement</strong>:
+<ul>
+<li>High-density multi-domain plots frequently suffer from text-stroke
+collisions.</li>
+<li>
+<code>cliomicplot</code> implements an internal ray-casting
+algorithm (<code>line_intersects_rect()</code>) that evaluates every
+intra-module edge and inter-domain link against module label bounding
+boxes, pruning colliding segments prior to rendering.</li>
+</ul>
+</li>
+<li>
+<strong>Clinical and Multi-Omics Harmonization</strong>:
+<ul>
+<li>Rather than requiring separate packages for clinical survival
+analysis, differential abundance, and network ecology,
+<code>cliomicplot</code> unifies all 55+ plot types under a consistent
+formula API and theme system.</li>
+</ul>
+</li>
+</ol>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

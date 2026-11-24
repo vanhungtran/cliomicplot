@@ -39,7 +39,7 @@ if (file.exists('lightbox.html')) {
 
 **cliomicplot** is a unified grammar for publication-ready clinical and multi-omics figures built directly on **ggplot2**. Designed around the visual principles of **Nature**, **Cell**, and **Science**, it offers:
 
-- **55+ specialized plot types** spanning clinical trials (Kaplan-Meier milestones, MCID dumbbells, trajectories, swimmers, waterfalls, forest plots) and multi-omics (volcano, GSEA, UpSet, PCA, heatmaps).
+- **55+ specialized plot types** spanning clinical trials (Kaplan-Meier milestones, MCID dumbbells, trajectories, swimmers, waterfalls, forest plots), multi-omics (volcano, GSEA, UpSet, PCA, heatmaps), and systems biology network architectures (concentric/bipolar cross-networks, 4-corner environmental coupling).
 - **13 publication themes** covering open-axis designs (`nature`, `science`, `cell`, `nejm`, `lancet`) and full-box Elsevier/IEEE frames (`scifig`).
 - **55+ curated color palettes** with strict color vision deficiency (CVD) accessibility.
 - **Publisher trim sizing** (`cli_journal_size()`) for 9 major publishers with vector compliance checks (`cli_save()`).
