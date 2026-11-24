@@ -296,6 +296,8 @@ cli_scifig_qa = function(plot = ggplot2::last_plot(),
                          column = c("double", "single", "one_half"),
                          width_mm = NULL,
                          height_mm = NULL) {
+  journal <- match.arg(journal)
+  column  <- match.arg(column)
   sz = cli_journal_size(journal, column)
   j_key = sz$journal
   col_key = sz$column
