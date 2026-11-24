@@ -350,6 +350,15 @@ type_km = function(
 
   # Numbers at risk table
   if (isTRUE(settings$risk_table)) {
+    # Apply title, subtitle, caption to main curve before risk table wrapping
+    if (!is.null(settings$title) || !is.null(settings$subtitle) || !is.null(settings$caption)) {
+      p = p + ggplot2::labs(
+        title    = settings$title,
+        subtitle = settings$subtitle,
+        caption  = settings$caption
+      )
+    }
+
     time_max = max(td$time, na.rm = TRUE)
     time_breaks = pretty(c(0, time_max), n = 5)
     time_breaks = sort(unique(time_breaks[time_breaks >= 0 & time_breaks <= time_max]))
@@ -375,6 +384,9 @@ type_km = function(
         theme_cli_base(base_size = 9) +
         ggplot2::theme(
           panel.grid       = ggplot2::element_blank(),
+          panel.border     = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          plot.background  = ggplot2::element_blank(),
           axis.line        = ggplot2::element_blank(),
           axis.ticks       = ggplot2::element_blank(),
           axis.text.x      = ggplot2::element_blank(),
@@ -389,7 +401,7 @@ type_km = function(
       p = p + ggplot2::scale_x_continuous(breaks = time_breaks)
 
       if (requireNamespace("patchwork", quietly = TRUE)) {
-        p = patchwork::wrap_plots(p, rt_plot, ncol = 1, heights = c(3.5, 1))
+        p = patchwork::wrap_elements(full = patchwork::wrap_plots(p, rt_plot, ncol = 1, heights = c(3.5, 1)))
       }
     }
   }

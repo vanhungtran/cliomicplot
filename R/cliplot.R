@@ -202,14 +202,16 @@ cliplot.default = function(
 
   if (!isTRUE(settings$skip_postprocess)) {
     # ---- Apply labels ----
-    p = p +
-      ggplot2::labs(
-        title    = settings$title,
-        subtitle = settings$subtitle,
-        caption  = settings$caption,
-        x        = settings$xlab,
-        y        = settings$ylab
-      )
+    if (!inherits(p, "wrapped_patch") && !inherits(p, "patchwork")) {
+      p = p +
+        ggplot2::labs(
+          title    = settings$title,
+          subtitle = settings$subtitle,
+          caption  = settings$caption,
+          x        = settings$xlab,
+          y        = settings$ylab
+        )
+    }
 
     # ---- Apply color palette ----
     if (!is.null(settings$by)) {
@@ -336,6 +338,8 @@ cliplot.formula = function(
     }
   }
 
+  is_forest = isTRUE(identical(type, "forest") || (is.list(type) && identical(type$name, "forest")))
+
   cliplot.default(
     x        = if (is_surv) NULL else parsed$x,
     y        = if (is_surv) parsed$y else parsed$y,
@@ -348,8 +352,8 @@ cliplot.formula = function(
     title    = title,
     subtitle = subtitle,
     caption  = caption,
-    xlab     = xlab %||% parsed$xlab,
-    ylab     = ylab %||% parsed$ylab,
+    xlab     = xlab %||% (if (is_forest) "Hazard Ratio (95% CI)" else parsed$xlab),
+    ylab     = ylab %||% (if (is_forest) "" else parsed$ylab),
     legend   = legend,
     add      = add,
     stat.test = stat.test,

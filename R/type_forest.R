@@ -267,13 +267,14 @@ type_forest = function(
       # Log scale if requested
       if (isTRUE(settings$forest_log_scale)) {
         p = p + ggplot2::scale_x_log10(
-          expand = ggplot2::expansion(mult = if (settings$forest_show_values) c(0.05, 0.25) else c(0.05, 0.08))
+          expand = ggplot2::expansion(mult = if (settings$forest_show_values) c(0.05, 0.35) else c(0.05, 0.08))
         )
       } else {
         p = p + ggplot2::scale_x_continuous(
-          expand = ggplot2::expansion(mult = if (settings$forest_show_values) c(0.05, 0.25) else c(0.05, 0.08))
+          expand = ggplot2::expansion(mult = if (settings$forest_show_values) c(0.05, 0.35) else c(0.05, 0.08))
         )
       }
+      p = p + ggplot2::coord_cartesian(clip = "off")
 
       p
     },
