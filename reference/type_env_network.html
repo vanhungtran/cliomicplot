@@ -61,6 +61,7 @@ and colored by correlation direction.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">type_env_network</span><span class="op">(</span></span>
 <span>  env_cors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  links <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  comm_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  module_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  corner_palettes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  link_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Positive <span class="op">=</span> <span class="st">"#E64B35"</span>, Negative <span class="op">=</span> <span class="st">"#4DBBD5"</span><span class="op">)</span>,</span>
@@ -108,7 +109,8 @@ and colored by correlation direction.</p>
 <span>  hull_alpha <span class="op">=</span> <span class="fl">0.18</span>,</span>
 <span>  curvature <span class="op">=</span> <span class="fl">0.14</span>,</span>
 <span>  preset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"default"</span>, <span class="st">"nature"</span>, <span class="st">"clinical"</span>, <span class="st">"seasonal"</span>, <span class="st">"cell"</span>, <span class="st">"dark"</span>, <span class="st">"lancet"</span>,</span>
-<span>    <span class="st">"minimal"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"minimal"</span>, <span class="st">"multi_tissue"</span>, <span class="st">"pharmacology"</span>, <span class="st">"circadian"</span>, <span class="st">"diurnal"</span>, <span class="st">"bipolar"</span>,</span>
+<span>    <span class="st">"response"</span><span class="op">)</span>,</span>
 <span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scifig <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -328,7 +330,8 @@ inter-domain links (default FALSE).</p></dd>
 <dt id="arg-preset">preset<a class="anchor" aria-label="anchor" href="#arg-preset"></a></dt>
 <dd><p>Character string specifying publisher style preset: <code>"default"</code>,
 <code>"nature"</code>, <code>"clinical"</code>, <code>"seasonal"</code>, <code>"cell"</code>, <code>"dark"</code>,
-<code>"lancet"</code>, or <code>"minimal"</code>.</p></dd>
+<code>"lancet"</code>, <code>"minimal"</code>, <code>"multi_tissue"</code> (or <code>"pharmacology"</code>),
+<code>"circadian"</code> (or <code>"diurnal"</code>), or <code>"bipolar"</code> (or <code>"response"</code>).</p></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
