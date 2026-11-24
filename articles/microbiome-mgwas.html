@@ -1078,8 +1078,144 @@ Measures matrix correlation between community dissimilarity
 of an environmental variable after conditioning on confounders (e.g.,
 patient age, geographic site, sequencing depth).</li>
 </ul>
-<hr>
 </div>
+</div>
+<div class="section level3">
+<h3 id="permutation-hypothesis-testing-for-cross-network-differences">8.4 Permutation Hypothesis Testing for Cross-Network
+Differences<a class="anchor" aria-label="anchor" href="#permutation-hypothesis-testing-for-cross-network-differences"></a>
+</h3>
+<p><code><a href="../reference/cli_network_permutation.html">cli_network_permutation()</a></code> tests whether global
+topological properties differ between experimental conditions. The
+function shuffles group assignments
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+times, re-estimates correlation networks on each permuted sample, and
+computes two-sided empirical
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>-values:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mtext mathvariant="normal">perm</mtext></msub><mo>=</mo><mfrac><mrow><mn>1</mn><mo>+</mo><munderover><mo>∑</mo><mrow><mi>b</mi><mo>=</mo><mn>1</mn></mrow><mi>B</mi></munderover><mi>𝕀</mi><mo stretchy="false" form="prefix">(</mo><mo stretchy="false" form="prefix">|</mo><msup><mi mathvariant="normal">Δ</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>b</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="prefix">|</mo><mo>≥</mo><mo stretchy="false" form="prefix">|</mo><msup><mi mathvariant="normal">Δ</mi><mtext mathvariant="normal">obs</mtext></msup><mo stretchy="false" form="prefix">|</mo><mo stretchy="false" form="postfix">)</mo></mrow><mrow><mi>B</mi><mo>+</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">P_{\text{perm}} = \frac{1 + \sum_{b=1}^B \mathbb{I}(|\Delta^{(b)}| \ge |\Delta^{\text{obs}}|)}{B + 1}</annotation></semantics></math></p>
+<p>The tested metrics are edge density, natural connectivity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>λ</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{\lambda}</annotation></semantics></math>,
+negative-to-positive edge ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mo>±</mo></msub><annotation encoding="application/x-tex">R_{\pm}</annotation></semantics></math>,
+mean degree, and clustering coefficient.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Permutation test comparing Reference and Test condition networks</span></span>
+<span><span class="va">comm_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span>, <span class="va">demo_omics</span><span class="op">$</span><span class="va">test_expr</span><span class="op">)</span></span>
+<span><span class="va">group_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reference_WT"</span>, <span class="st">"Perturbed_KO"</span><span class="op">)</span>,</span>
+<span>                      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">demo_omics</span><span class="op">$</span><span class="va">test_expr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">perm_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_network_permutation.html">cli_network_permutation</a></span><span class="op">(</span></span>
+<span>  comm_data  <span class="op">=</span> <span class="va">comm_combined</span>,</span>
+<span>  group      <span class="op">=</span> <span class="va">group_combined</span>,</span>
+<span>  ref_group  <span class="op">=</span> <span class="st">"Reference_WT"</span>,</span>
+<span>  test_group <span class="op">=</span> <span class="st">"Perturbed_KO"</span>,</span>
+<span>  cor_method <span class="op">=</span> <span class="st">"spearman"</span>,</span>
+<span>  cor_cutoff <span class="op">=</span> <span class="fl">0.35</span>,</span>
+<span>  p_cutoff   <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  n_perm     <span class="op">=</span> <span class="fl">49</span>,</span>
+<span>  seed       <span class="op">=</span> <span class="fl">42</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">perm_res</span>, digits <span class="op">=</span> <span class="fl">4</span>, caption <span class="op">=</span> <span class="st">"Cross-Network Permutation Significance Test"</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<caption>Cross-Network Permutation Significance Test</caption>
+<colgroup>
+<col width="31%">
+<col width="10%">
+<col width="11%">
+<col width="13%">
+<col width="13%">
+<col width="10%">
+<col width="9%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">metric</th>
+<th align="right">ref_val</th>
+<th align="right">test_val</th>
+<th align="right">delta_obs</th>
+<th align="right">perm_mean</th>
+<th align="right">perm_se</th>
+<th align="right">p_perm</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Edge Density</td>
+<td align="right">0.2429</td>
+<td align="right">0.0537</td>
+<td align="right">-0.1893</td>
+<td align="right">-0.0055</td>
+<td align="right">0.0466</td>
+<td align="right">0.02</td>
+</tr>
+<tr class="even">
+<td align="left">Natural Connectivity</td>
+<td align="right">11.4561</td>
+<td align="right">1.5315</td>
+<td align="right">-9.9246</td>
+<td align="right">-0.4676</td>
+<td align="right">3.0455</td>
+<td align="right">0.02</td>
+</tr>
+<tr class="odd">
+<td align="left">Negative/Positive Ratio</td>
+<td align="right">0.0750</td>
+<td align="right">0.4179</td>
+<td align="right">0.3429</td>
+<td align="right">0.0210</td>
+<td align="right">0.1019</td>
+<td align="right">0.02</td>
+</tr>
+<tr class="even">
+<td align="left">Mean Degree</td>
+<td align="right">14.3333</td>
+<td align="right">3.1667</td>
+<td align="right">-11.1667</td>
+<td align="right">-0.3238</td>
+<td align="right">2.7517</td>
+<td align="right">0.02</td>
+</tr>
+<tr class="odd">
+<td align="left">Clustering Coefficient</td>
+<td align="right">0.7343</td>
+<td align="right">0.1210</td>
+<td align="right">-0.6134</td>
+<td align="right">-0.0383</td>
+<td align="right">0.1583</td>
+<td align="right">0.02</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="automated-empirical-omics-to-environment-linkage">8.5 Automated Empirical Omics-to-Environment Linkage<a class="anchor" aria-label="anchor" href="#automated-empirical-omics-to-environment-linkage"></a>
+</h3>
+<p><code><a href="../reference/cli_calc_env_links.html">cli_calc_env_links()</a></code> extracts module eigengenes as the
+first principal component of each module or computes standardized mean
+abundances, runs bivariate correlation tests against environmental or
+clinical variables, and applies Benjamini-Hochberg FDR correction.</p>
+<p>Passing <code>comm_data</code>, <code>env_data</code>, and
+<code>modules</code> directly to <code><a href="../reference/cliplot_env_network.html">cliplot_env_network()</a></code>
+invokes <code><a href="../reference/cli_calc_env_links.html">cli_calc_env_links()</a></code> when
+<code>links = NULL</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Named list of environmental and clinical indicators</span></span>
+<span><span class="va">env_domains</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Clinical <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">env_data</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span>
+<span>  Exposome <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">env_data</span><span class="op">[</span>, <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Automated empirical calculation and visualization</span></span>
+<span><span class="va">p_auto_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot_env_network.html">cliplot_env_network</a></span><span class="op">(</span></span>
+<span>  comm_data          <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">ref_expr</span>,</span>
+<span>  env_data           <span class="op">=</span> <span class="va">env_domains</span>,</span>
+<span>  modules            <span class="op">=</span> <span class="va">demo_omics</span><span class="op">$</span><span class="va">modules</span>,</span>
+<span>  title              <span class="op">=</span> <span class="st">"Empirical Omics-Environment Linkage via Module Eigengene Correlation"</span>,</span>
+<span>  show_values        <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_domain_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  preset             <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>  scifig             <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">p_auto_env</span></span></code></pre></div>
+<p><img src="microbiome-mgwas_files/figure-html/calc-env-links-1.png" class="r-plt" alt="" width="816" style="display: block; margin: auto;"></p>
+<hr>
 </div>
 </div>
 <div class="section level2">
@@ -1098,7 +1234,7 @@ mm width).</p>
 <p>Using <code>patchwork</code>, the left column stacks Panel (a) and
 Panel (b), while the right column showcases the coupled network (Panel
 c):</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Build panels with Nature publication preset and SciFig quality gates</span></span>
@@ -1147,7 +1283,7 @@ c):</p>
 </h3>
 <p><code><a href="../reference/cli_scifig_qa.html">cli_scifig_qa()</a></code> verifies that the figure satisfies all
 journal submission criteria:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qa_report</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cli_scifig_qa.html">cli_scifig_qa</a></span><span class="op">(</span></span>
 <span>  plot      <span class="op">=</span> <span class="va">fig3_composite</span>,</span>
 <span>  journal   <span class="op">=</span> <span class="st">"nature"</span>,</span>
@@ -1180,7 +1316,7 @@ journal submission criteria:</p>
 </h3>
 <p>Figures can be saved using <code><a href="../reference/cli_save.html">cli_save()</a></code> with automatic
 format compliance and print DPI:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save vector PDF for manuscript submission</span></span>
 <span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span></span>
 <span>  plot    <span class="op">=</span> <span class="va">fig3_composite</span>,</span>
