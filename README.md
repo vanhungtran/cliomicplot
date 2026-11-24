@@ -248,19 +248,6 @@ The main figures of a real publication - "X-linked transcriptome dysregulation a
 
 Plot types used: `type_boxplot`, `type_volcano`, `type_heatmap`, `type_barplot` + `patchwork` composites.
 
-### Recreating a Published Paper (SpaMTP, *Nature Methods* 2026)
-
-The main figures of the SpaMTP manuscript - "SpaMTP: a framework for spatial metabolomics data integration and analysis" (DOI: `10.1038/s41592-026-03140-8`) - were recreated from the paper's public datasets (processed Seurat objects mirrored on the [SpaMTP Zenodo community](https://zenodo.org/communities/spamtp), CC-BY-4.0), rendered at 300 dpi in Nature style. See `vignette("recreate-spamtp")` and `inst/extdata/build_spamtp_figures.R`.
-
-| | | |
-|:---:|:---:|:---:|
-| **Fig. 1: Bladder MALDI-MSI** | **Fig. 2: Multi-omic mouse brain** | **Fig. 3: Brain tumour pathways** |
-| [![SpaMTP Fig 1](man/figures/spamtp_fig1.png)](man/figures/spamtp_fig1.png) | [![SpaMTP Fig 2](man/figures/spamtp_fig2.png)](man/figures/spamtp_fig2.png) | [![SpaMTP Fig 3](man/figures/spamtp_fig3.png)](man/figures/spamtp_fig3.png) |
-| **Fig. 4: Spotted mouse liver** | | |
-| [![SpaMTP Fig 4](man/figures/spamtp_fig4.png)](man/figures/spamtp_fig4.png) | | |
-
-Datasets: mouse urinary bladder MALDI-MSI (PRIDE `PXD001283`), Parkinson mouse brain Visium + MALDI (SciLifeLab `10.17044/scilifelab.22770161.v2`), human brain tumour single-cell pathways (BioImage Archive `S-BIAD14260`), and spotted mouse liver MALDI-MSI (METASPACE). Plot types used: `type_heatmap`, `type_volcano`, `type_boxplot` + spatial scatter maps and `patchwork` composites.
-
 ### Distributions & Statistics
 
 | | | |
@@ -402,15 +389,24 @@ ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
 
 ## Vignettes
 
-- **Getting Started** — `vignette("cliomicplot")`
-- **Volcano Plot Guide** — `vignette("volcano-plot")`
-- **Oncology Workflows** — `vignette("oncology")` — 7 figures: KM, forest, waterfall, swimmer, dose-response, time-course, PD biomarkers
-- **Multi-Omics** — `vignette("multiomics")` — 10 figures: PCA, correlation, volcano, MA, pattern clustering, rank-abundance, DEG comparison, bubble heatmap & more
-- **Recreating a Published Figure** - `vignette("recreate-paper")` - regenerates the figures of Soares et al. 2025 (*Biology of Sex Differences*, SLE X-linked dysregulation) from the paper's supplementary data: X/A-ratio and XIST boxplots, volcano small multiples, logFC/NES heatmaps, DIABLO F1/marker barplots, intercellular correlation diverging bars
-- **Recreating a Published Paper (Spatial Metabolomics)** - `vignette("recreate-spamtp")` - regenerates the figures of the SpaMTP manuscript (Wemans et al. 2026, *Nature Methods*) from the paper's public datasets: bladder MALDI-MSI segmentation and DEM heatmaps, multi-omic mouse brain MSI/Visium, tumour pathway NES heatmaps, and spotted-liver annotation QC
-- **Microbial Metagenomics & mGWAS** — `vignette("microbiome-mgwas")` — 4 figures: SCORAD severity stratification by host genetics, differential abundance bubble matrix, bacterial mGWAS Manhattan plot, and mother-infant dyad strain transmission
-- **Journal-Quality Figures** — `vignette("journal-plots")` — cnsplots-inspired ROC, GSEA dot plot, UpSet, Venn, slope, confusion, donut + Nature/Cell/Science export helpers
-- **Themes & Palettes** — `vignette("themes-palettes")`
+Organized into 5 logical parts matching the online handbook [Clinical and Omics Data Visualization in R](https://vanhungtran.github.io/cliomicplot_book/):
+
+- **Part I: Graphic Grammar & Design System**:
+  - `vignette("cliomicplot")` — Core grammar, constructor functions, and layer composition
+  - `vignette("themes-palettes")` — 13 journal themes and CVD-safe color palettes
+  - `vignette("journal-plots")` — Journal trim sizing (`cli_journal_size`) and `cli_scifig_qa()` compliance gate
+- **Part II: Clinical Trials & Survival Analysis**:
+  - `vignette("oncology")` — Kaplan-Meier milestones, Cox forest plots, RECIST waterfall, swimmer timelines, and MCID
+- **Part III: High-Dimensional Omics Visualizations**:
+  - `vignette("volcano-plot")` — Differential expression volcano plots with NCBI GEO GSE121212
+  - `vignette("multiomics")` — Translational proteomics, GSEA cascades, and diamond bubble heatmaps
+  - `vignette("microbiome-mgwas")` — Cutaneous metagenomics, host *FLG* genetics, mGWAS, and dyad strain sharing
+- **Part IV: Systems Biology & Coupled Multi-Network Architectures**:
+  - `vignette("coupled-networks")` — Cross-condition networks, 4 topological styles, 4-corner environmental heatmaps, and preservation testing
+- **Part V: Publication Composites & Applied Case Studies**:
+  - `vignette("case-study-atopic-dermatitis")` — Translational multi-omics case study in atopic dermatitis
+  - `vignette("case-study-cancer-immunotherapy")` — Immuno-oncology clinical trial endpoint reporting
+  - `vignette("recreate-paper")` — Published paper reproduction: SLE X-chromosome dysregulation (Soares et al., *Biol Sex Differ* 2025)
 
 ---
 
