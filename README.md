@@ -14,8 +14,17 @@
   <a href="#"><img src="https://img.shields.io/badge/Palettes-55+-E18727" alt="Palettes"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Themes-12-7E6148" alt="Themes"/></a>
   <img src="https://img.shields.io/badge/Version-0.1.5-3C5488" alt="Version 0.1.5"/>
+  <a href="https://vanhungtran.github.io/cliomicplot_book/"><img src="https://img.shields.io/badge/Handbook-Online_Book-002060.svg" alt="Online Handbook"/></a>
 </p>
 <!-- badges: end -->
+
+---
+
+## Online Handbook
+
+For an in-depth, chapter-by-chapter guide covering clinical trials, oncology response tracking, high-throughput omics, and coupled multi-network architectures (modeled after *circlize_book*), read the online book:
+
+👉 **[Clinical and Omics Data Visualization in R with cliomicplot](https://vanhungtran.github.io/cliomicplot_book/)**
 
 ---
 
