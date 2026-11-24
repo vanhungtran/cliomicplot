@@ -9,6 +9,7 @@ cliplot_env_network(
   edges = NULL,
   env_cors = NULL,
   links = NULL,
+  comm_data = NULL,
   module_colors = NULL,
   corner_palettes = NULL,
   link_colors = c(Positive = "#E64B35", Negative = "#4DBBD5"),
@@ -72,6 +73,10 @@ cliplot_env_network(
 \item{env_cors}{Named list of 1 to 4 correlation matrices for corner triangular heatmaps.}
 
 \item{links}{Data frame of environmental-to-module links.}
+
+\item{comm_data}{Optional numeric matrix or data frame of community abundance data. If supplied
+and \code{links} is NULL, empirical linkages to \code{env_cors} are automatically calculated
+using \code{\link{cli_calc_env_links}}.}
 
 \item{module_colors}{Named color vector for modules.}
 

@@ -709,6 +709,61 @@ knitr::kable(mantel_out, digits = 3, caption = "Mantel Association Statistics")
 - **Mantel Statistic ($r_M$)**: Measures matrix correlation between community dissimilarity (e.g. Bray-Curtis) and external environmental distance (Euclidean).
 - **Partial Mantel**: Evaluates the unique contribution of an environmental variable after conditioning on confounders (e.g., patient age, geographic site, sequencing depth).
 
+### 8.4 Permutation Hypothesis Testing for Cross-Network Differences
+
+`cli_network_permutation()` tests whether global topological properties differ between experimental conditions. The function shuffles group assignments $B$ times, re-estimates correlation networks on each permuted sample, and computes two-sided empirical $P$-values:
+
+$$P_{\text{perm}} = \frac{1 + \sum_{b=1}^B \mathbb{I}(|\Delta^{(b)}| \ge |\Delta^{\text{obs}}|)}{B + 1}$$
+
+The tested metrics are edge density, natural connectivity $\bar{\lambda}$, negative-to-positive edge ratio $R_{\pm}$, mean degree, and clustering coefficient.
+
+```{r network-permutation}
+# Permutation test comparing Reference and Test condition networks
+comm_combined <- rbind(demo_omics$ref_expr, demo_omics$test_expr)
+group_combined <- rep(c("Reference_WT", "Perturbed_KO"),
+                      c(nrow(demo_omics$ref_expr), nrow(demo_omics$test_expr)))
+
+perm_res <- cli_network_permutation(
+  comm_data  = comm_combined,
+  group      = group_combined,
+  ref_group  = "Reference_WT",
+  test_group = "Perturbed_KO",
+  cor_method = "spearman",
+  cor_cutoff = 0.35,
+  p_cutoff   = 0.05,
+  n_perm     = 49,
+  seed       = 42
+)
+knitr::kable(perm_res, digits = 4, caption = "Cross-Network Permutation Significance Test")
+```
+
+### 8.5 Automated Empirical Omics-to-Environment Linkage
+
+`cli_calc_env_links()` extracts module eigengenes as the first principal component of each module or computes standardized mean abundances, runs bivariate correlation tests against environmental or clinical variables, and applies Benjamini-Hochberg FDR correction.
+
+Passing `comm_data`, `env_data`, and `modules` directly to `cliplot_env_network()` invokes `cli_calc_env_links()` when `links = NULL`:
+
+```{r calc-env-links, fig.width=8.5, fig.height=8.5}
+# Named list of environmental and clinical indicators
+env_domains <- list(
+  Clinical = demo_omics$env_data[, 1:3],
+  Exposome = demo_omics$env_data[, 4:6]
+)
+
+# Automated empirical calculation and visualization
+p_auto_env <- cliplot_env_network(
+  comm_data          = demo_omics$ref_expr,
+  env_data           = env_domains,
+  modules            = demo_omics$modules,
+  title              = "Empirical Omics-Environment Linkage via Module Eigengene Correlation",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  preset             = "nature",
+  scifig             = TRUE
+)
+p_auto_env
+```
+
 ---
 
 ## 9. Multi-Panel Publication Composite & AI4SciFig Compliance

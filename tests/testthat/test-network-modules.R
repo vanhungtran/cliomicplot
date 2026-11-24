@@ -417,3 +417,92 @@ test_that("cliplot_env_network style presets work out of the box", {
   p_bip_env <- cliplot_env_network(preset = "bipolar")
   expect_s3_class(p_bip_env, "ggplot")
 })
+
+test_that("cli_calc_env_links calculates module-environment statistical linkages", {
+  set.seed(42)
+  n <- 35
+  p <- 20
+  comm <- matrix(rpois(n * p, lambda = 10), nrow = n, ncol = p)
+  colnames(comm) <- paste0("Taxon_", 1:p)
+
+  env_df <- data.frame(
+    pH = rnorm(n, 7, 0.5),
+    Moisture = rnorm(n, 50, 10),
+    Salinity = rnorm(n, 15, 3)
+  )
+
+  mods <- setNames(paste0("Mod_", rep(1:4, each = 5)), colnames(comm))
+
+  # Basic calculation with eigengene
+  links_df <- cli_calc_env_links(
+    comm_data = comm,
+    env_data = env_df,
+    modules = mods,
+    method = "spearman",
+    fdr_cutoff = 0.5,
+    top_n = 3
+  )
+
+  expect_s3_class(links_df, "data.frame")
+  expect_true(all(c("env", "module", "r", "p", "fdr", "log10p", "sign", "domain") %in% colnames(links_df)))
+  expect_true(nrow(links_df) > 0)
+  expect_true(all(links_df$sign %in% c("Positive", "Negative")))
+
+  # Calculation with named list of domains and module_summary = "mean"
+  env_list <- list(
+    Clinical = data.frame(SCORAD = rnorm(n, 30, 8), TEWL = rnorm(n, 20, 5)),
+    Environment = data.frame(PM25 = rnorm(n, 12, 4), Temp = rnorm(n, 22, 3))
+  )
+
+  links_multi <- cli_calc_env_links(
+    comm_data = comm,
+    env_data = env_list,
+    modules = mods,
+    module_summary = "mean",
+    fdr_cutoff = NULL,
+    top_n = 2
+  )
+
+  expect_s3_class(links_multi, "data.frame")
+  expect_true(all(c("Clinical", "Environment") %in% links_multi$domain))
+
+  # Test auto-linkage directly inside cliplot_env_network
+  p_auto <- cliplot_env_network(
+    comm_data = comm,
+    env_data = env_list,
+    modules = mods,
+    preset = "clinical"
+  )
+  expect_s3_class(p_auto, "ggplot")
+})
+
+test_that("cli_network_permutation computes empirical topological difference nulls", {
+  set.seed(42)
+  n <- 30
+  p <- 15
+  comm <- matrix(rpois(n * p, lambda = 8), nrow = n, ncol = p)
+  colnames(comm) <- paste0("Taxon_", 1:p)
+  grp <- rep(c("Control", "Treatment"), each = 15)
+
+  perm_res <- cli_network_permutation(
+    comm_data = comm,
+    group = grp,
+    ref_group = "Control",
+    test_group = "Treatment",
+    cor_method = "spearman",
+    cor_cutoff = 0.30,
+    p_cutoff = 0.10,
+    n_perm = 19,
+    seed = 42
+  )
+
+  expect_s3_class(perm_res, "cli_network_permutation")
+  expect_s3_class(perm_res, "data.frame")
+  expect_true(all(c("metric", "ref_val", "test_val", "delta_obs", "perm_mean", "perm_se", "p_perm") %in% colnames(perm_res)))
+  expect_equal(nrow(perm_res), 5)
+  expect_true(all(perm_res$p_perm >= 0 & perm_res$p_perm <= 1))
+
+  # Print method executes cleanly
+  out_txt <- utils::capture.output(print(perm_res))
+  expect_true(any(grepl("Cross-Network Permutation Test", out_txt)))
+})

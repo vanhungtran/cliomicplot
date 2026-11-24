@@ -91,6 +91,7 @@
 type_env_network = function(
     env_cors           = NULL,
     links              = NULL,
+    comm_data          = NULL,
     module_colors      = NULL,
     corner_palettes    = NULL,
     link_colors        = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
@@ -148,6 +149,12 @@ type_env_network = function(
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
   preset <- match.arg(preset)
+
+  if (is.null(links) && !is.null(comm_data) && !is.null(env_cors)) {
+    links <- tryCatch({
+      cli_calc_env_links(comm_data = comm_data, env_data = env_cors, modules = module_labels)
+    }, error = function(e) NULL)
+  }
 
   if (isTRUE(scifig) && preset == "default") preset <- "nature"
   if (preset != "default") {
@@ -284,6 +291,9 @@ type_env_network = function(
 #' @param edges Optional data frame of central network edges (columns: \code{from}, \code{to}).
 #' @param env_cors Named list of 1 to 4 correlation matrices for corner triangular heatmaps.
 #' @param links Data frame of environmental-to-module links.
+#' @param comm_data Optional numeric matrix or data frame of community abundance data. If supplied
+#'   and \code{links} is NULL, empirical linkages to \code{env_cors} are automatically calculated
+#'   using \code{\link{cli_calc_env_links}}.
 #' @param module_colors Named color vector for modules.
 #' @param corner_palettes List of color gradients for corner heatmaps.
 #' @param show_asterisks Logical. If TRUE, shows significance asterisks. Default TRUE.
@@ -329,6 +339,7 @@ cliplot_env_network = function(
     edges              = NULL,
     env_cors           = NULL,
     links              = NULL,
+    comm_data          = NULL,
     module_colors      = NULL,
     corner_palettes    = NULL,
     link_colors        = c("Positive" = "#E64B35", "Negative" = "#4DBBD5"),
@@ -387,6 +398,12 @@ cliplot_env_network = function(
   label_type <- match.arg(label_type)
   module_label_pos <- match.arg(module_label_pos)
   preset <- match.arg(preset)
+
+  if (is.null(links) && !is.null(comm_data) && !is.null(env_cors)) {
+    links <- tryCatch({
+      cli_calc_env_links(comm_data = comm_data, env_data = env_cors, modules = module_labels)
+    }, error = function(e) NULL)
+  }
 
   net_data <- list(nodes = nodes, edges = edges)
   t_obj <- type_env_network(

@@ -7,6 +7,7 @@
 type_env_network(
   env_cors = NULL,
   links = NULL,
+  comm_data = NULL,
   module_colors = NULL,
   corner_palettes = NULL,
   link_colors = c(Positive = "#E64B35", Negative = "#4DBBD5"),
