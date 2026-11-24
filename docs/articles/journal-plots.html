@@ -79,11 +79,11 @@ statistical discipline:</p>
 <li>
 <strong>Exact physical trim sizing</strong>: Figures must be drawn
 at the publisher’s printed column widths (e.g., 89 mm single-column, 120
-mm 1.5-column, 183 mm double-column) rather than an arbitrary 7×5 inch
-canvas scaled down during typesetting.</li>
+mm 1.5-column, 183 mm double-column) rather than an arbitrary canvas
+scaled down during typesetting.</li>
 <li>
-<strong>Minimalist typography and data-to-ink ratio</strong>: All
-in-figure titles are removed (figure explanations belong in the
+<strong>Minimalist typography and data-to-ink ratio</strong>:
+In-figure titles are removed (figure explanations belong in the
 legend/caption); panel identifier tags (<strong>a</strong>,
 <strong>b</strong>, <strong>c</strong>, <strong>d</strong>) sit at the
 upper left; font sizes are constrained to 5–7 pt at final print
@@ -128,12 +128,19 @@ bundled with the package.</p>
 <span><span class="va">adpd_meta</span> <span class="op">=</span> <span class="va">e_adpd</span><span class="op">$</span><span class="va">MetaData</span></span>
 <span><span class="va">adpd_wide</span> <span class="op">=</span> <span class="va">e_adpd</span><span class="op">$</span><span class="va">data_wide</span></span>
 <span><span class="va">adpd_res</span>  <span class="op">=</span> <span class="va">e_adpd</span><span class="op">$</span><span class="va">results_long</span></span>
+<span><span class="va">adpd_long</span> <span class="op">=</span> <span class="va">e_adpd</span><span class="op">$</span><span class="va">data_long</span></span>
 <span></span>
 <span><span class="co"># 2. Stroke brain time-course proteomics</span></span>
 <span><span class="va">e_stroke</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">resolve_data</span><span class="op">(</span><span class="st">"StrokeBrain_TimeCourse.RData"</span><span class="op">)</span>, envir <span class="op">=</span> <span class="va">e_stroke</span><span class="op">)</span></span>
 <span><span class="va">stroke_long</span> <span class="op">=</span> <span class="va">e_stroke</span><span class="op">$</span><span class="va">data_long</span></span>
-<span><span class="va">stroke_meta</span> <span class="op">=</span> <span class="va">e_stroke</span><span class="op">$</span><span class="va">MetaData</span></span></code></pre></div>
+<span><span class="va">stroke_meta</span> <span class="op">=</span> <span class="va">e_stroke</span><span class="op">$</span><span class="va">MetaData</span></span>
+<span></span>
+<span><span class="co"># 3. Aging &amp; High-Fat Caloric Diet metabolomics</span></span>
+<span><span class="va">e_aging</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu">resolve_data</span><span class="op">(</span><span class="st">"AgingHFCD_Metabolomics.RData"</span><span class="op">)</span>, envir <span class="op">=</span> <span class="va">e_aging</span><span class="op">)</span></span>
+<span><span class="va">aging_meta</span> <span class="op">=</span> <span class="va">e_aging</span><span class="op">$</span><span class="va">MetaData</span></span>
+<span><span class="va">aging_res</span>  <span class="op">=</span> <span class="va">e_aging</span><span class="op">$</span><span class="va">results_long</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -227,25 +234,26 @@ bundled with the package.</p>
 <h2 id="figure-1-diagnostic-biomarker-roc-curves-nature-style">2. Figure 1 — Diagnostic Biomarker ROC Curves (Nature Style)<a class="anchor" aria-label="anchor" href="#figure-1-diagnostic-biomarker-roc-curves-nature-style"></a>
 </h2>
 <p>ROC curves evaluate classifier sensitivity and specificity across all
-thresholds. In Nature style, coordinates are isometric (1:1 aspect
-ratio), the chance diagonal is dashed, and exact AUC values are embedded
-directly in the legend.</p>
-<p>Here, we evaluate top differentially expressed cortex proteins for
-distinguishing Alzheimer’s disease (AD) from neurologically normal
-controls (CTL):</p>
+thresholds. Coordinates are isometric (1:1 aspect ratio), the chance
+diagonal is dashed, and exact AUC values are embedded directly in the
+legend.</p>
+<p>Top differentially expressed cortex proteins distinguish Alzheimer’s
+disease (AD) from neurologically normal controls (CTL):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meta_adctl</span> <span class="op">=</span> <span class="va">adpd_meta</span><span class="op">[</span><span class="va">adpd_meta</span><span class="op">$</span><span class="va">group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AD"</span>, <span class="st">"CTL"</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="va">samples</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">meta_adctl</span><span class="op">$</span><span class="va">sampleid</span><span class="op">)</span></span>
 <span><span class="va">top_markers</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SMOC1_A0A024R6E0"</span>, <span class="st">"APP_A0A218KGR2"</span>, <span class="st">"MDK_E9PPJ5"</span><span class="op">)</span></span>
+<span><span class="va">marker_short</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SMOC1"</span>, <span class="st">"APP"</span>, <span class="st">"MDK"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">roc_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  disease <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta_adctl</span><span class="op">$</span><span class="va">group</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CTL"</span>, <span class="st">"AD"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">adpd_wide</span><span class="op">[</span><span class="va">top_markers</span>, <span class="va">samples</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  check.names <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">roc_df</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">marker_short</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">roc_df</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_roc.html">type_roc</a></span><span class="op">(</span>predictors <span class="op">=</span> <span class="va">top_markers</span>, response <span class="op">=</span> <span class="st">"disease"</span><span class="op">)</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_roc.html">type_roc</a></span><span class="op">(</span>predictors <span class="op">=</span> <span class="va">marker_short</span>, response <span class="op">=</span> <span class="st">"disease"</span><span class="op">)</span>,</span>
 <span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -261,8 +269,7 @@ Normalized Enrichment Score (NES), encoding statistical significance
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><mtext mathvariant="normal">FDR</mtext></mrow><annotation encoding="application/x-tex">-\log_{10} \text{FDR}</annotation></semantics></math>)
 in dot size and regulation direction in color:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract top DE proteins from AD vs CTL comparison</span></span>
-<span><span class="va">r_adctl</span> <span class="op">=</span> <span class="va">adpd_res</span><span class="op">[</span><span class="va">adpd_res</span><span class="op">$</span><span class="va">test</span> <span class="op">==</span> <span class="st">"ADvsCTL"</span>, <span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">r_adctl</span> <span class="op">=</span> <span class="va">adpd_res</span><span class="op">[</span><span class="va">adpd_res</span><span class="op">$</span><span class="va">test</span> <span class="op">==</span> <span class="st">"ADvsCTL"</span>, <span class="op">]</span></span>
 <span><span class="va">r_adctl</span> <span class="op">=</span> <span class="va">r_adctl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">r_adctl</span><span class="op">$</span><span class="va">Adj.P.Value</span><span class="op">)</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="va">top_pathways</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -278,13 +285,47 @@ in dot size and regulation direction in color:</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="figure-3-multi-set-intersection-upset-plot-cell-style">4. Figure 3 — Multi-Set Intersection: UpSet Plot (Cell Style)<a class="anchor" aria-label="anchor" href="#figure-3-multi-set-intersection-upset-plot-cell-style"></a>
+<h2 id="figure-3-differential-abundance-volcano-plot-with-publication-thresholds-nature-style">4. Figure 3 — Differential Abundance Volcano Plot with Publication
+Thresholds (Nature Style)<a class="anchor" aria-label="anchor" href="#figure-3-differential-abundance-volcano-plot-with-publication-thresholds-nature-style"></a>
 </h2>
-<p>UpSet plots supersede Venn diagrams when tracking differentially
-expressed gene or metabolite overlap across
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">\ge 4</annotation></semantics></math>
-biological contrasts:</p>
+<p>Volcano plots evaluate effect size
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mtext mathvariant="normal">FC</mtext></mrow><annotation encoding="application/x-tex">\log_2 \text{FC}</annotation></semantics></math>)
+against multiple-testing adjusted significance
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mn>10</mn></msub><mtext mathvariant="normal">FDR</mtext></mrow><annotation encoding="application/x-tex">-\log_{10} \text{FDR}</annotation></semantics></math>).
+Gene symbols are repelled via <code>ggrepel</code>, and threshold
+boundaries are demarcated by dashed reference lines:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">r_adctl_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">r_adctl</span><span class="op">)</span></span>
+<span><span class="va">r_adctl_df</span><span class="op">$</span><span class="va">symbol</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"_.*$"</span>, <span class="st">""</span>, <span class="va">r_adctl_df</span><span class="op">$</span><span class="va">UniqueID</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">r_adctl_df</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/make.unique.html" class="external-link">make.unique</a></span><span class="op">(</span><span class="va">r_adctl_df</span><span class="op">$</span><span class="va">symbol</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">top_volc_labels</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SMOC1"</span>, <span class="st">"APP"</span>, <span class="st">"MDK"</span>, <span class="st">"CHI3L1"</span>, <span class="st">"GFAP"</span>, <span class="st">"PEBP1"</span>, <span class="st">"MAPT"</span>, <span class="st">"STMN1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">Adj.P.Value</span><span class="op">)</span> <span class="op">~</span> <span class="va">logFC</span>, data <span class="op">=</span> <span class="va">r_adctl_df</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
+<span>          fc_cutoff    <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>          pval_cutoff  <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>          point_size   <span class="op">=</span> <span class="fl">1.8</span>,</span>
+<span>          point_alpha  <span class="op">=</span> <span class="fl">0.65</span>,</span>
+<span>          label_genes  <span class="op">=</span> <span class="va">top_volc_labels</span>,</span>
+<span>          max_overlaps <span class="op">=</span> <span class="fl">25</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>        xlab <span class="op">=</span> <span class="st">"log2 Fold Change (AD vs CTL)"</span>,</span>
+<span>        ylab <span class="op">=</span> <span class="st">"-log10 (FDR-adjusted p-value)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig3-volcano-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-4-multi-set-intersection-upset-plot-cell-style">5. Figure 4 — Multi-Set Intersection: UpSet Plot (Cell Style)<a class="anchor" aria-label="anchor" href="#figure-4-multi-set-intersection-upset-plot-cell-style"></a>
+</h2>
+<p>UpSet plots track differentially expressed gene or metabolite
+intersections across
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">\ge 4</annotation></semantics></math>
+biological contrasts without geometric distortion:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deg_sets</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">adpd_res</span><span class="op">$</span><span class="va">test</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">tt</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sub</span> <span class="op">=</span> <span class="va">adpd_res</span><span class="op">[</span><span class="va">adpd_res</span><span class="op">$</span><span class="va">test</span> <span class="op">==</span> <span class="va">tt</span>, <span class="op">]</span></span>
 <span>  <span class="va">sub</span><span class="op">$</span><span class="va">UniqueID</span><span class="op">[</span><span class="va">sub</span><span class="op">$</span><span class="va">Adj.P.Value</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">sub</span><span class="op">$</span><span class="va">logFC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">]</span></span>
@@ -293,22 +334,132 @@ biological contrasts:</p>
 <span><span class="va">deg_sets</span> <span class="op">=</span> <span class="va">deg_sets</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">deg_sets</span>, <span class="va">length</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">deg_sets</span>, type <span class="op">=</span> <span class="st">"upset"</span>, theme <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="journal-plots_files/figure-html/fig3-upset-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<p><img src="journal-plots_files/figure-html/fig4-upset-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="figure-4-sci-elsevier-full-box-style-with-theme_cli_scifig">5. Figure 4 — SCI / Elsevier Full-Box Style with
-<code>theme_cli_scifig()</code><a class="anchor" aria-label="anchor" href="#figure-4-sci-elsevier-full-box-style-with-theme_cli_scifig"></a>
+<h2 id="figure-5-three-way-contrast-intersection-venn-diagram-science-style">6. Figure 5 — Three-Way Contrast Intersection: Venn Diagram (Science
+Style)<a class="anchor" aria-label="anchor" href="#figure-5-three-way-contrast-intersection-venn-diagram-science-style"></a>
+</h2>
+<p>When comparing two to three contrasts, Venn diagrams provide
+intuitive set overlap summaries with clean transparent fills and exact
+intersection counts:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">venn_subsets</span> <span class="op">=</span> <span class="va">deg_sets</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ADvsCTL"</span>, <span class="st">"PDvsCTL"</span>, <span class="st">"ADPDvsCTL"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">venn_subsets</span>, type <span class="op">=</span> <span class="st">"venn"</span>, theme <span class="op">=</span> <span class="st">"science"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"e"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig5-venn-1.png" class="r-plt" alt="" width="652.8" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-6-paired-expression-trajectory-slope-graph-nature-style">7. Figure 6 — Paired Expression Trajectory: Slope Graph (Nature
+Style)<a class="anchor" aria-label="anchor" href="#figure-6-paired-expression-trajectory-slope-graph-nature-style"></a>
+</h2>
+<p>Slope graphs link paired observations across experimental conditions,
+showing individual trajectory slopes and population shifts without
+boxplot aggregation artifacts:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">top10_ids</span> <span class="op">=</span> <span class="va">r_adctl</span><span class="op">$</span><span class="va">UniqueID</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span><span class="va">sub_long</span> <span class="op">=</span> <span class="va">adpd_long</span><span class="op">[</span><span class="va">adpd_long</span><span class="op">$</span><span class="va">UniqueID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top10_ids</span> <span class="op">&amp;</span> <span class="va">adpd_long</span><span class="op">$</span><span class="va">group</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CTL"</span>, <span class="st">"AD"</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">means</span> <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">UniqueID</span> <span class="op">+</span> <span class="va">group</span>, data <span class="op">=</span> <span class="va">sub_long</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
+<span><span class="va">wide</span>  <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">means</span>, idvar <span class="op">=</span> <span class="st">"UniqueID"</span>, timevar <span class="op">=</span> <span class="st">"group"</span>, direction <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">wide</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"protein"</span>, <span class="st">"CTL"</span>, <span class="st">"AD"</span><span class="op">)</span></span>
+<span><span class="va">wide</span><span class="op">$</span><span class="va">symbol</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"_.*$"</span>, <span class="st">""</span>, <span class="va">wide</span><span class="op">$</span><span class="va">protein</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">slope_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  subject   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">wide</span><span class="op">$</span><span class="va">symbol</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Control"</span>, <span class="st">"Alzheimer"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">wide</span><span class="op">)</span><span class="op">)</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Control"</span>, <span class="st">"Alzheimer"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  abundance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">wide</span><span class="op">$</span><span class="va">CTL</span>, <span class="va">wide</span><span class="op">$</span><span class="va">AD</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">condition</span>, data <span class="op">=</span> <span class="va">slope_df</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_slope.html">type_slope</a></span><span class="op">(</span>pair <span class="op">=</span> <span class="st">"subject"</span><span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>,</span>
+<span>        xlab <span class="op">=</span> <span class="st">"Cortex Condition"</span>,</span>
+<span>        ylab <span class="op">=</span> <span class="st">"Mean Abundance (log2 LFQ)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig6-slope-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-7-diagnostic-classifier-performance-confusion-matrix-cell-style">8. Figure 7 — Diagnostic Classifier Performance: Confusion Matrix
+(Cell Style)<a class="anchor" aria-label="anchor" href="#figure-7-diagnostic-classifier-performance-confusion-matrix-cell-style"></a>
+</h2>
+<p>Confusion matrices evaluate binary classifier concordance against
+histological truth. Color intensity scales with sample frequency, and
+Fisher’s exact test p-value is integrated into the matrix header:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sub_stk</span> <span class="op">=</span> <span class="va">stroke_long</span><span class="op">[</span><span class="va">stroke_long</span><span class="op">$</span><span class="va">UniqueID</span> <span class="op">==</span> <span class="st">"Lxn_P70202"</span> <span class="op">&amp;</span></span>
+<span>                      <span class="va">stroke_long</span><span class="op">$</span><span class="va">treatment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StrkIp"</span>, <span class="st">"ShamIp"</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">sub_stk</span><span class="op">$</span><span class="va">stroke</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">treatment</span> <span class="op">==</span> <span class="st">"StrkIp"</span>, <span class="st">"Stroke"</span>, <span class="st">"Sham"</span><span class="op">)</span>,</span>
+<span>                        levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sham"</span>, <span class="st">"Stroke"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">thr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">expr</span><span class="op">[</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">stroke</span> <span class="op">==</span> <span class="st">"Stroke"</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>             <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">expr</span><span class="op">[</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">stroke</span> <span class="op">==</span> <span class="st">"Sham"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sub_stk</span><span class="op">$</span><span class="va">pred</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">expr</span> <span class="op">&gt;</span> <span class="va">thr</span>, <span class="st">"Stroke"</span>, <span class="st">"Sham"</span><span class="op">)</span>,</span>
+<span>                      levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">sub_stk</span><span class="op">$</span><span class="va">stroke</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">stroke</span> <span class="op">~</span> <span class="va">pred</span>, data <span class="op">=</span> <span class="va">sub_stk</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_confusion.html">type_confusion</a></span><span class="op">(</span>add_pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"g"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig7-confusion-1.png" class="r-plt" alt="" width="624" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-8-study-cohort-architecture-donut-plot-nature-style">9. Figure 8 — Study Cohort Architecture: Donut Plot (Nature
+Style)<a class="anchor" aria-label="anchor" href="#figure-8-study-cohort-architecture-donut-plot-nature-style"></a>
+</h2>
+<p>Donut plots communicate sample partitioning across study arms,
+featuring an open center metric that reports total cohort size
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>):</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comp</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">aging_meta</span><span class="op">$</span><span class="va">group</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">n</span> <span class="op">~</span> <span class="va">group</span>, data <span class="op">=</span> <span class="va">comp</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_donut.html">type_donut</a></span><span class="op">(</span>center_label <span class="op">=</span> <span class="st">"samples"</span>,</span>
+<span>                          center_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">aging_meta</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig8-donut-1.png" class="r-plt" alt="" width="624" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-9-multi-modal-distribution-raincloud-plot-nature-style">10. Figure 9 — Multi-Modal Distribution: Raincloud Plot (Nature
+Style)<a class="anchor" aria-label="anchor" href="#figure-9-multi-modal-distribution-raincloud-plot-nature-style"></a>
+</h2>
+<p>Raincloud plots integrate raw data points, half-violin probability
+density, and inner quartile boxplots, presenting distribution shape and
+sample density simultaneously:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">treatment</span>, data <span class="op">=</span> <span class="va">sub_stk</span>,</span>
+<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_raincloud.html">type_raincloud</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.55</span>, point_size <span class="op">=</span> <span class="fl">1.6</span>, point_alpha <span class="op">=</span> <span class="fl">0.45</span><span class="op">)</span>,</span>
+<span>        theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>,</span>
+<span>        xlab <span class="op">=</span> <span class="st">"Surgical Recovery Group"</span>,</span>
+<span>        ylab <span class="op">=</span> <span class="st">"Lxn Expression (LFQ)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"i"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig9-raincloud-1.png" class="r-plt" alt="" width="691.2" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="figure-10-sci-elsevier-full-box-style-with-theme_cli_scifig">11. Figure 10 — SCI / Elsevier Full-Box Style with
+<code>theme_cli_scifig()</code><a class="anchor" aria-label="anchor" href="#figure-10-sci-elsevier-full-box-style-with-theme_cli_scifig"></a>
 </h2>
 <p>For manuscripts submitted to Elsevier, IEEE, and SCI journals
-requiring full four-sided spines and outward tick marks,
-<code><a href="../reference/theme_cli_scifig.html">theme_cli_scifig()</a></code> provides a crisp box frame with a subtle
-dashed reference grid:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Protein abundance across stroke recovery time-points</span></span>
-<span><span class="va">lxn_sub</span> <span class="op">=</span> <span class="va">stroke_long</span><span class="op">[</span><span class="va">stroke_long</span><span class="op">$</span><span class="va">UniqueID</span> <span class="op">==</span> <span class="st">"Lxn_P70202"</span>, <span class="op">]</span></span>
+requiring full rectangular frames and outward ticks,
+<code><a href="../reference/theme_cli_scifig.html">theme_cli_scifig()</a></code> applies four visible spines and a subtle
+reference grid. The boxplot engine automatically factorizes numeric
+levels, preventing inter-group overlap:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lxn_sub</span> <span class="op">=</span> <span class="va">stroke_long</span><span class="op">[</span><span class="va">stroke_long</span><span class="op">$</span><span class="va">UniqueID</span> <span class="op">==</span> <span class="st">"Lxn_P70202"</span>, <span class="op">]</span></span>
 <span><span class="va">lxn_sub</span><span class="op">$</span><span class="va">timepoint</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Day "</span>, <span class="va">lxn_sub</span><span class="op">$</span><span class="va">conc</span><span class="op">)</span>,</span>
 <span>                           levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Day 1"</span>, <span class="st">"Day 3"</span>, <span class="st">"Day 7"</span>, <span class="st">"Day 14"</span>, <span class="st">"Day 28"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -318,36 +469,69 @@ dashed reference grid:</p>
 <span>        palette <span class="op">=</span> <span class="st">"npg"</span>,</span>
 <span>        xlab <span class="op">=</span> <span class="st">"Recovery Time-Point"</span>,</span>
 <span>        ylab <span class="op">=</span> <span class="st">"Normalized Abundance (LFQ Intensity)"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>tag <span class="op">=</span> <span class="st">"j"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="journal-plots_files/figure-html/fig4-scifig-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
+<p><img src="journal-plots_files/figure-html/fig10-scifig-1.png" class="r-plt" alt="" width="720" style="display: block; margin: auto;"></p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="multi-panel-composite-assembly-journal-sized-export">6. Multi-Panel Composite Assembly &amp; Journal-Sized Export<a class="anchor" aria-label="anchor" href="#multi-panel-composite-assembly-journal-sized-export"></a>
+<h2 id="figure-11-nature-double-column-4-panel-publication-composite-183-mm">12. Figure 11 — Nature Double-Column 4-Panel Publication Composite
+(183 mm)<a class="anchor" aria-label="anchor" href="#figure-11-nature-double-column-4-panel-publication-composite-183-mm"></a>
 </h2>
 <p>A key requirement in CNS journals is assembling modular panels into a
-unified figure and exporting at exact physical millimeter trim
-width:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">panel_a</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">roc_df</span>, type <span class="op">=</span> <span class="fu"><a href="../reference/type_roc.html">type_roc</a></span><span class="op">(</span>predictors <span class="op">=</span> <span class="va">top_markers</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, response <span class="op">=</span> <span class="st">"disease"</span><span class="op">)</span>,</span>
-<span>                  theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span><span class="op">)</span></span>
+unified figure and exporting at exact physical millimeter trim width
+(183 mm double-column).</p>
+<p>Here, we assemble diagnostic biomarker ROC curves
+(<strong>(a)</strong>), differential volcano results
+(<strong>(b)</strong>), paired expression trajectories
+(<strong>(c)</strong>), and pathway GSEA enrichments
+(<strong>(d)</strong>) into a cohesive 4-panel publication
+composite:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel_a</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">roc_df</span>, type <span class="op">=</span> <span class="fu"><a href="../reference/type_roc.html">type_roc</a></span><span class="op">(</span>predictors <span class="op">=</span> <span class="va">marker_short</span>, response <span class="op">=</span> <span class="st">"disease"</span><span class="op">)</span>,</span>
+<span>                  theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"jco"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">panel_b</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">top_pathways</span>, type <span class="op">=</span> <span class="st">"gsea"</span>, top_term <span class="op">=</span> <span class="fl">12</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span>
+<span><span class="va">panel_b</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">Adj.P.Value</span><span class="op">)</span> <span class="op">~</span> <span class="va">logFC</span>, data <span class="op">=</span> <span class="va">r_adctl_df</span>,</span>
+<span>                  type <span class="op">=</span> <span class="fu"><a href="../reference/type_volcano.html">type_volcano</a></span><span class="op">(</span></span>
+<span>                    fc_cutoff    <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>                    pval_cutoff  <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>                    point_size   <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>                    point_alpha  <span class="op">=</span> <span class="fl">0.60</span>,</span>
+<span>                    label_genes  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SMOC1"</span>, <span class="st">"APP"</span>, <span class="st">"MDK"</span>, <span class="st">"CHI3L1"</span>, <span class="st">"GFAP"</span>, <span class="st">"PEBP1"</span><span class="op">)</span>,</span>
+<span>                    max_overlaps <span class="op">=</span> <span class="fl">20</span></span>
+<span>                  <span class="op">)</span>,</span>
+<span>                  theme <span class="op">=</span> <span class="st">"nature"</span>,</span>
+<span>                  xlab <span class="op">=</span> <span class="st">"log2 Fold Change"</span>,</span>
+<span>                  ylab <span class="op">=</span> <span class="st">"-log10 FDR"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Combine side-by-side using patchwork</span></span>
-<span><span class="va">composite_fig</span> <span class="op">=</span> <span class="op">(</span><span class="va">panel_a</span> <span class="op">+</span> <span class="va">panel_b</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span><span class="va">panel_c</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">condition</span>, data <span class="op">=</span> <span class="va">slope_df</span>,</span>
+<span>                  type <span class="op">=</span> <span class="fu"><a href="../reference/type_slope.html">type_slope</a></span><span class="op">(</span>pair <span class="op">=</span> <span class="st">"subject"</span><span class="op">)</span>,</span>
+<span>                  theme <span class="op">=</span> <span class="st">"nature"</span>, palette <span class="op">=</span> <span class="st">"npg"</span>,</span>
+<span>                  xlab <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>                  ylab <span class="op">=</span> <span class="st">"Mean LFQ (log2)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">panel_d</span> <span class="op">=</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">top_pathways</span>, type <span class="op">=</span> <span class="st">"gsea"</span>, top_term <span class="op">=</span> <span class="fl">12</span>, theme <span class="op">=</span> <span class="st">"nature"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Assemble 2x2 double-column composite using patchwork</span></span>
+<span><span class="va">cns_composite_fig</span> <span class="op">=</span> <span class="op">(</span><span class="va">panel_a</span> <span class="op">|</span> <span class="va">panel_b</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">panel_c</span> <span class="op">|</span> <span class="va">panel_d</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span></span>
+<span>    tag_levels <span class="op">=</span> <span class="st">"a"</span>,</span>
+<span>    tag_prefix <span class="op">=</span> <span class="st">"("</span>,</span>
+<span>    tag_suffix <span class="op">=</span> <span class="st">")"</span></span>
+<span>  <span class="op">)</span> <span class="op">&amp;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">11</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">composite_fig</span></span></code></pre></div>
-<p><img src="journal-plots_files/figure-html/composite-assembly-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="exact-journal-dimensions-vector-export">Exact Journal Dimensions &amp; Vector Export<a class="anchor" aria-label="anchor" href="#exact-journal-dimensions-vector-export"></a>
-</h3>
+<span></span>
+<span><span class="va">cns_composite_fig</span></span></code></pre></div>
+<p><img src="journal-plots_files/figure-html/fig11-composite-1.png" class="r-plt" alt="" width="912" style="display: block; margin: auto;"></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="exact-journal-dimensions-vector-export">13. Exact Journal Dimensions &amp; Vector Export<a class="anchor" aria-label="anchor" href="#exact-journal-dimensions-vector-export"></a>
+</h2>
 <p><code><a href="../reference/cli_journal_size.html">cli_journal_size()</a></code> provides the publisher’s exact column
 specifications:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">journals</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nature"</span>, <span class="st">"natcomms"</span>, <span class="st">"science"</span>, <span class="st">"cell"</span>, <span class="st">"jama"</span>, <span class="st">"nejm"</span>, <span class="st">"lancet"</span>, <span class="st">"plos"</span>, <span class="st">"ieee"</span><span class="op">)</span></span>
 <span><span class="va">size_table</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">journals</span>, <span class="kw">function</span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">s_single</span> <span class="op">=</span> <span class="fu"><a href="../reference/cli_journal_size.html">cli_journal_size</a></span><span class="op">(</span><span class="va">j</span>, <span class="st">"single"</span><span class="op">)</span></span>
@@ -373,17 +557,16 @@ specifications:</p>
 <span><span class="co">#&gt; 9      IEEE            88.9           181.9         220.0</span></span></code></pre>
 <p>Export with <code><a href="../reference/cli_save.html">cli_save()</a></code> to enforce exact millimeter
 dimensions and submission format compliance:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Nature double-column vector PDF (183 mm width) at 600 DPI</span></span>
-<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">composite_fig</span>, file <span class="op">=</span> <span class="st">"Figure_1.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">cns_composite_fig</span>, file <span class="op">=</span> <span class="st">"Figure_1.pdf"</span>, journal <span class="op">=</span> <span class="st">"nature"</span>, column <span class="op">=</span> <span class="st">"double"</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Cell single-column vector SVG (85 mm width)</span></span>
 <span><span class="fu"><a href="../reference/cli_save.html">cli_save</a></span><span class="op">(</span><span class="va">panel_a</span>, file <span class="op">=</span> <span class="st">"Figure_1a.svg"</span>, journal <span class="op">=</span> <span class="st">"cell"</span>, column <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
-</div>
 <div class="section level2">
-<h2 id="clinical-trials-oncology-visual-grammar">7. Clinical Trials &amp; Oncology Visual Grammar<a class="anchor" aria-label="anchor" href="#clinical-trials-oncology-visual-grammar"></a>
+<h2 id="clinical-trials-oncology-visual-grammar">14. Clinical Trials &amp; Oncology Visual Grammar<a class="anchor" aria-label="anchor" href="#clinical-trials-oncology-visual-grammar"></a>
 </h2>
 <p>For clinical trial archetypes, including: - Kaplan-Meier survival
 curves with landmark milestone dots (<code>type_km</code>) - Cumulative
