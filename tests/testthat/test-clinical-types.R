@@ -25,6 +25,12 @@ test_that("type_boxplot works with grouping", {
   expect_s3_class(p_auto, "ggplot")
   d_auto <- ggplot2::layer_data(p_auto, 1)
   expect_equal(length(unique(d_auto$fill)), 3)
+
+  # Verify continuous numeric x dodges discrete levels cleanly without overlap
+  p_num <- cliplot(len ~ dose | supp, data = ToothGrowth, type = "boxplot", palette = "jco")
+  expect_s3_class(p_num, "ggplot")
+  d_num <- ggplot2::layer_data(p_num, 1)
+  expect_equal(nrow(d_num), 6) # 3 doses * 2 supplements
 })
 
 # ---- violin ----
@@ -32,6 +38,12 @@ test_that("type_boxplot works with grouping", {
 test_that("type_violin works with grouping", {
   p <- cliplot(Sepal.Length ~ Species, data = iris, type = "violin")
   expect_s3_class(p, "ggplot")
+
+  # Verify continuous numeric x dodges discrete levels cleanly in violin
+  p_vnum <- cliplot(len ~ dose | supp, data = ToothGrowth, type = "violin", palette = "jco")
+  expect_s3_class(p_vnum, "ggplot")
+  d_vnum <- ggplot2::layer_data(p_vnum, 1)
+  expect_equal(length(unique(d_vnum$group)), 6)
 })
 
 # ---- PCA ----

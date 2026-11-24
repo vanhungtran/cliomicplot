@@ -170,6 +170,15 @@ cliplot.default = function(
   settings$type_name = if (inherits(type, "cliplot_type")) type$name else type
   settings$type = resolve_type(type)
 
+  # For categorical distribution plots (boxplot, violin, beeswarm, raincloud),
+  # convert numeric x to factor so discrete levels (e.g. dose 0.5, 1.0, 2.0)
+  # dodge cleanly without continuous-scale interval overlaps
+  if (settings$type_name %in% c("boxplot", "violin", "beeswarm", "raincloud") &&
+      !is.null(x) && is.numeric(x)) {
+    x = as.factor(x)
+    settings$x = x
+  }
+
   # Resolve by from data if passed as a column name string
   if (is.character(by) && length(by) == 1L && !is.null(data) && is.data.frame(data) && by %in% names(data)) {
     by = data[[by]]

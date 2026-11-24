@@ -59,11 +59,16 @@ type_boxplot = function(
 ) {
   cliplot_type(
     draw = function(data, mapping, settings, ...) {
+      # Ensure categorical x for boxplots so numeric levels dodge cleanly
+      if ("x" %in% names(data) && is.numeric(data[["x"]])) {
+        data[["x"]] <- as.factor(data[["x"]])
+      }
+
       p = ggplot2::ggplot(data, mapping)
 
       # Build position dodge if grouping is present and distinct from x
       is_grouped_dodge <- !is.null(settings$by) && !identical(as.character(data[["x"]]), as.character(data[["..by.."]]))
-      dodge_width <- position_dodge %||% 0.9
+      dodge_width <- position_dodge %||% 0.8
       pos <- if (is_grouped_dodge) ggplot2::position_dodge(width = dodge_width) else ggplot2::position_identity()
 
       # Add violin if requested

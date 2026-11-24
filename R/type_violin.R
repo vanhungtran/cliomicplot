@@ -40,47 +40,81 @@ type_violin = function(
 ) {
   cliplot_type(
     draw = function(data, mapping, settings, ...) {
+      # Ensure categorical x for violin plots so numeric levels dodge cleanly
+      if ("x" %in% names(data) && is.numeric(data[["x"]])) {
+        data[["x"]] <- as.factor(data[["x"]])
+      }
+
       p = ggplot2::ggplot(data, mapping)
+
+      # Build position dodge if grouping is present and distinct from x
+      is_grouped_dodge <- !is.null(settings$by) && !identical(as.character(data[["x"]]), as.character(data[["..by.."]]))
+      dodge_width <- 0.8
+      pos <- if (is_grouped_dodge) ggplot2::position_dodge(width = dodge_width) else ggplot2::position_identity()
 
       # Violin
       if (!is.null(settings$by)) {
         p = p + ggplot2::geom_violin(
           ggplot2::aes(fill = .data[["..by.."]]),
-          alpha = violin_alpha,
-          trim  = trim,
-          color = "#30343B",
-          linewidth = 0.25
+          alpha     = violin_alpha,
+          trim      = trim,
+          color     = "#30343B",
+          linewidth = 0.25,
+          position  = pos
         )
       } else {
         p = p + ggplot2::geom_violin(
-          alpha = violin_alpha,
-          trim  = trim,
-          fill  = settings$col.default %||% "#0073C2",
-          color = "#30343B",
+          alpha     = violin_alpha,
+          trim      = trim,
+          fill      = settings$col.default %||% "#0073C2",
+          color     = "#30343B",
           linewidth = 0.25
         )
       }
 
       # Boxplot overlay
       if (add_boxplot) {
-        p = p + ggplot2::geom_boxplot(
-          width    = box_width,
-          alpha    = 0.42,
-          color    = "#20242A",
-          fill     = "white",
-          outlier.shape = NA
-        )
+        if (!is.null(settings$by)) {
+          p = p + ggplot2::geom_boxplot(
+            ggplot2::aes(fill = .data[["..by.."]]),
+            width         = box_width,
+            alpha         = 0.42,
+            color         = "#20242A",
+            outlier.shape = NA,
+            position      = pos,
+            show.legend   = FALSE
+          )
+        } else {
+          p = p + ggplot2::geom_boxplot(
+            width         = box_width,
+            alpha         = 0.42,
+            color         = "#20242A",
+            fill          = "white",
+            outlier.shape = NA
+          )
+        }
       }
 
       # Jittered points
       if (add_jitter) {
         if (!is.null(settings$by)) {
+          jit_pos <- if (is_grouped_dodge) {
+            ggplot2::position_jitterdodge(
+              jitter.width  = jitter_width,
+              dodge.width   = dodge_width,
+              jitter.height = 0
+            )
+          } else {
+            ggplot2::position_jitter(
+              width  = jitter_width,
+              height = 0
+            )
+          }
           p = p + ggplot2::geom_jitter(
             ggplot2::aes(color = .data[["..by.."]]),
-            width  = jitter_width,
-            alpha  = jitter_alpha,
-            size   = jitter_size,
-            height = 0
+            alpha    = jitter_alpha,
+            size     = jitter_size,
+            position = jit_pos
           )
         } else {
           p = p + ggplot2::geom_jitter(
