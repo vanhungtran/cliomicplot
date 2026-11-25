@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Lucas VHH
 Tran</h4>
             
-            <h4 data-toc-skip class="date">2026-11-24</h4>
+            <h4 data-toc-skip class="date">2026-11-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/HEAD/vignettes/oncology.Rmd" class="external-link"><code>vignettes/oncology.Rmd</code></a></small>
       <div class="d-none name"><code>oncology.Rmd</code></div>
@@ -445,18 +445,21 @@ control (StrkC):</p>
 <span>                    <span class="va">stroke_env</span><span class="op">$</span><span class="va">ProteinGeneName</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UniqueID"</span>, <span class="st">"Gene.Name"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>                    by <span class="op">=</span> <span class="st">"UniqueID"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Select Mpeg1 (macrophage/microglia activation marker)</span></span>
+<span><span class="co"># Select Mpeg1 (macrophage/microglia activation marker) and identify individual replicates</span></span>
 <span><span class="va">mpeg1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">stroke_long</span>, <span class="va">Gene.Name</span> <span class="op">==</span> <span class="st">"Mpeg1"</span><span class="op">)</span></span>
 <span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Day</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">mpeg1</span><span class="op">$</span><span class="va">conc</span><span class="op">)</span></span>
 <span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Treatment</span> <span class="op">=</span> <span class="va">mpeg1</span><span class="op">$</span><span class="va">treatment</span></span>
+<span><span class="va">mpeg1</span> <span class="op">=</span> <span class="va">mpeg1</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Treatment</span>, <span class="va">mpeg1</span><span class="op">$</span><span class="va">Day</span>, <span class="va">mpeg1</span><span class="op">$</span><span class="va">sampleid</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Individual</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">mpeg1</span><span class="op">$</span><span class="va">Treatment</span>, <span class="st">"_Mouse"</span>, <span class="fu"><a href="https://rdrr.io/r/stats/ave.html" class="external-link">ave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mpeg1</span><span class="op">)</span><span class="op">)</span>, <span class="va">mpeg1</span><span class="op">$</span><span class="va">Treatment</span>, <span class="va">mpeg1</span><span class="op">$</span><span class="va">Day</span>, FUN <span class="op">=</span> <span class="va">seq_along</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/clitheme.html">clitheme</a></span><span class="op">(</span><span class="st">"science"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">expr</span> <span class="op">~</span> <span class="va">Day</span> <span class="op">|</span> <span class="va">Treatment</span>, data <span class="op">=</span> <span class="va">mpeg1</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="../reference/type_lines.html">type_lines</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span>,</span>
+<span>        group   <span class="op">=</span> <span class="st">"Individual"</span>,</span>
+<span>        type    <span class="op">=</span> <span class="fu"><a href="../reference/type_lines.html">type_lines</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.1</span>, add_points <span class="op">=</span> <span class="cn">TRUE</span>, point_size <span class="op">=</span> <span class="fl">2.2</span><span class="op">)</span>,</span>
 <span>        palette <span class="op">=</span> <span class="st">"jco"</span>,</span>
 <span>        title   <span class="op">=</span> <span class="st">"**Figure 6A** — Mpeg1 Macrophage Marker Time Course"</span>,</span>
-<span>        subtitle <span class="op">=</span> <span class="st">"Stroke Brain Proteomics — 5 Time Points (Days 1–28)"</span>,</span>
+<span>        subtitle <span class="op">=</span> <span class="st">"Stroke Brain Proteomics — Individual Mouse Replicate Trajectories (Days 1–28)"</span>,</span>
 <span>        xlab    <span class="op">=</span> <span class="st">"Days Post-Onset"</span>,</span>
 <span>        ylab    <span class="op">=</span> <span class="st">"Protein Expression (LFQ Intensity)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/cli_markdown.html">cli_markdown</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
