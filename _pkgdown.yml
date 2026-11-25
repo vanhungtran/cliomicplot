@@ -72,6 +72,12 @@ reference:
       - type_cross_network_graph
       - cliplot_env_network
       - type_env_network
+      - calc_zipi
+      - type_zipi
+      - type_mantel_triangle
+      - type_polygon_network
+      - type_bipartite
+      - type_edge_dynamics
       - cli_calc_env_links
       - cli_network_permutation
       - type_module_compare

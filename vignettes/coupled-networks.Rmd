@@ -298,16 +298,93 @@ p_rob
 
 ---
 
-## 7. Comparative Benchmark: `cliomicplot` vs Existing Tools
+## 7. Keystone Identification and Ecological Network Mining
 
-`cliomicplot` introduces an integrated single-canvas architecture for clinical and multi-omics figures, evaluated below against `ggClusterNet 2` (*iMeta* 2025), `linkET`, `microeco`, and `ComplexHeatmap`:
+Microbial ecological co-occurrence analysis relies heavily on module partitioning, topological role classification, and cross-domain correlation patterns (Guimerà & Amaral, *Nature* 2005; Deng et al., *Science* 2012; Tao Wen et al., *iMeta* 2025). `cliomicplot` provides five dedicated network archetypes expanding on `ggClusterNet 2` capabilities with publication-grade automated typography.
 
-| Dimension | `ggClusterNet 2` | `linkET` | `microeco` | `ComplexHeatmap` | `cliomicplot` |
-|:---|:---|:---|:---|:---|:---|
-| **Canvas Architecture** | Asymmetric lower triangle | Asymmetric lower triangle | Separate plots | Matrix annotations | Symmetrical 4-corner multi-domain canvas |
-| **Output Object Type** | `igraph` / `ggplot` | `ggplot` | Custom R6 class | `Heatmap` grob | Pure `ggplot2` |
-| **Primary Syntax** | Function wrappers | Custom pipes | R6 methods | S4 methods | Standard formula (`y ~ x \| group`) |
-| **External Domains** | 1 domain | 1 domain | 1 domain | Column/row annotations | 1 to 4 independent corner matrices |
-| **Collision-Free Labels** | Manual tuning | Manual tuning | Manual tuning | Manual tuning | Automated (`line_intersects_rect` geometric pruning) |
-| **Publication Typography** | None | None | None | None | SciFig enforced ($\ge 5.0$ pt font floor, hairline floors) |
-| **Journal Submission Export** | None | None | None | None | `cli_save()` with journal dimension presets |
+### 7.1 Zi-Pi Keystone Ecological Role Plot (`type_zipi()`)
+
+The Zi-Pi plot classifies network nodes by mapping among-module connectivity ($P_i$, participation coefficient) on the x-axis and within-module connectivity ($Z_i$, degree z-score) on the y-axis. Standard thresholds ($Z = 2.5, P = 0.62$) divide community taxa into four ecological categories: **Peripherals** (specialists with few inter-module links), **Connectors** (generalists linking distinct modules), **Module hubs** (highly connected within their module), and **Network hubs** (super-generalists critical to network stability).
+
+`type_zipi()` automates role classification, renders soft shaded background quadrants, adds marginal density rugs, and generates collision-free callout labels for top keystone taxa:
+
+```{r zipi-demo, fig.width=7.5, fig.height=5.5}
+set.seed(42)
+n_taxa <- 50
+zipi_data <- data.frame(
+  taxa   = paste0("ASV_", sprintf("%02d", seq_len(n_taxa))),
+  Zi     = c(rnorm(42, mean = -0.2, sd = 0.8), rnorm(4, mean = 2.9, sd = 0.3), rnorm(4, mean = 2.7, sd = 0.4)),
+  Pi     = c(runif(38, 0.05, 0.55), runif(4, 0.65, 0.85), runif(4, 0.15, 0.45), runif(4, 0.68, 0.92)),
+  Phylum = sample(c("Bacteroidetes", "Firmicutes", "Actinobacteria", "Proteobacteria"), n_taxa, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+p_zipi <- cliplot(Zi ~ Pi, data = zipi_data,
+                  type = type_zipi(point_size = 3.2, label_top = 6),
+                  title = "Microbial Keystone Hub Identification (Zi-Pi Role Classification)")
+p_zipi
+```
+
+### 7.2 Triangular Correlation Heatmap with Curved Mantel Links (`type_mantel_triangle()`)
+
+In environmental microbiomics, identifying which environmental factors significantly drive taxonomic community composition requires linking pairwise environmental correlations with community distance metrics.
+
+`type_mantel_triangle()` pairs a lower-triangular environmental correlation matrix with curved bezier arcs connected to target community phyla or modules:
+
+```{r mantel-triangle-demo, fig.width=8.0, fig.height=5.8}
+p_mantel <- cliplot(type = type_mantel_triangle(label_size = 2.8, node_size = 3.8),
+                    title = "Environmental Factors Coupled with Microbial Phyla (Mantel Correlation)")
+p_mantel
+```
+
+### 7.3 Modular Polygon Ring Layout (`type_polygon_network()`)
+
+Community co-occurrence networks frequently cluster into tightly bound functional modules. Arranging module members along circular rings positioned at the vertices of a macro-polygon (`PolygonClusterG` and `PolygonRrClusterG` in `ggClusterNet 2`) separates dense intra-module edges from cross-module inter-cluster links.
+
+In `type_polygon_network(adaptive_radius = TRUE)`, module ring radii scale with $\sqrt{N_k / \bar{N}}$, providing proportional spatial area for larger modules:
+
+```{r polygon-network-demo, fig.width=7.2, fig.height=7.2}
+p_poly <- cliplot(type = type_polygon_network(adaptive_radius = TRUE, label_size = 2.4),
+                  title = "Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)")
+p_poly
+```
+
+### 7.4 Transkingdom & Multi-Omics Bipartite Interactions (`type_bipartite()`)
+
+Cross-domain interactions—such as bacterial-fungal co-occurrence or gut microbiota coupled with serum metabolomics—require bipartite layouts highlighting positive (synergistic) vs negative (competitive) correlations:
+
+```{r bipartite-demo, fig.width=7.8, fig.height=6.0}
+p_bip <- cliplot(type = type_bipartite(domain_a = "Gut Microbiota", domain_b = "Serum Metabolites", layout = "bipolar"),
+                 title = "Transkingdom Cross-Domain Network (Microbiota vs Metabolites)")
+p_bip
+```
+
+### 7.5 Ecological Network Edge-Sign Dynamics (`type_edge_dynamics()`)
+
+The ratio of negative correlation edges (competitive exclusion or niche differentiation) to positive correlation edges (mutualism or cross-feeding) quantifies community stability across clinical disease severity or environmental perturbation gradients:
+
+```{r edge-dynamics-demo, fig.width=7.0, fig.height=5.0}
+p_edge <- cliplot(type = type_edge_dynamics(mode = "stack"))
+p_edge
+```
+
+---
+
+## 8. Comparative Benchmark: `cliomicplot` vs `ggClusterNet 2`
+
+`cliomicplot` provides pure `ggplot2` modularity, unified formula grammar (`y ~ x | group`), and SciFig automated publication gates across both microbial ecological network mining and general multi-omics:
+
+| Capability / Dimension | `ggClusterNet 2` (*iMeta* 2025) | `linkET` | `microeco` | `cliomicplot` |
+|:---|:---|:---|:---|:---|
+| **Underlying Architecture** | Function wrappers / base `igraph` | Custom pipe grobs | R6 class methods | Pure S3 `ggplot2` grammar |
+| **Primary Formula Syntax** | None (matrix/phyloseq input) | None | Method calls | Standard formula (`y ~ x \| group`) |
+| **Zi-Pi Role Classification** | `ZiPiPlot()` | None | `trans_network$cal_eigen()` | `type_zipi()` (with shaded quadrants & rugs) |
+| **Triangular Heatmap + Mantel**| `MatCorPlot2()` / `cor_link3()` | `qcorrplot()` | `trans_env$plot_cor()` | `type_mantel_triangle()` & 4-corner `type_env_network()` |
+| **Modular Polygon Ring Layout** | `PolygonClusterG()`, `PolygonRrClusterG()` | None | None | `type_polygon_network()` (adaptive radius) |
+| **Transkingdom Bipartite** | `corBionetwork()` | None | Bipartite method | `type_bipartite()` (bipolar & concentric) |
+| **Edge-Sign Ratio Dynamics** | Extraction script | None | Ratio bar | `type_edge_dynamics()` (stack, ratio, counts) |
+| **Multi-Domain External Coupling**| 1 domain | 1 domain | 1 domain | 1 to 4 independent corner domains |
+| **Collision-Free Keystone Labels**| Manual positioning | Manual | Manual | Automated (`ggrepel` with halo backing) |
+| **Publication Typography** | None | None | None | SciFig enforced ($\ge 5.0$ pt font floor, CVD palettes) |
+| **Clinical Trial Portfolio** | None | None | None | 15+ trial types (KM, Forest, Waterfall, Swimmer) |
+| **Journal Submission Export** | None | None | None | `cli_save()` with journal dimension presets |

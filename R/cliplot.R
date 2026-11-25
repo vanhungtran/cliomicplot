@@ -21,7 +21,7 @@
 #'   \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
 #'   \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
 #'   \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
-#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"})
+#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"}, \code{"zipi"}, \code{"mantel_triangle"}, \code{"polygon_network"}, \code{"bipartite"}, \code{"edge_dynamics"})
 #'   or a call to a \code{type_*()} function for customization.
 #' @param by Grouping variable. Alternative to the \code{|} in formula.
 #' @param facet Faceting variable(s) as a formula. One-sided formulas
@@ -598,7 +598,20 @@ resolve_type = function(type) {
     env_network = type_env_network,
     microbial_network = type_env_network,
     module_preservation = type_module_preservation,
-    network_robustness = type_network_robustness
+    network_robustness = type_network_robustness,
+    zipi            = type_zipi,
+    zipi_plot       = type_zipi,
+    keystone        = type_zipi,
+    mantel_triangle = type_mantel_triangle,
+    mantel_link     = type_mantel_triangle,
+    matcor          = type_mantel_triangle,
+    polygon_network = type_polygon_network,
+    polygon_cluster = type_polygon_network,
+    bipartite       = type_bipartite,
+    bipartite_network = type_bipartite,
+    transkingdom    = type_bipartite,
+    edge_dynamics   = type_edge_dynamics,
+    edge_sign       = type_edge_dynamics
   )
 
   if (type %in% names(type_map)) {

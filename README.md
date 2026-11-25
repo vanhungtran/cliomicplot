@@ -248,6 +248,17 @@ The main figures of a real publication - "X-linked transcriptome dysregulation a
 
 Plot types used: `type_boxplot`, `type_volcano`, `type_heatmap`, `type_barplot` + `patchwork` composites.
 
+### Microbial Ecology & Systems Biology (Inspired by ggClusterNet 2)
+
+New ecological co-occurrence network architectures, keystone topological role classification, and cross-domain multi-omics archetypes (Tao Wen et al., *iMeta* 2025; Guimerà & Amaral, *Nature* 2005):
+
+| | | |
+|:---:|:---:|:---:|
+| **Zi-Pi Keystone Hub Plot** | **Triangular Heatmap + Mantel Links** | **Modular Polygon Ring (PolygonRr)** |
+| [![ZiPi](man/figures/zipi.png)](man/figures/zipi.png) | [![Mantel](man/figures/mantel_triangle.png)](man/figures/mantel_triangle.png) | [![Polygon](man/figures/polygon_network.png)](man/figures/polygon_network.png) |
+| **Transkingdom Bipartite** | **Edge-Sign Dynamics** | |
+| [![Bipartite](man/figures/bipartite.png)](man/figures/bipartite.png) | [![EdgeDynamics](man/figures/edge_dynamics.png)](man/figures/edge_dynamics.png) | |
+
 ### Distributions & Statistics
 
 | | | |
@@ -286,7 +297,7 @@ Plot types used: `type_boxplot`, `type_volcano`, `type_heatmap`, `type_barplot` 
 | **Parallel Coords** | **Spineplot** | **Waffle** |
 | [![Parallel](man/figures/parallel.png)](man/figures/parallel.png) | [![Spineplot](man/figures/spineplot.png)](man/figures/spineplot.png) | [![Waffle](man/figures/waffle.png)](man/figures/waffle.png) |
 
-Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`, `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`, `donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`, `module_compare`, `cross_network`, `module_trait`, `module_env`.
+Full list: `points`, `jitter`, `barplot`, `lines`, `histogram`, `density`, `errorbar`, `ribbon`, `boxplot`, `violin`, `ridge`, `volcano`, `forest`, `km`, `waterfall`, `swimmer`, `heatmap`, `pca`, `ma`, `correlation`, `text`, `bubble`, `bubble_heatmap`, `lm`, `loess`, `spineplot`, `rug`, `abline`, `qq`, `raincloud`, `dumbbell`, `lollipop`, `beeswarm`, `radar`, `alluvial`, `waffle`, `chord`, `treemap`, `streamgraph`, `connected`, `circular_bar`, `density2d`, `parallel`, `dendrogram`, `trials`, `infobar`, `rankabundance`, `pattern`, `deg_compare`, `roc`, `gsea`, `upset`, `venn`, `slope`, `confusion`, `donut`, `manhattan`, `bubble_matrix`, `sharing_heatmap`, `module_compare`, `cross_network`, `module_trait`, `module_env`, `zipi`, `mantel_triangle`, `polygon_network`, `bipartite`, `edge_dynamics`.
 
 ---
 
