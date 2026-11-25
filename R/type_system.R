@@ -130,34 +130,48 @@ type_barplot = function(stat = "count", position = "stack", alpha = 0.9) {
 # Type: Lines
 # ==========================================================================
 
-#' Line plot type
+#' Lines plot type
 #'
-#' Draws lines connecting data points. If individual subject/replicate grouping
-#' is provided (via \code{group} argument or an \code{Individual} / \code{Patient}
-#' column in the data), each individual gets a separate line. If duplicate observations
-#' exist at the same x position without individual grouping, the mean trajectory
-#' is automatically calculated to prevent vertical zigzag artifacts.
+#' Draws lines connecting data points. Supports individual subject/replicate
+#' trajectories via \code{group}, automatic calculation of group mean trajectories
+#' with standard error bars (\code{mean ± SE}) or shaded confidence bands (\code{show_ribbon}),
+#' horizontal positioning dodge to prevent multi-group collisions, prominent
+#' white-stroked mean point glyphs, and overlaid background observation points.
 #'
-#' @param linewidth Line width (default 1).
+#' @param linewidth Line width (default 1.15).
 #' @param alpha Line transparency (default 0.95).
 #' @param group Column name or aesthetic for individual grouping (e.g. \code{"Individual"}, \code{"Patient"}).
 #' @param aggregate Aggregation mode when duplicate observations exist at the same x:
 #'   \code{"auto"} (default, aggregates by mean if duplicates exist and no group is specified),
 #'   \code{"mean"}, \code{"median"}, or \code{"none"}.
 #' @param add_points Logical. Whether to overlay individual observation points (default \code{FALSE}).
-#' @param point_size Size of overlaid points (default 2.2).
-#' @param point_alpha Transparency of overlaid points (default 0.7).
+#' @param point_size Size of overlaid individual points (default 2.0).
+#' @param point_alpha Transparency of overlaid points (default 0.35).
 #' @param show_se Logical. Whether to display standard error bars (\code{mean ± SE}) (default \code{FALSE}).
+#' @param show_ribbon Logical. Whether to display a shaded \code{mean ± SE} ribbon (default \code{FALSE}).
+#' @param ribbon_alpha Transparency of shaded ribbon (default 0.16).
+#' @param dodge Horizontal position dodge to prevent error bars and points from overlapping across groups (default 0.45 when multiple groups exist, otherwise 0).
+#' @param errorbar_width Width of error bar caps (default 0.35).
+#' @param errorbar_linewidth Line width of error bars (default 0.75).
+#' @param show_mean_points Logical. Whether to place prominent point markers on the mean line (default \code{TRUE} when aggregating).
+#' @param mean_point_size Size of mean point markers (default 3.5).
 #' @export
 type_lines = function(
-    linewidth   = 1,
-    alpha       = 0.95,
-    group       = NULL,
-    aggregate   = c("auto", "mean", "median", "none"),
-    add_points  = FALSE,
-    point_size  = 2.2,
-    point_alpha = 0.7,
-    show_se     = FALSE
+    linewidth          = 1.15,
+    alpha              = 0.95,
+    group              = NULL,
+    aggregate          = c("auto", "mean", "median", "none"),
+    add_points         = FALSE,
+    point_size         = 2.0,
+    point_alpha        = 0.35,
+    show_se            = FALSE,
+    show_ribbon        = FALSE,
+    ribbon_alpha       = 0.16,
+    dodge              = 0.45,
+    errorbar_width     = 0.35,
+    errorbar_linewidth = 0.75,
+    show_mean_points   = TRUE,
+    mean_point_size    = 3.5
 ) {
   aggregate = match.arg(aggregate)
   cliplot_type(
@@ -198,48 +212,51 @@ type_lines = function(
           agg_df = agg_df[order(agg_df$x), , drop = FALSE]
         }
 
+        # Position dodge if multiple groups exist
+        actual_dodge = if (has_by && !is.null(dodge) && dodge > 0) dodge else 0
+        pd = if (actual_dodge > 0) ggplot2::position_dodge(width = actual_dodge) else ggplot2::position_identity()
+
         p = ggplot2::ggplot(agg_df, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]))
 
-        if (show_se && has_dups) {
+        # Calculate SE for errorbars or ribbons
+        if ((show_se || show_ribbon) && has_dups) {
           se_fun = function(z) {
             z = stats::na.omit(z)
             if (length(z) > 1) stats::sd(z) / sqrt(length(z)) else 0
           }
           se_df = stats::aggregate(grp_formula, data = data, FUN = se_fun)
           agg_df$se = se_df$y
-          agg_df$ymin = agg_df$y - agg_df$se
+          agg_df$ymin = pmax(0, agg_df$y - agg_df$se)
           agg_df$ymax = agg_df$y + agg_df$se
+        }
 
+        # Shaded ribbon
+        if (show_ribbon && has_dups) {
           if (has_by) {
-            p = p + ggplot2::geom_errorbar(
+            p = p + ggplot2::geom_ribbon(
               data = agg_df,
-              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]], color = .data[["..by.."]]),
-              width = 0.2, alpha = alpha * 0.7
+              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]], fill = .data[["..by.."]]),
+              alpha = ribbon_alpha, color = NA
             )
           } else {
-            p = p + ggplot2::geom_errorbar(
+            p = p + ggplot2::geom_ribbon(
               data = agg_df,
               ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]]),
-              width = 0.2, alpha = alpha * 0.7,
-              color = settings$col.default %||% "black"
+              fill = settings$col.default %||% "black", alpha = ribbon_alpha, color = NA
             )
           }
         }
 
-        if (has_by) {
-          p = p + ggplot2::geom_line(
-            ggplot2::aes(color = .data[["..by.."]], group = .data[["..by.."]]),
-            linewidth = linewidth, alpha = alpha
-          )
-        } else {
-          p = p + ggplot2::geom_line(
-            linewidth = linewidth, alpha = alpha,
-            color = settings$col.default %||% "black"
-          )
-        }
-
+        # Individual background observations
         if (add_points || isTRUE(settings$add_points) || isTRUE(dots$add_points)) {
-          if (has_by) {
+          if (has_by && actual_dodge > 0) {
+            p = p + ggplot2::geom_point(
+              data = data,
+              ggplot2::aes(x = .data[["x"]], y = .data[["y"]], color = .data[["..by.."]]),
+              position = ggplot2::position_jitterdodge(jitter.width = 0.12, dodge.width = actual_dodge, seed = 42),
+              size = point_size, alpha = point_alpha
+            )
+          } else if (has_by) {
             p = p + ggplot2::geom_point(
               data = data,
               ggplot2::aes(x = .data[["x"]], y = .data[["y"]], color = .data[["..by.."]]),
@@ -254,6 +271,57 @@ type_lines = function(
             )
           }
         }
+
+        # Error bars with clean caps and slight dodge
+        if (show_se && has_dups) {
+          if (has_by) {
+            p = p + ggplot2::geom_errorbar(
+              data = agg_df,
+              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]], color = .data[["..by.."]]),
+              position = pd, width = errorbar_width, linewidth = errorbar_linewidth, alpha = 0.9
+            )
+          } else {
+            p = p + ggplot2::geom_errorbar(
+              data = agg_df,
+              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]]),
+              position = pd, width = errorbar_width, linewidth = errorbar_linewidth, alpha = 0.9,
+              color = settings$col.default %||% "black"
+            )
+          }
+        }
+
+        # Trajectory line
+        if (has_by) {
+          p = p + ggplot2::geom_line(
+            data = agg_df,
+            ggplot2::aes(color = .data[["..by.."]], group = .data[["..by.."]]),
+            position = pd, linewidth = linewidth, alpha = alpha
+          )
+        } else {
+          p = p + ggplot2::geom_line(
+            data = agg_df,
+            position = pd, linewidth = linewidth, alpha = alpha,
+            color = settings$col.default %||% "black"
+          )
+        }
+
+        # Prominent mean point glyphs
+        if (show_mean_points) {
+          if (has_by) {
+            p = p + ggplot2::geom_point(
+              data = agg_df,
+              ggplot2::aes(fill = .data[["..by.."]], group = .data[["..by.."]]),
+              position = pd, shape = 21, size = mean_point_size, stroke = 1.1, color = "white"
+            )
+          } else {
+            p = p + ggplot2::geom_point(
+              data = agg_df,
+              shape = 21, size = mean_point_size, stroke = 1.1, color = "white",
+              fill = settings$col.default %||% "black"
+            )
+          }
+        }
+
       } else {
         # Individual lines or single series
         if (has_group) {

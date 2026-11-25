@@ -2,21 +2,28 @@
 % Please edit documentation in R/type_system.R
 \name{type_lines}
 \alias{type_lines}
-\title{Line plot type}
+\title{Lines plot type}
 \usage{
 type_lines(
-  linewidth = 1,
+  linewidth = 1.15,
   alpha = 0.95,
   group = NULL,
   aggregate = c("auto", "mean", "median", "none"),
   add_points = FALSE,
-  point_size = 2.2,
-  point_alpha = 0.7,
-  show_se = FALSE
+  point_size = 2,
+  point_alpha = 0.35,
+  show_se = FALSE,
+  show_ribbon = FALSE,
+  ribbon_alpha = 0.16,
+  dodge = 0.45,
+  errorbar_width = 0.35,
+  errorbar_linewidth = 0.75,
+  show_mean_points = TRUE,
+  mean_point_size = 3.5
 )
 }
 \arguments{
-\item{linewidth}{Line width (default 1).}
+\item{linewidth}{Line width (default 1.15).}
 
 \item{alpha}{Line transparency (default 0.95).}
 
@@ -28,16 +35,30 @@ type_lines(
 
 \item{add_points}{Logical. Whether to overlay individual observation points (default \code{FALSE}).}
 
-\item{point_size}{Size of overlaid points (default 2.2).}
+\item{point_size}{Size of overlaid individual points (default 2.0).}
 
-\item{point_alpha}{Transparency of overlaid points (default 0.7).}
+\item{point_alpha}{Transparency of overlaid points (default 0.35).}
 
 \item{show_se}{Logical. Whether to display standard error bars (\code{mean ± SE}) (default \code{FALSE}).}
+
+\item{show_ribbon}{Logical. Whether to display a shaded \code{mean ± SE} ribbon (default \code{FALSE}).}
+
+\item{ribbon_alpha}{Transparency of shaded ribbon (default 0.16).}
+
+\item{dodge}{Horizontal position dodge to prevent error bars and points from overlapping across groups (default 0.45 when multiple groups exist, otherwise 0).}
+
+\item{errorbar_width}{Width of error bar caps (default 0.35).}
+
+\item{errorbar_linewidth}{Line width of error bars (default 0.75).}
+
+\item{show_mean_points}{Logical. Whether to place prominent point markers on the mean line (default \code{TRUE} when aggregating).}
+
+\item{mean_point_size}{Size of mean point markers (default 3.5).}
 }
 \description{
-Draws lines connecting data points. If individual subject/replicate grouping
-is provided (via \code{group} argument or an \code{Individual} / \code{Patient}
-column in the data), each individual gets a separate line. If duplicate observations
-exist at the same x position without individual grouping, the mean trajectory
-is automatically calculated to prevent vertical zigzag artifacts.
+Draws lines connecting data points. Supports individual subject/replicate
+trajectories via \code{group}, automatic calculation of group mean trajectories
+with standard error bars (\code{mean ± SE}) or shaded confidence bands (\code{show_ribbon}),
+horizontal positioning dodge to prevent multi-group collisions, prominent
+white-stroked mean point glyphs, and overlaid background observation points.
 }
