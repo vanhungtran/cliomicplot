@@ -21,7 +21,7 @@
 #'   \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
 #'   \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
 #'   \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
-#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"}, \code{"zipi"}, \code{"mantel_triangle"}, \code{"polygon_network"}, \code{"bipartite"}, \code{"edge_dynamics"})
+#'   \code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"}, \code{"zipi"}, \code{"mantel_triangle"}, \code{"polygon_network"}, \code{"bipartite"}, \code{"edge_dynamics"}, \code{"mr_coloc"}, \code{"composition"})
 #'   or a call to a \code{type_*()} function for customization.
 #' @param by Grouping variable. Alternative to the \code{|} in formula.
 #' @param facet Faceting variable(s) as a formula. One-sided formulas
@@ -611,7 +611,14 @@ resolve_type = function(type) {
     bipartite_network = type_bipartite,
     transkingdom    = type_bipartite,
     edge_dynamics   = type_edge_dynamics,
-    edge_sign       = type_edge_dynamics
+    edge_sign       = type_edge_dynamics,
+    mr_coloc        = type_mr_coloc,
+    mr_heatmap      = type_mr_coloc,
+    coloc           = type_mr_coloc,
+    pqtl_mr         = type_mr_coloc,
+    composition     = type_composition,
+    cell_composition = type_composition,
+    lineage_bars    = type_composition
   )
 
   if (type %in% names(type_map)) {

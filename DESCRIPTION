@@ -22,6 +22,7 @@ Description: Provides high-quality, publication-ready visualizations for
     journal-specific themes (Nature, Science, NEJM, etc.), and statistical 
     annotations for seamless integration into scientific publications.
 License: MIT + file LICENSE
+LazyData: true
 Depends:
   R (>= 4.0.0)
 Imports:

@@ -11,7 +11,11 @@ type_slope(
   point_size = 2.6,
   line_alpha = 0.65,
   point_alpha = 0.9,
-  reorder_x = TRUE
+  reorder_x = TRUE,
+  reference_line = NULL,
+  reference_line_linetype = "dotted",
+  reference_line_linewidth = 0.35,
+  reference_line_color = "grey40"
 )
 }
 \arguments{
@@ -31,6 +35,14 @@ responder status). Defaults to the \code{by} grouping variable.}
 
 \item{reorder_x}{Reorder the x-axis categories in order of appearance
 (default TRUE).}
+
+\item{reference_line}{Optional numeric y-intercept for a horizontal reference line (e.g. \code{0} for baseline change).}
+
+\item{reference_line_linetype}{Line type for reference line (default \code{"dotted"}).}
+
+\item{reference_line_linewidth}{Line width for reference line (default \code{0.35}).}
+
+\item{reference_line_color}{Color for reference line (default \code{"grey40"}).}
 }
 \value{
 A \code{cliplot_type} object for use with \code{\link{cliplot}}.
@@ -50,7 +62,7 @@ highlights groups (e.g. responders vs non-responders).
 \examples{
 \dontrun{
 cliplot(value ~ timepoint, data = paired_df,
-        type = type_slope(pair = "patient", color_by = "responder"))
+        type = type_slope(pair = "patient", color_by = "responder", reference_line = 0))
 }
 
 }

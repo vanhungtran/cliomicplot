@@ -108,7 +108,7 @@ specified via formula.}
 \code{"km"}, \code{"waterfall"}, \code{"swimmer"}, \code{"heatmap"},
 \code{"pca"}, \code{"ma"}, \code{"correlation"}, \code{"roc"},
 \code{"gsea"}, \code{"upset"}, \code{"venn"}, \code{"slope"},
-\code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"}, \code{"zipi"}, \code{"mantel_triangle"}, \code{"polygon_network"}, \code{"bipartite"}, \code{"edge_dynamics"})
+\code{"confusion"}, \code{"donut"}, \code{"mcid"}, \code{"trajectory"}, \code{"manhattan"}, \code{"bubble_matrix"}, \code{"sharing_heatmap"}, \code{"module_compare"}, \code{"cross_network"}, \code{"module_trait"}, \code{"module_env"}, \code{"zipi"}, \code{"mantel_triangle"}, \code{"polygon_network"}, \code{"bipartite"}, \code{"edge_dynamics"}, \code{"mr_coloc"}, \code{"composition"})
 or a call to a \code{type_*()} function for customization.}
 
 \item{by}{Grouping variable. Alternative to the \code{|} in formula.}

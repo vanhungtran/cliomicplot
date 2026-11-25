@@ -20,6 +20,10 @@
 #' @param point_alpha Transparency of the points (default 0.9).
 #' @param reorder_x Reorder the x-axis categories in order of appearance
 #'   (default TRUE).
+#' @param reference_line Optional numeric y-intercept for a horizontal reference line (e.g. \code{0} for baseline change).
+#' @param reference_line_linetype Line type for reference line (default \code{"dotted"}).
+#' @param reference_line_linewidth Line width for reference line (default \code{0.35}).
+#' @param reference_line_color Color for reference line (default \code{"grey40"}).
 #'
 #' @return A \code{cliplot_type} object for use with \code{\link{cliplot}}.
 #'
@@ -32,18 +36,22 @@
 #' @examples
 #' \dontrun{
 #' cliplot(value ~ timepoint, data = paired_df,
-#'         type = type_slope(pair = "patient", color_by = "responder"))
+#'         type = type_slope(pair = "patient", color_by = "responder", reference_line = 0))
 #' }
 #'
 #' @export
 type_slope = function(
-    pair        = NULL,
-    color_by    = NULL,
-    linewidth   = 0.65,
-    point_size  = 2.6,
-    line_alpha  = 0.65,
-    point_alpha = 0.9,
-    reorder_x   = TRUE
+    pair                     = NULL,
+    color_by                 = NULL,
+    linewidth                = 0.65,
+    point_size               = 2.6,
+    line_alpha               = 0.65,
+    point_alpha              = 0.9,
+    reorder_x                = TRUE,
+    reference_line           = NULL,
+    reference_line_linetype  = "dotted",
+    reference_line_linewidth = 0.35,
+    reference_line_color     = "grey40"
 ) {
   cliplot_type(
     data = function(settings, ...) {
@@ -95,6 +103,10 @@ type_slope = function(
       settings$slope_point_size = point_size
       settings$slope_line_alpha = line_alpha
       settings$slope_point_alpha = point_alpha
+      settings$slope_ref_line = reference_line
+      settings$slope_ref_linetype = reference_line_linetype
+      settings$slope_ref_linewidth = reference_line_linewidth
+      settings$slope_ref_color = reference_line_color
     },
     draw = function(data, mapping, settings, ...) {
       df = settings$slope_data
@@ -105,7 +117,18 @@ type_slope = function(
       p = ggplot2::ggplot(df, ggplot2::aes(
         x = .data[["x"]], y = .data[["y"]],
         group = .data[[pair_col]]
-      )) +
+      ))
+
+      if (!is.null(settings$slope_ref_line)) {
+        p = p + ggplot2::geom_hline(
+          yintercept = settings$slope_ref_line,
+          linetype = settings$slope_ref_linetype,
+          linewidth = settings$slope_ref_linewidth,
+          color = settings$slope_ref_color
+        )
+      }
+
+      p = p +
         ggplot2::geom_line(
           linewidth = settings$slope_linewidth,
           alpha = settings$slope_line_alpha
