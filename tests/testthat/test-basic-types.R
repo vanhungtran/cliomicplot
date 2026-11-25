@@ -72,6 +72,29 @@ test_that("type_lines works with grouping", {
   expect_s3_class(p, "ggplot")
 })
 
+test_that("type_lines supports individual lines via group argument", {
+  df <- data.frame(
+    Time = rep(c(1, 2, 3), 4),
+    Score = rnorm(12),
+    Group = rep(c("A", "B"), each = 6),
+    Patient = rep(paste0("PT", 1:4), each = 3)
+  )
+  p <- cliplot(Score ~ Time | Group, data = df, group = "Patient",
+               type = type_lines(linewidth = 1.1, add_points = TRUE))
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("type_lines auto-aggregates duplicate x values by mean and supports show_se", {
+  df <- data.frame(
+    Day = rep(c(1, 3, 7, 14), each = 3),
+    Value = c(10, 11, 12, 8, 9, 7, 25, 28, 26, 4, 5, 4),
+    Trt = rep(c("Sham", "Drug"), each = 6)
+  )
+  p <- cliplot(Value ~ Day | Trt, data = df,
+               type = type_lines(linewidth = 1.2, show_se = TRUE, add_points = TRUE))
+  expect_s3_class(p, "ggplot")
+})
+
 # ---- histogram ----
 
 test_that("type_histogram works", {

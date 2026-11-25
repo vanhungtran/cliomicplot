@@ -4,13 +4,40 @@
 \alias{type_lines}
 \title{Line plot type}
 \usage{
-type_lines(linewidth = 1, alpha = 0.95)
+type_lines(
+  linewidth = 1,
+  alpha = 0.95,
+  group = NULL,
+  aggregate = c("auto", "mean", "median", "none"),
+  add_points = FALSE,
+  point_size = 2.2,
+  point_alpha = 0.7,
+  show_se = FALSE
+)
 }
 \arguments{
-\item{linewidth}{Line width}
+\item{linewidth}{Line width (default 1).}
 
-\item{alpha}{Line transparency}
+\item{alpha}{Line transparency (default 0.95).}
+
+\item{group}{Column name or aesthetic for individual grouping (e.g. \code{"Individual"}, \code{"Patient"}).}
+
+\item{aggregate}{Aggregation mode when duplicate observations exist at the same x:
+\code{"auto"} (default, aggregates by mean if duplicates exist and no group is specified),
+\code{"mean"}, \code{"median"}, or \code{"none"}.}
+
+\item{add_points}{Logical. Whether to overlay individual observation points (default \code{FALSE}).}
+
+\item{point_size}{Size of overlaid points (default 2.2).}
+
+\item{point_alpha}{Transparency of overlaid points (default 0.7).}
+
+\item{show_se}{Logical. Whether to display standard error bars (\code{mean ± SE}) (default \code{FALSE}).}
 }
 \description{
-Line plot type
+Draws lines connecting data points. If individual subject/replicate grouping
+is provided (via \code{group} argument or an \code{Individual} / \code{Patient}
+column in the data), each individual gets a separate line. If duplicate observations
+exist at the same x position without individual grouping, the mean trajectory
+is automatically calculated to prevent vertical zigzag artifacts.
 }

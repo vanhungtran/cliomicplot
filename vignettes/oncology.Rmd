@@ -348,18 +348,21 @@ stroke_long = merge(stroke_env$data_long,
                     stroke_env$ProteinGeneName[, c("UniqueID", "Gene.Name")],
                     by = "UniqueID", all.x = TRUE)
 
-# Select Mpeg1 (macrophage/microglia activation marker)
+# Select Mpeg1 (macrophage/microglia activation marker) and identify individual replicates
 mpeg1 = subset(stroke_long, Gene.Name == "Mpeg1")
 mpeg1$Day = as.numeric(mpeg1$conc)
 mpeg1$Treatment = mpeg1$treatment
+mpeg1 = mpeg1[order(mpeg1$Treatment, mpeg1$Day, mpeg1$sampleid), ]
+mpeg1$Individual = paste0(mpeg1$Treatment, "_Mouse", ave(seq_len(nrow(mpeg1)), mpeg1$Treatment, mpeg1$Day, FUN = seq_along))
 
 clitheme("science")
 
 cliplot(expr ~ Day | Treatment, data = mpeg1,
-        type = type_lines(linewidth = 1.2),
+        group   = "Individual",
+        type    = type_lines(linewidth = 1.1, add_points = TRUE, point_size = 2.2),
         palette = "jco",
         title   = "**Figure 6A** — Mpeg1 Macrophage Marker Time Course",
-        subtitle = "Stroke Brain Proteomics — 5 Time Points (Days 1–28)",
+        subtitle = "Stroke Brain Proteomics — Individual Mouse Replicate Trajectories (Days 1–28)",
         xlab    = "Days Post-Onset",
         ylab    = "Protein Expression (LFQ Intensity)") +
   cli_markdown()

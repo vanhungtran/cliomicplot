@@ -131,23 +131,178 @@ type_barplot = function(stat = "count", position = "stack", alpha = 0.9) {
 # ==========================================================================
 
 #' Line plot type
-#' @param linewidth Line width
-#' @param alpha Line transparency
+#'
+#' Draws lines connecting data points. If individual subject/replicate grouping
+#' is provided (via \code{group} argument or an \code{Individual} / \code{Patient}
+#' column in the data), each individual gets a separate line. If duplicate observations
+#' exist at the same x position without individual grouping, the mean trajectory
+#' is automatically calculated to prevent vertical zigzag artifacts.
+#'
+#' @param linewidth Line width (default 1).
+#' @param alpha Line transparency (default 0.95).
+#' @param group Column name or aesthetic for individual grouping (e.g. \code{"Individual"}, \code{"Patient"}).
+#' @param aggregate Aggregation mode when duplicate observations exist at the same x:
+#'   \code{"auto"} (default, aggregates by mean if duplicates exist and no group is specified),
+#'   \code{"mean"}, \code{"median"}, or \code{"none"}.
+#' @param add_points Logical. Whether to overlay individual observation points (default \code{FALSE}).
+#' @param point_size Size of overlaid points (default 2.2).
+#' @param point_alpha Transparency of overlaid points (default 0.7).
+#' @param show_se Logical. Whether to display standard error bars (\code{mean ± SE}) (default \code{FALSE}).
 #' @export
-type_lines = function(linewidth = 1, alpha = 0.95) {
+type_lines = function(
+    linewidth   = 1,
+    alpha       = 0.95,
+    group       = NULL,
+    aggregate   = c("auto", "mean", "median", "none"),
+    add_points  = FALSE,
+    point_size  = 2.2,
+    point_alpha = 0.7,
+    show_se     = FALSE
+) {
+  aggregate = match.arg(aggregate)
   cliplot_type(
     draw = function(data, mapping, settings, ...) {
-      p = ggplot2::ggplot(data, mapping)
-      if (!is.null(settings$by)) {
-        p = p + ggplot2::geom_line(
-          ggplot2::aes(color = .data[["..by.."]]),
-          linewidth = linewidth, alpha = alpha
-        )
+      dots = list(...)
+      grp_col = group %||% settings$group %||% dots$group
+
+      # Resolve group column if specified
+      if (!is.null(grp_col) && is.character(grp_col) && length(grp_col) == 1L) {
+        if (grp_col %in% names(data)) {
+          data[["..group.."]] = as.factor(data[[grp_col]])
+        } else if (!is.null(settings$data) && grp_col %in% names(settings$data)) {
+          data[["..group.."]] = as.factor(settings$data[[grp_col]])
+        }
+      }
+
+      has_group = "..group.." %in% names(data)
+      has_by    = !is.null(settings$by) && "..by.." %in% names(data)
+
+      # Check for duplicate observations at the same x coordinate
+      has_dups = FALSE
+      if (!is.null(data$x) && nrow(data) > 0) {
+        by_vec = if (has_by) data[["..by.."]] else rep(1, nrow(data))
+        has_dups = any(duplicated(paste(data$x, by_vec, sep = "_@_")))
+      }
+
+      should_agg = (aggregate == "mean" || aggregate == "median" || (aggregate == "auto" && has_dups && !has_group))
+
+      if (should_agg) {
+        agg_fun = if (aggregate == "median") stats::median else mean
+        grp_formula = if (has_by) y ~ x + ..by.. else y ~ x
+        agg_df = stats::aggregate(grp_formula, data = data, FUN = agg_fun, na.rm = TRUE)
+
+        # Ensure correct sorting along x for clean line paths
+        if (has_by) {
+          agg_df = agg_df[order(agg_df[["..by.."]], agg_df$x), , drop = FALSE]
+        } else {
+          agg_df = agg_df[order(agg_df$x), , drop = FALSE]
+        }
+
+        p = ggplot2::ggplot(agg_df, ggplot2::aes(x = .data[["x"]], y = .data[["y"]]))
+
+        if (show_se && has_dups) {
+          se_fun = function(z) {
+            z = stats::na.omit(z)
+            if (length(z) > 1) stats::sd(z) / sqrt(length(z)) else 0
+          }
+          se_df = stats::aggregate(grp_formula, data = data, FUN = se_fun)
+          agg_df$se = se_df$y
+          agg_df$ymin = agg_df$y - agg_df$se
+          agg_df$ymax = agg_df$y + agg_df$se
+
+          if (has_by) {
+            p = p + ggplot2::geom_errorbar(
+              data = agg_df,
+              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]], color = .data[["..by.."]]),
+              width = 0.2, alpha = alpha * 0.7
+            )
+          } else {
+            p = p + ggplot2::geom_errorbar(
+              data = agg_df,
+              ggplot2::aes(ymin = .data[["ymin"]], ymax = .data[["ymax"]]),
+              width = 0.2, alpha = alpha * 0.7,
+              color = settings$col.default %||% "black"
+            )
+          }
+        }
+
+        if (has_by) {
+          p = p + ggplot2::geom_line(
+            ggplot2::aes(color = .data[["..by.."]], group = .data[["..by.."]]),
+            linewidth = linewidth, alpha = alpha
+          )
+        } else {
+          p = p + ggplot2::geom_line(
+            linewidth = linewidth, alpha = alpha,
+            color = settings$col.default %||% "black"
+          )
+        }
+
+        if (add_points || isTRUE(settings$add_points) || isTRUE(dots$add_points)) {
+          if (has_by) {
+            p = p + ggplot2::geom_point(
+              data = data,
+              ggplot2::aes(x = .data[["x"]], y = .data[["y"]], color = .data[["..by.."]]),
+              size = point_size, alpha = point_alpha
+            )
+          } else {
+            p = p + ggplot2::geom_point(
+              data = data,
+              ggplot2::aes(x = .data[["x"]], y = .data[["y"]]),
+              size = point_size, alpha = point_alpha,
+              color = settings$col.default %||% "black"
+            )
+          }
+        }
       } else {
-        p = p + ggplot2::geom_line(
-          linewidth = linewidth, alpha = alpha,
-          color = settings$col.default %||% "black"
-        )
+        # Individual lines or single series
+        if (has_group) {
+          data = data[order(data[["..group.."]], data$x), , drop = FALSE]
+        } else if (has_by) {
+          data = data[order(data[["..by.."]], data$x), , drop = FALSE]
+        } else {
+          data = data[order(data$x), , drop = FALSE]
+        }
+
+        p = ggplot2::ggplot(data, mapping)
+        if (has_group) {
+          if (has_by) {
+            p = p + ggplot2::geom_line(
+              ggplot2::aes(color = .data[["..by.."]], group = .data[["..group.."]]),
+              linewidth = linewidth, alpha = alpha
+            )
+          } else {
+            p = p + ggplot2::geom_line(
+              ggplot2::aes(group = .data[["..group.."]]),
+              linewidth = linewidth, alpha = alpha,
+              color = settings$col.default %||% "black"
+            )
+          }
+        } else if (has_by) {
+          p = p + ggplot2::geom_line(
+            ggplot2::aes(color = .data[["..by.."]]),
+            linewidth = linewidth, alpha = alpha
+          )
+        } else {
+          p = p + ggplot2::geom_line(
+            linewidth = linewidth, alpha = alpha,
+            color = settings$col.default %||% "black"
+          )
+        }
+
+        if (add_points || isTRUE(settings$add_points) || isTRUE(dots$add_points)) {
+          if (has_by) {
+            p = p + ggplot2::geom_point(
+              ggplot2::aes(color = .data[["..by.."]]),
+              size = point_size, alpha = point_alpha
+            )
+          } else {
+            p = p + ggplot2::geom_point(
+              size = point_size, alpha = point_alpha,
+              color = settings$col.default %||% "black"
+            )
+          }
+        }
       }
       p
     },

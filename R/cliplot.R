@@ -129,7 +129,7 @@ cliplot.default = function(
   settings$km_group = km_group
 
   # Optional range aesthetics used by error bars, ribbons, and custom types
-  for (nm in c("xmin", "xmax", "ymin", "ymax", "extra_data")) {
+  for (nm in c("xmin", "xmax", "ymin", "ymax", "extra_data", "group")) {
     if (nm %in% names(dots)) {
       settings[[nm]] = dots[[nm]]
     }
@@ -635,6 +635,24 @@ build_plot_data = function(settings) {
   if (!is.null(settings$ymax)) df[["..ymax.."]] = settings$ymax
   if (!is.null(settings$xmin)) df[["..xmin.."]] = settings$xmin
   if (!is.null(settings$xmax)) df[["..xmax.."]] = settings$xmax
+
+  # Group aesthetic (e.g. for individual lines in longitudinal / time series)
+  if (!is.null(settings$group)) {
+    if (is.character(settings$group) && length(settings$group) == 1L &&
+        !is.null(settings$data) && is.data.frame(settings$data) &&
+        settings$group %in% names(settings$data)) {
+      df[["..group.."]] = as.factor(settings$data[[settings$group]])
+    } else {
+      df[["..group.."]] = as.factor(settings$group)
+    }
+  } else if (!is.null(settings$data) && is.data.frame(settings$data)) {
+    for (id_col in c("Individual", "Patient", "Subject", "mouse_id", "PatientID")) {
+      if (id_col %in% names(settings$data) && !id_col %in% names(df)) {
+        df[["..group.."]] = as.factor(settings$data[[id_col]])
+        break
+      }
+    }
+  }
 
   # Inject facet variables from original data so facet_grid/facet_wrap can
   # reference columns not in the core x/y/by mapping
