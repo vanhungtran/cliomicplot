@@ -418,96 +418,151 @@ measurements:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="comparative-benchmark-cliomicplot-vs-existing-tools">7. Comparative Benchmark: <code>cliomicplot</code> vs Existing
-Tools<a class="anchor" aria-label="anchor" href="#comparative-benchmark-cliomicplot-vs-existing-tools"></a>
+<h2 id="keystone-identification-and-ecological-network-mining">7. Keystone Identification and Ecological Network Mining<a class="anchor" aria-label="anchor" href="#keystone-identification-and-ecological-network-mining"></a>
 </h2>
-<p><code>cliomicplot</code> introduces an integrated single-canvas
-architecture for clinical and multi-omics figures, evaluated below
-against <code>ggClusterNet 2</code> (<em>iMeta</em> 2025),
-<code>linkET</code>, <code>microeco</code>, and
-<code>ComplexHeatmap</code>:</p>
+<p>Microbial ecological co-occurrence analysis relies on module partitioning, topological role classification, and cross-domain correlation patterns (Guimerà &amp; Amaral, <em>Nature</em> 2005; Deng et al., <em>Science</em> 2012; Tao Wen et al., <em>iMeta</em> 2025). <code>cliomicplot</code> provides dedicated network archetypes expanding on <code>ggClusterNet 2</code> capabilities with publication-grade automated typography.</p>
+
+<div class="section level3">
+<h3 id="zi-pi-keystone-ecological-role-plot">7.1 Zi-Pi Keystone Ecological Role Plot (<code>type_zipi()</code>)<a class="anchor" aria-label="anchor" href="#zi-pi-keystone-ecological-role-plot"></a>
+</h3>
+<p>The Zi-Pi plot classifies network nodes by mapping among-module connectivity (<em>P<sub>i</sub></em>, participation coefficient) on the x-axis and within-module connectivity (<em>Z<sub>i</sub></em>, degree z-score) on the y-axis. Standard thresholds (<em>Z</em> = 2.5, <em>P</em> = 0.62) divide community taxa into four ecological categories: <strong>Peripherals</strong> (specialists with few inter-module links), <strong>Connectors</strong> (generalists linking distinct modules), <strong>Module hubs</strong> (highly connected within their module), and <strong>Network hubs</strong> (super-generalists critical to network stability).</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Microbial keystone identification with automated shaded quadrants and callouts</span></span>
+<span><span class="va">p_zipi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span><span class="va">Zi</span> <span class="op">~</span> <span class="va">Pi</span>, data <span class="op">=</span> <span class="va">zipi_data</span>,</span>
+<span>                  type <span class="op">=</span> <span class="fu"><a href="../reference/type_zipi.html">type_zipi</a></span><span class="op">(</span>point_size <span class="op">=</span> <span class="fl">3.2</span>, label_top <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span>
+<span>                  title <span class="op">=</span> <span class="st">"Microbial Keystone Hub Identification (Zi-Pi Role Classification)"</span><span class="op">)</span></span>
+<span><span class="va">p_zipi</span></span></code></pre></div>
+<p><img src="coupled-networks_files/figure-html/zipi-demo-1.png" class="r-plt" alt="Zi-Pi Keystone Hub Plot" width="700" style="display: block; margin: auto;"></p>
+</div>
+
+<div class="section level3">
+<h3 id="triangular-correlation-heatmap-mantel-links">7.2 Triangular Correlation Heatmap with Curved Mantel Links (<code>type_mantel_triangle()</code>)<a class="anchor" aria-label="anchor" href="#triangular-correlation-heatmap-mantel-links"></a>
+</h3>
+<p>In environmental microbiomics, identifying which environmental factors significantly drive taxonomic community composition requires linking pairwise environmental correlations with community distance metrics. <code>type_mantel_triangle()</code> pairs a lower-triangular environmental correlation matrix with curved bezier arcs connected to target community phyla or modules:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_mantel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="../reference/type_mantel_triangle.html">type_mantel_triangle</a></span><span class="op">(</span>label_size <span class="op">=</span> <span class="fl">2.8</span>, node_size <span class="op">=</span> <span class="fl">3.8</span><span class="op">)</span>,</span>
+<span>                    title <span class="op">=</span> <span class="st">"Environmental Factors Coupled with Microbial Phyla (Mantel Correlation)"</span><span class="op">)</span></span>
+<span><span class="va">p_mantel</span></span></code></pre></div>
+<p><img src="coupled-networks_files/figure-html/mantel-triangle-demo-1.png" class="r-plt" alt="Mantel Triangle Link Plot" width="720" style="display: block; margin: auto;"></p>
+</div>
+
+<div class="section level3">
+<h3 id="modular-polygon-ring-layout">7.3 Modular Polygon Ring Layout (<code>type_polygon_network()</code>)<a class="anchor" aria-label="anchor" href="#modular-polygon-ring-layout"></a>
+</h3>
+<p>Community co-occurrence networks frequently cluster into tightly bound functional modules. Arranging module members along circular rings positioned at the vertices of a macro-polygon (<code>PolygonClusterG</code> and <code>PolygonRrClusterG</code> in <code>ggClusterNet 2</code>) separates dense intra-module edges from cross-module inter-cluster links. In <code>type_polygon_network(adaptive_radius = TRUE)</code>, module ring radii scale with &radic;(N<sub>k</sub> / N&#772;), providing proportional spatial area for larger modules:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="../reference/type_polygon_network.html">type_polygon_network</a></span><span class="op">(</span>adaptive_radius <span class="op">=</span> <span class="cn">TRUE</span>, label_size <span class="op">=</span> <span class="fl">2.4</span><span class="op">)</span>,</span>
+<span>                  title <span class="op">=</span> <span class="st">"Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)"</span><span class="op">)</span></span>
+<span><span class="va">p_poly</span></span></code></pre></div>
+<p><img src="coupled-networks_files/figure-html/polygon-network-demo-1.png" class="r-plt" alt="Polygon Ring Network" width="680" style="display: block; margin: auto;"></p>
+</div>
+
+<div class="section level3">
+<h3 id="transkingdom-bipartite-interactions">7.4 Transkingdom &amp; Multi-Omics Bipartite Interactions (<code>type_bipartite()</code>)<a class="anchor" aria-label="anchor" href="#transkingdom-bipartite-interactions"></a>
+</h3>
+<p>Cross-domain interactions—such as bacterial-fungal co-occurrence or gut microbiota coupled with serum metabolomics—require bipartite layouts highlighting positive (synergistic) vs negative (competitive) correlations:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_bip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="../reference/type_bipartite.html">type_bipartite</a></span><span class="op">(</span>domain_a <span class="op">=</span> <span class="st">"Gut Microbiota"</span>, domain_b <span class="op">=</span> <span class="st">"Serum Metabolites"</span>, layout <span class="op">=</span> <span class="st">"bipolar"</span><span class="op">)</span>,</span>
+<span>                 title <span class="op">=</span> <span class="st">"Transkingdom Cross-Domain Network (Microbiota vs Metabolites)"</span><span class="op">)</span></span>
+<span><span class="va">p_bip</span></span></code></pre></div>
+<p><img src="coupled-networks_files/figure-html/bipartite-demo-1.png" class="r-plt" alt="Transkingdom Bipartite Network" width="720" style="display: block; margin: auto;"></p>
+</div>
+
+<div class="section level3">
+<h3 id="ecological-edge-sign-dynamics">7.5 Ecological Network Edge-Sign Dynamics (<code>type_edge_dynamics()</code>)<a class="anchor" aria-label="anchor" href="#ecological-edge-sign-dynamics"></a>
+</h3>
+<p>The ratio of negative correlation edges (competitive exclusion or niche differentiation) to positive correlation edges (mutualism or cross-feeding) quantifies community stability across clinical disease severity or environmental perturbation gradients:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_edge</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliplot.html">cliplot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="fu"><a href="../reference/type_edge_dynamics.html">type_edge_dynamics</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p_edge</span></span></code></pre></div>
+<p><img src="coupled-networks_files/figure-html/edge-dynamics-demo-1.png" class="r-plt" alt="Edge Sign Dynamics" width="650" style="display: block; margin: auto;"></p>
+</div>
+<hr>
+</div>
+
+<div class="section level2">
+<h2 id="comparative-benchmark-cliomicplot-vs-ggclusternet-2">8. Comparative Benchmark: <code>cliomicplot</code> vs <code>ggClusterNet 2</code><a class="anchor" aria-label="anchor" href="#comparative-benchmark-cliomicplot-vs-ggclusternet-2"></a>
+</h2>
+<p><code>cliomicplot</code> provides pure <code>ggplot2</code> modularity, unified formula grammar (<code>y ~ x | group</code>), and SciFig automated publication gates across both microbial ecological network mining and general multi-omics:</p>
 <table style="width:100%;" class="table">
 <colgroup>
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
+<col width="28%">
+<col width="24%">
+<col width="24%">
+<col width="24%">
 </colgroup>
 <thead><tr class="header">
-<th align="left">Dimension</th>
-<th align="left"><code>ggClusterNet 2</code></th>
-<th align="left"><code>linkET</code></th>
-<th align="left"><code>microeco</code></th>
-<th align="left"><code>ComplexHeatmap</code></th>
+<th align="left">Capability / Archetype</th>
+<th align="left"><code>ggClusterNet 2</code> (<em>iMeta</em> 2025)</th>
+<th align="left"><code>microeco</code> / <code>linkET</code></th>
 <th align="left"><code>cliomicplot</code></th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left"><strong>Canvas Architecture</strong></td>
-<td align="left">Asymmetric lower triangle</td>
-<td align="left">Asymmetric lower triangle</td>
-<td align="left">Separate plots</td>
-<td align="left">Matrix annotations</td>
-<td align="left">Symmetrical 4-corner multi-domain canvas</td>
+<td align="left"><strong>Architecture &amp; Syntax</strong></td>
+<td align="left">Function wrappers</td>
+<td align="left">R6 methods / custom pipes</td>
+<td align="left">Pure S3 <code>ggplot2</code> &amp; formula (<code>y ~ x | group</code>)</td>
 </tr>
 <tr class="even">
-<td align="left"><strong>Output Object Type</strong></td>
-<td align="left">
-<code>igraph</code> / <code>ggplot</code>
-</td>
-<td align="left"><code>ggplot</code></td>
-<td align="left">Custom R6 class</td>
-<td align="left">
-<code>Heatmap</code> grob</td>
-<td align="left">Pure <code>ggplot2</code>
-</td>
+<td align="left"><strong>Zi-Pi Keystone Hubs</strong></td>
+<td align="left"><code>ZiPiPlot()</code></td>
+<td align="left"><code>trans_network$cal_eigen()</code></td>
+<td align="left"><code>type_zipi()</code> (shaded quadrants &amp; rugs)</td>
 </tr>
 <tr class="odd">
-<td align="left"><strong>Primary Syntax</strong></td>
-<td align="left">Function wrappers</td>
-<td align="left">Custom pipes</td>
-<td align="left">R6 methods</td>
-<td align="left">S4 methods</td>
-<td align="left">Standard formula (<code>y ~ x \| group</code>)</td>
+<td align="left"><strong>Triangular Heatmap + Mantel</strong></td>
+<td align="left"><code>MatCorPlot2()</code></td>
+<td align="left"><code>qcorrplot()</code></td>
+<td align="left"><code>type_mantel_triangle()</code> &amp; 4-corner <code>type_env_network()</code></td>
 </tr>
 <tr class="even">
+<td align="left"><strong>Modular Polygon Rings</strong></td>
+<td align="left"><code>PolygonClusterG()</code>, <code>PolygonRrClusterG()</code></td>
+<td align="left">None</td>
+<td align="left"><code>type_polygon_network()</code> (adaptive radius)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Transkingdom Bipartite</strong></td>
+<td align="left"><code>corBionetwork()</code></td>
+<td align="left">Bipartite method</td>
+<td align="left"><code>type_bipartite()</code> (bipolar &amp; concentric)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Edge-Sign Ratio Dynamics</strong></td>
+<td align="left">Extraction script</td>
+<td align="left">Ratio bar</td>
+<td align="left"><code>type_edge_dynamics()</code> (stack, ratio, counts)</td>
+</tr>
+<tr class="odd">
 <td align="left"><strong>External Domains</strong></td>
 <td align="left">1 domain</td>
 <td align="left">1 domain</td>
-<td align="left">1 domain</td>
-<td align="left">Column/row annotations</td>
 <td align="left">1 to 4 independent corner matrices</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>Collision-Free Labels</strong></td>
 <td align="left">Manual tuning</td>
-<td align="left">Manual tuning</td>
-<td align="left">Manual tuning</td>
-<td align="left">Manual tuning</td>
-<td align="left">Automated (<code>line_intersects_rect</code> geometric
-pruning)</td>
+<td align="left">Manual</td>
+<td align="left">Automated (<code>ggrepel</code> with halo backing)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>Publication Typography</strong></td>
 <td align="left">None</td>
 <td align="left">None</td>
+<td align="left">SciFig enforced (&ge; 5.0 pt font floor, CVD palettes)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Clinical Trial Portfolio</strong></td>
 <td align="left">None</td>
 <td align="left">None</td>
-<td align="left">SciFig enforced
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>5.0</mn></mrow><annotation encoding="application/x-tex">\ge 5.0</annotation></semantics></math>
-pt font floor, hairline floors)</td>
+<td align="left">15+ trial types (KM, Forest, Waterfall, Swimmer)</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>Journal Submission Export</strong></td>
 <td align="left">None</td>
 <td align="left">None</td>
-<td align="left">None</td>
-<td align="left">None</td>
-<td align="left">
-<code><a href="../reference/cli_save.html">cli_save()</a></code> with journal dimension
-presets</td>
+<td align="left"><code>cli_save()</code> with journal dimension presets</td>
 </tr>
 </tbody>
 </table>
