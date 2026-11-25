@@ -66,3 +66,6 @@ SESSION_SUMMARY.md
 cliomicplot_*.tar.gz
 /doc/
 /Meta/
+
+/.quarto/
+**/*.quarto_ipynb
