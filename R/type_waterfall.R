@@ -91,22 +91,30 @@ type_waterfall = function(
         "PD" = "#E64B35"   # red
       )
 
-      # Determine x-axis label dodge based on patient count
+      # Determine x-axis label formatting based on patient count
       n_patients = nrow(df)
       if (is.null(n_skip_label)) {
-        if (n_patients > 35) n_dodge = 3
-        else if (n_patients > 15) n_dodge = 2
-        else n_dodge = 1
-      } else if (is.numeric(n_skip_label) && n_skip_label > 1) {
-        n_dodge = n_skip_label
+        axis_angle = if (n_patients > 20) 90 else 45
+        axis_vjust = if (n_patients > 20) 0.5 else 1
       } else {
-        n_dodge = 1
+        axis_angle = if (n_skip_label > 1) 90 else 45
+        axis_vjust = if (n_skip_label > 1) 0.5 else 1
       }
 
       # Adaptive text size
       if (n_patients > 40) axis_text_size = 5.5
       else if (n_patients > 25) axis_text_size = 6.5
       else axis_text_size = 7
+
+      # Legend placement: default to top horizontal for spacious waterfall layouts
+      if (is.null(settings$legend)) {
+        settings$legend = "top"
+      }
+
+      # When bar labels are shown, mark axis text blank to eliminate double-label collision
+      if (isTRUE(show_labels)) {
+        settings$axis_text_blank = TRUE
+      }
 
       settings$waterfall_data     = df
       settings$bar_width          = bar_width
@@ -116,8 +124,9 @@ type_waterfall = function(
       settings$resp_colors        = resp_colors
       settings$response_thresholds = response_thresholds
       settings$show_threshold_labels = show_threshold_labels
-      settings$n_dodge            = n_dodge
       settings$axis_text_size     = axis_text_size
+      settings$axis_angle         = axis_angle
+      settings$axis_vjust         = axis_vjust
     },
     draw = function(data, mapping, settings, ...) {
       df = settings$waterfall_data
@@ -136,19 +145,42 @@ type_waterfall = function(
         ) +
         ggplot2::scale_fill_manual(
           values = settings$resp_colors,
-          name   = "Response",
+          name   = "Response: ",
           drop   = FALSE
         ) +
-        ggplot2::scale_x_discrete(
-          guide = ggplot2::guide_axis(n.dodge = settings$n_dodge)
+        ggplot2::guides(
+          fill = ggplot2::guide_legend(
+            nrow           = 1,
+            byrow          = TRUE,
+            title.position = "left",
+            title.vjust    = 0.85,
+            keywidth       = ggplot2::unit(4, "mm"),
+            keyheight      = ggplot2::unit(3.5, "mm")
+          )
+        ) +
+        ggplot2::scale_y_continuous(
+          expand = ggplot2::expansion(mult = c(0.12, 0.12))
         ) +
         ggplot2::labs(x = "", y = "Best Change from Baseline (%)") +
         ggplot2::theme(
-          axis.text.x = ggplot2::element_text(
-            angle = 45, hjust = 1, size = settings$axis_text_size
-          ),
           panel.grid.major.x = ggplot2::element_blank()
         )
+
+      if (isTRUE(settings$show_labels)) {
+        p = p + ggplot2::theme(
+          axis.text.x  = ggplot2::element_blank(),
+          axis.ticks.x = ggplot2::element_blank()
+        )
+      } else {
+        p = p + ggplot2::theme(
+          axis.text.x = ggplot2::element_text(
+            angle = settings$axis_angle,
+            hjust = 1,
+            vjust = settings$axis_vjust,
+            size  = settings$axis_text_size
+          )
+        )
+      }
 
       # Add horizontal reference lines
       ref_lines = c(0,
@@ -164,32 +196,28 @@ type_waterfall = function(
       if (settings$show_threshold_labels) {
         p = p +
           ggplot2::annotate(
-            "label", x = Inf, y = ref_lines[2], label = "PD +20%",
-            hjust = 1.05, vjust = -0.25, size = 3,
-            linewidth = 0, fill = "white", color = "#4A4F57", alpha = 0.9
+            "label", x = Inf, y = ref_lines[2], label = "PD (+20%)",
+            hjust = 1.05, vjust = -0.3, size = 3,
+            linewidth = 0, fill = "white", color = "#E64B35", fontface = "bold", alpha = 0.85
           ) +
           ggplot2::annotate(
-            "label", x = -Inf, y = ref_lines[3], label = "PR -30%",
-            hjust = -0.1, vjust = 1.25, size = 3,
-            linewidth = 0, fill = "white", color = "#4A4F57", alpha = 0.9
+            "label", x = -Inf, y = ref_lines[3], label = "PR (-30%)",
+            hjust = -0.05, vjust = 1.3, size = 3,
+            linewidth = 0, fill = "white", color = "#4DBBD5", fontface = "bold", alpha = 0.85
           )
       }
 
-      # Add patient labels if requested
+      # Add patient labels on bars if requested
       if (settings$show_labels) {
-        p = p + ggrepel::geom_text_repel(
+        p = p + ggplot2::geom_text(
           ggplot2::aes(
             label = .data[["patient"]],
-            y     = .data[["response"]]
+            vjust = ifelse(.data[["response"]] >= 0, -0.4, 1.4)
           ),
-          size             = settings$label_size,
-          angle            = 90,
-          direction        = "y",
-          max.overlaps     = 100,
-          min.segment.length = 0,
-          box.padding      = 0.15,
-          point.padding    = 0.1,
-          show.legend      = FALSE
+          size        = settings$label_size,
+          angle       = 90,
+          color       = "#30343B",
+          show.legend = FALSE
         )
       }
 

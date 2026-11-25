@@ -148,8 +148,8 @@ cliplot.default = function(
   settings$xlab      = xlab
   settings$ylab      = ylab
 
-  # Legend
-  settings$legend    = legend %||% "right"
+  # Legend (do not force default yet so plot types can set specialized defaults)
+  settings$legend    = legend
 
   # Statistical
   settings$stat.test  = stat.test %||% get_clipar("stat.test")
@@ -247,7 +247,8 @@ cliplot.default = function(
     p = p + resolve_theme(settings$theme)
 
     # ---- Apply legend position ----
-    p = p + ggplot2::theme(legend.position = settings$legend)
+    leg_pos = settings$legend %||% "right"
+    p = p + ggplot2::theme(legend.position = leg_pos)
 
     # ---- Maintain angled x-axis text for matrix, heatmap, and waterfall types ----
     if (settings$type_name %in% c("waterfall", "module_compare", "cross_network", "module_trait", "module_env", "module_cor", "correlation", "sharing_heatmap", "bubble_matrix", "bubble_heatmap")) {
@@ -256,10 +257,11 @@ cliplot.default = function(
       ang = settings$axis_text_angle %||% settings$cor_axis_angle %||% settings$bh_axis_angle %||% 45
       show_ax = if (!is.null(settings$cor_show_axis)) settings$cor_show_axis else TRUE
 
-      if (!isTRUE(show_ax)) {
+      if (!isTRUE(show_ax) || isTRUE(settings$axis_text_blank)) {
         p = p + ggplot2::theme(
           axis.text.x = ggplot2::element_blank(),
-          axis.text.y = ggplot2::element_blank()
+          axis.ticks.x = if (isTRUE(settings$axis_text_blank)) ggplot2::element_blank() else ggplot2::element_line(),
+          axis.text.y = if (isTRUE(settings$axis_text_blank)) ggplot2::element_text() else ggplot2::element_blank()
         )
       } else if (!is.null(sz_x) || !is.null(sz_y)) {
         p = p + ggplot2::theme(
