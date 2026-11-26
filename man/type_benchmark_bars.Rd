@@ -43,7 +43,7 @@ the error whiskers (default TRUE).}
 
 \item{border_width}{Bar border line width (default 0.5).}
 
-\item{label_format}{Character format string for annotations (default "%.2f").}
+\item{label_format}{Character format string for annotations (default "\\\%.2f").}
 
 \item{text_size}{Numeric text size for annotations (default 3.0).}
 

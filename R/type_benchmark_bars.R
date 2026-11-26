@@ -23,7 +23,7 @@
 #' @param cap_size Error bar whisker cap size (default 0.25).
 #' @param border_color Bar border color (default \code{"black"}).
 #' @param border_width Bar border line width (default 0.5).
-#' @param label_format Character format string for annotations (default "%.2f").
+#' @param label_format Character format string for annotations (default "\\\%.2f").
 #' @param text_size Numeric text size for annotations (default 3.0).
 #' @param group_sep_lines Vector of x-axis positions or category names where vertical
 #'   dotted boundary lines should be drawn between governance tiers (default NULL).

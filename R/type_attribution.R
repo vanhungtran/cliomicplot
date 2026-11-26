@@ -25,7 +25,7 @@
 #' @param reference_line Numeric. Reference value for baseline (default 0 for
 #'   Shapley/contrast; 0.5 for stepwise AUROC).
 #' @param annotate Logical. Whether to print numeric values on bars or points (default TRUE).
-#' @param label_format Character format string for annotations (default "%.3f").
+#' @param label_format Character format string for annotations (default "\\\%.3f").
 #' @param error_low Column name or vector for lower error bounds in stepwise/contrast plots.
 #' @param error_high Column name or vector for upper error bounds in stepwise/contrast plots.
 #' @param color_pos Color for positive contributions (default \code{"#B64342"}).

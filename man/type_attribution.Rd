@@ -35,7 +35,7 @@ Shapley/contrast; 0.5 for stepwise AUROC).}
 
 \item{annotate}{Logical. Whether to print numeric values on bars or points (default TRUE).}
 
-\item{label_format}{Character format string for annotations (default "%.3f").}
+\item{label_format}{Character format string for annotations (default "\\\%.3f").}
 
 \item{error_low}{Column name or vector for lower error bounds in stepwise/contrast plots.}
 
