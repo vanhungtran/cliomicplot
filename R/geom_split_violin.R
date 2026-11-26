@@ -80,6 +80,24 @@ GeomSplitViolin <- ggplot2::ggproto("GeomSplitViolin", ggplot2::GeomViolin,
     "quantiles", "draw_quantiles", "quantile_color", "quantile_colour",
     "quantile_linewidth", "quantile_linetype", "side"
   ),
+  setup_data = function(self, data, params) {
+    data <- ggplot2::GeomViolin$setup_data(data, params)
+    if (is.null(params$side) || params$side == "split") {
+      # Within each x position, rank groups so condition 1 is always left, condition 2 is always right
+      data$split_side <- "left"
+      for (x_val in unique(data$x)) {
+        idx <- which(data$x == x_val)
+        grps <- sort(unique(data$group[idx]))
+        if (length(grps) >= 2) {
+          right_idx <- which(data$x == x_val & data$group == grps[2])
+          data$split_side[right_idx] <- "right"
+        }
+      }
+    } else {
+      data$split_side <- params$side
+    }
+    data
+  },
   draw_group = function(
     self,
     data,
@@ -102,11 +120,7 @@ GeomSplitViolin <- ggplot2::ggproto("GeomSplitViolin", ggplot2::GeomViolin,
     )
 
     # Resolve active side for this group
-    actual_side <- side
-    if (actual_side == "split") {
-      grp <- data[1, "group"]
-      actual_side <- if (grp %% 2 == 1) "left" else "right"
-    }
+    actual_side <- data$split_side[1] %||% side
 
     if (actual_side == "left") {
       # Left half: along outer curve (xminv), then down the central spine (x)
@@ -129,9 +143,8 @@ GeomSplitViolin <- ggplot2::ggproto("GeomSplitViolin", ggplot2::GeomViolin,
     }
     newdata <- rbind(newdata, newdata[1, ])
 
-    # Transform polygon coordinates through the active coordinate system
-    poly_coords <- coord$transform(newdata, panel_params)
-    poly_grob <- ggplot2::GeomPolygon$draw_panel(poly_coords, panel_params, coord, ...)
+    # Render polygon directly via GeomPolygon panel method
+    poly_grob <- ggplot2::GeomPolygon$draw_panel(newdata, panel_params, coord, ...)
 
     # Draw quantiles if specified
     q_target <- quantiles %||% draw_quantiles
@@ -163,8 +176,7 @@ GeomSplitViolin <- ggplot2::ggproto("GeomSplitViolin", ggplot2::GeomViolin,
       q_df$linetype <- quantile_linetype
       q_df$alpha <- 0.9
 
-      q_coords <- coord$transform(q_df, panel_params)
-      line_grob <- ggplot2::GeomPath$draw_panel(q_coords, panel_params, coord, ...)
+      line_grob <- ggplot2::GeomPath$draw_panel(q_df, panel_params, coord, ...)
       grid::grobTree(poly_grob, line_grob)
     } else {
       poly_grob

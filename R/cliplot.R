@@ -86,6 +86,7 @@ cliplot.default = function(
     data      = NULL,
     type      = NULL,
     by        = NULL,
+    by_name   = NULL,
     facet     = NULL,
     palette   = NULL,
     theme     = NULL,
@@ -122,6 +123,7 @@ cliplot.default = function(
   settings$data  = data
   settings$by    = by
   settings$facet = facet
+  settings$by_name = by_name %||% (if (is.character(by) && length(by) == 1L) by else NULL)
 
   # KM-specific: time/event column names extracted from Surv() formula
   settings$km_time  = km_time
@@ -212,14 +214,20 @@ cliplot.default = function(
   if (!isTRUE(settings$skip_postprocess)) {
     # ---- Apply labels ----
     if (!inherits(p, "wrapped_patch") && !inherits(p, "patchwork")) {
+      guide_title = settings$by_name %||% "Group"
       p = p +
         ggplot2::labs(
           title    = settings$title,
           subtitle = settings$subtitle,
           caption  = settings$caption,
           x        = settings$xlab,
-          y        = settings$ylab
+          y        = settings$ylab,
+          fill     = guide_title
         )
+      has_col <- any(vapply(p$layers, function(l) any(c("colour", "color") %in% names(l$mapping)), logical(1)))
+      if (has_col) {
+        p = p + ggplot2::labs(color = guide_title)
+      }
     }
 
     # ---- Apply color palette ----
@@ -357,6 +365,7 @@ cliplot.formula = function(
     data     = data,
     type     = type,
     by       = if (is_surv) parsed$x else (parsed$by %||% by),
+    by_name  = parsed$by_name,
     facet    = facet,
     palette  = palette,
     theme    = theme,
@@ -795,12 +804,61 @@ add_stat_annotations = function(p, settings, data) {
   is_grouped <- !is.null(data[["x"]]) && !identical(as.character(data[["x"]]), as.character(by_var))
 
   if (is_grouped) {
-    # When grouped by a secondary conditioning variable (y ~ x | by), compare by groups within each x level
-    p = p + ggpubr::stat_compare_means(
-      ggplot2::aes(group = .data[["..by.."]]),
-      method = method,
-      label  = settings$stat.label %||% "p.format"
-    )
+    if (length(groups) == 2 && requireNamespace("ggsignif", quietly = TRUE)) {
+      x_factor  <- factor(data[["x"]])
+      x_levels  <- levels(x_factor)
+      by_factor <- factor(data[["..by.."]])
+      y_values  <- data[["y"]]
+
+      p_vals  <- numeric(length(x_levels))
+      y_maxes <- numeric(length(x_levels))
+
+      for (i in seq_along(x_levels)) {
+        lvl    <- x_levels[i]
+        sub_y  <- y_values[x_factor == lvl]
+        sub_by <- by_factor[x_factor == lvl]
+
+        pval <- tryCatch({
+          if (method == "t.test") {
+            stats::t.test(sub_y ~ sub_by)$p.value
+          } else {
+            stats::wilcox.test(sub_y ~ sub_by)$p.value
+          }
+        }, error = function(e) NA_real_)
+
+        p_vals[i]  <- pval
+        y_maxes[i] <- if (length(sub_y) > 0) max(sub_y, na.rm = TRUE) else 0
+      }
+
+      fmt <- settings$stat.label %||% "p.format"
+      labels <- vapply(p_vals, function(p) {
+        if (is.na(p)) return("ns")
+        if (fmt == "p.signif") {
+          if (p < 0.001) "***" else if (p < 0.01) "**" else if (p < 0.05) "*" else "ns"
+        } else {
+          if (p < 0.001) "p < 0.001" else if (p < 0.01) sprintf("p = %.3f", p) else sprintf("p = %.2f", p)
+        }
+      }, character(1))
+
+      p = p + ggsignif::geom_signif(
+        y_position = y_maxes * 1.07,
+        xmin       = seq_along(x_levels) - 0.18,
+        xmax       = seq_along(x_levels) + 0.18,
+        annotation = labels,
+        tip_length = 0.025,
+        textsize   = 3.5,
+        vjust      = -0.4,
+        color      = "#20242A",
+        size       = 0.45
+      ) + ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.06, 0.15)))
+    } else {
+      # Fallback for >2 groups or without ggsignif
+      p = p + ggpubr::stat_compare_means(
+        ggplot2::aes(group = .data[["..by.."]]),
+        method = method,
+        label  = settings$stat.label %||% "p.format"
+      )
+    }
   } else if (!is.null(settings$stat.comparisons)) {
     p = p + ggpubr::stat_compare_means(
       comparisons = settings$stat.comparisons,

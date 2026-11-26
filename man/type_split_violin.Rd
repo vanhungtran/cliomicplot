@@ -17,9 +17,9 @@ type_split_violin(
   violin_alpha = 0.8,
   violin_color = "#20242A",
   linewidth = 0.35,
-  box_width = 0.14,
-  box_fill = "white",
-  box_alpha = 0.85,
+  box_width = 0.15,
+  box_fill = c("group", "white"),
+  box_alpha = 0.9,
   trim = TRUE,
   scale = "width",
   orientation = c("vertical", "horizontal")
@@ -53,11 +53,12 @@ or \code{"none"}.}
 
 \item{linewidth}{Outline stroke width (default 0.35).}
 
-\item{box_width}{Width of inner boxplot when \code{inner = "boxplot"} (default 0.14).}
+\item{box_width}{Width of inner boxplot when \code{inner = "boxplot"} (default 0.15).}
 
-\item{box_fill}{Fill color of inner boxplot (default \code{"white"}).}
+\item{box_fill}{Fill style for inner boxplot: \code{"group"} (default, filled
+by group color) or \code{"white"}.}
 
-\item{box_alpha}{Transparency of inner boxplot (default 0.85).}
+\item{box_alpha}{Transparency of inner boxplot (default 0.9).}
 
 \item{trim}{Trim violin tails to observed data range (default \code{TRUE}).}
 
@@ -82,9 +83,9 @@ cliplot(len ~ dose | supp, data = ToothGrowth,
         type = type_split_violin(),
         title = "Odontoblast Length by Dose & Supplement")
 
-# With inner boxplots and horizontal orientation
+# With inner boxplots highlighted by group
 cliplot(len ~ dose | supp, data = ToothGrowth,
-        type = type_split_violin(inner = "boxplot", orientation = "horizontal"))
+        type = type_split_violin(inner = "boxplot"))
 }
 
 }

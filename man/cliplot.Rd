@@ -17,6 +17,7 @@ cliplot(x, ...)
   data = NULL,
   type = NULL,
   by = NULL,
+  by_name = NULL,
   facet = NULL,
   palette = NULL,
   theme = NULL,

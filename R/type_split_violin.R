@@ -24,9 +24,10 @@
 #' @param violin_alpha Transparency of split violins (default 0.8).
 #' @param violin_color Border color of violins (default \code{"#20242A"}).
 #' @param linewidth Outline stroke width (default 0.35).
-#' @param box_width Width of inner boxplot when \code{inner = "boxplot"} (default 0.14).
-#' @param box_fill Fill color of inner boxplot (default \code{"white"}).
-#' @param box_alpha Transparency of inner boxplot (default 0.85).
+#' @param box_width Width of inner boxplot when \code{inner = "boxplot"} (default 0.15).
+#' @param box_fill Fill style for inner boxplot: \code{"group"} (default, filled
+#'   by group color) or \code{"white"}.
+#' @param box_alpha Transparency of inner boxplot (default 0.9).
 #' @param trim Trim violin tails to observed data range (default \code{TRUE}).
 #' @param scale Violin scaling method: \code{"width"} (default, all categories
 #'   have equal maximum width), \code{"area"}, or \code{"count"}.
@@ -41,9 +42,9 @@
 #'         type = type_split_violin(),
 #'         title = "Odontoblast Length by Dose & Supplement")
 #'
-#' # With inner boxplots and horizontal orientation
+#' # With inner boxplots highlighted by group
 #' cliplot(len ~ dose | supp, data = ToothGrowth,
-#'         type = type_split_violin(inner = "boxplot", orientation = "horizontal"))
+#'         type = type_split_violin(inner = "boxplot"))
 #' }
 #'
 #' @export
@@ -60,14 +61,15 @@ type_split_violin = function(
     violin_alpha       = 0.8,
     violin_color       = "#20242A",
     linewidth          = 0.35,
-    box_width          = 0.14,
-    box_fill           = "white",
-    box_alpha          = 0.85,
+    box_width          = 0.15,
+    box_fill           = c("group", "white"),
+    box_alpha          = 0.9,
     trim               = TRUE,
     scale              = "width",
     orientation        = c("vertical", "horizontal")
 ) {
   inner       = match.arg(inner)
+  box_fill    = match.arg(box_fill)
   orientation = match.arg(orientation)
 
   cliplot_type(
@@ -108,17 +110,31 @@ type_split_violin = function(
 
       # 2. Inner Summary Structure
       if (inner == "boxplot") {
-        p <- p + ggplot2::geom_boxplot(
-          ggplot2::aes(fill = .data[["..by.."]]),
-          width         = box_width,
-          fill          = box_fill,
-          alpha         = box_alpha,
-          color         = violin_color,
-          linewidth     = linewidth + 0.05,
-          outlier.shape = NA,
-          position      = ggplot2::position_dodge(width = 0.28),
-          show.legend   = FALSE
-        )
+        if (identical(box_fill, "white")) {
+          p <- p + ggplot2::geom_boxplot(
+            mapping       = ggplot2::aes(group = interaction(.data[["x"]], .data[["..by.."]])),
+            width         = box_width,
+            fill          = "white",
+            alpha         = box_alpha,
+            color         = violin_color,
+            linewidth     = linewidth + 0.1,
+            outlier.shape = NA,
+            position      = ggplot2::position_dodge(width = 0.35),
+            show.legend   = FALSE
+          )
+        } else {
+          p <- p + ggplot2::geom_boxplot(
+            mapping       = ggplot2::aes(group = interaction(.data[["x"]], .data[["..by.."]]),
+                                         fill = .data[["..by.."]]),
+            width         = box_width,
+            alpha         = box_alpha,
+            color         = violin_color,
+            linewidth     = linewidth + 0.1,
+            outlier.shape = NA,
+            position      = ggplot2::position_dodge(width = 0.35),
+            show.legend   = FALSE
+          )
+        }
       } else if (inner == "mean_se") {
         p <- p + ggplot2::stat_summary(
           ggplot2::aes(group = .data[["..by.."]]),
@@ -127,17 +143,17 @@ type_split_violin = function(
           width     = 0.12,
           linewidth = linewidth + 0.35,
           color     = violin_color,
-          position  = ggplot2::position_dodge(width = 0.28)
+          position  = ggplot2::position_dodge(width = 0.35)
         ) + ggplot2::stat_summary(
-          ggplot2::aes(group = .data[["..by.."]]),
+          ggplot2::aes(group = .data[["..by.."]], fill = .data[["..by.."]]),
           fun       = mean,
           geom      = "point",
           shape     = 23,
           size      = 2.8,
-          fill      = "white",
           color     = violin_color,
           stroke    = 0.9,
-          position  = ggplot2::position_dodge(width = 0.28)
+          position  = ggplot2::position_dodge(width = 0.35),
+          show.legend = FALSE
         )
       }
 

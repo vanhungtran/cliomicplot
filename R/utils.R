@@ -66,18 +66,22 @@ parse_cli_formula = function(formula, data, env = parent.frame()) {
     rhs = formula[[3L]]
     if (is.call(rhs) && rhs[[1L]] == as.name("|")) {
       # Has grouping: y ~ x | group
-      x  = eval_part(rhs[[2L]], data, env)
-      by = eval_part(rhs[[3L]], data, env)
-      y  = eval_part(formula[[2L]], data, env)
+      x       = eval_part(rhs[[2L]], data, env)
+      by      = eval_part(rhs[[3L]], data, env)
+      y       = eval_part(formula[[2L]], data, env)
+      by_name = deparse(rhs[[3L]])
+      x_name  = deparse(rhs[[2L]])
     } else {
-      x  = eval_part(rhs, data, env)
-      y  = eval_part(formula[[2L]], data, env)
-      by = NULL
+      x       = eval_part(rhs, data, env)
+      y       = eval_part(formula[[2L]], data, env)
+      by      = NULL
+      by_name = NULL
+      x_name  = deparse(rhs)
     }
   }
 
-  list(x = x, y = y, by = by,
-       xlab = deparse(formula[[if (length(formula) == 2L) 2L else 3L]]),
+  list(x = x, y = y, by = by, by_name = by_name,
+       xlab = x_name,
        ylab = if (length(formula) == 3L) deparse(formula[[2L]]) else NULL)
 }
 
