@@ -40,33 +40,34 @@ type_pathology_boxplot(
 \arguments{
 \item{add_jitter}{Add jittered points (default TRUE).}
 
-\item{jitter_width}{Width of jitter (default 0.15 for default, 0.10 for pathology).}
+\item{jitter_width}{Width of jitter (default 0.15 for default, 0.10 for pathology, 0.12 for baranger).}
 
-\item{jitter_alpha}{Transparency of jittered points (default 0.38 for default, 0.35 for pathology).}
+\item{jitter_alpha}{Transparency of jittered points (default 0.38 for default, 0.35 for pathology, 0.65 for baranger).}
 
-\item{jitter_size}{Size of jittered points (default 1.6 for default, 0.85 for pathology).}
+\item{jitter_size}{Size of jittered points (default 1.6 for default, 0.85 for pathology, 1.8 for baranger).}
 
 \item{jitter_subsample}{Optional integer. When specified, subsamples up to
 `jitter_subsample` observations per category/group for jittered point display
 while computing boxplots and statistics on all data (ideal for large cohorts
 such as GTEx with N ~ 20k).}
 
-\item{add_violin}{Overlay violin plot (default FALSE).}
+\item{add_violin}{Overlay violin plot (default FALSE for classic/pathology;
+default TRUE for Baranger style).}
 
-\item{violin_alpha}{Violin transparency (default 0.2).}
+\item{violin_alpha}{Violin transparency (default 0.20 for classic, 0.30 for baranger).}
 
 \item{outlier_shape}{Shape for outlier points. Set to `NA` to hide
 outliers (publication style). Default `NA`.}
 
 \item{outlier_size}{Size of outlier points (default 1.5).}
 
-\item{width}{Box width (default 0.55 for default, 0.32 for pathology).}
+\item{width}{Box width (default 0.55 for default, 0.32 for pathology, 0.22 for baranger).}
 
-\item{alpha}{Box fill transparency. Lower = more transparent (default 0.28 for default, 0.22 for pathology).}
+\item{alpha}{Box fill transparency (default 0.28 for default, 0.22 for pathology, 0.75 for baranger).}
 
 \item{linewidth}{Box outline width (default 0.65 for default, 0.45 for pathology).}
 
-\item{position_dodge}{Dodge width for grouped boxes. `NULL` uses 0.8 for default,
+\item{position_dodge}{Dodge width for grouped boxes. Default 0.8 for default/baranger,
 0.42 for pathology style.}
 
 \item{show_mean}{Logical. Show mean marker diamond (default `TRUE` when

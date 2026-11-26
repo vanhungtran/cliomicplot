@@ -179,7 +179,7 @@ cliplot.default = function(
   # For categorical distribution plots (boxplot, violin, beeswarm, raincloud, pathology, ecology),
   # convert numeric x to factor so discrete levels (e.g. dose 0.5, 1.0, 2.0)
   # dodge cleanly without continuous-scale interval overlaps
-  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud") &&
+  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud", "scatter_box_violin", "baranger", "sbv", "scatter_box", "box_violin") &&
       !is.null(x) && is.numeric(x)) {
     x = as.factor(x)
     settings$x = x
@@ -193,7 +193,7 @@ cliplot.default = function(
   # If by is not supplied, but x is categorical and a discrete palette or grouping type
   # is requested, default by to x so boxes/points color by categories and stat.test works
   if (is.null(by) && !is.null(x) && (is.character(x) || is.factor(x)) &&
-      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud") || !is.null(palette))) {
+      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud", "scatter_box_violin", "baranger", "sbv", "scatter_box", "box_violin") || !is.null(palette))) {
     by = x
     if (is.null(legend)) {
       settings$legend = "none"
@@ -554,6 +554,11 @@ resolve_type = function(type) {
     boxplot     = type_boxplot,
     pathology   = type_pathology_boxplot,
     pathology_boxplot = type_pathology_boxplot,
+    scatter_box_violin = type_scatter_box_violin,
+    baranger    = type_scatter_box_violin,
+    sbv         = type_scatter_box_violin,
+    scatter_box = type_scatter_box,
+    box_violin  = type_box_violin,
     violin      = type_violin,
     split_violin = type_split_violin,
     split_vln   = type_split_violin,

@@ -5,19 +5,31 @@
 \title{Boxplot Type}
 \usage{
 type_boxplot(
-  style = c("default", "pathology"),
-  add_jitter = TRUE,
-  jitter_width = 0.15,
-  jitter_alpha = 0.38,
-  jitter_size = 1.6,
+  style = c("default", "pathology", "baranger", "scatter_box_violin", "scatter_box",
+    "box_violin"),
+  add_jitter = NULL,
+  jitter_width = NULL,
+  jitter_alpha = NULL,
+  jitter_size = NULL,
   jitter_subsample = NULL,
-  add_violin = FALSE,
-  violin_alpha = 0.2,
+  point_shape = NULL,
+  point_border = "black",
+  point_stroke = 0.35,
+  add_violin = NULL,
+  violin_alpha = NULL,
+  violin_width = NULL,
+  violin_color = NULL,
+  violin_linewidth = 0.55,
+  trim = TRUE,
+  scale = "width",
+  notch = NULL,
+  notchwidth = 0.5,
   outlier_shape = NA,
   outlier_size = 1.5,
-  width = 0.55,
-  alpha = 0.28,
-  linewidth = 0.65,
+  width = NULL,
+  alpha = NULL,
+  linewidth = NULL,
+  box_color = NULL,
   position_dodge = NULL,
   show_mean = NULL,
   show_mean_line = NULL,
@@ -39,39 +51,71 @@ type_boxplot(
 )
 }
 \arguments{
-\item{style}{Boxplot aesthetic style: `"default"` (classic cliplot) or
+\item{style}{Boxplot aesthetic style: `"default"` (classic cliplot),
 `"pathology"` (Nature Aging / SciFig style with colored borders, bold median,
-white diamond mean, dotted mean trajectory lines, and dashed zero baseline).}
+white diamond mean, dotted mean trajectory lines, and dashed zero baseline),
+`"baranger"` / `"scatter_box_violin"` (David Baranger style with wide violin,
+narrow notched boxplot, and overlaid jittered points with black border),
+`"scatter_box"` (notched boxplot with bordered jittered points), or
+`"box_violin"` (wide violin with narrow notched boxplot, no points).}
 
 \item{add_jitter}{Add jittered points (default TRUE).}
 
-\item{jitter_width}{Width of jitter (default 0.15 for default, 0.10 for pathology).}
+\item{jitter_width}{Width of jitter (default 0.15 for default, 0.10 for pathology, 0.12 for baranger).}
 
-\item{jitter_alpha}{Transparency of jittered points (default 0.38 for default, 0.35 for pathology).}
+\item{jitter_alpha}{Transparency of jittered points (default 0.38 for default, 0.35 for pathology, 0.65 for baranger).}
 
-\item{jitter_size}{Size of jittered points (default 1.6 for default, 0.85 for pathology).}
+\item{jitter_size}{Size of jittered points (default 1.6 for default, 0.85 for pathology, 1.8 for baranger).}
 
 \item{jitter_subsample}{Optional integer. When specified, subsamples up to
 `jitter_subsample` observations per category/group for jittered point display
 while computing boxplots and statistics on all data (ideal for large cohorts
 such as GTEx with N ~ 20k).}
 
-\item{add_violin}{Overlay violin plot (default FALSE).}
+\item{point_shape}{Point shape for raw data scatter points. `21` renders
+filled circles with black borders (default in Baranger style); `16` renders
+solid circular points (default in classic/pathology styles).}
 
-\item{violin_alpha}{Violin transparency (default 0.2).}
+\item{point_border}{Border outline color for points when `point_shape` is 21–25
+(default `"black"`).}
+
+\item{point_stroke}{Border stroke thickness for points (default `0.35`).}
+
+\item{add_violin}{Overlay violin plot (default FALSE for classic/pathology;
+default TRUE for Baranger style).}
+
+\item{violin_alpha}{Violin transparency (default 0.20 for classic, 0.30 for baranger).}
+
+\item{violin_width}{Width of violin layer (default `0.80` for baranger).}
+
+\item{violin_color}{Outline color of violin layer (`"black"` for baranger, `NA` for classic).}
+
+\item{violin_linewidth}{Line width of violin outline (default `0.55`).}
+
+\item{trim}{Logical. Trim violin tails to observed data range (default TRUE).}
+
+\item{scale}{Density scaling method for violin: `"width"` (default), `"area"`, or `"count"`.}
+
+\item{notch}{Logical. Draw notched boxplots showing the 95% confidence interval
+around the median (default TRUE in Baranger styles, FALSE otherwise).}
+
+\item{notchwidth}{Notch depth relative to box width (default `0.5`).}
 
 \item{outlier_shape}{Shape for outlier points. Set to `NA` to hide
 outliers (publication style). Default `NA`.}
 
 \item{outlier_size}{Size of outlier points (default 1.5).}
 
-\item{width}{Box width (default 0.55 for default, 0.32 for pathology).}
+\item{width}{Box width (default 0.55 for default, 0.32 for pathology, 0.22 for baranger).}
 
-\item{alpha}{Box fill transparency. Lower = more transparent (default 0.28 for default, 0.22 for pathology).}
+\item{alpha}{Box fill transparency (default 0.28 for default, 0.22 for pathology, 0.75 for baranger).}
 
 \item{linewidth}{Box outline width (default 0.65 for default, 0.45 for pathology).}
 
-\item{position_dodge}{Dodge width for grouped boxes. `NULL` uses 0.8 for default,
+\item{box_color}{Custom outline color for boxplots (default `"black"` for baranger,
+`"#30343B"` for default, or group-matched for pathology).}
+
+\item{position_dodge}{Dodge width for grouped boxes. Default 0.8 for default/baranger,
 0.42 for pathology style.}
 
 \item{show_mean}{Logical. Show mean marker diamond (default `TRUE` when
@@ -118,13 +162,18 @@ A cliplot_type object for use with \code{\link{cliplot}}.
 \description{
 Creates publication-ready boxplots with optional jittered
   points, violin overlays, statistical annotations, and specialized styling.
-  Supports grouped dodging, matrix-style faceting, bold black median bars,
-  diamond mean markers, paired trajectory lines, and zero reference baselines.
+  Supports classic cliplot (`"default"`), Nature Aging pathology style
+  (`"pathology"`), and David Baranger (2018) scatter-box-violin composites
+  (`"baranger"`, `"scatter_box_violin"`, `"scatter_box"`, `"box_violin"`).
 }
 \examples{
 \dontrun{
 # Basic publication-style boxplot (transparent fill, no outliers)
 cliplot(len ~ dose, data = ToothGrowth, type = "boxplot")
+
+# David Baranger style scatter-box-violin composite
+cliplot(Sepal.Length ~ Species, data = iris,
+        type = type_boxplot(style = "baranger"))
 
 # Nature Aging / SciFig pathology style boxplot
 cliplot(delta ~ pathology | status, data = df_gtex,
@@ -132,4 +181,8 @@ cliplot(delta ~ pathology | status, data = df_gtex,
         palette = "pathology", theme = "pathology")
 }
 
+}
+\references{
+Baranger, D. (2018). Showing your data: Scatter, box, & violin plots.
+\url{https://davidbaranger.com/2018/03/05/showing-your-data-scatter-box-violin-plots/}
 }
