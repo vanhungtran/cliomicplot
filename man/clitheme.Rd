@@ -22,6 +22,7 @@ clitheme(theme = NULL, ..., register = NULL)
   \item \code{"dark"} - Dark background theme
   \item \code{"scifig"} - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward ticks, dashed grid)
   \item \code{"pathology"} - Nature Aging / SciFig style (open L-frame, outward ticks, dotted y-grid)
+  \item \code{"ecology"} - Ecology / Demographic viability style (full 4-sided black frame, no grid, outward ticks)
 }
 Use \code{clitheme()} without arguments to reset to the default theme.}
 

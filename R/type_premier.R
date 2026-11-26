@@ -3,23 +3,111 @@
 # Stunning visualization types beyond what tinyplot offers
 # ===========================================================================
 
-#' Raincloud Plot Type
+#' Raincloud and Half-Boxed Ecology Plot Type
 #'
-#' @description Creates elegant raincloud plots combining a split-half violin,
-#'   boxplot, and jittered raw data points. Popular in neuroscience and
-#'   psychology for transparent data visualization.
+#' @description Creates publication-ready raincloud and half-boxed distribution plots
+#'   combining half-violins (density slabs), vertical boxplots, mean markers, and optional
+#'   statistical summary confidence interval annotations.
 #'
-#' @param alpha Raincloud transparency (default 0.7)
-#' @param point_size Size of jittered points (default 1.5)
-#' @param point_alpha Transparency of points (default 0.4)
-#' @param box_width Width of boxplot relative to violin (default 0.2)
-#' @param adjust Bandwidth adjustment for density (default 1)
-#' @param side Which side to draw the raincloud: "right", "left", or "both"
+#' @param style Aesthetic style: `"default"` (classic neuroscience raincloud with jittered points)
+#'   or `"ecology"` / `"half_boxed"` (clean ecology/demography style with white-filled boxplot,
+#'   category-matched borders, open square outliers, prominent circular mean dot, right-facing
+#'   half-violin density, horizontal reference line, and bottom-positioned mean + 95 percent CI text annotations).
+#' @param alpha Violin transparency (default 0.7 for default, 0.98 for ecology).
+#' @param point_size Size of jittered points in default style (default 1.5).
+#' @param point_alpha Transparency of jittered points in default style (default 0.4).
+#' @param box_width Width of boxplot (default 0.2 for default, 0.17 for ecology).
+#' @param box_nudge Horizontal nudge for boxplot in ecology style (default -0.15).
+#' @param box_fill Fill color of boxplot (default white `"#FFFFFF"` in ecology style, semi-transparent in default).
+#' @param box_lwd Line width for boxplot borders and whiskers (default 1.1 for ecology style).
+#' @param outlier_shape Outlier point shape (default `0` [open square] for ecology style, `NA` for default).
+#' @param outlier_size Outlier point size (default 2.0 for ecology style).
+#' @param outlier_stroke Outlier border stroke thickness (default 0.8 for ecology style).
+#' @param show_mean Logical. Draw a solid circular mean marker between boxplot and violin (default TRUE for ecology style).
+#' @param mean_nudge Horizontal nudge for mean point (default -0.01).
+#' @param mean_shape Mean marker shape (default 16, solid circle).
+#' @param mean_size Mean marker size (default 3.8).
+#' @param violin_width Width of half-violin slab (default 0.52).
+#' @param adjust Bandwidth adjustment for density estimation (default 1.1).
+#' @param side Which side to draw the half-violin: `"right"`, `"left"`, or `"both"`.
+#' @param ref_line Numeric y-intercept for horizontal dashed reference line (e.g. `1.0` for population replacement rate). `NULL` to disable.
+#' @param ref_line_col Color for reference line (default `"grey70"`).
+#' @param ref_line_lty Linetype for reference line (default `"dashed"`).
+#' @param ref_line_lwd Linewidth for reference line (default 1.2).
+#' @param show_stats Logical. Compute and display sample mean and confidence intervals below each category (default TRUE for ecology style).
+#' @param stat_param Parameter symbol or name for stats label (default `"λ"`, or `"mean"`).
+#' @param stat_ci_level Confidence interval level (default 0.95 for 95 percent CI).
+#' @param stat_digits Number of decimal digits to format in stats label (default 3).
+#' @param stat_y_pos Custom y-coordinate for bottom stats labels. `NULL` automatically calculates position below minimum data range.
+#' @param stat_text_size Font size for bottom stats labels (default 3.4).
+#' @param stat_labels Optional custom character vector to override calculated stats labels.
 #'
-#' @return A cliplot_type object
+#' @return A cliplot_type object.
 #' @export
-type_raincloud = function(alpha = 0.7, point_size = 1.5, point_alpha = 0.4,
-                           box_width = 0.2, adjust = 1, side = "right") {
+type_raincloud = function(
+    style          = c("default", "ecology", "half_boxed"),
+    alpha          = NULL,
+    point_size     = 1.5,
+    point_alpha    = 0.4,
+    box_width      = NULL,
+    box_nudge      = NULL,
+    box_fill       = NULL,
+    box_lwd        = NULL,
+    outlier_shape  = NULL,
+    outlier_size   = NULL,
+    outlier_stroke = NULL,
+    show_mean      = NULL,
+    mean_nudge     = -0.01,
+    mean_shape     = 16,
+    mean_size      = 3.8,
+    violin_width   = 0.52,
+    adjust         = 1.1,
+    side           = "right",
+    ref_line       = NULL,
+    ref_line_col   = "grey70",
+    ref_line_lty   = "dashed",
+    ref_line_lwd   = 1.2,
+    show_stats     = NULL,
+    stat_param     = "\u03bb",
+    stat_ci_level  = 0.95,
+    stat_digits    = 3,
+    stat_y_pos     = NULL,
+    stat_text_size = 3.4,
+    stat_labels    = NULL
+) {
+  if (is.character(style)) {
+    style <- match.arg(style)
+  } else {
+    style <- "default"
+  }
+  is_ecology <- style %in% c("ecology", "half_boxed")
+
+  # Style-specific defaults
+  if (is_ecology) {
+    alpha          <- alpha %||% 0.98
+    box_width      <- box_width %||% 0.17
+    box_nudge      <- box_nudge %||% -0.15
+    box_fill       <- box_fill %||% "#FFFFFF"
+    box_lwd        <- box_lwd %||% 1.1
+    outlier_shape  <- outlier_shape %||% 0
+    outlier_size   <- outlier_size %||% 2.0
+    outlier_stroke <- outlier_stroke %||% 0.8
+    show_mean      <- show_mean %||% TRUE
+    ref_line       <- ref_line %||% 1.0
+    show_stats     <- show_stats %||% TRUE
+  } else {
+    alpha          <- alpha %||% 0.7
+    box_width      <- box_width %||% 0.2
+    box_nudge      <- box_nudge %||% 0
+    box_fill       <- box_fill %||% NA
+    box_lwd        <- box_lwd %||% 0.6
+    outlier_shape  <- outlier_shape %||% NA
+    outlier_size   <- outlier_size %||% 1.5
+    outlier_stroke <- outlier_stroke %||% 0.5
+    show_mean      <- show_mean %||% FALSE
+    show_stats     <- show_stats %||% FALSE
+  }
+
   cliplot_type(
     data = function(settings, ...) {
       df = settings$data
@@ -45,46 +133,231 @@ type_raincloud = function(alpha = 0.7, point_size = 1.5, point_alpha = 0.4,
       df[[x_col]] = factor(df[[x_col]])
 
       p = ggplot2::ggplot(df, ggplot2::aes(
-        x = .data[[x_col]], y = .data[[y_col]], fill = .data[[group_col]]
+        x = .data[[x_col]], y = .data[[y_col]], fill = .data[[group_col]], color = .data[[group_col]]
       ))
 
-      # Half violin
-      side_map = c(right = "r", left = "l", both = "full")
-      v_side = side_map[side]
-
-      if (requireNamespace("ggdist", quietly = TRUE)) {
-        p = p + ggdist::stat_halfeye(
-          adjust = adjust, width = 0.6, .width = 0,
-          justification = if (side == "right") -0.2 else 0.2,
-          point_colour = NA, alpha = alpha
-        )
-      } else {
-        p = p + ggplot2::geom_violin(
-          alpha = alpha, trim = TRUE,
-          position = ggplot2::position_dodge(0.8)
+      # Reference horizontal baseline (rendered behind distributions)
+      if (!is.null(ref_line) && is.numeric(ref_line)) {
+        p = p + ggplot2::geom_hline(
+          yintercept = ref_line,
+          linetype   = ref_line_lty,
+          color      = ref_line_col,
+          linewidth  = ref_line_lwd
         )
       }
 
-      # Boxplot (use position_dodge only, no explicit width)
-      p = p + ggplot2::geom_boxplot(
-        width = box_width, alpha = 0.5,
-        outlier.shape = NA
-      )
+      # Half violin / slab
+      if (requireNamespace("ggdist", quietly = TRUE)) {
+        just_val <- if (side == "right") -0.18 else 0.18
+        p = p + ggdist::stat_halfeye(
+          adjust        = adjust,
+          width         = violin_width,
+          .width        = 0,
+          justification = just_val,
+          point_colour  = NA,
+          color         = NA,
+          alpha         = alpha
+        )
+      } else {
+        # Base R + ggplot2 density polygon fallback
+        x_levels  <- levels(df[[x_col]])
+        poly_rows <- list()
+        for (i in seq_along(x_levels)) {
+          lvl   <- x_levels[i]
+          sub_y <- df[[y_col]][df[[x_col]] == lvl & !is.na(df[[y_col]])]
+          if (length(sub_y) >= 2) {
+            d <- stats::density(sub_y, adjust = adjust)
+            max_d <- max(d$y, na.rm = TRUE)
+            scaled_x <- if (max_d > 0) (d$y / max_d) * (violin_width * 0.72) else rep(0, length(d$y))
+            poly_rows[[length(poly_rows) + 1]] <- data.frame(
+              x     = c(rep(i + 0.04, length(d$x)), rev(i + 0.04 + scaled_x)),
+              y     = c(d$x, rev(d$x)),
+              group = lvl,
+              stringsAsFactors = FALSE
+            )
+          }
+        }
+        if (length(poly_rows) > 0) {
+          poly_df <- do.call(rbind, poly_rows)
+          poly_df$group <- factor(poly_df$group, levels = x_levels)
+          p = p + ggplot2::geom_polygon(
+            data        = poly_df,
+            mapping     = ggplot2::aes(x = .data[["x"]], y = .data[["y"]], fill = .data[["group"]]),
+            color       = NA,
+            alpha       = alpha,
+            inherit.aes = FALSE
+          )
+        }
+      }
 
-      # Jittered points
-      p = p + ggplot2::geom_jitter(
-        width = 0.1, size = point_size, alpha = point_alpha,
-        color = "grey30"
-      )
+      # Boxplot
+      if (is_ecology) {
+        p = p + ggplot2::geom_boxplot(
+          width          = box_width,
+          fill           = box_fill,
+          linewidth      = box_lwd,
+          outlier.shape  = outlier_shape,
+          outlier.size   = outlier_size,
+          outlier.stroke = outlier_stroke,
+          position       = ggplot2::position_nudge(x = box_nudge)
+        )
+      } else {
+        p = p + ggplot2::geom_boxplot(
+          width         = box_width,
+          alpha         = 0.5,
+          color         = "black",
+          outlier.shape = NA
+        )
+        # Jittered raw observations in default style
+        p = p + ggplot2::geom_jitter(
+          width = 0.1,
+          size  = point_size,
+          alpha = point_alpha,
+          color = "grey30"
+        )
+      }
+
+      # Mean point marker (ecology style)
+      if (isTRUE(show_mean)) {
+        p = p + ggplot2::stat_summary(
+          fun      = mean,
+          geom     = "point",
+          shape    = mean_shape,
+          size     = mean_size,
+          position = ggplot2::position_nudge(x = mean_nudge)
+        )
+      }
+
+      # Summary statistics & 95% CI text labels at bottom
+      if (isTRUE(show_stats)) {
+        x_levels   <- levels(df[[x_col]])
+        stats_rows <- list()
+        y_all      <- df[[y_col]]
+        y_range    <- range(y_all, na.rm = TRUE)
+        y_span     <- diff(y_range)
+        text_y     <- stat_y_pos %||% (y_range[1] - y_span * 0.14)
+
+        for (i in seq_along(x_levels)) {
+          lvl   <- x_levels[i]
+          vals  <- df[[y_col]][df[[x_col]] == lvl & !is.na(df[[y_col]])]
+          n_obs <- length(vals)
+          if (n_obs > 0) {
+            m      <- mean(vals)
+            se     <- if (n_obs > 1) stats::sd(vals) / sqrt(n_obs) else 0
+            t_crit <- if (n_obs > 1) stats::qt(1 - (1 - stat_ci_level) / 2, df = n_obs - 1) else 1.96
+            ci_low <- m - t_crit * se
+            ci_high <- m + t_crit * se
+
+            lbl <- if (!is.null(stat_labels) && length(stat_labels) >= i) {
+              stat_labels[i]
+            } else {
+              sprintf(paste0("%s = %.", stat_digits, "f\n(%.0f%% CI: %.", stat_digits, "f - %.", stat_digits, "f)"),
+                      stat_param, m, stat_ci_level * 100, ci_low, ci_high)
+            }
+            stats_rows[[length(stats_rows) + 1]] <- data.frame(
+              x = lvl,
+              y = text_y,
+              label = lbl,
+              stringsAsFactors = FALSE
+            )
+          }
+        }
+        if (length(stats_rows) > 0) {
+          stats_df   <- do.call(rbind, stats_rows)
+          stats_df$x <- factor(stats_df$x, levels = x_levels)
+          p = p + ggplot2::geom_text(
+            data        = stats_df,
+            mapping     = ggplot2::aes(x = .data[["x"]], y = .data[["y"]], label = .data[["label"]]),
+            color       = "black",
+            size        = stat_text_size,
+            lineheight  = 0.95,
+            inherit.aes = FALSE
+          )
+        }
+      }
 
       p = p + ggplot2::labs(x = x_col, y = y_col) +
         ggplot2::theme(legend.position = "none")
 
       p
     },
-    name = "raincloud"
+    name = if (is_ecology) "ecology_raincloud" else "raincloud"
   )
 }
+
+#' Ecology Half-Boxed Raincloud Plot Type
+#'
+#' @description Creates publication-ready ecology and demographic viability raincloud plots
+#'   featuring a white-filled boxplot with colored outline, open square outliers, a prominent
+#'   circular mean marker, a solid half-violin density slab, a dashed reference baseline,
+#'   and bottom-positioned mean + 95 percent CI text annotations.
+#'
+#' @inheritParams type_raincloud
+#'
+#' @return A cliplot_type object.
+#' @export
+type_ecology_raincloud = function(
+    alpha          = 0.98,
+    box_width      = 0.17,
+    box_nudge      = -0.15,
+    box_fill       = "#FFFFFF",
+    box_lwd        = 1.1,
+    outlier_shape  = 0,
+    outlier_size   = 2.0,
+    outlier_stroke = 0.8,
+    show_mean      = TRUE,
+    mean_nudge     = -0.01,
+    mean_shape     = 16,
+    mean_size      = 3.8,
+    violin_width   = 0.52,
+    adjust         = 1.1,
+    side           = "right",
+    ref_line       = 1.0,
+    ref_line_col   = "grey70",
+    ref_line_lty   = "dashed",
+    ref_line_lwd   = 1.2,
+    show_stats     = TRUE,
+    stat_param     = "\u03bb",
+    stat_ci_level  = 0.95,
+    stat_digits    = 3,
+    stat_y_pos     = NULL,
+    stat_text_size = 3.4,
+    stat_labels    = NULL
+) {
+  type_raincloud(
+    style          = "ecology",
+    alpha          = alpha,
+    box_width      = box_width,
+    box_nudge      = box_nudge,
+    box_fill       = box_fill,
+    box_lwd        = box_lwd,
+    outlier_shape  = outlier_shape,
+    outlier_size   = outlier_size,
+    outlier_stroke = outlier_stroke,
+    show_mean      = show_mean,
+    mean_nudge     = mean_nudge,
+    mean_shape     = mean_shape,
+    mean_size      = mean_size,
+    violin_width   = violin_width,
+    adjust         = adjust,
+    side           = side,
+    ref_line       = ref_line,
+    ref_line_col   = ref_line_col,
+    ref_line_lty   = ref_line_lty,
+    ref_line_lwd   = ref_line_lwd,
+    show_stats     = show_stats,
+    stat_param     = stat_param,
+    stat_ci_level  = stat_ci_level,
+    stat_digits    = stat_digits,
+    stat_y_pos     = stat_y_pos,
+    stat_text_size = stat_text_size,
+    stat_labels    = stat_labels
+  )
+}
+
+#' @rdname type_ecology_raincloud
+#' @export
+type_half_boxed = type_ecology_raincloud
 
 #' Dumbbell Plot Type
 #'

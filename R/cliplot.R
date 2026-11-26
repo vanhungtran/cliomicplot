@@ -176,10 +176,10 @@ cliplot.default = function(
   settings$type_name = if (inherits(type, "cliplot_type")) type$name else type
   settings$type = resolve_type(type)
 
-  # For categorical distribution plots (boxplot, violin, beeswarm, raincloud, pathology),
+  # For categorical distribution plots (boxplot, violin, beeswarm, raincloud, pathology, ecology),
   # convert numeric x to factor so discrete levels (e.g. dose 0.5, 1.0, 2.0)
   # dodge cleanly without continuous-scale interval overlaps
-  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot") &&
+  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud") &&
       !is.null(x) && is.numeric(x)) {
     x = as.factor(x)
     settings$x = x
@@ -193,7 +193,7 @@ cliplot.default = function(
   # If by is not supplied, but x is categorical and a discrete palette or grouping type
   # is requested, default by to x so boxes/points color by categories and stat.test works
   if (is.null(by) && !is.null(x) && (is.character(x) || is.factor(x)) &&
-      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot") || !is.null(palette))) {
+      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot", "ecology", "half_boxed", "ecology_raincloud") || !is.null(palette))) {
     by = x
     if (is.null(legend)) {
       settings$legend = "none"
@@ -576,6 +576,9 @@ resolve_type = function(type) {
     abline      = type_abline,
     qq          = type_qq,
     raincloud   = type_raincloud,
+    ecology     = type_ecology_raincloud,
+    half_boxed  = type_ecology_raincloud,
+    ecology_raincloud = type_ecology_raincloud,
     dumbbell    = type_dumbbell,
     lollipop    = type_lollipop,
     beeswarm    = type_beeswarm,

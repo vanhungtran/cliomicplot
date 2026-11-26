@@ -398,6 +398,33 @@ theme_cli_pathology = function(base_size = 8, base_family = "") {
     )
 }
 
+#' Ecology / Demographic Viability Theme
+#' @description Full 4-sided black frame, clean white background without gridlines,
+#'   outward tick marks, and bold axis typography conforming to ecology and population
+#'   demography publication figures (e.g. reseeding viability and population growth rate).
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
+theme_cli_ecology = function(base_size = 11, base_family = "") {
+  theme_cli_base(base_size, base_family) +
+    ggplot2::theme(
+      panel.background  = ggplot2::element_rect(fill = "white", color = NA),
+      panel.border      = ggplot2::element_rect(color = "black", fill = NA, linewidth = 0.8),
+      panel.grid        = ggplot2::element_blank(),
+      panel.grid.major  = ggplot2::element_blank(),
+      panel.grid.minor  = ggplot2::element_blank(),
+      axis.line         = ggplot2::element_blank(),
+      axis.ticks        = ggplot2::element_line(color = "black", linewidth = 0.6),
+      axis.ticks.length = ggplot2::unit(3, "pt"),
+      axis.title.x      = ggplot2::element_text(size = base_size + 3, face = "bold", color = "black", margin = ggplot2::margin(t = 8)),
+      axis.title.y      = ggplot2::element_text(size = base_size + 3, face = "bold", color = "black", margin = ggplot2::margin(r = 8)),
+      axis.text.x       = ggplot2::element_text(size = base_size + 1.5, face = "bold", color = "black"),
+      axis.text.y       = ggplot2::element_text(size = base_size + 0.5, face = "bold", color = "black"),
+      legend.position   = "none",
+      plot.margin       = ggplot2::margin(8, 8, 8, 8)
+    )
+}
+
 # Map of available themes
 .theme_map = list(
   cli_bw      = theme_cli_bw,
@@ -413,7 +440,9 @@ theme_cli_pathology = function(base_size = 8, base_family = "") {
   broadsheet  = theme_cli_broadsheet,
   scifig      = theme_cli_scifig,
   sci_box     = theme_cli_scifig,
-  pathology   = theme_cli_pathology
+  pathology   = theme_cli_pathology,
+  ecology     = theme_cli_ecology,
+  reseeding   = theme_cli_ecology
 )
 
 # ==========================================================================
@@ -443,6 +472,7 @@ theme_cli_pathology = function(base_size = 8, base_family = "") {
 #'     \item \code{"dark"} - Dark background theme
 #'     \item \code{"scifig"} - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward ticks, dashed grid)
 #'     \item \code{"pathology"} - Nature Aging / SciFig style (open L-frame, outward ticks, dotted y-grid)
+#'     \item \code{"ecology"} - Ecology / Demographic viability style (full 4-sided black frame, no grid, outward ticks)
 #'   }
 #'   Use \code{clitheme()} without arguments to reset to the default theme.
 #' @param ... Named arguments to override specific theme settings (passed to
