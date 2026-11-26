@@ -85,8 +85,12 @@ type_composition = function(
       nms <- names(df)
 
       find_col <- function(candidates, default_val = NULL) {
-        m <- intersect(candidates, nms)
-        if (length(m) > 0) m[1] else default_val
+        low_nms <- tolower(nms)
+        for (cand in candidates) {
+          idx <- which(low_nms == tolower(cand))
+          if (length(idx) > 0) return(nms[idx[1]])
+        }
+        default_val
       }
 
       # Resolve sample (x)
