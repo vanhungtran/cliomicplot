@@ -648,7 +648,12 @@ resolve_type = function(type) {
     stepwise        = type_stepwise,
     benchmark_bars  = type_benchmark_bars,
     benchmark       = type_benchmark_bars,
-    identifiability = type_identifiability
+    identifiability = type_identifiability,
+    mbma            = type_mbma_trajectory,
+    mbma_trajectory = type_mbma_trajectory,
+    mbma_grid       = type_mbma_grid,
+    trial_grid      = type_mbma_grid,
+    mbma_benchmark  = type_mbma_benchmark
   )
 
   if (type %in% names(type_map)) {
