@@ -37,13 +37,12 @@ This vignette provides the scientific reproduction, statistical re-audit, and mu
 > Polystyrene nanoplastics induce metabolic and transcriptomic remodeling in liver.  
 > *Nature Metabolism*. 2026; doi:[10.1038/s42255-026-01615-8](https://doi.org/10.1038/s42255-026-01615-8).
 
-The study evaluated metabolic remodeling following 50 nm nanopolystyrene (NP) or 500 nm micropolystyrene (MP) exposure relative to vehicle control (Ctrl) in mice ($n = 6$ per group, 18 total). The re-analysis audited 10 scientific figures spanning:
+The re-analysis audited scientific figures spanning:
 1. **Targeted Liver Lipidomics**: 19 lipid classes and double-bond index (DBI).
 2. **Single-Nucleus RNA Atlas (snRNA-seq)**: 35,151 liver nuclei across 9 cell types (GSE291616).
 3. **Differential Gene Expression Reconciliation**: FDR 0.05 thresholds and ORA pathways.
 4. **Hepatocyte Lipid Modules & Kupffer Cell Activation**: DoRothEA TF activities and RPCA subclusters.
 5. **Macrophage Proteomics Run Scan**: diaPASEF label-free quantification and permutation FDR audit.
-6. **Scientific Reproduction Scorecard**: 17 evaluated claims categorized by reproducibility verdict.
 7. **Liver Histology OD**: PAS glycogen and Oil Red O lipid droplet optical density ($n = 721$ micrographs).
 8. **Intercellular Signaling (CellChat 2.2)**: Kupffer cell to hepatocyte communication networks.
 9. **Pancreas & Liver IHC**: Insulin islet quantification and Iba1 macrophage infiltration.
@@ -124,7 +123,8 @@ cliplot(
 
 ## 3. Differential Gene Expression Reconciliation (Figure R3)
 
-Re-running edgeR QLF models across hepatocytes revealed high gene-for-gene concordance ($ho = 0.94	ext{--}0.99$), but highlighted discrepancy in nominal versus FDR thresholds used in published pathway analyses.
+Re-running edgeR QLF models across hepatocytes revealed high gene-for-gene concordance ($
+ho = 0.94	ext{--}0.99$), but highlighted discrepancy in nominal versus FDR thresholds used in published pathway analyses.
 
 <div class="figure-container">
 <img src="images/natmetab_mnp/fig_R3_snrna_de.png" alt="Figure R3: snRNA Differential Expression" style="width: 100%; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); cursor: zoom-in;" />
@@ -179,53 +179,7 @@ cliplot(
 
 ---
 
-## 5. Scientific Reproduction Scorecard (Figure R6)
-
-The scientific audit evaluated 17 published quantitative claims across lipidomics, snRNA-seq, proteomics, histology, and adipose tissue remodeling. The results are classified using `type_scorecard()`.
-
-<div class="figure-container">
-<img src="images/natmetab_mnp/fig_R6_scorecard.png" alt="Figure R6: Reproduction Scorecard" style="width: 100%; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); cursor: zoom-in;" />
-<p class="caption"><strong>Figure R6.</strong> Comprehensive 17-claim scientific reproduction scorecard table.</p>
-</div>
-
-```{r scorecard-code, eval=FALSE}
-# Comprehensive reproduction scorecard table
-sc_df <- data.frame(
-  claim_id = 1:10,
-  what     = c("Liver lipidomics: TAG increase",
-               "Liver lipidomics: DBI index reduction",
-               "snRNA-seq: 9 major cell lineages",
-               "snRNA-seq: Hepatocyte DE concordance",
-               "snRNA-seq: Steatosis module score",
-               "Proteomics: 48 DE proteins reported",
-               "Proteomics: Permutation FDR significance",
-               "Histology: Oil Red O optical density",
-               "CellChat: KC-hepatocyte signaling flow",
-               "gWAT: Adipocyte hypertrophy shift"),
-  verdict  = c("reproduced", "partly", "reproduced", "reproduced", "partly",
-               "not reproduced", "not reproduced", "reproduced", "reproduced", "reproduced"),
-  source   = c("Extended Data Fig 2", "Extended Data Fig 2", "Fig 3b", "Fig 3c",
-               "Fig 4a", "Fig 5b", "Fig 5b", "Fig 2d", "Fig 4f", "Fig 6a"),
-  finding  = c("TAG classes elevated (log2FC = 0.65)", "DBI difference not statistically robust",
-               "High cell-type ARI (0.91)", "Spearman rho = 0.96 with edgeR",
-               "Moderate effect (Cohen d = 0.42)", "Sensitive to run exclusion (rank 1/455)",
-               "Zero hits under 1,000 permutations", "Optical density elevation confirmed",
-               "TNFSF12-TNFRSF12A pathway verified", "Right-shift in 1,500-3,500 um2 confirmed")
-)
-
-cliplot(
-  verdict ~ what,
-  data    = sc_df,
-  type    = type_scorecard(id_col = "claim_id", source_col = "source", finding_col = "finding"),
-  palette = palette_cli("scorecard"),
-  theme   = theme_cli_nature(),
-  title   = "Nature Metabolism Nanoplastics: Scientific Reproduction Scorecard"
-)
-```
-
----
-
-## 6. Epididymal Adipose Tissue (gWAT) Remodeling (Figure R10)
+## 5. Epididymal Adipose Tissue (gWAT) Remodeling (Figure R10)
 
 Automated segmentation of 703,735 adipocytes across whole-slide images revealed clear cohort-dependent shifts in size frequency distributions. Profiles are visualized using `type_binned_shift()`.
 
@@ -267,10 +221,10 @@ cliplot(
 |:-------|:---------|:-----------------|:-----------------|
 | **R1** | Lipidomics | 19 lipid classes, DBI, species log2FC | Reproduced class levels; DBI claim lacks statistical robustness |
 | **R2** | snRNA-seq | 35,151 liver nuclei, 9 lineages | Fully reproduced ($ARI = 0.91$) |
-| **R3** | snRNA-seq | edgeR vs DESeq2 DE, ORA pathways | Gene log2FC reproduced ($ho = 0.96$); uncorrected p-values inflated pathways |
+| **R3** | snRNA-seq | edgeR vs DESeq2 DE, ORA pathways | Gene log2FC reproduced ($
+ho = 0.96$); uncorrected p-values inflated pathways |
 | **R4** | snRNA-seq | Lipid modules, DoRothEA VIPER, KC RPCA | Directional agreement; TF effect sizes smaller than reported |
 | **R5** | Proteomics | diaPASEF LFQ, 14 runs, permutation FDR | Sensitive to 3-run exclusion; $0$ proteins significant under permutation FDR |
-| **R6** | Audit | 17 quantitative scientific claims | 9 reproduced, 4 partly reproduced, 4 not reproduced |
 | **R7** | Histology | 721 CZI micrographs (PAS & Oil Red O) | Elevated neutral lipid droplets confirmed in periportal zones |
 | **R8** | CellChat | Intercellular ligand-receptor signaling | KC-hepatocyte TNFSF12/TNFRSF12A axis reproduced |
 | **R9** | IHC / IF | Pancreas insulin, liver Iba1 | Pancreatic islet density invariant; liver macrophage counts confirmed |
