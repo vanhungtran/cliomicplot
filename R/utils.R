@@ -58,9 +58,20 @@ parse_cli_formula = function(formula, data, env = parent.frame()) {
   }
   if (length(formula) == 2L) {
     # One-sided formula: ~ x | group  or  ~ x
-    x = eval_part(formula[[2]], data, env)
-    y = NULL
-    by = NULL
+    rhs = formula[[2L]]
+    if (is.call(rhs) && rhs[[1L]] == as.name("|")) {
+      x       = eval_part(rhs[[2L]], data, env)
+      by      = eval_part(rhs[[3L]], data, env)
+      y       = NULL
+      by_name = deparse(rhs[[3L]])
+      x_name  = deparse(rhs[[2L]])
+    } else {
+      x       = eval_part(rhs, data, env)
+      y       = NULL
+      by      = NULL
+      by_name = NULL
+      x_name  = deparse(rhs)
+    }
   } else if (length(formula) == 3L) {
     # Two-sided formula: y ~ x | group
     rhs = formula[[3L]]
