@@ -173,7 +173,7 @@ cliplot.default = function(
   # For categorical distribution plots (boxplot, violin, beeswarm, raincloud),
   # convert numeric x to factor so discrete levels (e.g. dose 0.5, 1.0, 2.0)
   # dodge cleanly without continuous-scale interval overlaps
-  if (settings$type_name %in% c("boxplot", "violin", "beeswarm", "raincloud") &&
+  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud") &&
       !is.null(x) && is.numeric(x)) {
     x = as.factor(x)
     settings$x = x
@@ -187,7 +187,7 @@ cliplot.default = function(
   # If by is not supplied, but x is categorical and a discrete palette or grouping type
   # is requested, default by to x so boxes/points color by categories and stat.test works
   if (is.null(by) && !is.null(x) && (is.character(x) || is.factor(x)) &&
-      (settings$type_name %in% c("boxplot", "violin", "beeswarm", "raincloud") || !is.null(palette))) {
+      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud") || !is.null(palette))) {
     by = x
     if (is.null(legend)) {
       settings$legend = "none"
@@ -536,6 +536,8 @@ resolve_type = function(type) {
     ribbon      = type_ribbon,
     boxplot     = type_boxplot,
     violin      = type_violin,
+    split_violin = type_split_violin,
+    split_vln   = type_split_violin,
     volcano     = type_volcano,
     forest      = type_forest,
     km          = type_km,

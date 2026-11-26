@@ -67,6 +67,8 @@ reference:
       - type_correlation
       - type_boxplot
       - type_violin
+      - type_split_violin
+      - geom_split_violin
       - type_bubble_heatmap
   - title: Datasets
     desc: Curated clinical cohorts and multi-omics reference datasets.

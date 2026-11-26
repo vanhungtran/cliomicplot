@@ -5,47 +5,107 @@
 \title{Violin Plot Type}
 \usage{
 type_violin(
+  inner = c("boxplot", "quartiles", "mean_se", "median_iqr", "none"),
+  quantiles = c(0.25, 0.5, 0.75),
+  quantile_color = "grey25",
+  quantile_linewidth = 0.45,
+  quantile_linetype = "solid",
+  split = FALSE,
   add_boxplot = TRUE,
   add_jitter = TRUE,
   jitter_width = 0.15,
   jitter_alpha = 0.45,
-  jitter_size = 1.6,
+  jitter_size = 1.5,
   violin_alpha = 0.78,
-  box_width = 0.2,
-  trim = TRUE
+  violin_color = "#30343B",
+  linewidth = 0.3,
+  box_width = 0.18,
+  box_fill = "white",
+  box_alpha = 0.82,
+  trim = TRUE,
+  scale = "width",
+  orientation = c("vertical", "horizontal"),
+  show_n = FALSE
 )
 }
 \arguments{
-\item{add_boxplot}{Overlay boxplot (default TRUE)}
+\item{inner}{Interior summary structure: \code{"boxplot"} (default, overlay
+mini-boxplot), \code{"quartiles"} (draw 25\%, median, and 75\% density quantile
+lines), \code{"mean_se"} (mean diamond glyph with standard error errorbars),
+\code{"median_iqr"} (median circle with interquartile range crossbar), or
+\code{"none"}.}
 
-\item{add_jitter}{Add jittered points (default TRUE)}
+\item{quantiles}{Numeric vector of quantile lines to draw when
+\code{inner = "quartiles"} (default \code{c(0.25, 0.5, 0.75)}).}
 
-\item{jitter_width}{Width of jitter (default 0.15)}
+\item{quantile_color}{Color for quantile lines (default \code{"grey25"}).}
 
-\item{jitter_alpha}{Transparency of jittered points (default 0.5)}
+\item{quantile_linewidth}{Line width for quantile lines (default 0.45).}
 
-\item{jitter_size}{Size of jittered points (default 1.5)}
+\item{quantile_linetype}{Line type for quantile lines (default \code{"solid"}).}
 
-\item{violin_alpha}{Violin transparency (default 0.7)}
+\item{split}{Logical. When \code{TRUE} and a 2-level grouping variable is
+present, renders split violins comparing both conditions back-to-back
+(default \code{FALSE}).}
 
-\item{box_width}{Width of boxplot overlay (default 0.2)}
+\item{add_boxplot}{Backward-compatible flag to overlay boxplot (default \code{TRUE}).
+If set to \code{FALSE}, overrides \code{inner = "none"}.}
 
-\item{trim}{Trim violin tails to data range (default TRUE)}
+\item{add_jitter}{Overlay jittered raw data points (default \code{TRUE}).}
+
+\item{jitter_width}{Width of horizontal jitter (default 0.15).}
+
+\item{jitter_alpha}{Transparency of jittered points (default 0.45).}
+
+\item{jitter_size}{Size of jittered points (default 1.5).}
+
+\item{violin_alpha}{Violin fill transparency (default 0.78).}
+
+\item{violin_color}{Outline color of violins (default \code{"#30343B"}).}
+
+\item{linewidth}{Outline stroke width (default 0.3).}
+
+\item{box_width}{Width of boxplot overlay (default 0.18).}
+
+\item{box_fill}{Fill color of boxplot overlay (default \code{"white"}).}
+
+\item{box_alpha}{Transparency of boxplot overlay (default 0.82).}
+
+\item{trim}{Trim violin tails to observed data range (default \code{TRUE}).}
+
+\item{scale}{Density scaling method: \code{"width"} (default, all categories
+have equal maximum width), \code{"area"}, or \code{"count"}.}
+
+\item{orientation}{Plot orientation: \code{"vertical"} (default) or \code{"horizontal"}.}
+
+\item{show_n}{Logical. Annotate sample sizes (\eqn{n = \dots}) below categories
+(default \code{FALSE}).}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
 }
 \description{
-Creates publication-ready violin plots with optional boxplot
-  overlay and jittered points.
+Creates publication-ready violin plots with rich interior anatomy
+  options (boxplots, quartile lines, mean-SE glyphs), optional single-cell
+  jittered raw data points, split-half condition comparisons, and custom
+  density scaling.
 }
 \examples{
 \dontrun{
+# Standard publication violin with inner boxplot and jitter
 cliplot(len ~ dose, data = ToothGrowth, type = "violin")
 
-# Custom violin
+# Violin with interior quartile lines
 cliplot(len ~ dose, data = ToothGrowth,
-        type = type_violin(add_boxplot = FALSE, jitter_width = 0.1))
+        type = type_violin(inner = "quartiles"))
+
+# Mean diamond glyph with standard error bars
+cliplot(len ~ dose | supp, data = ToothGrowth,
+        type = type_violin(inner = "mean_se", add_jitter = TRUE))
+
+# Split violin comparing two conditions back-to-back
+cliplot(len ~ dose | supp, data = ToothGrowth,
+        type = type_violin(split = TRUE, inner = "quartiles"))
 }
 
 }
