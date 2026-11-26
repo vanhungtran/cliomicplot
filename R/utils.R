@@ -276,7 +276,13 @@ parse_cli_formula = function(formula, data, env = parent.frame()) {
                      "#CFCECE", "#767676"),
   tier = c("#0F4D92", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#CFCECE"),
   leakage = c("#0F4D92", "#3775BA", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#CFCECE"),
-  benchmark = c("#0F4D92", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#8BCF8B")
+  benchmark = c("#0F4D92", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#8BCF8B"),
+
+  # --- Nature Metabolism / MNP reproduction palettes ---
+  natmetab = c("#B7BDC9", "#009E73", "#D55E00"),
+  mnp = c("#B7BDC9", "#009E73", "#D55E00"),
+  scorecard = c("#0F4D92", "#8FB4DC", "#555555", "#C9C9C9", "#FFFFFF"),
+  liver_cells = c("#C3ADDB", "#E6740D", "#7CC4AF", "#235D33", "#7B24AE", "#9A636E", "#8F2C5E", "#7A9D6F", "#B678E9")
 )
 
 # Color palette helper: get colors by name and count

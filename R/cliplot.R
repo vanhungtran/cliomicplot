@@ -653,7 +653,11 @@ resolve_type = function(type) {
     mbma_trajectory = type_mbma_trajectory,
     mbma_grid       = type_mbma_grid,
     trial_grid      = type_mbma_grid,
-    mbma_benchmark  = type_mbma_benchmark
+    mbma_benchmark  = type_mbma_benchmark,
+    scorecard       = type_scorecard,
+    reproduction_scorecard = type_scorecard,
+    binned_shift    = type_binned_shift,
+    distribution_shift = type_binned_shift
   )
 
   if (type %in% names(type_map)) {
