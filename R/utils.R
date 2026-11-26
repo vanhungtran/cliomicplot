@@ -123,6 +123,8 @@ parse_cli_formula = function(formula, data, env = parent.frame()) {
               "#BB0021", "#5F559B", "#A20056", "#808180"),
 
   # --- Accessibility-focused palettes ---
+  pathology = c("#0F4D92", "#D55E00"),
+  nature_pathology = c("#0F4D92", "#D55E00", "#009E73", "#52514E", "#B64342"),
   okabe_ito = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7"),
   tableau10 = c("#4E79A7", "#F28E2B", "#E15759", "#76B7B2", "#59A14F",

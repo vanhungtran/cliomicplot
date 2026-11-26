@@ -5,10 +5,12 @@
 \title{Boxplot Type}
 \usage{
 type_boxplot(
+  style = c("default", "pathology"),
   add_jitter = TRUE,
   jitter_width = 0.15,
   jitter_alpha = 0.38,
   jitter_size = 1.6,
+  jitter_subsample = NULL,
   add_violin = FALSE,
   violin_alpha = 0.2,
   outlier_shape = NA,
@@ -16,58 +18,118 @@ type_boxplot(
   width = 0.55,
   alpha = 0.28,
   linewidth = 0.65,
-  position_dodge = NULL
+  position_dodge = NULL,
+  show_mean = NULL,
+  show_mean_line = NULL,
+  mean_shape = 23,
+  mean_fill = "#FFFFFF",
+  mean_color = "black",
+  mean_size = 2,
+  mean_stroke = 0.45,
+  mean_line_lty = "dotted",
+  mean_line_col = "grey45",
+  mean_line_lwd = 0.38,
+  bold_median = NULL,
+  bold_median_col = "#111111",
+  bold_median_lwd = 0.85,
+  zero_line = NULL,
+  zero_line_y = 0,
+  zero_line_col = "grey75",
+  zero_line_lty = "dashed"
 )
 }
 \arguments{
-\item{add_jitter}{Add jittered points (default TRUE)}
+\item{style}{Boxplot aesthetic style: `"default"` (classic cliplot) or
+`"pathology"` (Nature Aging / SciFig style with colored borders, bold median,
+white diamond mean, dotted mean trajectory lines, and dashed zero baseline).}
 
-\item{jitter_width}{Width of jitter (default 0.15)}
+\item{add_jitter}{Add jittered points (default TRUE).}
 
-\item{jitter_alpha}{Transparency of jittered points (default 0.25)}
+\item{jitter_width}{Width of jitter (default 0.15 for default, 0.10 for pathology).}
 
-\item{jitter_size}{Size of jittered points (default 1.2)}
+\item{jitter_alpha}{Transparency of jittered points (default 0.38 for default, 0.35 for pathology).}
 
-\item{add_violin}{Overlay violin plot (default FALSE)}
+\item{jitter_size}{Size of jittered points (default 1.6 for default, 0.85 for pathology).}
 
-\item{violin_alpha}{Violin transparency (default 0.2)}
+\item{jitter_subsample}{Optional integer. When specified, subsamples up to
+`jitter_subsample` observations per category/group for jittered point display
+while computing boxplots and statistics on all data (ideal for large cohorts
+such as GTEx with N ~ 20k).}
+
+\item{add_violin}{Overlay violin plot (default FALSE).}
+
+\item{violin_alpha}{Violin transparency (default 0.2).}
 
 \item{outlier_shape}{Shape for outlier points. Set to `NA` to hide
 outliers (publication style). Default `NA`.}
 
-\item{outlier_size}{Size of outlier points (default 1.5)}
+\item{outlier_size}{Size of outlier points (default 1.5).}
 
-\item{width}{Box width (default 0.55)}
+\item{width}{Box width (default 0.55 for default, 0.32 for pathology).}
 
-\item{alpha}{Box fill transparency. Lower = more transparent (default 0.15)}
+\item{alpha}{Box fill transparency. Lower = more transparent (default 0.28 for default, 0.22 for pathology).}
 
-\item{linewidth}{Box outline width (default 0.5)}
+\item{linewidth}{Box outline width (default 0.65 for default, 0.45 for pathology).}
 
-\item{position_dodge}{Dodge width for grouped boxes. `NULL` uses ggplot2
-default (0.9). Set to e.g. 0.7 for tighter grouping.}
+\item{position_dodge}{Dodge width for grouped boxes. `NULL` uses 0.8 for default,
+0.42 for pathology style.}
+
+\item{show_mean}{Logical. Show mean marker diamond (default `TRUE` when
+`style = "pathology"`, `FALSE` otherwise).}
+
+\item{show_mean_line}{Logical. Show dotted connecting line between paired
+means within each x category (default `TRUE` when `style = "pathology"`, `FALSE` otherwise).}
+
+\item{mean_shape}{Shape for mean marker (default `23`, diamond).}
+
+\item{mean_fill}{Fill color for mean marker (default `"#FFFFFF"`, white).}
+
+\item{mean_color}{Border color for mean marker (default `"black"`).}
+
+\item{mean_size}{Size of mean marker (default `2.0`).}
+
+\item{mean_stroke}{Border thickness for mean marker (default `0.45`).}
+
+\item{mean_line_lty}{Linetype for paired mean connecting line (default `"dotted"`).}
+
+\item{mean_line_col}{Color for paired mean connecting line (default `"grey45"`).}
+
+\item{mean_line_lwd}{Linewidth for paired mean connecting line (default `0.38`).}
+
+\item{bold_median}{Logical. Draw a bold black horizontal line across each box
+for the median (default `TRUE` when `style = "pathology"`, `FALSE` otherwise).}
+
+\item{bold_median_col}{Color for bold median line (default `"#111111"`).}
+
+\item{bold_median_lwd}{Linewidth for bold median line (default `0.85`).}
+
+\item{zero_line}{Logical. Draw a horizontal reference line at y = 0 (default
+`TRUE` when `style = "pathology"`, `FALSE` otherwise).}
+
+\item{zero_line_y}{Intercept for zero reference line (default `0`).}
+
+\item{zero_line_col}{Color for zero reference line (default `"grey75"`).}
+
+\item{zero_line_lty}{Linetype for zero reference line (default `"dashed"`).}
 }
 \value{
 A cliplot_type object for use with \code{\link{cliplot}}.
 }
 \description{
 Creates publication-ready boxplots with optional jittered
-  points, violin overlays, and statistical annotations. Supports grouped
-  dodging and facet_grid/facet_wrap layouts for matrix-style figures.
+  points, violin overlays, statistical annotations, and specialized styling.
+  Supports grouped dodging, matrix-style faceting, bold black median bars,
+  diamond mean markers, paired trajectory lines, and zero reference baselines.
 }
 \examples{
 \dontrun{
 # Basic publication-style boxplot (transparent fill, no outliers)
 cliplot(len ~ dose, data = ToothGrowth, type = "boxplot")
 
-# With violin overlay + stats + bold outline
-cliplot(len ~ dose, data = ToothGrowth,
-        type = type_boxplot(add_violin = TRUE, linewidth = 0.8),
-        stat.test = "t.test")
-
-# Grouped boxplot with faceting (matrix layout)
-cliplot(value ~ method, data = df,
-        type = type_boxplot(position_dodge = 0.7),
-        facet = panel ~ logfc + fdr)
+# Nature Aging / SciFig pathology style boxplot
+cliplot(delta ~ pathology | status, data = df_gtex,
+        type = type_pathology_boxplot(),
+        palette = "pathology", theme = "pathology")
 }
 
 }

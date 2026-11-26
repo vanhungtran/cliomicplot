@@ -99,6 +99,8 @@ cliplot.default = function(
     add       = FALSE,
     stat.test = NULL,
     stat.label = NULL,
+    stat.annotations = NULL,
+    stat.y    = NULL,
     file      = NULL,
     width     = NULL,
     height    = NULL,
@@ -154,8 +156,10 @@ cliplot.default = function(
   settings$legend    = legend
 
   # Statistical
-  settings$stat.test  = stat.test %||% get_clipar("stat.test")
-  settings$stat.label = stat.label %||% get_clipar("stat.label")
+  settings$stat.test        = stat.test %||% get_clipar("stat.test")
+  settings$stat.label       = stat.label %||% get_clipar("stat.label")
+  settings$stat.annotations = stat.annotations %||% dots$stat.annotations
+  settings$stat.y           = stat.y %||% dots$stat.y
 
   # File output
   settings$file   = file
@@ -172,10 +176,10 @@ cliplot.default = function(
   settings$type_name = if (inherits(type, "cliplot_type")) type$name else type
   settings$type = resolve_type(type)
 
-  # For categorical distribution plots (boxplot, violin, beeswarm, raincloud),
+  # For categorical distribution plots (boxplot, violin, beeswarm, raincloud, pathology),
   # convert numeric x to factor so discrete levels (e.g. dose 0.5, 1.0, 2.0)
   # dodge cleanly without continuous-scale interval overlaps
-  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud") &&
+  if (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot") &&
       !is.null(x) && is.numeric(x)) {
     x = as.factor(x)
     settings$x = x
@@ -189,7 +193,7 @@ cliplot.default = function(
   # If by is not supplied, but x is categorical and a discrete palette or grouping type
   # is requested, default by to x so boxes/points color by categories and stat.test works
   if (is.null(by) && !is.null(x) && (is.character(x) || is.factor(x)) &&
-      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud") || !is.null(palette))) {
+      (settings$type_name %in% c("boxplot", "violin", "split_violin", "half_violin", "beeswarm", "raincloud", "pathology", "pathology_boxplot") || !is.null(palette))) {
     by = x
     if (is.null(legend)) {
       settings$legend = "none"
@@ -327,6 +331,8 @@ cliplot.formula = function(
     add       = FALSE,
     stat.test = NULL,
     stat.label = NULL,
+    stat.annotations = NULL,
+    stat.y    = NULL,
     file      = NULL,
     width     = NULL,
     height    = NULL
@@ -378,6 +384,8 @@ cliplot.formula = function(
     add      = add,
     stat.test = stat.test,
     stat.label = stat.label,
+    stat.annotations = stat.annotations,
+    stat.y   = stat.y,
     file     = file,
     width    = width,
     height   = height,
@@ -544,6 +552,8 @@ resolve_type = function(type) {
     errorbar    = type_errorbar,
     ribbon      = type_ribbon,
     boxplot     = type_boxplot,
+    pathology   = type_pathology_boxplot,
+    pathology_boxplot = type_pathology_boxplot,
     violin      = type_violin,
     split_violin = type_split_violin,
     split_vln   = type_split_violin,
@@ -831,54 +841,97 @@ add_stat_annotations = function(p, settings, data) {
       }
 
       fmt <- settings$stat.label %||% "p.format"
-      labels <- vapply(p_vals, function(p) {
-        if (is.na(p)) return("ns")
-        if (fmt == "p.signif") {
-          if (p < 0.001) "***" else if (p < 0.01) "**" else if (p < 0.05) "*" else "ns"
+      labels <- if (!is.null(settings$stat.annotations)) {
+        if (length(settings$stat.annotations) == length(x_levels)) {
+          settings$stat.annotations
         } else {
-          if (p < 0.001) "p < 0.001" else if (p < 0.01) sprintf("p = %.3f", p) else sprintf("p = %.2f", p)
+          rep(settings$stat.annotations, length.out = length(x_levels))
         }
-      }, character(1))
+      } else {
+        vapply(p_vals, function(p) {
+          if (is.na(p)) return("ns")
+          if (fmt %in% c("p.nature", "pathology", "p.math", "nature")) {
+            stars <- if (p < 0.001) "***" else if (p < 0.01) "**" else if (p < 0.05) "*" else "n.s."
+            p_str <- if (p < 0.0001) {
+              exp_val   <- floor(log10(p))
+              base_val  <- p / (10^exp_val)
+              sups      <- c("0"="⁰", "1"="¹", "2"="²", "3"="³", "4"="⁴", "5"="⁵", "6"="⁶", "7"="⁷", "8"="⁸", "9"="⁹", "-"="⁻")
+              exp_chars <- strsplit(as.character(exp_val), "")[[1]]
+              exp_super <- paste0(vapply(exp_chars, function(ch) sups[[ch]] %||% ch, character(1)), collapse = "")
+              sprintf("%.1f \u00d7 10%s", base_val, exp_super)
+            } else if (p < 0.01) {
+              sprintf("%.3f", p)
+            } else {
+              sprintf("%.2f", p)
+            }
+            if (stars == "n.s.") {
+              sprintf("n.s.\n(P = %s)", p_str)
+            } else {
+              sprintf("%s\n(P = %s)", stars, p_str)
+            }
+          } else if (fmt == "p.signif") {
+            if (p < 0.001) "***" else if (p < 0.01) "**" else if (p < 0.05) "*" else "ns"
+          } else {
+            if (p < 0.001) "p < 0.001" else if (p < 0.01) sprintf("p = %.3f", p) else sprintf("p = %.2f", p)
+          }
+        }, character(1))
+      }
+
+      y_positions <- if (!is.null(settings$stat.y)) {
+        if (length(settings$stat.y) == length(x_levels)) settings$stat.y else rep(settings$stat.y, length.out = length(x_levels))
+      } else {
+        y_span <- diff(range(y_values, na.rm = TRUE))
+        y_maxes + y_span * 0.08
+      }
+
+      bracket_offset <- if (identical(settings$type_name, "pathology_boxplot") || identical(settings$type_name, "pathology")) 0.105 else 0.18
 
       p = p + ggsignif::geom_signif(
-        y_position = y_maxes * 1.07,
-        xmin       = seq_along(x_levels) - 0.18,
-        xmax       = seq_along(x_levels) + 0.18,
+        y_position = y_positions,
+        xmin       = seq_along(x_levels) - bracket_offset,
+        xmax       = seq_along(x_levels) + bracket_offset,
         annotation = labels,
-        tip_length = 0.025,
-        textsize   = 3.5,
-        vjust      = -0.4,
+        tip_length = 0.02,
+        textsize   = settings$stat_text_size %||% 2.3,
+        vjust      = -0.2,
         color      = "#20242A",
-        size       = 0.45
-      ) + ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.06, 0.15)))
+        size       = 0.35
+      )
+      if (is.null(settings$stat.y)) {
+        p = p + ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.06, 0.18)))
+      }
     } else {
       # Fallback for >2 groups or without ggsignif
+      lbl <- if (identical(settings$stat.label, "p.nature") || identical(settings$stat.label, "pathology")) "p.signif" else (settings$stat.label %||% "p.format")
       p = p + ggpubr::stat_compare_means(
         ggplot2::aes(group = .data[["..by.."]]),
         method = method,
-        label  = settings$stat.label %||% "p.format"
+        label  = lbl
       )
     }
   } else if (!is.null(settings$stat.comparisons)) {
+    lbl <- if (identical(settings$stat.label, "p.nature") || identical(settings$stat.label, "pathology")) "p.signif" else (settings$stat.label %||% "p.format")
     p = p + ggpubr::stat_compare_means(
       comparisons = settings$stat.comparisons,
       method      = method,
-      label       = settings$stat.label %||% "p.format"
+      label       = lbl
     )
   } else if (length(groups) > 2 && settings$stat.test %in% c("kruskal.test", "anova")) {
     if (is.null(settings$stat.label)) {
       p = p + ggpubr::stat_compare_means(method = method)
     } else {
+      lbl <- if (identical(settings$stat.label, "p.nature") || identical(settings$stat.label, "pathology")) "p.signif" else settings$stat.label
       p = p + ggpubr::stat_compare_means(
         method = method,
-        label  = settings$stat.label
+        label  = lbl
       )
     }
   } else {
+    lbl <- if (identical(settings$stat.label, "p.nature") || identical(settings$stat.label, "pathology")) "p.signif" else (settings$stat.label %||% "p.format")
     p = p + ggpubr::stat_compare_means(
       comparisons = comparisons,
       method      = method,
-      label       = settings$stat.label %||% "p.format"
+      label       = lbl
     )
   }
 

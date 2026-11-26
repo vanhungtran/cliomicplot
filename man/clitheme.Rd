@@ -21,6 +21,7 @@ clitheme(theme = NULL, ..., register = NULL)
   \item \code{"showcase"} - Polished presentation style with stronger hierarchy
   \item \code{"dark"} - Dark background theme
   \item \code{"scifig"} - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward ticks, dashed grid)
+  \item \code{"pathology"} - Nature Aging / SciFig style (open L-frame, outward ticks, dotted y-grid)
 }
 Use \code{clitheme()} without arguments to reset to the default theme.}
 

@@ -358,6 +358,46 @@ theme_cli_scifig = function(base_size = 8, base_family = "") {
     )
 }
 
+#' Nature Pathology Boxplot Theme
+#' @description Open L-frame axes, outward ticks, dotted horizontal y-gridlines,
+#'   and publication typography conforming to Nature Aging / SciFig boxplot standards
+#'   (as seen in Yadav et al. 2026).
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
+theme_cli_pathology = function(base_size = 8, base_family = "") {
+  theme_cli_minimal(base_size, base_family) +
+    ggplot2::theme(
+      text              = ggplot2::element_text(color = "black", family = base_family),
+      panel.background  = ggplot2::element_rect(fill = "white", color = NA),
+      panel.border      = ggplot2::element_blank(),
+      # Open L-frame: visible x and y axes
+      axis.line.x       = ggplot2::element_line(color = "black", linewidth = 0.45),
+      axis.line.y       = ggplot2::element_line(color = "black", linewidth = 0.45),
+      # Outward ticks on both axes
+      axis.ticks        = ggplot2::element_line(color = "black", linewidth = 0.45),
+      axis.ticks.length = ggplot2::unit(2.5, "pt"),
+      axis.text         = ggplot2::element_text(size = base_size, color = "black"),
+      axis.title        = ggplot2::element_text(size = base_size + 0.5, color = "black"),
+      plot.title        = ggplot2::element_text(size = base_size + 1.5, face = "bold", hjust = 0),
+      plot.subtitle     = ggplot2::element_text(size = base_size, hjust = 0, color = "grey30"),
+      plot.margin       = ggplot2::margin(4, 4, 4, 4, "mm"),
+      # Dotted horizontal major gridlines, no vertical gridlines
+      panel.grid.major.y = ggplot2::element_line(color = "grey88", linewidth = 0.35, linetype = "dotted"),
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.minor   = ggplot2::element_blank(),
+      # Legend
+      legend.background = ggplot2::element_rect(fill = ggplot2::alpha("#FFFFFF", 0.92), color = "#E0E0E0", linewidth = 0.25),
+      legend.key        = ggplot2::element_blank(),
+      legend.text       = ggplot2::element_text(size = base_size - 1.5, color = "black"),
+      legend.title      = ggplot2::element_blank(),
+      legend.key.size   = ggplot2::unit(3.0, "mm"),
+      legend.spacing.x  = ggplot2::unit(1.5, "mm"),
+      strip.background  = ggplot2::element_blank(),
+      strip.text        = ggplot2::element_text(size = base_size, face = "bold", color = "black")
+    )
+}
+
 # Map of available themes
 .theme_map = list(
   cli_bw      = theme_cli_bw,
@@ -372,7 +412,8 @@ theme_cli_scifig = function(base_size = 8, base_family = "") {
   showcase    = theme_cli_showcase,
   broadsheet  = theme_cli_broadsheet,
   scifig      = theme_cli_scifig,
-  sci_box     = theme_cli_scifig
+  sci_box     = theme_cli_scifig,
+  pathology   = theme_cli_pathology
 )
 
 # ==========================================================================
@@ -401,6 +442,7 @@ theme_cli_scifig = function(base_size = 8, base_family = "") {
 #'     \item \code{"showcase"} - Polished presentation style with stronger hierarchy
 #'     \item \code{"dark"} - Dark background theme
 #'     \item \code{"scifig"} - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward ticks, dashed grid)
+#'     \item \code{"pathology"} - Nature Aging / SciFig style (open L-frame, outward ticks, dotted y-grid)
 #'   }
 #'   Use \code{clitheme()} without arguments to reset to the default theme.
 #' @param ... Named arguments to override specific theme settings (passed to
