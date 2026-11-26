@@ -10,10 +10,10 @@
   <a href="https://www.r-project.org/"><img src="https://img.shields.io/badge/R-%E2%89%A5%204.0.0-276DC3?logo=r&logoColor=white" alt="R version"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="https://ggplot2.tidyverse.org/"><img src="https://img.shields.io/badge/Built%20on-ggplot2-2171B5?logo=r" alt="Built on ggplot2"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Plot%20Types-60+-20854E" alt="Plot Types"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Plot%20Types-65+-20854E" alt="Plot Types"/></a>
   <a href="#"><img src="https://img.shields.io/badge/Palettes-55+-E18727" alt="Palettes"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Themes-12-7E6148" alt="Themes"/></a>
-  <img src="https://img.shields.io/badge/Version-0.1.5-3C5488" alt="Version 0.1.5"/>
+  <a href="#"><img src="https://img.shields.io/badge/Themes-15-7E6148" alt="Themes"/></a>
+  <img src="https://img.shields.io/badge/Version-0.1.6-3C5488" alt="Version 0.1.6"/>
   <a href="https://vanhungtran.github.io/cliomicplot_book/"><img src="https://img.shields.io/badge/Handbook-Online_Book-002060.svg" alt="Online Handbook"/></a>
 </p>
 <!-- badges: end -->
@@ -418,6 +418,7 @@ Organized into 5 logical parts matching the online handbook [Clinical and Omics 
   - `vignette("case-study-atopic-dermatitis")` — Translational multi-omics case study in atopic dermatitis
   - `vignette("case-study-cancer-immunotherapy")` — Immuno-oncology clinical trial endpoint reporting
   - `vignette("recreate-paper")` — Published paper reproduction: SLE X-chromosome dysregulation (Soares et al., *Biol Sex Differ* 2025)
+  - `vignette("recreate-nature-communications-polyps")` — Published paper reproduction: Granzyme K+ CD8+ T cells in nasal polyps and cross-tissue chronic inflammation (Sun et al., *Nat Commun* 2024)
 
 ---
 

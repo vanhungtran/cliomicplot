@@ -1,3 +1,24 @@
+# cliomicplot 0.1.6
+
+## Nature Aging Pathology Boxplots & Ecology Demographic Rainclouds
+
+* **Nature Aging Pathology Boxplots (`type_nature_aging_boxplot()`, `type_pathology_boxplot()`)**:
+  Implements the Nature Aging / SciFig boxplot standard established in Yadav et al. 2026. Features category-colored outlines with low-alpha interior fill, bold black median crossbar (`#111111`, linewidth = 0.85), paired mean trajectory connecting lines across conditions, arithmetic mean diamonds (shape = 23), dashed reference baseline ($y = 0$), subsampled background jitter for massive sample sizes, and two-line exact Unicode scientific significance annotations ($***\text{ (P = }1.7 \times 10^{-9}\text{)}$ or $\text{n.s. (P = 0.55)}$).
+  Includes dedicated theme `theme_cli_nature_aging()` / `theme_cli_nature()`.
+
+* **Ecology & Demographic Viability Rainclouds (`type_ecology_raincloud()`, `type_half_boxed()`)**:
+  Implements the half-boxed raincloud architecture for population viability analysis and ecology. Features left-nudged white-filled boxplots with thick category-colored borders and open square outlier glyphs (shape = 0), centered circular mean dots (shape = 16), right-facing half-violin density curves, horizontal replacement equilibrium reference lines ($y = 1.0$), automated two-line Student's $t$ 95% Confidence Interval text summaries, and 4-sided boxed frame `theme_cli_ecology()`.
+  Registered palettes: `ecology` and `reseeding`.
+
+* **Enhanced Longitudinal Recovery Trajectories (`type_trajectory()`)**:
+  Substantially upgraded trajectory architecture supporting stratified multi-arm trials (e.g. Active Biologic vs. Placebo). Adds vertical standard error bars with horizontal crossbar caps (`show_errorbar = TRUE`, `errorbar = c("se", "ci", "sd", "none")`), circular mean markers with crisp white interior fill (`point_fill = "white"`), horizontal dodging across comparison arms, and milestone tracking across recovery time points.
+
+* **Split-Half Dual-Condition Violins (`type_split_violin()`)**:
+  Back-to-back split violin densities highlighted by group color mapping, with inner dodged boxplots and within-tier statistical hypothesis testing with comparison bracket bars (`stat.test = "t.test"` / `"wilcox.test"`).
+
+* **Nature Communications Case Study Vignette**:
+  Added `vignette("recreate-nature-communications-polyps")` detailing the complete replication of all 37 figure panels from Nature Communications (2024) 15:10413 (PMC11607458) spanning single-cell RNA-seq, clinical flow cytometry (95 donors), Visium HD spatial transcriptomics, in vitro functional secretome assays, and a cross-tissue inflammatory disease atlas.
+
 # cliomicplot 0.1.5
 
 ## Systems Biology Networks & AI4SciFig Publication Standards

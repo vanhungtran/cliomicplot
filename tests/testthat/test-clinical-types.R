@@ -238,6 +238,27 @@ test_that("type_trajectory works with severity bands (Archetype 4)", {
   p2 <- cliplot(Score ~ Visit | Patient, data = traj_df,
                 type = type_trajectory(show_mean = TRUE, show_ci = TRUE, show_n = TRUE))
   expect_s3_class(p2, "ggplot")
+
+  # Multi-arm recovery trajectory with standard error bars
+  traj_df$Arm <- factor(ifelse(as.numeric(gsub("Pt_", "", traj_df$Patient)) <= 5, "Placebo", "Biologic"))
+  p3 <- cliplot(
+    Score ~ Visit | Arm,
+    data = traj_df,
+    type = type_trajectory(
+      show_errorbar  = TRUE,
+      errorbar       = "se",
+      errorbar_width = 0.15,
+      point_shape    = 21,
+      point_fill     = "white",
+      dodge          = 0.18,
+      severity_bands = NULL
+    ),
+    palette = "nature",
+    theme   = "nature"
+  )
+  expect_s3_class(p3, "ggplot")
+  b3 <- ggplot2::ggplot_build(p3)
+  expect_true(length(b3$data) >= 3) # lines, errorbars, points
 })
 
 # ---- Clinical Archetype 5: KM Cumulative Incidence & Milestones ----

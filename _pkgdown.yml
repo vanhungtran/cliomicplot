@@ -66,9 +66,13 @@ reference:
       - type_ma
       - type_correlation
       - type_boxplot
+      - type_nature_aging_boxplot
+      - type_pathology_boxplot
       - type_violin
       - type_split_violin
       - geom_split_violin
+      - type_ecology_raincloud
+      - type_half_boxed
       - type_bubble_heatmap
   - title: Datasets
     desc: Curated clinical cohorts and multi-omics reference datasets.
@@ -144,3 +148,4 @@ articles:
       - case-study-atopic-dermatitis
       - case-study-cancer-immunotherapy
       - recreate-paper
+      - recreate-nature-communications-polyps
