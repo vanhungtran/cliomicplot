@@ -184,9 +184,35 @@ p_2i <- ggplot(top_kegg, aes(x = GeneRatioNum, y = Description)) +
     legend.key.width   = unit(0.25, "cm")
   )
 
-# Assemble Figure 2 multi-panel composite
-p_fig2_composite <- (p_2d) / (p_2f | (p_2g / p_2i)) +
-  plot_layout(heights = c(1.0, 1.4)) +
+# Panel 2h: Top 10 DEGs between GZMK+ and GZMB+ CD8+ T cells
+raw_2h <- readxl::read_excel(excel_path, sheet = "Figure 2h")
+raw_2h <- as.data.frame(raw_2h)
+raw_2h <- raw_2h[!is.na(raw_2h$gene), ]
+top_gzmk <- head(raw_2h[raw_2h$cluster == "CD8+ GZMK", ], 5)
+top_gzmb <- head(raw_2h[raw_2h$cluster == "CD8+ GZMB", ], 5)
+df_2h <- rbind(top_gzmk, top_gzmb)
+df_2h$gene <- factor(df_2h$gene, levels = df_2h$gene[order(df_2h$avg_log2FC)])
+df_2h$cluster <- factor(df_2h$cluster, levels = c("CD8+ GZMK", "CD8+ GZMB"))
+
+p_2h <- ggplot(df_2h, aes(x = avg_log2FC, y = gene, fill = cluster)) +
+  geom_col(width = 0.68, color = "black", linewidth = 0.25) +
+  scale_fill_manual(values = c("CD8+ GZMK" = "#F58518", "CD8+ GZMB" = "#DE3533"), name = "Enriched in") +
+  labs(tag = "h", x = expression("Average "*log[2]*"(Fold Change)"), y = NULL) +
+  theme_natcommun(base_size = 8.5) +
+  theme(
+    axis.text.y     = element_text(size = 7.5, face = "italic"),
+    legend.position = "right",
+    legend.key.size = unit(0.35, "cm")
+  )
+
+ggsave(file.path(out_dir, "NatCommun_Figure2h_Top_DEGs.png"),
+       p_2h, width = 5.2, height = 4.2, dpi = 300)
+ggsave(file.path(inst_dir, "NatCommun_Figure2h_Top_DEGs.png"),
+       p_2h, width = 5.2, height = 4.2, dpi = 300)
+
+# Assemble Figure 2 multi-panel composite (d, f, h, g, i)
+p_fig2_composite <- (p_2d) / (p_2f | p_2h) / (p_2g | p_2i) +
+  plot_layout(heights = c(1.0, 1.1, 1.1)) +
   plot_annotation(
     title = "Nature Communications (2024) 15:10413 - Figure 2 Replication",
     subtitle = "Phenotypic enrichment and functional transcriptome of GZMK+CD8+ effector T cells in nasal polyps",
