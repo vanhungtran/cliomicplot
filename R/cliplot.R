@@ -792,8 +792,22 @@ add_stat_annotations = function(p, settings, data) {
     assign("create_p_label", get("create_p_label", envir = asNamespace("ggpubr")), envir = p$plot_env)
   }
 
-  # For >2 groups, use global test, else pairwise
-  if (length(groups) > 2 && settings$stat.test %in% c("kruskal.test", "anova")) {
+  is_grouped <- !is.null(data[["x"]]) && !identical(as.character(data[["x"]]), as.character(by_var))
+
+  if (is_grouped) {
+    # When grouped by a secondary conditioning variable (y ~ x | by), compare by groups within each x level
+    p = p + ggpubr::stat_compare_means(
+      ggplot2::aes(group = .data[["..by.."]]),
+      method = method,
+      label  = settings$stat.label %||% "p.format"
+    )
+  } else if (!is.null(settings$stat.comparisons)) {
+    p = p + ggpubr::stat_compare_means(
+      comparisons = settings$stat.comparisons,
+      method      = method,
+      label       = settings$stat.label %||% "p.format"
+    )
+  } else if (length(groups) > 2 && settings$stat.test %in% c("kruskal.test", "anova")) {
     if (is.null(settings$stat.label)) {
       p = p + ggpubr::stat_compare_means(method = method)
     } else {
