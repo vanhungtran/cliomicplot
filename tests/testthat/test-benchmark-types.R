@@ -92,3 +92,24 @@ test_that("type_benchmark_bars works with error bars and permutation null band",
   b = ggplot2::ggplot_build(p)
   expect_true(length(b$data) >= 2)
 })
+
+test_that("type_identifiability generates valid dual-axis deconvolution plot", {
+  df = data.frame(
+    cell_type = c("T_cell", "B_cell", "Macrophage", "Keratinocyte"),
+    n_markers = c(13, 3, 42, 32),
+    max_corr  = c(0.57, 0.90, 0.77, 0.46),
+    status    = c("predicted", "predicted", "predicted", "zeroed"),
+    note      = c("identifiable", "few markers + collinear", "collinear", "identifiable"),
+    signature = c("AD", "AD", "AD", "AD")
+  )
+
+  p = cliplot(
+    n_markers ~ cell_type | signature,
+    data = df,
+    type = type_identifiability()
+  )
+
+  expect_s3_class(p, "ggplot")
+  b = ggplot2::ggplot_build(p)
+  expect_true(length(b$data) >= 2)
+})

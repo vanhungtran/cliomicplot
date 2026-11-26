@@ -647,7 +647,8 @@ resolve_type = function(type) {
     shapley         = type_shapley,
     stepwise        = type_stepwise,
     benchmark_bars  = type_benchmark_bars,
-    benchmark       = type_benchmark_bars
+    benchmark       = type_benchmark_bars,
+    identifiability = type_identifiability
   )
 
   if (type %in% names(type_map)) {
