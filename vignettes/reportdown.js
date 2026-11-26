@@ -115,6 +115,50 @@
     window.addEventListener("mouseup", function () {
       drag = false; if (scale > 1) { lbImg.style.cursor = "grab"; }
     });
+    // Code folding for vignettes
+    var sourceBlocks = document.querySelectorAll("pre.r, div.sourceCode, pre.sourceCode");
+    var detailsList = [];
+    sourceBlocks.forEach(function (block) {
+      if (block.closest("details") || block.dataset.rdCodeFolded) { return; }
+      block.dataset.rdCodeFolded = "true";
+      var details = document.createElement("details");
+      details.className = "rd-code-fold";
+      var summary = document.createElement("summary");
+      summary.className = "rd-code-summary";
+      summary.innerHTML = '<span class="rd-toggle-arrow">▶</span> <span class="rd-toggle-text">Show R code</span>';
+      block.parentNode.insertBefore(details, block);
+      details.appendChild(summary);
+      details.appendChild(block);
+      details.addEventListener("toggle", function () {
+        var arrow = summary.querySelector(".rd-toggle-arrow");
+        var text = summary.querySelector(".rd-toggle-text");
+        if (details.open) {
+          if (arrow) arrow.textContent = "▼";
+          if (text) text.textContent = "Hide R code";
+        } else {
+          if (arrow) arrow.textContent = "▶";
+          if (text) text.textContent = "Show R code";
+        }
+      });
+      detailsList.push(details);
+    });
+
+    if (detailsList.length > 0) {
+      var h1 = document.querySelector("h1");
+      if (h1 && !document.getElementById("rd-toggle-all-code-btn")) {
+        var toolbar = document.createElement("div");
+        toolbar.className = "rd-code-toolbar";
+        toolbar.innerHTML = '<button id="rd-toggle-all-code-btn" class="rd-code-btn" type="button">Show All Code</button>';
+        var btn = toolbar.querySelector("#rd-toggle-all-code-btn");
+        var allExpanded = false;
+        btn.addEventListener("click", function () {
+          allExpanded = !allExpanded;
+          detailsList.forEach(function (d) { d.open = allExpanded; });
+          btn.textContent = allExpanded ? "Hide All Code" : "Show All Code";
+        });
+        h1.parentNode.insertBefore(toolbar, h1.nextSibling);
+      }
+    }
   });
 })();
 </script>
