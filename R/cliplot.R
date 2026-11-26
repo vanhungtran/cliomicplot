@@ -642,7 +642,12 @@ resolve_type = function(type) {
     pqtl_mr         = type_mr_coloc,
     composition     = type_composition,
     cell_composition = type_composition,
-    lineage_bars    = type_composition
+    lineage_bars    = type_composition,
+    attribution     = type_attribution,
+    shapley         = type_shapley,
+    stepwise        = type_stepwise,
+    benchmark_bars  = type_benchmark_bars,
+    benchmark       = type_benchmark_bars
   )
 
   if (type %in% names(type_map)) {

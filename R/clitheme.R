@@ -425,6 +425,39 @@ theme_cli_ecology = function(base_size = 11, base_family = "") {
     )
 }
 
+#' Benchmark & Multi-Omics Figure Theme
+#' @description Open L-frame axes (top and right spines removed), crisp black axis lines,
+#'   outward ticks, frameless legend, and clean white background without gridlines.
+#'   Adheres to the figures4papers / Chen Liu publication style used in
+#'   leakage-controlled multi-omics and drug target prioritization benchmarks.
+#' @inheritParams theme_cli_bw
+#' @return A ggplot2 theme.
+#' @export
+theme_cli_benchmark = function(base_size = 10, base_family = "") {
+  theme_cli_base(base_size, base_family) +
+    ggplot2::theme(
+      panel.background  = ggplot2::element_rect(fill = "white", color = NA),
+      panel.border      = ggplot2::element_blank(),
+      panel.grid.major  = ggplot2::element_blank(),
+      panel.grid.minor  = ggplot2::element_blank(),
+      axis.line.x       = ggplot2::element_line(color = "black", linewidth = 0.55),
+      axis.line.y       = ggplot2::element_line(color = "black", linewidth = 0.55),
+      axis.ticks        = ggplot2::element_line(color = "black", linewidth = 0.5),
+      axis.ticks.length = ggplot2::unit(3, "pt"),
+      axis.title        = ggplot2::element_text(size = base_size + 1, face = "plain", color = "black"),
+      axis.text         = ggplot2::element_text(size = base_size, color = "black"),
+      legend.background = ggplot2::element_blank(),
+      legend.key        = ggplot2::element_blank(),
+      legend.text       = ggplot2::element_text(size = base_size - 1, color = "black"),
+      legend.title      = ggplot2::element_text(size = base_size, face = "bold", color = "black"),
+      strip.background  = ggplot2::element_blank(),
+      strip.text        = ggplot2::element_text(size = base_size, face = "bold", color = "black"),
+      plot.title        = ggplot2::element_text(size = base_size + 2, face = "bold", hjust = 0),
+      plot.subtitle     = ggplot2::element_text(size = base_size, hjust = 0, color = "grey30"),
+      plot.margin       = ggplot2::margin(5, 5, 5, 5, "mm")
+    )
+}
+
 # Map of available themes
 .theme_map = list(
   cli_bw      = theme_cli_bw,
@@ -442,7 +475,9 @@ theme_cli_ecology = function(base_size = 11, base_family = "") {
   sci_box     = theme_cli_scifig,
   pathology   = theme_cli_pathology,
   ecology     = theme_cli_ecology,
-  reseeding   = theme_cli_ecology
+  reseeding   = theme_cli_ecology,
+  benchmark   = theme_cli_benchmark,
+  figures4papers = theme_cli_benchmark
 )
 
 # ==========================================================================

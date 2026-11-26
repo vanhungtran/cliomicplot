@@ -1,3 +1,24 @@
+# cliomicplot 0.1.7
+
+## Leakage-Controlled Machine Learning & Multi-Omics Drug Target Prioritization
+
+* **Attribution Plots (`type_attribution()`, `type_shapley()`, `type_stepwise()`)**:
+  Implements the attribution figure archetypes from leakage-controlled multi-omics and machine learning benchmarks (Liu et al. / `multiomics_paper`).
+  - `style = "shapley"`: Exact Shapley value contributions across leakage mechanisms, data tiers, or genomic features, with horizontal orientation, baseline zero reference lines, and learner comparisons (e.g. HGB vs Logistic Regression).
+  - `style = "stepwise"`: Sequential ablation staircase curves tracing metric decay (AUROC / Average Precision) across removal steps, with 95% confidence intervals and exact step annotations.
+  - `style = "contrast"`: Dual-regime attribution comparisons contrasting marginal gains when added to clean biological features versus marginal losses when removed from fully leaky pipelines.
+
+* **Multi-Tier Model Benchmark Bar Charts (`type_benchmark_bars()`, `type_benchmark()`)**:
+  Publication-standard tiered model comparison bar charts featuring:
+  - Permutation null distribution reference bands (`null_band = c(lo, hi)`) rendered as neutral background ribbons (`#CFCECE`).
+  - Whiskers with caps for 95% confidence intervals derived from group-jackknife or bootstrap resampling.
+  - Dotted vertical tier separation lines (`group_sep_lines`) demarcating biological priors, druggability, research attention confounding, and label-containing tiers.
+  - Linear AUROC and logarithmic AP lift scaling (`log_scale = TRUE`).
+
+* **Benchmark Theme & Palettes (`theme_cli_benchmark()`, palettes `"figures4papers"`, `"tier"`, `"leakage"`, `"benchmark"`)**:
+  - Open L-frame axes with top and right spines removed, crisp black axis lines (`0.55 pt`), outward ticks (`3 pt`), clean white background without gridlines, and frameless legends.
+  - Curated color palettes matching the 5 governance tiers: Biology (`#0F4D92`), Druggability (`#42949E`), Attention (`#9A4D8E`), Clinical outside-disease (`#E9A6A1`), and Label-containing (`#B64342`).
+
 # cliomicplot 0.1.6
 
 ## Nature Aging Pathology Boxplots & Ecology Demographic Rainclouds

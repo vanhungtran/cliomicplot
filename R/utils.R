@@ -268,7 +268,15 @@ parse_cli_formula = function(formula, data, env = parent.frame()) {
                "#46732E", "#71D0F5", "#370335", "#075149",
                "#C80813", "#91331F", "#1A9993", "#FD8CC1"),
   startrek = c("#CC0C00", "#5C88DA", "#84BD00", "#FFCD00",
-               "#7C878E", "#00B5E2", "#00AF66")
+               "#7C878E", "#00B5E2", "#00AF66"),
+
+  # --- figures4papers & multiomics benchmark palettes ---
+  figures4papers = c("#0F4D92", "#3775BA", "#42949E", "#8BCF8B",
+                     "#AADCA9", "#9A4D8E", "#E9A6A1", "#B64342",
+                     "#CFCECE", "#767676"),
+  tier = c("#0F4D92", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#CFCECE"),
+  leakage = c("#0F4D92", "#3775BA", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#CFCECE"),
+  benchmark = c("#0F4D92", "#42949E", "#9A4D8E", "#E9A6A1", "#B64342", "#8BCF8B")
 )
 
 # Color palette helper: get colors by name and count
