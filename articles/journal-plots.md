@@ -1,0 +1,503 @@
+# Nature/Cell/Science-Quality Figures with cliomicplot
+
+## Overview
+
+Publishing in premier scientific journals—**Nature, Cell, and Science
+(CNS)**—demands strict visual, typographic, and statistical discipline:
+
+1.  **Exact physical trim sizing**: Figures must be drawn at the
+    publisher’s printed column widths (e.g., 89 mm single-column, 120 mm
+    1.5-column, 183 mm double-column) rather than an arbitrary canvas
+    scaled down during typesetting.
+2.  **Minimalist typography and data-to-ink ratio**: In-figure titles
+    are removed (figure explanations belong in the legend/caption);
+    panel identifier tags (**a**, **b**, **c**, **d**) sit at the upper
+    left; font sizes are constrained to 5–7 pt at final print scale.
+3.  **Open axes vs. full-box frames**: Top and right spines are removed
+    for Nature and Science
+    ([`theme_cli_nature()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nature.md),
+    [`theme_cli_science()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_science.md)),
+    while structured spines and outward ticks are preserved for Cell and
+    SCI/Elsevier styles
+    ([`theme_cli_cell()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_cell.md),
+    [`theme_cli_scifig()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_scifig.md)).
+4.  **Clinical and biological integrity**: Clinical figures prioritize
+    effect magnitudes over raw p-values (e.g. MCID thresholds), track
+    exact denominators, report landmark milestones, and present
+    multi-omics evidence side-by-side.
+
+This vignette demonstrates how **cliomicplot** creates publication-ready
+figures matching these exact journal requirements, drawing on the real
+proteomics, metabolomics, and clinical datasets bundled with the
+package.
+
+``` r
+
+library(cliomicplot)
+library(ggplot2)
+library(patchwork)
+
+clipar(stat.test = NULL) # Disable auto statistical overlays for clean journal look
+```
+
+``` r
+
+# Helper to resolve bundled example datasets
+resolve_data = function(filename) {
+  pkg_path = system.file("extdata", filename, package = "cliomicplot")
+  if (pkg_path != "" && file.exists(pkg_path)) return(pkg_path)
+  fallback = file.path("..", "inst", "extdata", filename)
+  if (file.exists(fallback)) return(fallback)
+  fallback2 = file.path("inst", "extdata", filename)
+  if (file.exists(fallback2)) return(fallback2)
+  stop("Cannot locate ", filename)
+}
+
+# 1. AD/PD cortex proteomics (MaxQuant)
+e_adpd = new.env()
+load(resolve_data("ADPD_cortex_Maxquant.RData"), envir = e_adpd)
+adpd_meta = e_adpd$MetaData
+adpd_wide = e_adpd$data_wide
+adpd_res  = e_adpd$results_long
+adpd_long = e_adpd$data_long
+
+# 2. Stroke brain time-course proteomics
+e_stroke = new.env()
+load(resolve_data("StrokeBrain_TimeCourse.RData"), envir = e_stroke)
+stroke_long = e_stroke$data_long
+stroke_meta = e_stroke$MetaData
+
+# 3. Aging & High-Fat Caloric Diet metabolomics
+e_aging = new.env()
+load(resolve_data("AgingHFCD_Metabolomics.RData"), envir = e_aging)
+aging_meta = e_aging$MetaData
+aging_res  = e_aging$results_long
+```
+
+------------------------------------------------------------------------
+
+## 1. The Design Language of Nature, Cell, and Science
+
+Premier journals follow distinct visual conventions:
+
+| Specification | Nature / Nat. Comms | Science / AAAS | Cell Press | SCI / Elsevier |
+|----|----|----|----|----|
+| **Theme** | `theme = "nature"` | `theme = "science"` | `theme = "cell"` | `theme = "scifig"` |
+| **Spines** | Open (left & bottom only) | Ultra-clean open | Structured open | 4 visible black spines |
+| **Grid lines** | Refused / None | Strictly None | None | Subtle dashed (0.3 pt) |
+| **Ticks** | Outward (1.5 pt) | Outward (1.5 pt) | Outward (1.5 pt) | Outward (2.5 pt) |
+| **Single Column** | 89 mm (3.50 in) | 90 mm (3.54 in) | 85 mm (3.35 in) | 85–90 mm |
+| **Double Column** | 183 mm (7.20 in) | 183 mm (7.20 in) | 174–180 mm | 175–185 mm |
+| **Max Height** | 170 mm (Nature) / 225 mm | 230 mm | 203 mm | 220 mm |
+| **Panel Tags** | Bold lowercase (**a**, **b**) | Bold lowercase (**a**, **b**) | Bold uppercase (**A**, **B**) | Bold lowercase (**a**, **b**) |
+| **Format** | Vector PDF/SVG required | Vector PDF/SVG required | Vector PDF/EPS/SVG | Vector PDF/TIFF/SVG |
+
+------------------------------------------------------------------------
+
+## 2. Figure 1 — Diagnostic Biomarker ROC Curves (Nature Style)
+
+ROC curves evaluate classifier sensitivity and specificity across all
+thresholds. Coordinates are isometric (1:1 aspect ratio), the chance
+diagonal is dashed, and exact AUC values are embedded directly in the
+legend.
+
+Top differentially expressed cortex proteins distinguish Alzheimer’s
+disease (AD) from neurologically normal controls (CTL):
+
+``` r
+
+meta_adctl = adpd_meta[adpd_meta$group %in% c("AD", "CTL"), ]
+samples = as.character(meta_adctl$sampleid)
+top_markers = c("SMOC1_A0A024R6E0", "APP_A0A218KGR2", "MDK_E9PPJ5")
+marker_short = c("SMOC1", "APP", "MDK")
+
+roc_df = data.frame(
+  disease = factor(meta_adctl$group, levels = c("CTL", "AD")),
+  t(adpd_wide[top_markers, samples]),
+  check.names = FALSE
+)
+names(roc_df)[-1] = marker_short
+
+cliplot(roc_df,
+        type = type_roc(predictors = marker_short, response = "disease"),
+        theme = "nature", palette = "npg") +
+  labs(tag = "a") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig1-roc-1.png)
+
+------------------------------------------------------------------------
+
+## 3. Figure 2 — GSEA-Style Pathway Enrichment Dot Plot (Nature Style)
+
+Enrichment dot plots order biological pathways or gene sets by
+Normalized Enrichment Score (NES), encoding statistical significance
+($`-\log_{10} \text{FDR}`$) in dot size and regulation direction in
+color:
+
+``` r
+
+r_adctl = adpd_res[adpd_res$test == "ADvsCTL", ]
+r_adctl = r_adctl[order(r_adctl$Adj.P.Value), ]
+
+top_pathways = data.frame(
+  Term = sub("_.*$", "", r_adctl$UniqueID[1:18]),
+  NES  = r_adctl$logFC[1:18],
+  FDR  = r_adctl$Adj.P.Value[1:18]
+)
+
+cliplot(top_pathways, type = "gsea", top_term = 18, theme = "nature") +
+  labs(tag = "b") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig2-gsea-1.png)
+
+------------------------------------------------------------------------
+
+## 4. Figure 3 — Differential Abundance Volcano Plot with Publication Thresholds (Nature Style)
+
+Volcano plots evaluate effect size ($`\log_2 \text{FC}`$) against
+multiple-testing adjusted significance ($`-\log_{10} \text{FDR}`$). Gene
+symbols are repelled via `ggrepel`, and threshold boundaries are
+demarcated by dashed reference lines:
+
+``` r
+
+r_adctl_df = as.data.frame(r_adctl)
+r_adctl_df$symbol = sub("_.*$", "", r_adctl_df$UniqueID)
+rownames(r_adctl_df) = make.unique(r_adctl_df$symbol)
+
+top_volc_labels = c("SMOC1", "APP", "MDK", "CHI3L1", "GFAP", "PEBP1", "MAPT", "STMN1")
+
+cliplot(-log10(Adj.P.Value) ~ logFC, data = r_adctl_df,
+        type = type_volcano(
+          fc_cutoff    = 0.5,
+          pval_cutoff  = 0.05,
+          point_size   = 1.8,
+          point_alpha  = 0.65,
+          label_genes  = top_volc_labels,
+          max_overlaps = 25
+        ),
+        theme = "nature",
+        xlab = "log2 Fold Change (AD vs CTL)",
+        ylab = "-log10 (FDR-adjusted p-value)") +
+  labs(tag = "c") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig3-volcano-1.png)
+
+------------------------------------------------------------------------
+
+## 5. Figure 4 — Multi-Set Intersection: UpSet Plot (Cell Style)
+
+UpSet plots track differentially expressed gene or metabolite
+intersections across $`\ge 4`$ biological contrasts without geometric
+distortion:
+
+``` r
+
+deg_sets = lapply(unique(adpd_res$test), function(tt) {
+  sub = adpd_res[adpd_res$test == tt, ]
+  sub$UniqueID[sub$Adj.P.Value < 0.05 & abs(sub$logFC) > 0.5]
+})
+names(deg_sets) = unique(adpd_res$test)
+deg_sets = deg_sets[vapply(deg_sets, length, integer(1)) > 0]
+
+cliplot(deg_sets, type = "upset", theme = "cell") +
+  labs(tag = "d") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig4-upset-1.png)
+
+------------------------------------------------------------------------
+
+## 6. Figure 5 — Three-Way Contrast Intersection: Venn Diagram (Science Style)
+
+When comparing two to three contrasts, Venn diagrams provide intuitive
+set overlap summaries with clean transparent fills and exact
+intersection counts:
+
+``` r
+
+venn_subsets = deg_sets[c("ADvsCTL", "PDvsCTL", "ADPDvsCTL")]
+
+cliplot(venn_subsets, type = "venn", theme = "science") +
+  labs(tag = "e") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig5-venn-1.png)
+
+------------------------------------------------------------------------
+
+## 7. Figure 6 — Paired Expression Trajectory: Slope Graph (Nature Style)
+
+Slope graphs link paired observations across experimental conditions,
+showing individual trajectory slopes and population shifts without
+boxplot aggregation artifacts:
+
+``` r
+
+top10_ids = r_adctl$UniqueID[1:10]
+sub_long = adpd_long[adpd_long$UniqueID %in% top10_ids & adpd_long$group %in% c("CTL", "AD"), ]
+means = stats::aggregate(expr ~ UniqueID + group, data = sub_long, FUN = mean)
+wide  = stats::reshape(means, idvar = "UniqueID", timevar = "group", direction = "wide")
+names(wide) = c("protein", "CTL", "AD")
+wide$symbol = sub("_.*$", "", wide$protein)
+
+slope_df = data.frame(
+  subject   = rep(wide$symbol, 2),
+  condition = factor(rep(c("Control", "Alzheimer"), each = nrow(wide)), levels = c("Control", "Alzheimer")),
+  abundance = c(wide$CTL, wide$AD)
+)
+
+cliplot(abundance ~ condition, data = slope_df,
+        type = type_slope(pair = "subject"),
+        theme = "nature", palette = "npg",
+        xlab = "Cortex Condition",
+        ylab = "Mean Abundance (log2 LFQ)") +
+  labs(tag = "f") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig6-slope-1.png)
+
+------------------------------------------------------------------------
+
+## 8. Figure 7 — Diagnostic Classifier Performance: Confusion Matrix (Cell Style)
+
+Confusion matrices evaluate binary classifier concordance against
+histological truth. Color intensity scales with sample frequency, and
+Fisher’s exact test p-value is integrated into the matrix header:
+
+``` r
+
+sub_stk = stroke_long[stroke_long$UniqueID == "Lxn_P70202" &
+                      stroke_long$treatment %in% c("StrkIp", "ShamIp"), ]
+sub_stk$stroke = factor(ifelse(sub_stk$treatment == "StrkIp", "Stroke", "Sham"),
+                        levels = c("Sham", "Stroke"))
+thr = mean(c(median(sub_stk$expr[sub_stk$stroke == "Stroke"]),
+             median(sub_stk$expr[sub_stk$stroke == "Sham"])))
+sub_stk$pred = factor(ifelse(sub_stk$expr > thr, "Stroke", "Sham"),
+                      levels = levels(sub_stk$stroke))
+
+cliplot(stroke ~ pred, data = sub_stk,
+        type = type_confusion(add_pvalue = TRUE),
+        theme = "cell") +
+  labs(tag = "g") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig7-confusion-1.png)
+
+------------------------------------------------------------------------
+
+## 9. Figure 8 — Study Cohort Architecture: Donut Plot (Nature Style)
+
+Donut plots communicate sample partitioning across study arms, featuring
+an open center metric that reports total cohort size ($`N`$):
+
+``` r
+
+comp = as.data.frame(table(aging_meta$group))
+names(comp) = c("group", "n")
+
+cliplot(n ~ group, data = comp,
+        type = type_donut(center_label = "samples",
+                          center_value = as.character(nrow(aging_meta))),
+        theme = "nature", palette = "npg") +
+  labs(tag = "h") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig8-donut-1.png)
+
+------------------------------------------------------------------------
+
+## 10. Figure 9 — Multi-Modal Distribution: Raincloud Plot (Nature Style)
+
+Raincloud plots integrate raw data points, half-violin probability
+density, and inner quartile boxplots, presenting distribution shape and
+sample density simultaneously:
+
+``` r
+
+cliplot(expr ~ treatment, data = sub_stk,
+        type = type_raincloud(alpha = 0.55, point_size = 1.6, point_alpha = 0.45),
+        theme = "nature", palette = "npg",
+        xlab = "Surgical Recovery Group",
+        ylab = "Lxn Expression (LFQ)") +
+  labs(tag = "i") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig9-raincloud-1.png)
+
+------------------------------------------------------------------------
+
+## 11. Figure 10 — SCI / Elsevier Full-Box Style with `theme_cli_scifig()`
+
+For manuscripts submitted to Elsevier, IEEE, and SCI journals requiring
+full rectangular frames and outward ticks,
+[`theme_cli_scifig()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_scifig.md)
+applies four visible spines and a subtle reference grid. The boxplot
+engine automatically factorizes numeric levels, preventing inter-group
+overlap:
+
+``` r
+
+lxn_sub = stroke_long[stroke_long$UniqueID == "Lxn_P70202", ]
+lxn_sub$timepoint = factor(paste0("Day ", lxn_sub$conc),
+                           levels = c("Day 1", "Day 3", "Day 7", "Day 14", "Day 28"))
+
+cliplot(expr ~ timepoint | treatment, data = lxn_sub,
+        type = "boxplot",
+        theme = "scifig",
+        palette = "npg",
+        xlab = "Recovery Time-Point",
+        ylab = "Normalized Abundance (LFQ Intensity)") +
+  labs(tag = "j") +
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+```
+
+![](journal-plots_files/figure-html/fig10-scifig-1.png)
+
+------------------------------------------------------------------------
+
+## 12. Figure 11 — Nature Double-Column 4-Panel Publication Composite (183 mm)
+
+A key requirement in CNS journals is assembling modular panels into a
+unified figure and exporting at exact physical millimeter trim width
+(183 mm double-column).
+
+Here, we assemble diagnostic biomarker ROC curves (**(a)**),
+differential volcano results (**(b)**), paired expression trajectories
+(**(c)**), and pathway GSEA enrichments (**(d)**) into a cohesive
+4-panel publication composite:
+
+``` r
+
+panel_a = cliplot(roc_df, type = type_roc(predictors = marker_short, response = "disease"),
+                  theme = "nature", palette = "jco")
+
+panel_b = cliplot(-log10(Adj.P.Value) ~ logFC, data = r_adctl_df,
+                  type = type_volcano(
+                    fc_cutoff    = 0.5,
+                    pval_cutoff  = 0.05,
+                    point_size   = 1.3,
+                    point_alpha  = 0.60,
+                    label_genes  = c("SMOC1", "APP", "MDK", "CHI3L1", "GFAP", "PEBP1"),
+                    max_overlaps = 20
+                  ),
+                  theme = "nature",
+                  xlab = "log2 Fold Change",
+                  ylab = "-log10 FDR")
+
+panel_c = cliplot(abundance ~ condition, data = slope_df,
+                  type = type_slope(pair = "subject"),
+                  theme = "nature", palette = "npg",
+                  xlab = "Condition",
+                  ylab = "Mean LFQ (log2)")
+
+panel_d = cliplot(top_pathways, type = "gsea", top_term = 12, theme = "nature")
+
+# Assemble 2x2 double-column composite using patchwork
+cns_composite_fig = (panel_a | panel_b) / (panel_c | panel_d) +
+  plot_layout(heights = c(1, 1)) +
+  plot_annotation(
+    tag_levels = "a",
+    tag_prefix = "(",
+    tag_suffix = ")"
+  ) &
+  theme(plot.tag = element_text(size = 11, face = "bold"))
+
+cns_composite_fig
+```
+
+![](journal-plots_files/figure-html/fig11-composite-1.png)
+
+------------------------------------------------------------------------
+
+## 13. Exact Journal Dimensions & Vector Export
+
+[`cli_journal_size()`](https://vanhungtran.github.io/cliomicplot/reference/cli_journal_size.md)
+provides the publisher’s exact column specifications:
+
+``` r
+
+journals = c("nature", "natcomms", "science", "cell", "jama", "nejm", "lancet", "plos", "ieee")
+size_table = do.call(rbind, lapply(journals, function(j) {
+  s_single = cli_journal_size(j, "single")
+  s_double = cli_journal_size(j, "double")
+  data.frame(
+    Publisher       = toupper(j),
+    Single_Width_mm = s_single$width_mm,
+    Double_Width_mm = s_double$width_mm,
+    Max_Height_mm   = s_single$max_height_mm,
+    stringsAsFactors = FALSE
+  )
+}))
+size_table
+```
+
+    #>   Publisher Single_Width_mm Double_Width_mm Max_Height_mm
+    #> 1    NATURE            89.0           183.0         170.0
+    #> 2  NATCOMMS            88.0           180.0         225.0
+    #> 3   SCIENCE            90.0           183.0         230.0
+    #> 4      CELL            85.0           180.0         203.0
+    #> 5      JAMA            86.4           177.8         220.0
+    #> 6      NEJM            89.0           180.0         220.0
+    #> 7    LANCET            85.0           175.0         220.0
+    #> 8      PLOS            83.0           190.5         222.3
+    #> 9      IEEE            88.9           181.9         220.0
+
+Export with
+[`cli_save()`](https://vanhungtran.github.io/cliomicplot/reference/cli_save.md)
+to enforce exact millimeter dimensions and submission format compliance:
+
+``` r
+
+# Nature double-column vector PDF (183 mm width) at 600 DPI
+cli_save(cns_composite_fig, file = "Figure_1.pdf", journal = "nature", column = "double", dpi = 600)
+
+# Cell single-column vector SVG (85 mm width)
+cli_save(panel_a, file = "Figure_1a.svg", journal = "cell", column = "single")
+```
+
+------------------------------------------------------------------------
+
+## 14. Clinical Trials & Oncology Visual Grammar
+
+For clinical trial archetypes, including: - Kaplan-Meier survival curves
+with landmark milestone dots (`type_km`) - Cumulative incidence
+$`[1 - S(t)]`$ with numbers-at-risk - Multivariable Cox regression
+forest plots with row stripes (`type_forest`) - RECIST waterfall plots
+(`type_waterfall`) - Patient timeline swimmer plots with ongoing therapy
+arrowheads (`type_swimmer`) - Minimal Clinically Important Difference
+(MCID) dumbbells (`type_mcid`) - Longitudinal trajectory plots with
+clinical severity bands (`type_trajectory`) - Clinical trial phase
+pipeline stacked bars (`type_trials`)
+
+See the dedicated [Clinical Oncology & Trial
+Visualizations](https://vanhungtran.github.io/cliomicplot/articles/oncology.md)
+vignette.
+
+------------------------------------------------------------------------
+
+## Summary
+
+By pairing the
+[`cliplot()`](https://vanhungtran.github.io/cliomicplot/reference/cliplot.md)
+formula grammar with Nature, Cell, and Science themes and journal
+clinical archetypes:
+
+1.  **Every figure adheres to strict publisher layout and typography
+    rules**.
+2.  **Clinical and omics interpretations remain mathematically
+    transparent**.
+3.  **Multi-panel figures can be assembled and saved directly at journal
+    trim specifications**.

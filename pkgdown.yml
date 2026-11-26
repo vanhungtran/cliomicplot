@@ -2,16 +2,18 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  case-study-atopic-dermatitis: case-study-atopic-dermatitis.html
+  case-study-cancer-immunotherapy: case-study-cancer-immunotherapy.html
   cliomicplot: cliomicplot.html
+  coupled-networks: coupled-networks.html
   journal-plots: journal-plots.html
   microbiome-mgwas: microbiome-mgwas.html
   multiomics: multiomics.html
   oncology: oncology.html
   recreate-paper: recreate-paper.html
-  recreate-spamtp: recreate-spamtp.html
   themes-palettes: themes-palettes.html
   volcano-plot: volcano-plot.html
-last_built: 2026-10-31T10:26Z
+last_built: 2026-11-26T09:32Z
 urls:
   reference: https://vanhungtran.github.io/cliomicplot/reference
   article: https://vanhungtran.github.io/cliomicplot/articles
