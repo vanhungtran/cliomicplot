@@ -17,6 +17,8 @@ The main plotting function and layer helpers.
 
 - [`clitheme()`](https://vanhungtran.github.io/cliomicplot/reference/clitheme.md)
   : Set or Reset Plot Themes for cliomicplot
+- [`theme_cli_benchmark()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_benchmark.md)
+  : Benchmark & Multi-Omics Figure Theme
 - [`theme_cli_broadsheet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_broadsheet.md)
   : Broadsheet Publication Print Theme
 - [`theme_cli_bw()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_bw.md)
@@ -27,6 +29,8 @@ The main plotting function and layer helpers.
   : Classic Axis Theme
 - [`theme_cli_dark()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_dark.md)
   : Dark Background Theme for Slides & Keynotes
+- [`theme_cli_ecology()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_ecology.md)
+  : Ecology / Demographic Viability Theme
 - [`theme_cli_lancet()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_lancet.md)
   : The Lancet Theme
 - [`theme_cli_minimal()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_minimal.md)
@@ -35,6 +39,8 @@ The main plotting function and layer helpers.
   : Nature Publishing Group Theme
 - [`theme_cli_nejm()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nejm.md)
   : New England Journal of Medicine (NEJM) Theme
+- [`theme_cli_pathology()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_pathology.md)
+  : Nature Pathology Boxplot Theme
 - [`theme_cli_science()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_science.md)
   : Science Magazine Theme
 - [`theme_cli_scifig()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_scifig.md)
@@ -122,14 +128,33 @@ The main plotting function and layer helpers.
   : Correlation Matrix Plot Type
 - [`type_boxplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_boxplot.md)
   : Boxplot Type
+- [`type_scatter_box_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_baranger()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_sbv()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_scatter_box()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_box_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  : Scatter-Box-Violin Plot Type (David Baranger Style)
+- [`type_pathology_boxplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_pathology_boxplot.md)
+  : Pathology Boxplot Type (Nature Aging / SciFig Style)
 - [`type_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_violin.md)
   : Violin Plot Type
 - [`type_split_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_split_violin.md)
   : Split Violin Plot Type
 - [`geom_split_violin()`](https://vanhungtran.github.io/cliomicplot/reference/geom_split_violin.md)
   : Split and Half Violin Geom
+- [`type_ecology_raincloud()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md)
+  [`type_half_boxed()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md)
+  : Ecology Half-Boxed Raincloud Plot Type
 - [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
-  : Diamond Bubble Heatmap
+  : Bubble Heatmap Archetypes (Diamond, Circle, Square, and Diverging)
+- [`type_bubble_diamond()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_diamond.md)
+  : Diamond Bubble Heatmap Archetype
+- [`type_bubble_circle()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_circle.md)
+  : Circular Dot Bubble Heatmap Archetype
+- [`type_bubble_square()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_square.md)
+  : Square Tile Proportional Bubble Heatmap Archetype
+- [`type_bubble_diverging()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_diverging.md)
+  : Divergent Effect-Size Bubble Heatmap Archetype
 
 ## Datasets
 
@@ -228,20 +253,38 @@ Curated clinical cohorts and multi-omics reference datasets.
   : Reference Lines Type
 - [`type_alluvial()`](https://vanhungtran.github.io/cliomicplot/reference/type_alluvial.md)
   : Alluvial / Sankey Diagram Type
+- [`type_attribution()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md)
+  [`type_shapley()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md)
+  [`type_stepwise()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md)
+  : Attribution Plot Type (Shapley Values, Stepwise Ablation, and Dual
+  Contrasts)
 - [`type_barplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_barplot.md)
   : Bar plot type
 - [`type_beeswarm()`](https://vanhungtran.github.io/cliomicplot/reference/type_beeswarm.md)
   : Beeswarm Plot Type
+- [`type_benchmark_bars()`](https://vanhungtran.github.io/cliomicplot/reference/type_benchmark_bars.md)
+  [`type_benchmark()`](https://vanhungtran.github.io/cliomicplot/reference/type_benchmark_bars.md)
+  : Multi-Tier Model Benchmark Bar Charts
+- [`type_binned_shift()`](https://vanhungtran.github.io/cliomicplot/reference/type_binned_shift.md)
+  : Binned Distribution Shift Type
 - [`type_bipartite()`](https://vanhungtran.github.io/cliomicplot/reference/type_bipartite.md)
   : Transkingdom & Multi-Omics Bipartite Network Type
 - [`type_boxplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_boxplot.md)
   : Boxplot Type
 - [`type_bubble()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble.md)
   : Bubble Chart Type
+- [`type_bubble_circle()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_circle.md)
+  : Circular Dot Bubble Heatmap Archetype
+- [`type_bubble_diamond()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_diamond.md)
+  : Diamond Bubble Heatmap Archetype
+- [`type_bubble_diverging()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_diverging.md)
+  : Divergent Effect-Size Bubble Heatmap Archetype
 - [`type_bubble_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_heatmap.md)
-  : Diamond Bubble Heatmap
+  : Bubble Heatmap Archetypes (Diamond, Circle, Square, and Diverging)
 - [`type_bubble_matrix()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_matrix.md)
   : Differential Abundance Bubble Matrix Dot Plot
+- [`type_bubble_square()`](https://vanhungtran.github.io/cliomicplot/reference/type_bubble_square.md)
+  : Square Tile Proportional Bubble Heatmap Archetype
 - [`type_chord()`](https://vanhungtran.github.io/cliomicplot/reference/type_chord.md)
   : Chord Diagram Type
 - [`type_circular_bar()`](https://vanhungtran.github.io/cliomicplot/reference/type_circular_bar.md)
@@ -269,6 +312,9 @@ Curated clinical cohorts and multi-omics reference datasets.
   : Donut Chart Type
 - [`type_dumbbell()`](https://vanhungtran.github.io/cliomicplot/reference/type_dumbbell.md)
   : Dumbbell Plot Type
+- [`type_ecology_raincloud()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md)
+  [`type_half_boxed()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md)
+  : Ecology Half-Boxed Raincloud Plot Type
 - [`type_edge_dynamics()`](https://vanhungtran.github.io/cliomicplot/reference/type_edge_dynamics.md)
   : Ecological Network Edge-Sign Dynamics Plot Type
 - [`type_env_network()`](https://vanhungtran.github.io/cliomicplot/reference/type_env_network.md)
@@ -284,6 +330,8 @@ Curated clinical cohorts and multi-omics reference datasets.
   : Heatmap Type
 - [`type_histogram()`](https://vanhungtran.github.io/cliomicplot/reference/type_histogram.md)
   : Histogram type
+- [`type_identifiability()`](https://vanhungtran.github.io/cliomicplot/reference/type_identifiability.md)
+  : Deconvolution Identifiability Plot Type
 - [`type_infobar()`](https://vanhungtran.github.io/cliomicplot/reference/type_infobar.md)
   : Infographic Bar Chart
 - [`type_jitter()`](https://vanhungtran.github.io/cliomicplot/reference/type_jitter.md)
@@ -304,6 +352,13 @@ Curated clinical cohorts and multi-omics reference datasets.
   : Manhattan Plot for Genome-Wide and Microbial Association Studies
 - [`type_mantel_triangle()`](https://vanhungtran.github.io/cliomicplot/reference/type_mantel_triangle.md)
   : Triangular Correlation Heatmap with Curved Mantel Links
+- [`type_mbma_benchmark()`](https://vanhungtran.github.io/cliomicplot/reference/type_mbma_benchmark.md)
+  : MBMA Model-versus-Observed Benchmark Validation Type
+- [`type_mbma_grid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mbma_grid.md)
+  [`type_trial_design_grid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mbma_grid.md)
+  : MBMA Trial Design Grid Heatmap Type
+- [`type_mbma_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_mbma_trajectory.md)
+  : MBMA Longitudinal Trajectory Type
 - [`type_mcid()`](https://vanhungtran.github.io/cliomicplot/reference/type_mcid.md)
   : Minimal Clinically Important Difference (MCID) Dumbbell Plot Type
 - [`type_module_compare()`](https://vanhungtran.github.io/cliomicplot/reference/type_module_compare.md)
@@ -318,6 +373,8 @@ Curated clinical cohorts and multi-omics reference datasets.
   : Network Robustness Degradation Curves Plot Type
 - [`type_parallel()`](https://vanhungtran.github.io/cliomicplot/reference/type_parallel.md)
   : Parallel Coordinates Plot Type
+- [`type_pathology_boxplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_pathology_boxplot.md)
+  : Pathology Boxplot Type (Nature Aging / SciFig Style)
 - [`type_pattern()`](https://vanhungtran.github.io/cliomicplot/reference/type_pattern.md)
   : Expression Pattern Clustering Type
 - [`type_pca()`](https://vanhungtran.github.io/cliomicplot/reference/type_pca.md)
@@ -331,7 +388,7 @@ Curated clinical cohorts and multi-omics reference datasets.
 - [`type_radar()`](https://vanhungtran.github.io/cliomicplot/reference/type_radar.md)
   : Radar / Spider Chart Type
 - [`type_raincloud()`](https://vanhungtran.github.io/cliomicplot/reference/type_raincloud.md)
-  : Raincloud Plot Type
+  : Raincloud and Half-Boxed Ecology Plot Type
 - [`type_rankabundance()`](https://vanhungtran.github.io/cliomicplot/reference/type_rankabundance.md)
   : Rank Abundance Curve Type
 - [`type_ribbon()`](https://vanhungtran.github.io/cliomicplot/reference/type_ribbon.md)
@@ -342,6 +399,14 @@ Curated clinical cohorts and multi-omics reference datasets.
   : ROC Curve Type
 - [`type_rug()`](https://vanhungtran.github.io/cliomicplot/reference/type_rug.md)
   : Rug Plot Type
+- [`type_scatter_box_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_baranger()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_sbv()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_scatter_box()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  [`type_box_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_scatter_box_violin.md)
+  : Scatter-Box-Violin Plot Type (David Baranger Style)
+- [`type_scorecard()`](https://vanhungtran.github.io/cliomicplot/reference/type_scorecard.md)
+  : Scientific Reproduction Scorecard Type
 - [`type_sharing_heatmap()`](https://vanhungtran.github.io/cliomicplot/reference/type_sharing_heatmap.md)
   : Longitudinal Transmission and Dyad Sharing Heatmap
 - [`type_slope()`](https://vanhungtran.github.io/cliomicplot/reference/type_slope.md)

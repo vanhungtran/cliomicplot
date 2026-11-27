@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,44 @@
       <small>Source: <a href="https://github.com/vanhungtran/cliomicplot/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.7" id="cliomicplot-017">cliomicplot 0.1.7<a class="anchor" aria-label="anchor" href="#cliomicplot-017"></a></h2>
+<div class="section level3">
+<h3 id="leakage-controlled-machine-learning--multi-omics-drug-target-prioritization-0-1-7">Leakage-Controlled Machine Learning &amp; Multi-Omics Drug Target Prioritization<a class="anchor" aria-label="anchor" href="#leakage-controlled-machine-learning--multi-omics-drug-target-prioritization-0-1-7"></a></h3>
+<ul><li>
+<strong>Attribution Plots (<code><a href="../reference/type_attribution.html">type_attribution()</a></code>, <code><a href="../reference/type_attribution.html">type_shapley()</a></code>, <code><a href="../reference/type_attribution.html">type_stepwise()</a></code>)</strong>: Implements the attribution figure archetypes from leakage-controlled multi-omics and machine learning benchmarks (Liu et al. / <code>multiomics_paper</code>).
+<ul><li>
+<code>style = "shapley"</code>: Exact Shapley value contributions across leakage mechanisms, data tiers, or genomic features, with horizontal orientation, baseline zero reference lines, and learner comparisons (e.g. HGB vs Logistic Regression).</li>
+<li>
+<code>style = "stepwise"</code>: Sequential ablation staircase curves tracing metric decay (AUROC / Average Precision) across removal steps, with 95% confidence intervals and exact step annotations.</li>
+<li>
+<code>style = "contrast"</code>: Dual-regime attribution comparisons contrasting marginal gains when added to clean biological features versus marginal losses when removed from fully leaky pipelines.</li>
+</ul></li>
+<li>
+<strong>Multi-Tier Model Benchmark Bar Charts (<code><a href="../reference/type_benchmark_bars.html">type_benchmark_bars()</a></code>, <code><a href="../reference/type_benchmark_bars.html">type_benchmark()</a></code>)</strong>: Publication-standard tiered model comparison bar charts featuring:
+<ul><li>Permutation null distribution reference bands (<code>null_band = c(lo, hi)</code>) rendered as neutral background ribbons (<code>#CFCECE</code>).</li>
+<li>Whiskers with caps for 95% confidence intervals derived from group-jackknife or bootstrap resampling.</li>
+<li>Dotted vertical tier separation lines (<code>group_sep_lines</code>) demarcating biological priors, druggability, research attention confounding, and label-containing tiers.</li>
+<li>Linear AUROC and logarithmic AP lift scaling (<code>log_scale = TRUE</code>).</li>
+</ul></li>
+<li>
+<strong>Benchmark Theme &amp; Palettes (<code><a href="../reference/theme_cli_benchmark.html">theme_cli_benchmark()</a></code>, palettes <code>"figures4papers"</code>, <code>"tier"</code>, <code>"leakage"</code>, <code>"benchmark"</code>)</strong>:
+<ul><li>Open L-frame axes with top and right spines removed, crisp black axis lines (<code>0.55 pt</code>), outward ticks (<code>3 pt</code>), clean white background without gridlines, and frameless legends.</li>
+<li>Curated color palettes matching the 5 governance tiers: Biology (<code>#0F4D92</code>), Druggability (<code>#42949E</code>), Attention (<code>#9A4D8E</code>), Clinical outside-disease (<code>#E9A6A1</code>), and Label-containing (<code>#B64342</code>).</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.6" id="cliomicplot-016">cliomicplot 0.1.6<a class="anchor" aria-label="anchor" href="#cliomicplot-016"></a></h2>
+<div class="section level3">
+<h3 id="nature-aging-pathology-boxplots--ecology-demographic-rainclouds-0-1-6">Nature Aging Pathology Boxplots &amp; Ecology Demographic Rainclouds<a class="anchor" aria-label="anchor" href="#nature-aging-pathology-boxplots--ecology-demographic-rainclouds-0-1-6"></a></h3>
+<ul><li><p><strong>Nature Aging Pathology Boxplots (<code>type_nature_aging_boxplot()</code>, <code><a href="../reference/type_pathology_boxplot.html">type_pathology_boxplot()</a></code>)</strong>: Implements the Nature Aging / SciFig boxplot standard established in Yadav et al. 2026. Features category-colored outlines with low-alpha interior fill, bold black median crossbar (<code>#111111</code>, linewidth = 0.85), paired mean trajectory connecting lines across conditions, arithmetic mean diamonds (shape = 23), dashed reference baseline (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">y = 0</annotation></semantics></math>), subsampled background jitter for massive sample sizes, and two-line exact Unicode scientific significance annotations (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>*</mi><mo>*</mo><mi>*</mi><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> (P = </mtext><mspace width="0.333em"></mspace></mrow><mn>1.7</mn><mo>×</mo><msup><mn>10</mn><mrow><mi>−</mi><mn>9</mn></mrow></msup><mtext mathvariant="normal">)</mtext></mrow><annotation encoding="application/x-tex">***\text{ (P = }1.7 \times 10^{-9}\text{)}</annotation></semantics></math> or <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtext mathvariant="normal">n.s. (P = 0.55)</mtext><annotation encoding="application/x-tex">\text{n.s. (P = 0.55)}</annotation></semantics></math>). Includes dedicated theme <code>theme_cli_nature_aging()</code> / <code><a href="../reference/theme_cli_nature.html">theme_cli_nature()</a></code>.</p></li>
+<li><p><strong>Ecology &amp; Demographic Viability Rainclouds (<code><a href="../reference/type_ecology_raincloud.html">type_ecology_raincloud()</a></code>, <code><a href="../reference/type_ecology_raincloud.html">type_half_boxed()</a></code>)</strong>: Implements the half-boxed raincloud architecture for population viability analysis and ecology. Features left-nudged white-filled boxplots with thick category-colored borders and open square outlier glyphs (shape = 0), centered circular mean dots (shape = 16), right-facing half-violin density curves, horizontal replacement equilibrium reference lines (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">y = 1.0</annotation></semantics></math>), automated two-line Student’s <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math> 95% Confidence Interval text summaries, and 4-sided boxed frame <code><a href="../reference/theme_cli_ecology.html">theme_cli_ecology()</a></code>. Registered palettes: <code>ecology</code> and <code>reseeding</code>.</p></li>
+<li><p><strong>Enhanced Longitudinal Recovery Trajectories (<code><a href="../reference/type_trajectory.html">type_trajectory()</a></code>)</strong>: Substantially upgraded trajectory architecture supporting stratified multi-arm trials (e.g. Active Biologic vs. Placebo). Adds vertical standard error bars with horizontal crossbar caps (<code>show_errorbar = TRUE</code>, <code>errorbar = c("se", "ci", "sd", "none")</code>), circular mean markers with crisp white interior fill (<code>point_fill = "white"</code>), horizontal dodging across comparison arms, and milestone tracking across recovery time points.</p></li>
+<li><p><strong>Split-Half Dual-Condition Violins (<code><a href="../reference/type_split_violin.html">type_split_violin()</a></code>)</strong>: Back-to-back split violin densities highlighted by group color mapping, with inner dodged boxplots and within-tier statistical hypothesis testing with comparison bracket bars (<code>stat.test = "t.test"</code> / <code>"wilcox.test"</code>).</p></li>
+<li><p><strong>Nature Communications Case Study Vignette</strong>: Added <code><a href="../articles/recreate-nature-communications-polyps.html">vignette("recreate-nature-communications-polyps")</a></code> detailing the complete replication of all 37 figure panels from Nature Communications (2024) 15:10413 (PMC11607458) spanning single-cell RNA-seq, clinical flow cytometry (95 donors), Visium HD spatial transcriptomics, in vitro functional secretome assays, and a cross-tissue inflammatory disease atlas.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.5" id="cliomicplot-015">cliomicplot 0.1.5<a class="anchor" aria-label="anchor" href="#cliomicplot-015"></a></h2>
 <div class="section level3">

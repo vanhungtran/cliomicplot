@@ -30,6 +30,8 @@ cliplot(
   add = FALSE,
   stat.test = NULL,
   stat.label = NULL,
+  stat.annotations = NULL,
+  stat.y = NULL,
   file = NULL,
   width = NULL,
   height = NULL,
@@ -57,6 +59,8 @@ cliplot(
   add = FALSE,
   stat.test = NULL,
   stat.label = NULL,
+  stat.annotations = NULL,
+  stat.y = NULL,
   file = NULL,
   width = NULL,
   height = NULL

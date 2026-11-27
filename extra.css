@@ -158,3 +158,78 @@ body.cli-lb-open {
   display: none;
   pointer-events: none;
 }
+
+/* ==========================================================================
+   Code Folding for pkgdown Articles
+   ========================================================================== */
+details.cli-code-fold {
+  margin: 1rem 0 1.25rem 0;
+  border: 1px solid rgba(0, 115, 194, 0.22);
+  border-radius: 8px;
+  background-color: #f8fafc;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+details.cli-code-fold:hover {
+  border-color: rgba(0, 115, 194, 0.45);
+  box-shadow: 0 2px 6px rgba(0, 32, 96, 0.05);
+}
+
+summary.cli-code-summary {
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #0073C2;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: #f1f5f9;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+summary.cli-code-summary::-webkit-details-marker {
+  display: none;
+}
+
+summary.cli-code-summary:hover {
+  background-color: #e2e8f0;
+  color: #004c82;
+}
+
+details.cli-code-fold[open] > summary.cli-code-summary {
+  border-bottom: 1px solid rgba(0, 115, 194, 0.15);
+  background-color: #eaf2f8;
+}
+
+details.cli-code-fold div.sourceCode,
+details.cli-code-fold pre {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
+.cli-code-toolbar {
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#cli-toggle-all-code-btn {
+  font-size: 0.82rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border-color: #cbd5e1;
+  color: #475569;
+  background: #ffffff;
+}
+
+#cli-toggle-all-code-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}

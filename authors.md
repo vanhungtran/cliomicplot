@@ -10,13 +10,13 @@ Source:
 [`DESCRIPTION`](https://github.com/vanhungtran/cliomicplot/blob/master/DESCRIPTION)
 
 Tran L (2026). *cliomicplot: Publication-Ready Visualizations for
-Clinical and Multi-Omics Data*. R package version 0.1.5,
+Clinical and Multi-Omics Data*. R package version 0.1.7,
 <https://github.com/vanhungtran/cliomicplot>.
 
     @Manual{,
       title = {cliomicplot: Publication-Ready Visualizations for Clinical and Multi-Omics Data},
       author = {Lucas VHH Tran},
       year = {2026},
-      note = {R package version 0.1.5},
+      note = {R package version 0.1.7},
       url = {https://github.com/vanhungtran/cliomicplot},
     }

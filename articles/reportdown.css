@@ -284,3 +284,80 @@ strong { color: var(--rd-navy); }
   font-size: 13px;
   font-weight: 600;
 }
+
+/* ---- Code folding details for vignettes ---- */
+details.rd-code-fold {
+  margin: 1rem 0 1.25rem 0;
+  border: 1px solid var(--rd-border);
+  border-radius: var(--rd-radius);
+  background: var(--rd-surface);
+  box-shadow: var(--rd-shadow);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+details.rd-code-fold:hover {
+  border-color: var(--rd-accent);
+}
+
+summary.rd-code-summary {
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--rd-navy);
+  font-family: "Fira Code", monospace;
+  background: #f8fafc;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+summary.rd-code-summary::-webkit-details-marker {
+  display: none;
+}
+
+summary.rd-code-summary:hover {
+  background: #f1f5f9;
+  color: var(--rd-accent);
+}
+
+details.rd-code-fold[open] > summary.rd-code-summary {
+  border-bottom: 1px solid var(--rd-border);
+  background: #f1f5f9;
+}
+
+details.rd-code-fold div.sourceCode,
+details.rd-code-fold pre {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.rd-code-toolbar {
+  text-align: right;
+  margin: -0.5rem 0 1.25rem 0;
+}
+
+.rd-code-btn {
+  font-size: 0.82rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--rd-border);
+  color: var(--rd-muted);
+  background: var(--rd-surface);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.rd-code-btn:hover {
+  background: var(--rd-canvas);
+  color: var(--rd-navy);
+  border-color: var(--rd-navy);
+}

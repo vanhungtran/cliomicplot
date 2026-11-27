@@ -478,6 +478,10 @@ R](https://vanhungtran.github.io/cliomicplot_book/):
   - [`vignette("recreate-paper")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md)
     — Published paper reproduction: SLE X-chromosome dysregulation
     (Soares et al., *Biol Sex Differ* 2025)
+  - [`vignette("recreate-nature-communications-polyps")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-nature-communications-polyps.md)
+    — Published paper reproduction: Granzyme K+ CD8+ T cells in nasal
+    polyps and cross-tissue chronic inflammation (Sun et al., *Nat
+    Commun* 2024)
 
 ------------------------------------------------------------------------
 

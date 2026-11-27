@@ -1,5 +1,107 @@
 # Changelog
 
+## cliomicplot 0.1.7
+
+### Leakage-Controlled Machine Learning & Multi-Omics Drug Target Prioritization
+
+- **Attribution Plots
+  ([`type_attribution()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md),
+  [`type_shapley()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md),
+  [`type_stepwise()`](https://vanhungtran.github.io/cliomicplot/reference/type_attribution.md))**:
+  Implements the attribution figure archetypes from leakage-controlled
+  multi-omics and machine learning benchmarks (Liu et al. /
+  `multiomics_paper`).
+  - `style = "shapley"`: Exact Shapley value contributions across
+    leakage mechanisms, data tiers, or genomic features, with horizontal
+    orientation, baseline zero reference lines, and learner comparisons
+    (e.g. HGB vs Logistic Regression).
+  - `style = "stepwise"`: Sequential ablation staircase curves tracing
+    metric decay (AUROC / Average Precision) across removal steps, with
+    95% confidence intervals and exact step annotations.
+  - `style = "contrast"`: Dual-regime attribution comparisons
+    contrasting marginal gains when added to clean biological features
+    versus marginal losses when removed from fully leaky pipelines.
+- **Multi-Tier Model Benchmark Bar Charts
+  ([`type_benchmark_bars()`](https://vanhungtran.github.io/cliomicplot/reference/type_benchmark_bars.md),
+  [`type_benchmark()`](https://vanhungtran.github.io/cliomicplot/reference/type_benchmark_bars.md))**:
+  Publication-standard tiered model comparison bar charts featuring:
+  - Permutation null distribution reference bands
+    (`null_band = c(lo, hi)`) rendered as neutral background ribbons
+    (`#CFCECE`).
+  - Whiskers with caps for 95% confidence intervals derived from
+    group-jackknife or bootstrap resampling.
+  - Dotted vertical tier separation lines (`group_sep_lines`)
+    demarcating biological priors, druggability, research attention
+    confounding, and label-containing tiers.
+  - Linear AUROC and logarithmic AP lift scaling (`log_scale = TRUE`).
+- **Benchmark Theme & Palettes
+  ([`theme_cli_benchmark()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_benchmark.md),
+  palettes `"figures4papers"`, `"tier"`, `"leakage"`, `"benchmark"`)**:
+  - Open L-frame axes with top and right spines removed, crisp black
+    axis lines (`0.55 pt`), outward ticks (`3 pt`), clean white
+    background without gridlines, and frameless legends.
+  - Curated color palettes matching the 5 governance tiers: Biology
+    (`#0F4D92`), Druggability (`#42949E`), Attention (`#9A4D8E`),
+    Clinical outside-disease (`#E9A6A1`), and Label-containing
+    (`#B64342`).
+
+## cliomicplot 0.1.6
+
+### Nature Aging Pathology Boxplots & Ecology Demographic Rainclouds
+
+- **Nature Aging Pathology Boxplots (`type_nature_aging_boxplot()`,
+  [`type_pathology_boxplot()`](https://vanhungtran.github.io/cliomicplot/reference/type_pathology_boxplot.md))**:
+  Implements the Nature Aging / SciFig boxplot standard established in
+  Yadav et al. 2026. Features category-colored outlines with low-alpha
+  interior fill, bold black median crossbar (`#111111`, linewidth =
+  0.85), paired mean trajectory connecting lines across conditions,
+  arithmetic mean diamonds (shape = 23), dashed reference baseline
+  ($`y = 0`$), subsampled background jitter for massive sample sizes,
+  and two-line exact Unicode scientific significance annotations
+  ($`***\text{ (P = }1.7 \times 10^{-9}\text{)}`$ or
+  $`\text{n.s. (P = 0.55)}`$). Includes dedicated theme
+  `theme_cli_nature_aging()` /
+  [`theme_cli_nature()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_nature.md).
+
+- **Ecology & Demographic Viability Rainclouds
+  ([`type_ecology_raincloud()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md),
+  [`type_half_boxed()`](https://vanhungtran.github.io/cliomicplot/reference/type_ecology_raincloud.md))**:
+  Implements the half-boxed raincloud architecture for population
+  viability analysis and ecology. Features left-nudged white-filled
+  boxplots with thick category-colored borders and open square outlier
+  glyphs (shape = 0), centered circular mean dots (shape = 16),
+  right-facing half-violin density curves, horizontal replacement
+  equilibrium reference lines ($`y = 1.0`$), automated two-line
+  Student’s $`t`$ 95% Confidence Interval text summaries, and 4-sided
+  boxed frame
+  [`theme_cli_ecology()`](https://vanhungtran.github.io/cliomicplot/reference/theme_cli_ecology.md).
+  Registered palettes: `ecology` and `reseeding`.
+
+- **Enhanced Longitudinal Recovery Trajectories
+  ([`type_trajectory()`](https://vanhungtran.github.io/cliomicplot/reference/type_trajectory.md))**:
+  Substantially upgraded trajectory architecture supporting stratified
+  multi-arm trials (e.g. Active Biologic vs. Placebo). Adds vertical
+  standard error bars with horizontal crossbar caps
+  (`show_errorbar = TRUE`, `errorbar = c("se", "ci", "sd", "none")`),
+  circular mean markers with crisp white interior fill
+  (`point_fill = "white"`), horizontal dodging across comparison arms,
+  and milestone tracking across recovery time points.
+
+- **Split-Half Dual-Condition Violins
+  ([`type_split_violin()`](https://vanhungtran.github.io/cliomicplot/reference/type_split_violin.md))**:
+  Back-to-back split violin densities highlighted by group color
+  mapping, with inner dodged boxplots and within-tier statistical
+  hypothesis testing with comparison bracket bars
+  (`stat.test = "t.test"` / `"wilcox.test"`).
+
+- **Nature Communications Case Study Vignette**: Added
+  [`vignette("recreate-nature-communications-polyps")`](https://vanhungtran.github.io/cliomicplot/articles/recreate-nature-communications-polyps.md)
+  detailing the complete replication of all 37 figure panels from Nature
+  Communications (2024) 15:10413 (PMC11607458) spanning single-cell
+  RNA-seq, clinical flow cytometry (95 donors), Visium HD spatial
+  transcriptomics, in vitro functional secretome assays, and a
+  cross-tissue inflammatory disease atlas.
+
 ## cliomicplot 0.1.5
 
 ### Systems Biology Networks & AI4SciFig Publication Standards

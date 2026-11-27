@@ -51,3 +51,7 @@ immuno-oncology, and published paper reproductions.
   Endpoints](https://vanhungtran.github.io/cliomicplot/articles/case-study-cancer-immunotherapy.md):
 - [Recreating a Published Figure: SLE X-Chromosome
   Dysregulation](https://vanhungtran.github.io/cliomicplot/articles/recreate-paper.md):
+- [Recreating Multi-Modal Figures: Nature Communications (Nasal
+  Polyps)](https://vanhungtran.github.io/cliomicplot/articles/recreate-nature-communications-polyps.md):
+- [Multi-Omics Reproduction & Audit: Nature Metabolism
+  (Nanoplastics)](https://vanhungtran.github.io/cliomicplot/articles/reproduce-nature-metabolism-microplastics.md):

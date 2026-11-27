@@ -42,6 +42,12 @@ clitheme(theme = NULL, ..., register = NULL)
   - `"scifig"` - SCI Full-Box style (Elsevier/IEEE, 4 spines, outward
     ticks, dashed grid)
 
+  - `"pathology"` - Nature Aging / SciFig style (open L-frame, outward
+    ticks, dotted y-grid)
+
+  - `"ecology"` - Ecology / Demographic viability style (full 4-sided
+    black frame, no grid, outward ticks)
+
   Use `clitheme()` without arguments to reset to the default theme.
 
 - ...:

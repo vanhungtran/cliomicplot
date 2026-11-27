@@ -195,11 +195,11 @@ genomic, accessibility, and diverging families:
 
 all_pals <- cli_palette_list()
 cat(sprintf("Total available palettes: %d\n", length(all_pals)))
-#> Total available palettes: 44
+#> Total available palettes: 56
 cat("Representative selection:\n")
 #> Representative selection:
 cat(paste(head(all_pals, 24), collapse = ", "))
-#> jco, nejm, lancet, nature, science, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples, oranges, rd_yl_gn, spectral, pi_yg
+#> jco, nejm, lancet, nature, science, pathology, nature_pathology, ecology, reseeding, okabe_ito, tableau10, tol_muted, heatmap_rdbu, heatmap_rdylbu, heatmap_prgn, volcano, pastel, soft, neon, cyberpunk, blues, reds, greens, purples
 ```
 
 ------------------------------------------------------------------------

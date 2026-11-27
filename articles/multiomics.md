@@ -27,7 +27,7 @@ spanning proteomics, metabolomics, and time-course analysis:
 library(cliomicplot)
 ```
 
-    #> cliomicplot 0.1.5 - Publication-ready clinical & omics plots
+    #> cliomicplot 0.1.7 - Publication-ready clinical & omics plots
     #> Main function: cliplot() | Themes: clitheme() | Params: clipar()
 
 ``` r
