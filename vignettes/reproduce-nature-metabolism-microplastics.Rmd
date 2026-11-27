@@ -1,6 +1,6 @@
 ---
 title: "Multi-Omics Reproduction & Audit: Nature Metabolism (Nanoplastics)"
-author: "Van Hung Tran"
+author: "Van Hung Huynh-Tran"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:

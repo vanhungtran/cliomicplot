@@ -1,6 +1,6 @@
 ---
 title: "Recreating Multi-Modal Figures: Nature Communications (Nasal Polyps)"
-author: "Van Hung Tran"
+author: "Van Hung Huynh-Tran"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
