@@ -11,7 +11,7 @@ journal-specific themes. Built on ggplot2."><meta property="og:image" content="h
 
     <a class="navbar-brand me-2" href="../index.html">cliomicplot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,7 @@ journal-specific themes. Built on ggplot2.</p>
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  by_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  facet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -68,6 +69,8 @@ journal-specific themes. Built on ggplot2.</p>
 <span>  add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stat.test <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stat.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stat.annotations <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stat.y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -95,6 +98,8 @@ journal-specific themes. Built on ggplot2.</p>
 <span>  add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stat.test <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stat.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stat.annotations <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stat.y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  height <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -231,7 +236,7 @@ or a call to a <code>type_*()</code> function for customization.</p></dd>
 
 <dt id="arg-km-time-km-event-km-group">km_time, km_event, km_group<a class="anchor" aria-label="anchor" href="#arg-km-time-km-event-km-group"></a></dt>
 <dd><p>Internal. Column names extracted from a
-<code>Surv()</code> formula for Kaplan-Meier plots; set automatically by the
+<code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv()</a></code> formula for Kaplan-Meier plots; set automatically by the
 formula method and not intended to be supplied directly.</p></dd>
 
 

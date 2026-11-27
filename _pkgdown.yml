@@ -66,7 +66,7 @@ reference:
       - type_ma
       - type_correlation
       - type_boxplot
-      - type_nature_aging_boxplot
+      - type_scatter_box_violin
       - type_pathology_boxplot
       - type_violin
       - type_split_violin
@@ -74,6 +74,10 @@ reference:
       - type_ecology_raincloud
       - type_half_boxed
       - type_bubble_heatmap
+      - type_bubble_diamond
+      - type_bubble_circle
+      - type_bubble_square
+      - type_bubble_diverging
   - title: Datasets
     desc: Curated clinical cohorts and multi-omics reference datasets.
     contents:
@@ -149,3 +153,4 @@ articles:
       - case-study-cancer-immunotherapy
       - recreate-paper
       - recreate-nature-communications-polyps
+      - reproduce-nature-metabolism-microplastics

@@ -292,9 +292,78 @@
     });
   }
 
-  if (document.readyState !== 'loading') {
+  /* ==========================================================================
+     cliomicplot: Code Folding for Articles and Vignettes
+     Wraps code chunks in collapsible <details> with "Show R code" toggle.
+     Adds a global "Show All Code / Hide All Code" toggle to article headers.
+     ========================================================================== */
+  function initCodeFolding() {
+    var sourceBlocks = document.querySelectorAll('.template-article main div.sourceCode, .template-article main pre.sourceCode, .template-article main pre.downlit');
+    if (!sourceBlocks.length) {
+      sourceBlocks = document.querySelectorAll('main div.sourceCode, main pre.sourceCode, main pre.downlit');
+    }
+    if (!sourceBlocks.length) return;
+
+    var detailsList = [];
+
+    sourceBlocks.forEach(function (block) {
+      if (block.closest('details') || block.dataset.cliCodeFolded) return;
+      block.dataset.cliCodeFolded = 'true';
+
+      var details = document.createElement('details');
+      details.className = 'cli-code-fold';
+      
+      var summary = document.createElement('summary');
+      summary.className = 'cli-code-summary';
+      summary.innerHTML = '<span class="cli-code-icon">▶</span> <span class="cli-code-label">Show R code</span>';
+
+      block.parentNode.insertBefore(details, block);
+      details.appendChild(summary);
+      details.appendChild(block);
+
+      details.addEventListener('toggle', function () {
+        var icon = summary.querySelector('.cli-code-icon');
+        var label = summary.querySelector('.cli-code-label');
+        if (details.open) {
+          if (icon) icon.textContent = '▼';
+          if (label) label.textContent = 'Hide R code';
+        } else {
+          if (icon) icon.textContent = '▶';
+          if (label) label.textContent = 'Show R code';
+        }
+      });
+
+      detailsList.push(details);
+    });
+
+    if (detailsList.length > 0) {
+      var headerTarget = document.querySelector('main header, main h1');
+      if (headerTarget && !document.getElementById('cli-toggle-all-code-btn')) {
+        var toolbar = document.createElement('div');
+        toolbar.className = 'cli-code-toolbar mb-3 text-end';
+        toolbar.innerHTML = '<button id="cli-toggle-all-code-btn" class="btn btn-sm btn-outline-secondary" type="button"><i class="bi bi-code-slash me-1"></i> Show All Code</button>';
+        
+        var btn = toolbar.querySelector('#cli-toggle-all-code-btn');
+        var allExpanded = false;
+        btn.addEventListener('click', function () {
+          allExpanded = !allExpanded;
+          detailsList.forEach(function (d) { d.open = allExpanded; });
+          btn.innerHTML = allExpanded ? '<i class="bi bi-code-slash me-1"></i> Hide All Code' : '<i class="bi bi-code-slash me-1"></i> Show All Code';
+        });
+
+        headerTarget.parentNode.insertBefore(toolbar, headerTarget.nextSibling);
+      }
+    }
+  }
+
+  function init() {
     initLightbox();
+    initCodeFolding();
+  }
+
+  if (document.readyState !== 'loading') {
+    init();
   } else {
-    document.addEventListener('DOMContentLoaded', initLightbox);
+    document.addEventListener('DOMContentLoaded', init);
   }
 })();
