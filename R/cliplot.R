@@ -604,6 +604,7 @@ resolve_type = function(type) {
     bubble_heatmap = type_bubble_heatmap,
     roc         = type_roc,
     gsea        = type_gsea,
+    gsea_running = type_gsea_running,
     upset       = type_upset,
     venn        = type_venn,
     slope       = type_slope,
