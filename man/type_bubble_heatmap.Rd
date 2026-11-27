@@ -2,43 +2,95 @@
 % Please edit documentation in R/type_bubble_heatmap.R
 \name{type_bubble_heatmap}
 \alias{type_bubble_heatmap}
-\title{Diamond Bubble Heatmap}
+\title{Bubble Heatmap Archetypes (Diamond, Circle, Square, and Diverging)}
 \usage{
 type_bubble_heatmap(
-  label_threshold = 1.5,
-  max_size = 9,
-  label_size = 2.4,
-  band_alpha = 0.6,
-  band_fill = "#F2F5FA",
-  cell_border = "#E2E6EF",
-  size_name = "|log₂FC|",
-  fill_name = expression(-log[10] ~ "adjusted P"),
+  shape = c("diamond", "circle", "square", "triangle_up", "triangle_down"),
+  palette_type = c("sequential", "diverging"),
+  palette = NULL,
   fill_low = "#D6E4F0",
   fill_mid = "#59B8A8",
   fill_high = "#A83D62",
+  midpoint = 0,
+  limits = NULL,
+  min_size = 1,
+  max_size = 9,
+  stroke_col = "white",
+  stroke_width = 0.65,
+  point_alpha = 0.95,
+  grid_style = c("banded", "grid", "minimal", "none"),
+  band_alpha = 0.6,
+  band_fill = "#F2F5FA",
+  cell_border = "#E2E6EF",
+  label_metric = c("value", "signif", "none"),
+  label_threshold = 1.5,
+  signif_cutoffs = c(0.05, 0.01, 0.001),
+  signif_labels = c("*", "**", "***"),
+  label_size = 2.4,
+  label_col = "#182033",
+  size_name = "|log₂FC|",
+  fill_name = expression(-log[10] ~ "adjusted P"),
   axis_text_size = NULL,
   axis_text_angle = 45,
   transpose = FALSE
 )
 }
 \arguments{
-\item{label_threshold}{Size threshold above which cell labels are drawn (default 1.5).}
+\item{shape}{Shape of the bubble glyphs: \code{"diamond"} (23, default),
+\code{"circle"} (21), \code{"square"} (22), \code{"triangle_up"} or \code{"triangle"} (24),
+\code{"triangle_down"} (25), or an integer shape code (21--25).}
 
-\item{max_size}{Maximum point size (default 9).}
+\item{palette_type}{Color gradient type: \code{"sequential"} (default) or \code{"diverging"}.}
+
+\item{palette}{Named publication palette or color vector:
+\itemize{
+  \item Diverging: \code{"nature"}, \code{"rdbu"}, \code{"bipolar"}, \code{"lancet"},
+    \code{"spectral"}, \code{"piyg"}, \code{"prgn"}, \code{"dark"}.
+  \item Sequential: \code{"mako"}, \code{"rocket"}, \code{"viridis"}, \code{"plasma"},
+    \code{"blues"}, \code{"reds"}, \code{"ylorrd"}, \code{"purples"}.
+}}
+
+\item{fill_low, fill_mid, fill_high}{Explicit colour stops for the fill gradient when
+\code{palette = NULL}.}
+
+\item{midpoint}{Value representing the midpoint for diverging palettes (default 0).}
+
+\item{limits}{Numeric vector of length 2 specifying fill scale limits.}
+
+\item{min_size, max_size}{Point size range (defaults \code{min_size = 1.0}, \code{max_size = 9.0}).}
+
+\item{stroke_col}{Outline stroke colour for bubbles (default \code{"white"}).}
+
+\item{stroke_width}{Outline stroke width (default 0.65).}
+
+\item{point_alpha}{Bubble fill transparency (default 0.95).}
+
+\item{grid_style}{Background matrix style: \code{"banded"} (alternating row stripes with borders, default),
+\code{"grid"} (clean tile matrix borders without stripes), \code{"minimal"} (subtle grid guides),
+or \code{"none"}.}
+
+\item{band_alpha}{Opacity for alternating row bands in banded style (default 0.6).}
+
+\item{band_fill}{Fill colour for alternating row bands (default \code{"#F2F5FA"}).}
+
+\item{cell_border}{Border colour for guide tiles (default \code{"#E2E6EF"}).}
+
+\item{label_metric}{Content of glyph text labels: \code{"value"} (numeric size value if above threshold),
+\code{"signif"} (significance asterisks \code{*}, \code{**}, \code{***}), or \code{"none"}.}
+
+\item{label_threshold}{Size threshold above which cell labels are drawn when \code{label_metric = "value"} (default 1.5).}
+
+\item{signif_cutoffs}{Significance thresholds for asterisks when \code{label_metric = "signif"} (default \code{c(0.05, 0.01, 0.001)}).}
+
+\item{signif_labels}{Asterisk labels corresponding to cutoffs (default \code{c("*", "**", "***")}).}
 
 \item{label_size}{Font size for cell text labels (default 2.4).}
 
-\item{band_alpha}{Opacity for alternating row bands.}
-
-\item{band_fill}{Fill colour for alternating row bands.}
-
-\item{cell_border}{Border colour for guide tiles.}
+\item{label_col}{Font colour for cell text labels (default \code{"#182033"}).}
 
 \item{size_name}{Legend title for the size scale.}
 
 \item{fill_name}{Legend title for the fill colour scale.}
-
-\item{fill_low, fill_mid, fill_high}{Colour stops for the fill gradient.}
 
 \item{axis_text_size}{Size of axis text. If NULL (default), adaptively scaled.}
 
@@ -50,6 +102,10 @@ type_bubble_heatmap(
 A \code{cliplot_type} object.
 }
 \description{
-Creates a matrix of diamond-shaped bubbles where marker-sample combinations
-are encoded by size (e.g., fold-change) and colour (e.g., significance).
+Creates a matrix of bubbles where marker-sample combinations are encoded
+simultaneously by shape size (e.g., effect magnitude, |log2FC|, -log10 P, or abundance)
+and colour (e.g., continuous significance, directional NES, or log2FC).
+Supports multiple glyph shapes (diamond, circle, square, triangle), sequential
+and diverging publication palettes, significance asterisks, and customizable
+matrix backgrounds (banded, grid, minimal).
 }
