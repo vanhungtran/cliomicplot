@@ -290,6 +290,134 @@ cli_calc_gsea_running = function(stats, gene_set, p = 1.0) {
   out
 }
 
+#' Over-Representation Analysis (ORA) Calculator
+#'
+#' @description Performs hypergeometric testing (Fisher's exact test) for
+#'   over-representation of target genes (e.g. differentially expressed genes,
+#'   mass-spec protein hits, single-cell marker modules) in predefined pathway
+#'   collections.
+#'
+#' @param de_genes Character vector of target or differentially expressed genes.
+#' @param pathways Named list of character vectors (each containing gene symbols for
+#'   a pathway) or a two-column data frame with columns \code{c("pathway", "gene")}.
+#' @param background Character vector of all background / universe genes measured
+#'   in the experiment. If \code{NULL}, defaults to all unique genes across \code{pathways}.
+#' @param min_size Minimum number of pathway genes present in the background (default 3).
+#' @param max_size Maximum number of pathway genes present in the background (default 1000).
+#' @param p_adjust Method for multiple testing correction passed to \code{\link[stats]{p.adjust}}
+#'   (default \code{"BH"}).
+#'
+#' @return A sorted data frame containing:
+#'   \itemize{
+#'     \item \code{Pathway}: Pathway or functional gene set name.
+#'     \item \code{GeneRatio}: Numeric fraction of target genes in this pathway (\code{k / n}).
+#'     \item \code{BgRatio}: Numeric fraction of background genes in this pathway (\code{M / N}).
+#'     \item \code{Count}: Number of overlapping genes (\code{k}).
+#'     \item \code{PathwaySize}: Pathway size in background (\code{M}).
+#'     \item \code{FoldEnrichment}: Ratio of \code{GeneRatio} to \code{BgRatio}.
+#'     \item \code{pvalue}: Hypergeometric p-value (Fisher's exact test).
+#'     \item \code{padj}: Adjusted p-value (FDR).
+#'     \item \code{Genes}: Comma-separated list of identified overlapping genes.
+#'   }
+#'   Sorted ascending by \code{padj}, then \code{pvalue}.
+#'
+#' @examples
+#' pathways <- list(
+#'   "Type 2 Response" = c("IL4R", "IL13RA1", "CCL17", "CCL18", "POSTN"),
+#'   "Epidermal Barrier" = c("FLG", "LOR", "IVL", "LCE3A", "SPRR2G")
+#' )
+#' de_genes <- c("IL4R", "CCL17", "POSTN", "FLG")
+#' bg_genes <- c("IL4R", "IL13RA1", "CCL17", "CCL18", "POSTN", "FLG", "LOR", "IVL", "LCE3A", "SPRR2G", "ACTB", "GAPDH")
+#' ora_res <- cli_calc_ora(de_genes, pathways, background = bg_genes)
+#' ora_res
+#'
+#' @export
+cli_calc_ora = function(
+    de_genes,
+    pathways,
+    background = NULL,
+    min_size   = 3,
+    max_size   = 1000,
+    p_adjust   = "BH"
+) {
+  if (is.data.frame(pathways)) {
+    p_col <- .detect_col(pathways, c("pathway", "term", "gs_name", "category"), "character")
+    g_col <- .detect_col(pathways, c("gene", "symbol", "gene_symbol", "id"), "character")
+    if (is.null(p_col) || is.null(g_col)) {
+      stop("cli_calc_ora requires pathway and gene columns when pathways is a data frame.", call. = FALSE)
+    }
+    pathways <- split(as.character(pathways[[g_col]]), as.character(pathways[[p_col]]))
+  }
+
+  if (!is.list(pathways) || is.null(names(pathways))) {
+    stop("cli_calc_ora: pathways must be a named list of gene vectors or a 2-column data frame.", call. = FALSE)
+  }
+
+  all_pw_genes <- unique(unlist(pathways, use.names = FALSE))
+  if (is.null(background)) {
+    background <- all_pw_genes
+  }
+  background <- unique(as.character(background))
+  de_genes <- unique(as.character(de_genes))
+
+  de_in_bg <- intersect(de_genes, background)
+  n <- length(de_in_bg)
+  N <- length(background)
+
+  if (n == 0) {
+    warning("cli_calc_ora: None of the target genes were found in the background universe.", call. = FALSE)
+  }
+
+  rows <- lapply(names(pathways), function(pw) {
+    pw_genes <- unique(as.character(pathways[[pw]]))
+    pw_in_bg <- intersect(pw_genes, background)
+    M <- length(pw_in_bg)
+
+    if (M < min_size || M > max_size) return(NULL)
+
+    hits <- intersect(de_in_bg, pw_in_bg)
+    k <- length(hits)
+
+    pval <- if (n > 0 && M > 0) {
+      stats::phyper(k - 1, M, N - M, n, lower.tail = FALSE)
+    } else {
+      1.0
+    }
+
+    gene_ratio <- if (n > 0) k / n else 0
+    bg_ratio   <- if (N > 0) M / N else 0
+    fold_enr   <- if (bg_ratio > 0) gene_ratio / bg_ratio else 0
+
+    data.frame(
+      Pathway        = pw,
+      GeneRatio      = gene_ratio,
+      BgRatio        = bg_ratio,
+      Count          = k,
+      PathwaySize    = M,
+      FoldEnrichment = fold_enr,
+      pvalue         = pval,
+      Genes          = paste(hits, collapse = ", "),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  rows <- rows[!vapply(rows, is.null, logical(1))]
+  if (length(rows) == 0) {
+    return(data.frame(
+      Pathway = character(0), GeneRatio = numeric(0), BgRatio = numeric(0),
+      Count = integer(0), PathwaySize = integer(0), FoldEnrichment = numeric(0),
+      pvalue = numeric(0), padj = numeric(0), Genes = character(0),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  out <- do.call(rbind, rows)
+  out$padj <- stats::p.adjust(out$pvalue, method = p_adjust)
+  out <- out[order(out$padj, out$pvalue), ]
+  rownames(out) <- NULL
+  out
+}
+
 #' GSEA Running Enrichment Score Composite Plot Type
 #'
 #' @description
@@ -443,12 +571,15 @@ type_gsea_running = function(
         }
       }
 
-      # 3. Bottom Panel: Ranked Metric Gradient area
+      # 3. Bottom Panel: Ranked Metric Gradient
       p_metric <- ggplot2::ggplot(df, ggplot2::aes(x = .data[["rank"]], y = .data[["stat"]])) +
-        ggplot2::geom_area(ggplot2::aes(fill = .data[["stat"]]), alpha = 0.85) +
+        ggplot2::geom_segment(
+          ggplot2::aes(x = .data[["rank"]], xend = .data[["rank"]], y = 0, yend = .data[["stat"]], color = .data[["stat"]]),
+          linewidth = 0.45, alpha = 0.9
+        ) +
         ggplot2::geom_hline(yintercept = 0, color = "grey40", linewidth = 0.3) +
-        ggplot2::scale_fill_gradient2(
-          low = "#2166AC", mid = "#F7F7F7", high = "#B2182B", midpoint = 0, guide = "none"
+        ggplot2::scale_color_gradient2(
+          low = "#2166AC", mid = "#D0D7DE", high = "#B2182B", midpoint = 0, guide = "none"
         ) +
         ggplot2::scale_x_continuous(expand = c(0.01, 0)) +
         theme_cli_base() +

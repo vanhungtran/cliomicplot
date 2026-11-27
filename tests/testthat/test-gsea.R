@@ -33,3 +33,22 @@ test_that("type_gsea_running produces valid composite plot", {
   )
   expect_true(inherits(p, "ggplot") || inherits(p, "patchwork"))
 })
+
+test_that("cli_calc_ora correctly computes hypergeometric test statistics", {
+  pathways <- list(
+    "Pathway_A" = paste0("Gene_", 1:20),
+    "Pathway_B" = paste0("Gene_", 50:70),
+    "Pathway_C" = paste0("Gene_", 100:150)
+  )
+  bg_genes <- paste0("Gene_", 1:500)
+  # Heavily enriched in Pathway_A
+  de_genes <- c(paste0("Gene_", 1:15), paste0("Gene_", 200:210))
+
+  res <- cli_calc_ora(de_genes, pathways, background = bg_genes)
+  expect_s3_class(res, "data.frame")
+  expect_equal(res$Pathway[1], "Pathway_A")
+  expect_true(res$padj[1] < 1e-10)
+  expect_equal(res$Count[1], 15)
+  expect_true(res$FoldEnrichment[1] > 10)
+})
+
